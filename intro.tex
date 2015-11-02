@@ -33,13 +33,13 @@ Finally, the Bloom filter formalization that is given does not obviously capture
 \jknote{You had me for a minute...but actually I think the representations of the hash functions ARE included in the representation. This is not explicit, but is consistent with the way they state their positive result in the computational setting (“...if there is a Bloom filter using m bits of memory, then there is a strongly resilient Bloom filter using $m + \lambda$ bits of memory…”); more importantly, it seems explicit from their treatment of the IT case.}
 
 \tsnote{Perhaps.  I’m still not convinced.  If you read the text preceding the statement of Theorem 1.2 (page 4), you’ll see their discussion of lower bounds on “memory” required for a given set size and FP rate.  This bound is the classical one for Bloom filters and speaks only of the (bit)size of the array.  It says nothing about the description of the hash functions needed to populate the array.  In fact, this lower bound is for any method of representing set S in a bit array, not only for hashing-based methods.
-
+%
 Maybe they are defining “memory” differently in this discussion than in their theorems.  This would be annoying, and I think it isn’t the case.  So for the moment, I’ll continue to hold my position on this.
-
+%
 (I’ll also point out that they explicitly say that $B_1$ outputs “compressed representation of [set $S$] $B_1(S)=M$”.  But it would be easy to have small sets $S$ for which the bitsize of the array is smaller than the total bitsize of $S$, yet the combined bitsize of array + hash functions is larger.)
-
+%
 But for the sake of argument, say that their representation size m does include the description of the hash functions.  To me, this is a clunky way to handle this matter.  For one thing, it doesn’t play well with analysis in the ROM, which is the traditional way to establish results relating FP rate, set size and array size for Bloom filters.  (I know there are standard model assumptions that suffice, too.)  For another, this way of accounting makes unnecessarily hard to answer the two important operational questions: how big is the array, and how many hash function calls do I need to make per item/query?  
-
+% 
 I’ll agree that this syntactic issue does not matter for theorem statements such as “...if there is a Bloom filter using $m$ bits of memory, then there is a strongly resilient Bloom filter using $m + \lambda$ bits of memory…”  In fact, this statement would be true for the traditional way of defining Bloom filter memory (array size), since the extra space is basically for a PRP key.}
 
 
@@ -49,20 +49,16 @@ I’ll agree that this syntactic issue does not matter for theorem statements su
 \begin{itemize}
 \item Get a solid handle on how Bloom filters are used in practice, and what generalizations have gained traction in the academic literature. (See wikipedia, a section of which I’ve pasted in at the end of this doc.)
 \item Work out a proper “cryptographic” syntax for the Bloom filter primitive.  (Possibly something more general, see number 5.)
-\item Establish security notions that are appropriate for broader use cases (e.g. privacy of $S$, privacy of the representation $M$, authenticity of representation $M$), potentially distinguishing between “external” and “internal” attacks for, say, CDN scenarios
+\item Establish security notions that are appropriate for broader use cases (e.g. privacy of~$S$, privacy of the representation~$M$, authenticity of representation~$M$), potentially distinguishing between “external” and “internal” attacks for, say, CDN scenarios
 \item Develop constructions that are secure and are supported by a practice-informed argument for deployment
 \item Expand from Bloom filters to “Approximate Set Membership” primitives, i.e. more general compressed representations (of sets) that admit queries  Note: this should be done only if it makes sense -- i.e. it doesn’t explode the scope, it doesn’t send us off too far into theoryland.
 \end{itemize}
 
-\jknote{I think privacy is an interesting question. I also thought that both privacy and soundness could be considered both in the setting when the representation is “hidden” from the adversary (as in the paper under discussion) as well as in the setting where the representation is public. [Ahh...I see you have some similar thoughts further below.] Some thoughts about this:}
-
-\begin{itemize}
-\item Privacy in the “hidden” setting. Here the idea would be that queries about whether $x \in S$ reveal only the result of the query and nothing else. 
-
-\item Privacy in the “public” setting. Here we could assume the elements of $S$ have high entropy, and $S$ has low density, and require that the attacker cannot find $x \in S$ even when given the representation(!) I see no reason why this should not be achievable in the random oracle model, or possibly even in the standard model.
-
-\item Soundness in the “public” setting. Note that if the soundness is 0.5 then the attacker can simply guess random elements until it finds a false positive. So one way to approach this is to look at negligible soundness error only. Or, in the random oracle model, you could count queries to the RO and bound the attacker’s success as a function of the number of queries it makes.
-\end{itemize}
+\jknote{I think privacy is an interesting question. I also thought that both privacy and soundness could be considered both in the setting when the representation is “hidden” from the adversary (as in the paper under discussion) as well as in the setting where the representation is public. [Ahh...I see you have some similar thoughts further below.] Some thoughts about this:
+(1) Privacy in the “hidden” setting. Here the idea would be that queries about whether $x \in S$ reveal only the result of the query and nothing else;  
+(2) Privacy in the “public” setting. Here we could assume the elements of~$S$ have high entropy, and~$S$ has low density, and require that the attacker cannot find~$x \in S$ even when given the representation(!) I see no reason why this should not be achievable in the random oracle model, or possibly even in the standard model;
+(3) Soundness in the “public” setting. Note that if the soundness is 0.5 then the attacker can simply guess random elements until it finds a false positive. So one way to approach this is to look at negligible soundness error only. Or, in the random oracle model, you could count queries to the RO and bound the attacker’s success as a function of the number of queries it makes.
+}
 
 \paragraph{Basic Bloom filter syntax.}
 As a first step, let us try to better formalize Bloom filters as a primitive.
@@ -71,7 +67,7 @@ Fix integers $m,k > 0$ and a nonempty set $U$.  Fix a symbol $\bot \not\in U$.  
 
 The hash family $H = \{h_i : U \rightarrow [m]  | i in [k]\}$ is  set of~$k$ hash functions.  
 
-The representation mapping $\mathsc{Rep}: 2^U \rightarrow \bits^m$ takes a set $S \subseteq U$ as input, and outputs an $m$-bit representation~$M$ of $S$.  The query mapping $\mathsc{Qry}: \bits^m x U \rightarrow \bits$ takes a representation $M$ and an element $x \in U$ and returns a bit.  We assume that both $\mathsc{Rep}$ and $\mathsc{Qry}$ may make (black-box) calls to the functions in~$H$.  Both $\mathsc{Rep}$ and $\mathsc{Qry}$ are deterministic.
+The representation mapping $\mathsc{Rep}: 2^U \rightarrow \bits^m$ takes a set $S \subseteq U$ as input, and outputs an $m$-bit representation~$M$ of $S$.  The query mapping $\mathsc{Qry}: \bits^m \times U \rightarrow \bits$ takes a representation $M$ and an element $x \in U$ and returns a bit.  We assume that both $\mathsc{Rep}$ and $\mathsc{Qry}$ may make (black-box) calls to the functions in~$H$.  Both $\mathsc{Rep}$ and $\mathsc{Qry}$ are deterministic.
 
 Note that this is already a slight generalization of a true Bloom filter, because the syntax does not proscribe how Rep and Qry operate.
 
@@ -97,11 +93,11 @@ A “Bloom filter with operations” is a four-tuple  $B=(H,\mathsc{Rep},\mathsc
 As before, the hash family $H = \{h_i : U \rightarrow [m]  | i in [k] \}$ is  set of~$k$ hash functions.  
 
 The set $\mathsc{Ops}$ is the finite collection of allowable operations.  All operations are of the form 
-$f: U^* x U^* \rightarrow U^* \cup \{\bot\}$.  That is, an operation takes tuples $S$ and $T$ as input, and returns either tuple $S’$ or the distinguished symbol $\bot$.  (Examples: $f_{\mathrm{add}}((a,b,c,c),(c,d,d)) = (a,b,c,c,c,d,d); f_{\mathrm{del}}((a,b,c),(c))=(a,b); f_{\mathrm{del}}((a,b,c),(c,d)) = \bot$.  Could allow more advanced things like $f_{\mathrm{setify}}((a,b,c,c),(c,d,a)) = (a,b,c,d))$ to support what already exists in the literature and (more importantly) in practice.)  We assume that if an operation~$f$ is called outside of its domain, it returns $\bot$.
+$f: U^* \times U^* \rightarrow U^* \cup \{\bot\}$.  That is, an operation takes tuples~$S$ and~$T$ as input, and returns either tuple~$S’$ or the distinguished symbol $\bot$.  (Examples: $f_{\mathrm{add}}((a,b,c,c),(c,d,d)) = (a,b,c,c,c,d,d); f_{\mathrm{del}}((a,b,c),(c))=(a,b); f_{\mathrm{del}}((a,b,c),(c,d)) = \bot$.  Could allow more advanced things like $f_{\mathrm{setify}}((a,b,c,c),(c,d,a)) = (a,b,c,d))$ to support what already exists in the literature and (more importantly) in practice.)  We assume that if an operation~$f$ is called outside of its domain, it returns $\bot$.
 
 The representation mapping $P: U^* \rightarrow A^m \cup \{\bot\}$.  It takes a tuple~$S$, and returns an $m$-vector~$M$ of elements from the alphabet~$A$, or the distinguished symbol~$\bot$.  We call the (non-$\bot$) output of $P(S)$ the representation $S$. 
 
-The query mapping $Q: A^m x U \rightarrow \{0,1\}$ takes a representation $M$ and an element $x \in U$ and returns a bit.  We assume that both~$P$ and~$Q$ may make (black-box) calls to the functions in~$H$.  
+The query mapping $Q: A^m \times U \rightarrow \{0,1\}$ takes a representation $M$ and an element $x \in U$ and returns a bit.  We assume that both~$P$ and~$Q$ may make (black-box) calls to the functions in~$H$.  
 
 Correctness is defined as follows.  Let $S,T$ be arbitrary elements of $U^*$, and let~$f$ be an arbitrary operation in $\mathsc{Ops}$.  If $f(S,T) = S’$ is in $U^*$ (i.e. is not $\bot$), then for all $x \in S’$ we demand that $\mathsc{Qry}(\mathsc{Rep}(S’),x)=1$. [Note: might need a stronger condition that this holds for any sequence of operations that do not result in $\bot$.]
 
