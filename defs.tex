@@ -876,9 +876,10 @@
     \end{tabular}}
 
 
-\newcommand{\authnote}[2]{\textcolor{cyan}{$\ll$ \textbf{#1 says:} #2 $\gg$}}
+\newcommand{\authnote}[2]{\textcolor{cyan} [{\textbf{#1 says:} #2]}}
 \newcommand{\authfnote}[2]{\footnote{\textbf{#1 says:} #2}}
-
+\newcommand{\jknote}[1]{\authnote{<JK>}{#1}}
+\newcommand{\tsnote}[1]{\authnote{<TS>}{#1}}
 
 \newcommand{\semi}{\:;\:}
 \newcommand{\bitset}{B}
@@ -947,6 +948,8 @@
 \newcommand{\XXX}{\textnormal{XXX}}
 \newcommand{\A}{\textnormal{A}}
 \newcommand{\B}{\textnormal{B}}
+
+\newcommand{\advA}{\mathcal{A}}
 
 \newcommand{\na}{\textrm{na}}
 \newcommand{\AdvClassRA}{\calA_{\textrm{ra}}}

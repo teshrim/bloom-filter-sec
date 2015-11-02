@@ -1,0 +1,142 @@
+\section{Introduction}
+\paragraph{Basic issues. }
+\begin{itemize}
+\item [NY] formalize and investigate a security notion of limited interest
+\item The proposed construction won’t scale in common network applications
+\item The main results are of theoretical interest only
+\item The basic syntax and operation of their Bloom filter formalization is underdefined.  (This really irritates me.)  It isn’t clear that their Bloom filter formalization actually captures traditional Bloom filters!
+\end{itemize}
+
+\paragraph{Critique. }
+The traditional definition of Bloom filter soundness is information theoretic.  Effectively, it states that an IT adversary cannot find a false positive with probability more than some small value.  (That value is a function of the size of the set being represented, the representation size, the size of the universe, and the number of hash functions.)  This paper ([NY]) replaces the traditional IT notion with a computational notion, and casts it as a security experiment/goal.  Namely: given the set S that is represented by the Bloom filter, and access to an oracle for Bloom filter set-membership queries, an attacker must find a false positive.  
+
+\jknote{Of course, [NY] discusses an info-theoretic notion also. So in some sense what is really new here is consideration of adaptivity...}
+\tsnote{Yes, defining soundness with respect to explicit adversaries, who are also adaptive, does seem to be the novel piece.} 
+
+Security relative to this notion appears to have some practical relevance.  [NY] points to whitelisting spam filters as an example.  That is, a Bloom filter is populated with set S of whitelisted email addresses, so a false positive translates to an attacker finding an email address that sneaks through the filter.  [NY] suggest a second example of content-caching servers that keep a Bloom filter of their own storage contents.  A false positive causes the server to search its local store, which is slow, only to find nothing.
+
+To the first example, I suspect that spam filters are far more sophisticated than simply looking for whitelisted email addresses.  So the example feels artificial and overblown as practical motivation.  But more to the point, the security notion proposed by [NY] gives S ---the set of whitelisted email addresses--- to the adversary.  In practice, knowledge of these email addresses may be more damaging than creating a false-positive email address! (Keep in mind that the attacker wins, in this scenario, by creating any email address that passes the filter, even ones that bear no resemblance to real email addresses.)  From this perspective, the [NY] security definition is narrow in its scope, even assuming it says something useful about spam filtering.
+
+\jknote{Yes, although another way to interpret this is that the adversary cannot find a false positive EVEN IF it had the whitelisted email addresses, even if in practice it does not.}
+\tsnote{Fair enough. And this potentially unrealistic attack is preventable by a simple countermeasure.  That said, I’m not convinced the countermeasure is easy to deploy at scale, or that it meshes well with real deployments.  (See below.)  }
+
+I am less critical of the second example, although this is mostly because I feel ignorant of how real CDNs operate.  However, I believe that the following is common.  Say I’m a caching server.  If my Bloom filter tells me that some requested content is not locally stored, then I check the Bloom filters of my network neighbors, these having been shared with me.  When a neighbor’s Bloom filter is positive for the requested content, I contact that neighbor, and that neighbor only.  (If no neighbor has it, then I have to retrieve it from some slower and more distant source, like the Web.)  Now, the [NY] construction uses a PRP, meaning that a secret key is involved in evaluating the Bloom filter.  Thus, I need to know the secret keys of my neighbors in order to operate in the way just described.  This seems troublesome in practice, at scale.  Thus, their solution to a (potentially) real problem seems to be a non-solution.
+
+Note that there is at least one way to avoid this knowledge of secret keys issues.  Namely, assume that content-caching servers distinguish between Bloom filter queries that originate from outside the CDN (e.g. users’ browsers) and those from within (e.g. other servers), and that the attacker only makes the former type of queries.  Then each server could store its neighbors’ Bloom filters in the clear, as normal, and only use the PRP construction when responding to external queries.  I don’t know how realistic this separation of queries is, in practice, nor how easy it would be to deploy such a strategy.  I also don’t know if this restricted attack scenario is interesting or plausible.
+
+Moving on, the paper spends too much time asking and answering questions that are interesting to theoreticians, only.  Specifically, the relationship between the existence of one-way functions and Bloom filters that are secure relative to their definition.
+
+\jknote{Agreed. =)}
+
+Finally, the Bloom filter formalization that is given does not obviously capture traditional Bloom filters!  Traditionally, both Bloom filter population and querying procedures use hash functions $h_1,h_2,...h_k$ that each map from some universe $U$ to $[m]$, where $m$ is the bit-length of the array $M$ that represents a given set $S$.  These hash functions are missing from the authors’ definition, apparently swept into the algorithms $B_1$ (population) and $B_2$ (querying).  I don’t really understand how, though. They allow $B_1$ to be randomized, which would let $B_1$ pick the hash functions.  But the security definition provides no way for $B_1$ to share these with $B_2$.  So how would $B_2$ be able to process set-membership queries?  (Note: based on how they define the size of the representation M, $B_1$ cannot include descriptions of $h_1, h_2, \ldots , h_k$ in $M$.  They really mean $M$ to be the array that represents the set $S$.)  In general, their formalization of the Bloom filter primitive is badly underdefined.
+
+\jknote{You had me for a minute...but actually I think the representations of the hash functions ARE included in the representation. This is not explicit, but is consistent with the way they state their positive result in the computational setting (“...if there is a Bloom filter using m bits of memory, then there is a strongly resilient Bloom filter using $m + \lambda$ bits of memory…”); more importantly, it seems explicit from their treatment of the IT case.}
+
+\tsnote{Perhaps.  I’m still not convinced.  If you read the text preceding the statement of Theorem 1.2 (page 4), you’ll see their discussion of lower bounds on “memory” required for a given set size and FP rate.  This bound is the classical one for Bloom filters and speaks only of the (bit)size of the array.  It says nothing about the description of the hash functions needed to populate the array.  In fact, this lower bound is for any method of representing set S in a bit array, not only for hashing-based methods.
+
+Maybe they are defining “memory” differently in this discussion than in their theorems.  This would be annoying, and I think it isn’t the case.  So for the moment, I’ll continue to hold my position on this.
+
+(I’ll also point out that they explicitly say that $B_1$ outputs “compressed representation of [set $S$] $B_1(S)=M$”.  But it would be easy to have small sets $S$ for which the bitsize of the array is smaller than the total bitsize of $S$, yet the combined bitsize of array + hash functions is larger.)
+
+But for the sake of argument, say that their representation size m does include the description of the hash functions.  To me, this is a clunky way to handle this matter.  For one thing, it doesn’t play well with analysis in the ROM, which is the traditional way to establish results relating FP rate, set size and array size for Bloom filters.  (I know there are standard model assumptions that suffice, too.)  For another, this way of accounting makes unnecessarily hard to answer the two important operational questions: how big is the array, and how many hash function calls do I need to make per item/query?  
+
+I’ll agree that this syntactic issue does not matter for theorem statements such as “...if there is a Bloom filter using $m$ bits of memory, then there is a strongly resilient Bloom filter using $m + \lambda$ bits of memory…”  In fact, this statement would be true for the traditional way of defining Bloom filter memory (array size), since the extra space is basically for a PRP key.}
+
+
+
+\paragraph{Obvious Tasks. }
+
+\begin{itemize}
+\item Get a solid handle on how Bloom filters are used in practice, and what generalizations have gained traction in the academic literature. (See wikipedia, a section of which I’ve pasted in at the end of this doc.)
+\item Work out a proper “cryptographic” syntax for the Bloom filter primitive.  (Possibly something more general, see number 5.)
+\item Establish security notions that are appropriate for broader use cases (e.g. privacy of $S$, privacy of the representation $M$, authenticity of representation $M$), potentially distinguishing between “external” and “internal” attacks for, say, CDN scenarios
+\item Develop constructions that are secure and are supported by a practice-informed argument for deployment
+\item Expand from Bloom filters to “Approximate Set Membership” primitives, i.e. more general compressed representations (of sets) that admit queries  Note: this should be done only if it makes sense -- i.e. it doesn’t explode the scope, it doesn’t send us off too far into theoryland.
+\end{itemize}
+
+\jknote{I think privacy is an interesting question. I also thought that both privacy and soundness could be considered both in the setting when the representation is “hidden” from the adversary (as in the paper under discussion) as well as in the setting where the representation is public. [Ahh...I see you have some similar thoughts further below.] Some thoughts about this:}
+
+\begin{itemize}
+\item Privacy in the “hidden” setting. Here the idea would be that queries about whether $x \in S$ reveal only the result of the query and nothing else. 
+
+\item Privacy in the “public” setting. Here we could assume the elements of $S$ have high entropy, and $S$ has low density, and require that the attacker cannot find $x \in S$ even when given the representation(!) I see no reason why this should not be achievable in the random oracle model, or possibly even in the standard model.
+
+\item Soundness in the “public” setting. Note that if the soundness is 0.5 then the attacker can simply guess random elements until it finds a false positive. So one way to approach this is to look at negligible soundness error only. Or, in the random oracle model, you could count queries to the RO and bound the attacker’s success as a function of the number of queries it makes.
+\end{itemize}
+
+\paragraph{Basic Bloom filter syntax.}
+As a first step, let us try to better formalize Bloom filters as a primitive.
+
+Fix integers $m,k > 0$ and a nonempty set $U$.  Fix a symbol $\bot \not\in U$.  A “Bloom filter” is a triple  $B=(H,\mathsc{Rep},\mathsc{Qry})$.  
+
+The hash family $H = \{h_i : U \rightarrow [m]  | i in [k]\}$ is  set of~$k$ hash functions.  
+
+The representation mapping $\mathsc{Rep}: 2^U \rightarrow \bits^m$ takes a set $S \subseteq U$ as input, and outputs an $m$-bit representation~$M$ of $S$.  The query mapping $\mathsc{Qry}: \bits^m x U \rightarrow \bits$ takes a representation $M$ and an element $x \in U$ and returns a bit.  We assume that both $\mathsc{Rep}$ and $\mathsc{Qry}$ may make (black-box) calls to the functions in~$H$.  Both $\mathsc{Rep}$ and $\mathsc{Qry}$ are deterministic.
+
+Note that this is already a slight generalization of a true Bloom filter, because the syntax does not proscribe how Rep and Qry operate.
+
+\jknote{Why not simply include the description of the hash function(s) as part of the size of the representation? I.e., Have $B_1$, $B_2$ exactly as in the paper, but explicitly count the bits needed to represent the hash functions as part of the representation output by $B_1$.}
+\tsnote{See my comments above.}
+\jknote{There could be some advantages to your formulation, though, if you imagine choosing the hash functions “once and for all” and then running Rep on many different sets$ S_1, S_2, \ldots$ in that case we would care about the amortized size of the representation, and so not count the bits needed to describe the hash functions.}
+
+For proper operation, we demand that for all $S$, and for all $x \in S, \mathsc{Qry}(\mathsc{Rep}(S),x)=1$.  Observe that this is only a correctness condition.  Soundness will be cast as a security experiment, following [NY].
+
+
+\paragraph{Bloom filters with operations. }
+
+Here we extend the basic Bloom filter syntax to allow for variations on the traditional Bloom filter, e.g. counting Bloom filters.  [We should find out what are the important variations! I only know of a few.  None of these require randomness, so I’ll continue to formalize everything as deterministic.][“Scaling Bloom filters”, appear to allow the parameter m, below, to vary.][This syntax might naturally support count-min sketches, too.]
+
+\jknote{You probably want to even be more general and talk about “data structures” more abstractly.}
+\tsnote{Sure, but I’d rather take it a step at a time.  First, restrict to this class of Bloom filters with operations, and see what can be said that is interesting and practically relevant.  (There may already be quite a bit.)  Only once that picture starts to emerge would I want to expand to a more general class of primitives.
+Expanding the class to “data structures” likely brings other related work into scope.  Haven’t Goodrich and various coauthors worked on data structures with security?}
+
+Fix integers $m,k > 0$, and nonempty sets $U$ (the universe) and $A$ (the output alphabet).  Fix a symbol $\bot \not\in U$.  
+
+A “Bloom filter with operations” is a four-tuple  $B=(H,\mathsc{Rep},\mathsc{Qry}, \mathsc{Ops})$.  
+
+As before, the hash family $H = \{h_i : U \rightarrow [m]  | i in [k] \}$ is  set of~$k$ hash functions.  
+
+The set $\mathsc{Ops}$ is the finite collection of allowable operations.  All operations are of the form 
+$f: U^* x U^* \rightarrow U^* \cup \{\bot\}$.  That is, an operation takes tuples $S$ and $T$ as input, and returns either tuple $S’$ or the distinguished symbol $\bot$.  (Examples: $f_{\mathrm{add}}((a,b,c,c),(c,d,d)) = (a,b,c,c,c,d,d); f_{\mathrm{del}}((a,b,c),(c))=(a,b); f_{\mathrm{del}}((a,b,c),(c,d)) = \bot$.  Could allow more advanced things like $f_{\mathrm{setify}}((a,b,c,c),(c,d,a)) = (a,b,c,d))$ to support what already exists in the literature and (more importantly) in practice.)  We assume that if an operation~$f$ is called outside of its domain, it returns $\bot$.
+
+The representation mapping $P: U^* \rightarrow A^m \cup \{\bot\}$.  It takes a tuple~$S$, and returns an $m$-vector~$M$ of elements from the alphabet~$A$, or the distinguished symbol~$\bot$.  We call the (non-$\bot$) output of $P(S)$ the representation $S$. 
+
+The query mapping $Q: A^m x U \rightarrow \{0,1\}$ takes a representation $M$ and an element $x \in U$ and returns a bit.  We assume that both~$P$ and~$Q$ may make (black-box) calls to the functions in~$H$.  
+
+Correctness is defined as follows.  Let $S,T$ be arbitrary elements of $U^*$, and let~$f$ be an arbitrary operation in $\mathsc{Ops}$.  If $f(S,T) = S’$ is in $U^*$ (i.e. is not $\bot$), then for all $x \in S’$ we demand that $\mathsc{Qry}(\mathsc{Rep}(S’),x)=1$. [Note: might need a stronger condition that this holds for any sequence of operations that do not result in $\bot$.]
+
+\paragraph{Further Syntactic Generalizations. }
+
+Allow $\mathsc{Ops}, P, Q$ to be randomized?  Replace hash function family with something more general?  Note that we shouldn’t just generalize for the sake of it.  Let’s try to stay motivated by reality...
+
+\paragraph{Alternative Security Definitions. }
+
+NOTE: this section is very sketchy.  It was actually written first, before I realized how underspecified the [NY] syntax is.
+
+The first alternative I’ll call “partial-inversion resistance”.  It captures privacy of the Bloom filter input.  Sticking with the [NY] notation, let $B=(B_1, B_2)$ be the bloom filter population and querying algorithms, respectively.  Fix integers $n,m > 0$.  The (still informal) experiment is as follows: 
+
+$S=\{x_1,x_2,..., x_n\}$ sampled from U according to some distribution $D_U$.  $B_1(S,m)$ returns~$M$, an array of~$m$ bits. Adversary~$\advA$ is given an oracle for $B_2(M,\cdot)$  (and assume $B_2$ outputs 0 or 1).  Adversary~$\advA$ halts with output $z$, and wins if $z \in S$.
+
+Essentially, $B_1$ is a mapping from $n$-tuples (over $S$) to $m$-tuples (over $\{0,1\}$, in typical bloom filters).  The adversary’s job is to determine some component of the input to $B_1$, i.e. partial inversion of M. \tsnote{How does this relate to Ristenpart et al.’s recent work on model-inversion attacks?}
+
+Definitional choices remain...
+
+Should $B_1$ be randomized, as it is in [NY]?  Traditionally, no: population of the Bloom filter array is a deterministic process.  (Here I’m viewing the sampling of the hash functions as external to $B_1$.)   An implication of deterministic $B_1$ seems to be that distribution $D_U$ must have reasonable min-entropy.  
+Should the hash functions used by $B_1$ and $B_2$ in traditional Bloom filters be explicit in the syntax, and explicitly surfaced in the security notion?  
+Should they be given as oracles to $\advA$?  That is, should we assume that attackers know the hash functions begin used? Should $\advA$ be given $m = |M|$ as input?  That is, should we assume that attackers know the size of the representation?
+Should $B_2$ be deterministic?  Traditionally, yes.  But I allowing it to be stateful admits more advanced Bloom filter constructions, e.g. counting Bloom filters.  [NY] do consider the case that $B_2$ is randomized (“unstable representations”), but I don’t know of any Bloom filters whose array representations are probabilistic over time.
+
+Note that false positives do not count as wins in this experiment.  They could be by, say, changing the winning condition to “Adversary $\advA$ wins if $B_2(M,\cdot)$ ever returns 1”.  But I think this muddles together separate security goals --- forging a bogus input, and learning one of the real inputs.  So I prefer to keep them separate.  (I’d want to rewrite the [NY] notion, however.)
+
+=================================
+From the Wikipedia page...
+Examples[edit]
+Google BigTable, Apache HBase and Apache Cassandra use Bloom filters to reduce the disk lookups for non-existent rows or columns. Avoiding costly disk lookups considerably increases the performance of a database query operation.[7][8]
+The Google Chrome web browser used to use a Bloom filter to identify malicious URLs. Any URL was first checked against a local Bloom filter, and only if the Bloom filter returned a positive result was a full check of the URL performed (and the user warned, if that too returned a positive result).[9][10]
+The Squid Web Proxy Cache uses Bloom filters for cache digests.[11]
+Bitcoin uses Bloom filters to speed up wallet synchronization.[12][13]
+The Venti archival storage system uses Bloom filters to detect previously stored data.[14]
+The SPIN model checker uses Bloom filters to track the reachable state space for large verification problems.[15]
+The Cascading analytics framework uses Bloom filters to speed up asymmetric joins, where one of the joined data sets is significantly larger than the other (often called Bloom join[16] in the database literature).[17]
+The Exim mail transfer agent (MTA) uses bloom filters in its rate-limit feature.[18]
+
