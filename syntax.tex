@@ -1,0 +1,45 @@
+\section{Syntax}
+As a first step, let us try to better formalize Bloom filters as a primitive.
+
+\paragraph{Basic Bloom filter syntax.}
+Fix integers $m,k > 0$ and a nonempty set $U$.  Fix a symbol $\bot \not\in U$.  A “Bloom filter” is a triple  $B=(H,\mathsc{Rep},\mathsc{Qry})$.  
+
+The hash family $H = \{h_i : U \rightarrow [m]  | i in [k]\}$ is  set of~$k$ hash functions.  
+
+The representation mapping $\mathsc{Rep}: 2^U \rightarrow \bits^m$ takes a set $S \subseteq U$ as input, and outputs an $m$-bit representation~$M$ of $S$.  The query mapping $\mathsc{Qry}: \bits^m \times U \rightarrow \bits$ takes a representation $M$ and an element $x \in U$ and returns a bit.  We assume that both $\mathsc{Rep}$ and $\mathsc{Qry}$ may make (black-box) calls to the functions in~$H$.  Both $\mathsc{Rep}$ and $\mathsc{Qry}$ are deterministic.
+
+Note that this is already a slight generalization of a true Bloom filter, because the syntax does not proscribe how Rep and Qry operate.
+
+\jknote{Why not simply include the description of the hash function(s) as part of the size of the representation? I.e., Have $B_1$, $B_2$ exactly as in the paper, but explicitly count the bits needed to represent the hash functions as part of the representation output by $B_1$.}
+\tsnote{See my comments above.}
+\jknote{There could be some advantages to your formulation, though, if you imagine choosing the hash functions “once and for all” and then running Rep on many different sets$ S_1, S_2, \ldots$ in that case we would care about the amortized size of the representation, and so not count the bits needed to describe the hash functions.}
+
+For proper operation, we demand that for all $S$, and for all $x \in S, \mathsc{Qry}(\mathsc{Rep}(S),x)=1$.  Observe that this is only a correctness condition.  Soundness will be cast as a security experiment, following [NY].
+
+
+\paragraph{Bloom filters with operations. }
+Here we extend the basic Bloom filter syntax to allow for variations on the traditional Bloom filter, e.g. counting Bloom filters.  [We should find out what are the important variations! I only know of a few.  None of these require randomness, so I'll continue to formalize everything as deterministic.][“Scaling Bloom filters”, appear to allow the parameter m, below, to vary.][This syntax might naturally support count-min sketches, too.]
+
+\jknote{You probably want to even be more general and talk about “data structures” more abstractly.}
+\tsnote{Sure, but I'd rather take it a step at a time.  First, restrict to this class of Bloom filters with operations, and see what can be said that is interesting and practically relevant.  (There may already be quite a bit.)  Only once that picture starts to emerge would I want to expand to a more general class of primitives.
+Expanding the class to “data structures” likely brings other related work into scope.  Haven't Goodrich and various coauthors worked on data structures with security?}
+
+Fix integers $m,k > 0$, and nonempty sets $U$ (the universe) and $A$ (the output alphabet).  Fix a symbol $\bot \not\in U$.  
+
+A “Bloom filter with operations” is a four-tuple  $B=(H,\mathsc{Rep},\mathsc{Qry}, \mathsc{Ops})$.  
+
+As before, the hash family $H = \{h_i : U \rightarrow [m]  | i in [k] \}$ is  set of~$k$ hash functions.  
+
+The set $\mathsc{Ops}$ is the finite collection of allowable operations.  All operations are of the form 
+$f: U^* \times U^* \rightarrow U^* \cup \{\bot\}$.  That is, an operation takes tuples~$S$ and~$T$ as input, and returns either tuple~$S'$ or the distinguished symbol $\bot$.  (Examples: $f_{\mathrm{add}}((a,b,c,c),(c,d,d)) = (a,b,c,c,c,d,d); f_{\mathrm{del}}((a,b,c),(c))=(a,b); f_{\mathrm{del}}((a,b,c),(c,d)) = \bot$.  Could allow more advanced things like $f_{\mathrm{setify}}((a,b,c,c),(c,d,a)) = (a,b,c,d))$ to support what already exists in the literature and (more importantly) in practice.)  We assume that if an operation~$f$ is called outside of its domain, it returns $\bot$.
+
+The representation mapping $P: U^* \rightarrow A^m \cup \{\bot\}$.  It takes a tuple~$S$, and returns an $m$-vector~$M$ of elements from the alphabet~$A$, or the distinguished symbol~$\bot$.  We call the (non-$\bot$) output of $P(S)$ the representation $S$. 
+
+The query mapping $Q: A^m \times U \rightarrow \{0,1\}$ takes a representation $M$ and an element $x \in U$ and returns a bit.  We assume that both~$P$ and~$Q$ may make (black-box) calls to the functions in~$H$.  
+
+Correctness is defined as follows.  Let $S,T$ be arbitrary elements of $U^*$, and let~$f$ be an arbitrary operation in $\mathsc{Ops}$.  If $f(S,T) = S'$ is in $U^*$ (i.e. is not $\bot$), then for all $x \in S'$ we demand that $\mathsc{Qry}(\mathsc{Rep}(S'),x)=1$. [Note: might need a stronger condition that this holds for any sequence of operations that do not result in $\bot$.]
+
+\paragraph{Further Syntactic Generalizations. }
+
+Allow $\mathsc{Ops}, P, Q$ to be randomized?  Replace hash function family with something more general?  Note that we shouldn't just generalize for the sake of it.  Let's try to stay motivated by reality...
+
