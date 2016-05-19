@@ -1,10 +1,11 @@
 \section{Introduction}
-\paragraph{Basic issues. }
+\paragraph{Basic issues in Naor-Yogev. }
 \begin{itemize}
 \item The NY paper formalizes and investigates a security notion of limited interest
-\item The proposed construction won’t scale in common network applications
+\item The proposed construction won't scale in common network applications
 \item The main results are of theoretical interest only
 \item The basic syntax and operation of their Bloom filter formalization is underdefined.  (This really irritates me.)  It isn’t clear that their Bloom filter formalization actually captures traditional Bloom filters!
+\item The ``adversarial-resilient Bloom Filter'' definition does not give the adversary access to the hash functions that created the representation; effectively, they are secret.  This strikes me as quite odd, and seems to miss the point that finding a false positive should be hard, in practice, even if you know that the hash functions are $h_i(X)=\mathrm{SHA256}(\langle i \rangle \concat X)$.
 \end{itemize}
 
 \paragraph{Critique. }
