@@ -4,7 +4,7 @@
 \item The NY paper formalizes and investigates a security notion of limited interest
 \item The proposed construction won't scale in common network applications
 \item The main results are of theoretical interest only
-\item The basic syntax and operation of their Bloom filter formalization is underdefined.  (This really irritates me.)  It isn’t clear that their Bloom filter formalization actually captures traditional Bloom filters!
+\item The basic syntax and operation of their Bloom filter formalization is underdefined.  (This really irritates me.)  It isn’t clear that their Bloom filter formalization actually captures traditional Bloom filters! \tsnote{UPDATE (5/20/16): It is clear, now, that it \emph{does not}.}
 \item The ``adversarial-resilient Bloom Filter'' definition does not give the adversary access to the hash functions that created the representation; effectively, they are secret.  This strikes me as quite odd, and seems to miss the point that finding a false positive should be hard, in practice, even if you know that the hash functions are $h_i(X)=\mathrm{SHA256}(\langle i \rangle \concat X)$.  (If the hash functions are not kept secret, the whole [NY] security notion kind of unravels; the adversary already is given~$S$, so if it knows the hash functions then you might as well just give it the whole Bloom filter data structure.)
 \item Not sure what Bloom filter-like data structures would have randomized querying procedures (``unsteady representations'').  They mention the possibility of differential privacy mechanisms being incorporated into the querying procedure.  But what's the purpose of this, if the security definition gives the adversary the set~$S$?  (What are you keeping private?) 
 \end{itemize}
