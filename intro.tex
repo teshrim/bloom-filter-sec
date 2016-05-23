@@ -53,7 +53,7 @@ Finally, the security definitions do not give the adversary access to the hash f
 \begin{enumerate}
 \item Get a solid handle on how Bloom filters are used in practice, and what generalizations have gained traction in the academic literature. (See wikipedia, a section of which I've pasted in at the end of this doc.)
 \item Work out a proper “cryptographic” syntax for the Bloom filter primitive.  (Possibly something more general, see number 5.)
-\item Establish security notions that are appropriate for broader use cases (e.g. privacy of~$S$, privacy of the representation~$M$, authenticity of representation~$M$), potentially distinguishing between “external” and “internal” attacks for, say, CDN scenarios
+\item Establish security notions that are appropriate for broader use cases (e.g. privacy of~$S$, privacy of the representation~$M$, authenticity of representation~$M$), single Bloom filter vs.\ multiple Bloom filter settings (e.g. attacking a CDN by querying multiple servers)
 \item Develop constructions that are secure and are supported by a practice-informed argument for deployment
 \item Expand from Bloom filters to “Approximate Set Membership” primitives, i.e. more general compressed representations (of sets) that admit queries  Note: this should be done only if it makes sense -- i.e. it doesn't explode the scope, it doesn't send us off too far into theoryland.
 \item Expand more generally to hash-based approximate set operations, e.g.\ minhash methods for approximating $J(A,B)$ for sets $A,B$.  Note: this should be done only if it makes sense -- i.e. it doesn't explode the scope, it doesn't send us off too far into theoryland.
