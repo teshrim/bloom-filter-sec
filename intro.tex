@@ -51,10 +51,11 @@ Finally, the security definitions do not give the adversary access to the hash f
 \paragraph{Obvious Tasks. }
 
 \begin{enumerate}
-\item Get a solid handle on how Bloom filters are used in practice, and what generalizations have gained traction in the academic literature. (See wikipedia, a section of which I've pasted in at the end of this doc.)
+\item Get a solid handle on how Bloom filters are used in practice, and what generalizations have gained traction in the academic literature. (See wikipedia, a section of which I've pasted in at the end of this doc.) \tsnote{5/23: lots of uses to consider --CDNs/load balancers, peer-to-peer networks, medical record linkage, model checking, etc.  Might be good to try to characterize by, say, setting (distributed vs. local), typical BF instance size (e.g. local whitelist of emails = ``small'', CDN server-cache summary = ``large''), security concerns, and estimated severity of security violation (e.g. FP at CDN server = ``low'' or ``medium'', deanonymizing medical record = ``high'').  Just throwing out ideas...}
 \item Work out a proper “cryptographic” syntax for the Bloom filter primitive.  (Possibly something more general, see number 5.)
 \item Establish security notions that are appropriate for broader use cases (e.g. privacy of~$S$, privacy of the representation~$M$, authenticity of representation~$M$), single Bloom filter vs.\ multiple Bloom filter settings (e.g. attacking a CDN by querying multiple servers)
 \item Develop constructions that are secure and are supported by a practice-informed argument for deployment
+\item Break some stuff :-)
 \item Expand from Bloom filters to “Approximate Set Membership” primitives, i.e. more general compressed representations (of sets) that admit queries  Note: this should be done only if it makes sense -- i.e. it doesn't explode the scope, it doesn't send us off too far into theoryland.
 \item Expand more generally to hash-based approximate set operations, e.g.\ minhash methods for approximating $J(A,B)$ for sets $A,B$.  Note: this should be done only if it makes sense -- i.e. it doesn't explode the scope, it doesn't send us off too far into theoryland.
 \end{enumerate}
