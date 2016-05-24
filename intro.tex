@@ -1,4 +1,19 @@
 \section{Introduction}
+We revisit the formalization of Bloom filters~\cite{xxx} and closely related data structures as primitives with explicit security goals.  Recently, Naor and Yogev~\cite{xxx} (hereafter NY) gave such a formalization, providing syntax for a generalized abstraction of Bloom filters, as well as casting the classical Bloom filter soundness condition as a security experiment admiting adaptive adversaries.  To briefly summarize, a Bloom filter is a data structure for compactly representing a set~$\mathcal{S}$ in a way that supports constant time responses to set-membership queries.  The representation of~$\mathcal{S}$ is an indexed array~$M$ of~$m$-bits, all initally set to 0.  To insert $x \in \mathcal{S}$ into~$M$, one computes indices $h_1(x),h_2(x),\ldots,h_k(x)$ where each $h_i \colon \mathcal{U} \to \{0,1,\ldots m-1\}$ maps from a universe~$\mathcal{U}$ (which contains $\mathcal{S}$) to indices of~$M$.  The bits at positions $h_1(x),h_2(x),\ldots,h_k(x)$ are set to 1; if a bit is already 1, due to inserting some previous element of~$\mathcal{S}$, then it is left alone.  After all elements of~$\mathcal{S}$ have been inserted, the resulting bit-array~$M$ is taken as the representation.  To test if $y \in \mathcal{S}$, one checks if  $(h_1(y)=1 \wedge h_2(y)=1 \wedge \cdots \wedge h_k(y)=1)$, returning ``yes'' if so, and ``no'' otherwise.   Bloom filters are correct, in the sense that if $y \in \mathcal{S}$, the set-membership test always returns ``yes''.  The classical soundness condition asserts that for all $y \notin\mathcal{S}$,  $\Prob{h_1,h_2,\ldots,h_k \getsr \mathrm{Func(\mathcal{U},\mathbb{Z}_m)}\colon h_1(y)=1 \wedge h_2(y)=1 \wedge \cdots \wedge h_k(y)=1} \leq \epsilon$ where $\epsilon$, the false-positive rate, is a parameter of the Bloom filter.  (The values of~$\epsilon,m,k,|\mathcal{S}|$ are related in a well known way.)  NY recast this soundness condition as a game in which an adversary~$A$ is given~$\mathcal{S}$ and an oracle for set-membership queries, and it attempts to find a false-positive.  The fact that~$A$ can \emph{adapt} its queries and its output based on what it learns from the set-membership oracle is the key definitional constribution of NY.
+
+
+
+
+
+
+
+
+
+
+
+
+
+\if{0}
 \paragraph{Basic issues in Naor-Yogev. }
 \begin{itemize}
 \item The NY paper formalizes and investigates a security notion of limited interest
@@ -77,3 +92,4 @@ The SPIN model checker uses Bloom filters to track the reachable state space for
 The Cascading analytics framework uses Bloom filters to speed up asymmetric joins, where one of the joined data sets is significantly larger than the other (often called Bloom join[16] in the database literature).[17]
 The Exim mail transfer agent (MTA) uses bloom filters in its rate-limit feature.[18]
 
+\fi
