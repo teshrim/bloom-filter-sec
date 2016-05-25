@@ -1,41 +1,37 @@
 \section{Syntax}
+\tsnote{Very much a work-in-progress.}
 As a first step, let us try to better formalize Bloom filters as a primitive.
 
-\paragraph{Basic Bloom filter syntax.}
-Fix integers $m,k > 0$ and a nonempty set $U$.  Fix a symbol $\bot \not\in U$.  A “Bloom filter” is a triple  $B=(\mathcal{H},\mathsc{Rep},\mathsc{Qry})$.   The hash family $\mathcal{H} = \{h_i : U \rightarrow [m]  \,|\,  i \in [k]\}$ is  set of~$k$ hash functions.  
+\heading{Hash-based (Bloom) filter syntax.}
+Fix a nonempty sets $U,\Sigma$ and integers $k,m,n>0$.  Fix a symbol $\bot \not\in U$.  An $(n,k,m)$-filter (over universe~$U$) is a triple  $B=(\mathsc{H},\mathsc{Rep},\mathsc{Qry})$.   
+%
+The randomized \emph{hash-sampling} algorithm~$\mathsc{H}$ samples a size~$k$ subset~$\mathcal{H} \subset \mathrm{Func}(U,\{0,1,\ldots,m-1\})$.  We write $\mathcal{H} \getsr \mathsc{H}$ for this operation.
+%
+The deterministic representation algorithm $\mathsc{Rep}: [U]^n \rightarrow \Sigma^m$ takes a set~$S$ of~$n$ elements as input, and outputs representation~$M$ of length~$m$.  (Recall that $[U]^n$ denotes subsets of~$U$ of size~$n$.)
+%
+The determinisitc query algorithm $\mathsc{Qry}: \Sigma^m \times U \rightarrow \bits$ takes a representation $M$ and an element $x \in U$ and returns a bit.  
+%
+We assume that both $\mathsc{Rep}$ and $\mathsc{Qry}$ have the following blackbox access to the functions $h_1,h_2,\ldots,h_k \in \mathcal{H}$, which we denote by writing~$\mathcal{H}$ as a superscript.   Thus, we write $M \gets \mathsc{Rep}^{\mathcal{H}}(S)$ and $b \gets \mathsc{Qry}^{\mathcal{H}}(M,x)$ for the execution of the representation and query algorithms, respectively.
 
-The representation mapping $\mathsc{Rep}: 2^U \rightarrow \bits^m$ takes a set $S \subseteq U$ as input, and outputs an $m$-bit representation~$M$ of $S$.  The query mapping $\mathsc{Qry}: \bits^m \times U \rightarrow \bits$ takes a representation $M$ and an element $x \in U$ and returns a bit.  We assume that both $\mathsc{Rep}$ and $\mathsc{Qry}$ may make (black-box) calls to the functions in~$\mathcal{H}$.  Both $\mathsc{Rep}$ and $\mathsc{Qry}$ are deterministic.
+For correctness, we demand that for all $\mathcal{H}$ and $S$, and for all $x \in S, \mathsc{Qry}^{\mathcal{H}}(\mathsc{Rep}^{\mathcal{H}}(S),x)=1$.  
 
-Note that this is already a slight generalization of a true Bloom filter, because the syntax does not proscribe how Rep and Qry operate.
-
-\jknote{Why not simply include the description of the hash function(s) as part of the size of the representation? I.e., Have $B_1$, $B_2$ exactly as in the paper, but explicitly count the bits needed to represent the hash functions as part of the representation output by $B_1$.}
-\tsnote{See my comments above.}
-\jknote{There could be some advantages to your formulation, though, if you imagine choosing the hash functions “once and for all” and then running Rep on many different sets $ S_1, S_2, \ldots$ in that case we would care about the amortized size of the representation, and so not count the bits needed to describe the hash functions.}
-
-For proper operation, we demand that for all $S$, and for all $x \in S, \mathsc{Qry}(\mathsc{Rep}(S),x)=1$.  Observe that this is only a correctness condition.  Soundness will be cast as a security experiment, following [NY].
+\heading{Discusssion.}
+This syntax captures classical Bloom filters by setting~$\Sigma=\bits$ and defining $\mathsc{Rep},\mathsc{Qry}$ in the obvious way.  Setting $\Sigma=\bits^{\leq L}$ allows one to store a bitstring of length at most~$L$ at each location. \tsnote{Would let us capture a construction from NY, among other things.}
 
 
-\paragraph{Bloom filters with operations. }
-Here we extend the basic Bloom filter syntax to allow for variations on the traditional Bloom filter, e.g. counting Bloom filters.  [We should find out what are the important variations! I only know of a few.  None of these require randomness, so I'll continue to formalize everything as deterministic.][“Scaling Bloom filters”, appear to allow the parameter m, below, to vary.][This syntax might naturally support count-min sketches, too.]
+\heading{Hash-based filters with operations. }
+Here we extend the basic Bloom filter syntax to allow for variations on the traditional Bloom filter, e.g. counting Bloom filters.  \tsnote{We should find out what are the important variations! I only know of a few.  None of these require randomness, so I'll continue to formalize everything as deterministic.}\tsnote{“Scaling Bloom filters”, appear to allow the parameter~$m$, below, to vary. Syntax doesn't address this.}\tsnote{This syntax might naturally support count-min sketches, too.}
 
-\jknote{You probably want to even be more general and talk about “data structures” more abstractly.}
-\tsnote{Sure, but I'd rather take it a step at a time.  First, restrict to this class of Bloom filters with operations, and see what can be said that is interesting and practically relevant.  (There may already be quite a bit.)  Only once that picture starts to emerge would I want to expand to a more general class of primitives.
-Expanding the class to “data structures” likely brings other related work into scope.  Haven't Goodrich and various coauthors worked on data structures with security?}
+Let $\mathbb{M}_\mathcal{U}$ be the set of multisets over~$\mathcal{U}$.  We can denote any multiset as $\{(x,\ell) \,|\, x \in \mathcal{U}, \ell \in \mathbb{N}\}$, and for a particular multiset~$S$ we define the multiplicity of~$x$ as $\mu_S(x) = \ell$ where $(x,\ell)\in S$.
 
-Fix integers $m,k > 0$, and nonempty sets $U$ (the universe) and $A$ (the output alphabet).  Fix a symbol $\bot \not\in U$.  
-A “Bloom filter with operations” is a four-tuple  $B=(\mathcal{H},\mathsc{Rep},\mathsc{Qry}, \mathsc{Ops})$.  
-As before, the hash family $\mathcal{H} = \{h_i : U \rightarrow [m]  \,|\,  i \in [k] \}$ is  set of~$k$ hash functions.  
+An $(k,m)$-filter with operations is a tuple  $B=(\mathsc{H},\mathsc{Rep},\mathsc{Qry}, \mathcal{F})$.  
+The set $\mathcal{F}$ is the finite collection of allowable operations.  All operations are of the form 
+$f: \mathbb{M}_{\mathcal{U}} \times \mathbb{M}_{\mathcal{U}} \rightarrow \mathbb{M}_{\mathcal{U}} \cup \{\bot\}$.  
+%
+The deterministic representation algorithm $\mathsc{Rep}: \mathbb{M}_\mathcal{U} \rightarrow \Sigma^m$ takes a multiset~$S$, and outputs representation~$M$ of length~$m$.   The randomized hash-sampling algorithm and deterministic query algorithm is defined as before.
 
-The set $\mathsc{Ops}$ is the finite collection of allowable operations.  All operations are of the form 
-$f: U^* \times U^* \rightarrow U^* \cup \{\bot\}$.  That is, an operation takes tuples~$S$ and~$T$ as input, and returns either tuple~$S'$ or the distinguished symbol $\bot$.  (Examples: $f_{\mathrm{add}}((a,b,c,c),(c,d,d)) = (a,b,c,c,c,d,d); f_{\mathrm{del}}((a,b,c),(c))=(a,b); f_{\mathrm{del}}((a,b,c),(c,d)) = \bot$.  Could allow more advanced things like $f_{\mathrm{setify}}((a,b,c,c),(c,d,a)) = (a,b,c,d))$ to support what already exists in the literature and (more importantly) in practice.)  We assume that if an operation~$f$ is called outside of its domain, it returns $\bot$.
+Correctness is defined as follows.  Let $S,T$ be arbitrary multisets and let~$f$ be an arbitrary operation in $\mathcal{F}$.  If $f(S,T) = S'\neq \bot$, then for all $x \in S'$ we demand that $\mathsc{Qry}(\mathsc{Rep}(S'),x)=1$.  \tsnote{might need a stronger condition that this holds for any sequence of operations that do not result in $\bot$.}
 
-The representation mapping $P: U^* \rightarrow A^m \cup \{\bot\}$.  It takes a tuple~$S$, and returns an $m$-vector~$M$ of elements from the alphabet~$A$, or the distinguished symbol~$\bot$.  We call the (non-$\bot$) output of $P(S)$ the representation $S$. 
+Let us see how this syntax captures various kinds of Bloom filters.  First, let $\Sigma = \mathbb{N}$ and define $f_{\mathrm{add}}(S,T)=\{(x,\mu_S(x)+\mu_T(x)) \,|\, x \in \mathcal{U}\}$ and $f_\mathrm{del}(S,T) = \{(x,\min\{0,\mu_S(x)-\mu_T(x)\}) \,|\, x \in \mathcal{U} \}$.  Define $\mathsc{Rep}(S')$ as follows: for each $(x,\ell)\in S'$ and $j\in\{1,2,\ldots,k\}$, set $M[h_j(x)]=\ell$.   Finally, define $\mathsc{Qry}(M,x) = 1 \Leftrightarrow \forall j \in \{1,2,\ldots,k\},\; M[h_j(x)] > 0$.  This allows us to capture counting Bloom filters.
 
-The query mapping $Q: A^m \times U \rightarrow \{0,1\}$ takes a representation $M$ and an element $x \in U$ and returns a bit.  We assume that both~$P$ and~$Q$ may make (black-box) calls to the functions in~$\mathcal{H}$.  
-
-Correctness is defined as follows.  Let $S,T$ be arbitrary elements of $U^*$, and let~$f$ be an arbitrary operation in $\mathsc{Ops}$.  If $f(S,T) = S'$ is in $U^*$ (i.e. is not $\bot$), then for all $x \in S'$ we demand that $\mathsc{Qry}(\mathsc{Rep}(S'),x)=1$. [Note: might need a stronger condition that this holds for any sequence of operations that do not result in $\bot$.]
-
-\paragraph{Further Syntactic Generalizations. }
-
-Allow $\mathsc{Ops}, P, Q$ to be randomized?  Replace hash function family with something more general?  Note that we shouldn't just generalize for the sake of it.  Let's try to stay motivated by reality...
-
+\tsnote{There are more direct ways to formalize counting Bloom filters.  But this less direct way will allow us to capture other kinds ``advanced'' Bloom filters proposed in the literature or (more importantly) used in practice. For example, $f_{\mathrm{setify}}(S,T)=\{(x,1) \,|\, x \in \mathcal{U} \mbox{s.t. } \mu_S(x)>0, \mu_T(x)>0\}$.  On the other hand, we may end up deciding it is overkill... }
