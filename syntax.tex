@@ -12,7 +12,7 @@ The determinisitc query algorithm $\mathsc{Qry}\colon \Sigma^m \times U \rightar
 %
 We assume that both $\mathsc{Rep}$ and $\mathsc{Qry}$ have the following blackbox access to the functions $h_1,h_2,\ldots,h_k \in \mathcal{H}$, which we denote by writing~$\mathcal{H}$ as a superscript.   Thus, we write $M \gets \mathsc{Rep}^{\mathcal{H}}(S)$ and $b \gets \mathsc{Qry}^{\mathcal{H}}(M,x)$ for the execution of the representation and query algorithms, respectively.
 
-For correctness, we demand that for all $\mathcal{H}$ and $S$, and for all $x \in S, \mathsc{Qry}^{\mathcal{H}}(\mathsc{Rep}^{\mathcal{H}}(S),x)=1$.  
+For correctness, we demand that for all $\mathcal{H}$ and~$S$, and for all $x \in S, \mathsc{Qry}^{\mathcal{H}}(\mathsc{Rep}^{\mathcal{H}}(S),x)=1$.  
 
 \heading{Discusssion.}
 This syntax captures classical Bloom filters by setting~$\Sigma=\bits$ and defining $\mathsc{Rep},\mathsc{Qry}$ in the obvious way.  Setting $\Sigma=\bits^{\leq L}$ allows one to store a bitstring of length at most~$L$ at each location. \tsnote{Would let us capture a construction from NY, among other things.}
@@ -20,21 +20,22 @@ This syntax captures classical Bloom filters by setting~$\Sigma=\bits$ and defin
 \tsnote{Very much a work-in-progress.}
 
 \heading{Mutuable hash-based filters. }
-Fix a nonempty sets $U,\Sigma$ and integers $k,m_1,m_2,>0$ with $m_1 \leq m_2$.  Fix a symbol $\bot \not\in U$.  An $(k,[m_1,m_2])$-filter (over universe~$U$) is a tuple  $B=(\mathsc{H},\mathsc{Rep},\mathsc{Qry},\mathsc{Up})$.   
+Fix a nonempty sets $U,\Sigma$ and integers $k,m_1,m_2,>0$ with $m_1 \leq m_2$.  Fix a symbol $\bot \not\in U$.  An $(k,[m_1,m_2])$-filter (over universe~$U$) is a tuple  $B=(\mathsc{H},\mathsc{Rep},\mathsc{Qry},\mathsc{Up}, \mathsc{Test})$.   
 %
 The randomized \emph{hash-sampling} algorithm~$\mathsc{H}$ samples a size~$k$ subset~$\mathcal{H} \subset \mathrm{Func}(U,\{0,1,\ldots,m_2-1\})$.  We write $\mathcal{H} \getsr \mathsc{H}$ for this operation.
 %
 The deterministic representation algorithm $\mathsc{Rep}\colon [U]^n \rightarrow \bigcup_{m=m_1}^{m_2}\Sigma^m$ takes a set~$S$ of~$n$ elements as input, and outputs representation~$M$ of length~$m_1 \leq m \leq m_2$.
 %\mbox{s.t. } \mu_S(x)>0, \mu_T(x)>0\}$.  On the other hand, we may end up deciding it is overkill... }
 %
-The determinisitc query algorithm $\mathsc{Qry}\colon \bigcup_{m=m_1}^{m_2}\Sigma^m \times U \rightarrow \bits$ takes a representation $M$ and an element $x \in U$ and returns a bit.  
+The determinisitc query algorithm $\mathsc{Qry}\colon \bigcup_{m=m_1}^{m_2}\Sigma^m \times U \rightarrow \bits^*$ takes a representation $M$ and an element $x \in U$ and returns a bitstring.  
 %
 The deterministic \emph{update} algorithm $\mathsc{Up}\colon \bigcup_{m=m_1}^{m_2}\Sigma^m \times \bits^* \rightarrow \left(\bigcup_{m=m_1}^{m_2}\Sigma^m \right) \cup \{\bot\}$ takes a representation and an update string, and returns an updated representation or the distinguished symbol~$\bot$. 
 %
+The deterministic \emph{test} algorithm $\mathsc{Test} \colon \bigcup_{m=m_1}^{m_2}\Sigma^m \times U \rightarrow \bits$ takes a representation~$M$ and an element~$x \in U$ and returns a bit.
 %
-We assume that $\mathsc{Rep}$, $\mathsc{Qry}$ and $\mathsc{Up}$ have the following blackbox access to the functions $h_1,h_2,\ldots,h_k \in \mathcal{H}$, which we denote by writing~$\mathcal{H}$ as a superscript.   Thus, we write $M \gets \mathsc{Rep}^{\mathcal{H}}(S)$, $b \gets \mathsc{Qry}^{\mathcal{H}}(M,x)$, $M' \gets \mathsc{Up}(M,\sigma)$ for the execution of the representation, query and update algorithms, respectively.
+We assume that all $\mathsc{Rep},\mathsc{Qry},\mathsc{Up},\mathsc{Test}$ all have blackbox access to the functions $h_1,h_2,\ldots,h_k \in \mathcal{H}$, which we denote by writing~$\mathcal{H}$ as a superscript.   
 
-For correctness, we demand that... 
+\tsnote{Not sure how to define correctness.  Intuitively, it should be something like, at any point in time, if $x\in S$ then $\Prob{\mathsc{Test}(M,x)=1} \geq \epsilon$ for some correctness parameter~$\epsilon$, where the probablilty is over...?  Coins of~$\mathsc{H}$, perhaps.  (Alternatively, could require for all outputs of~$\mathsc{H}$, as above.)  But perhaps this should be an adversarial game, in which case it is over the coins of the adversary, too.}
 
 
 
