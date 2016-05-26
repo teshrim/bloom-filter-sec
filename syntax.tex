@@ -2,9 +2,9 @@
 As a first step, let us try to better formalize Bloom filters as a primitive.
 
 \heading{Hash-based (Bloom) filters.}
-Fix a nonempty sets $U,\Sigma$ and integers $k,m,n>0$.  Fix a symbol $\bot \not\in U$.  An $(n,k,m)$-filter (over universe~$U$) is a triple  $B=(\mathsc{H},\mathsc{Rep},\mathsc{Qry})$.   
+Fix a nonempty sets $U,\Sigma$ and integers $k,m,n>0$.  Fix a symbol $\bot \not\in U$.  An $(n,k,m)$-filter (over universe~$U$) is a triple  $B=(\mathsc{Hash},\mathsc{Rep},\mathsc{Qry})$.   
 %
-The randomized \emph{hash-sampling} algorithm~$\mathsc{H}$ samples a size~$k$ subset~$\mathcal{H} \subset \mathrm{Func}(U,\{0,1,\ldots,m-1\})$.  We write $\mathcal{H} \getsr \mathsc{H}$ for this operation.
+The randomized \emph{hash-sampling} algorithm~$\mathsc{Hash}$ samples a size~$k$ subset~$\mathcal{H} \subset \mathrm{Func}(U,\{0,1,\ldots,m-1\})$.  We write $\mathcal{H} \getsr \mathsc{Hash}$ for this operation.
 %
 The deterministic representation algorithm $\mathsc{Rep}\colon [U]^n \rightarrow \Sigma^m$ takes a set~$S$ of~$n$ elements as input, and outputs representation~$M$ of length~$m$.  (Recall that $[U]^n$ denotes subsets of~$U$ of size~$n$.)
 %
@@ -12,7 +12,7 @@ The determinisitc query algorithm $\mathsc{Qry}\colon \Sigma^m \times U \rightar
 %
 We assume that both $\mathsc{Rep}$ and $\mathsc{Qry}$ have the following blackbox access to the functions $h_1,h_2,\ldots,h_k \in \mathcal{H}$, which we denote by writing~$\mathcal{H}$ as a superscript.   Thus, we write $M \gets \mathsc{Rep}^{\mathcal{H}}(S)$ and $b \gets \mathsc{Qry}^{\mathcal{H}}(M,x)$ for the execution of the representation and query algorithms, respectively.
 %
-For correctness, we demand that for all~$S$ of size~$n$, we have that for all $x \in S, \Prob{\mathsc{Qry}^{\mathcal{H}}(\mathsc{Rep}^{\mathcal{H}}(S),x)=1}$, where the probability is over the sampling $\mathcal{H}\getsr\mathsc{H}$.  
+For correctness, we demand that for all~$S$ of size~$n$, we have that for all $x \in S, \Prob{\mathsc{Qry}^{\mathcal{H}}(\mathsc{Rep}^{\mathcal{H}}(S),x)=1}=1$, where the probability is over the sampling $\mathcal{H}\getsr\mathsc{Hash}$.  
 
 \heading{Discusssion.}
 This syntax captures classical Bloom filters by setting~$\Sigma=\bits$ and defining $\mathsc{Rep},\mathsc{Qry}$ in the obvious way.  Setting $\Sigma=\bits^{\leq L}$ allows one to store a bitstring of length at most~$L$ at each location. \tsnote{Would let us capture a construction from NY, among other things.}  We note that even though this would allow for the storage of counters (say) at each filter location, our restriction that~$\mathsc{Qry}$ returns a bit does not capture functionality of Bloom filters that employ counters, e.g., returning a counter value. (One could, however, have $\mathsc{Qry}$ compute an arbitrary, fixed predicate.  For example, ``has~$x$ been seen at least 5 times?''.)  Nonetheless, this restriction allows us to state a simple correctness condition, and covers a broad range of hash-based filters.
@@ -24,9 +24,9 @@ Our syntax also does not capture filters that are allowed to grow over time (e.g
 \heading{Mutuable hash-based filters. }
 Here we extend the basic Bloom filter syntax to allow for variations on the traditional Bloom filter, e.g. counting Bloom filters, spectral Bloom filters, count-min sketches.  \tsnote{We should find out what are the important variations! I only know of a few.  None of them require randomness for representation or querying, so I'll continue to formalize everything as deterministic.}
 
-Fix a nonempty sets $U,\Sigma$ and integers $k,m_1,m_2,n>0$ with $m_1 \leq m_2$.  Fix a symbol $\bot \not\in U$.  An $(n,k,[m_1,m_2])$-filter (over universe~$U$) is a tuple  $B=(\mathsc{H},\mathsc{Rep},\mathsc{Qry},\mathsc{Up}, \mathsc{Test})$.   
+Fix a nonempty sets $U,\Sigma$ and integers $k,m_1,m_2,n>0$ with $m_1 \leq m_2$.  Fix a symbol $\bot \not\in U$.  An $(n,k,[m_1,m_2])$-filter (over universe~$U$) is a tuple  $B=(\mathsc{Hash},\mathsc{Rep},\mathsc{Qry},\mathsc{Up}, \mathsc{Test})$.   
 %
-The randomized \emph{hash-sampling} algorithm~$\mathsc{H}$ samples a size~$k$ subset~$\mathcal{H} \subset \mathrm{Func}(U,\{0,1,\ldots,m_2-1\})$.  We write $\mathcal{H} \getsr \mathsc{H}$ for this operation.
+The randomized \emph{hash-sampling} algorithm~$\mathsc{Hash}$ samples a size~$k$ subset~$\mathcal{H} \subset \mathrm{Func}(U,\{0,1,\ldots,m_2-1\})$.  We write $\mathcal{H} \getsr \mathsc{Hash}$ for this operation.
 %
 The deterministic representation algorithm $\mathsc{Rep}\colon [U]^n \rightarrow \left(\bigcup_{m=m_1}^{m_2}\Sigma^m\right)$ takes a set~$S$ of~$n$ elements as input, and outputs representation~$M$ of length~$m_1 \leq m \leq m_2$.
 %
@@ -38,9 +38,9 @@ The deterministic \emph{test} algorithm $\mathsc{Test} \colon \left(\bigcup_{m=m
 %
 We assume that all $\mathsc{Rep},\mathsc{Qry},\mathsc{Up},\mathsc{Test}$ all have blackbox access to the functions $h_1,h_2,\ldots,h_k \in \mathcal{H}$, which we denote by writing~$\mathcal{H}$ as a superscript.   
 
-\tsnote{Not sure how to define correctness.  Intuitively, it should be something like, at any point in time, if $x\in S$ then $\Prob{\mathsc{Test}(M,x)=1} \geq \epsilon$ for some correctness parameter~$\epsilon$, where the probablilty is over...?  Coins of~$\mathsc{H}$, perhaps.  (Alternatively, could require for all outputs of~$\mathsc{H}$, as above.)  But perhaps this should be an adversarial game, in which case it is over the coins of the adversary, too.}
+\tsnote{Not sure how to define correctness.  Intuitively, it should be something like, at any point in time, if $x\in S$ then $\Prob{\mathsc{Test}(M,x)=1} \geq 1-\epsilon$ for some correctness parameter~$\epsilon$, where the probablilty is over (at least) the coins of~$\mathsc{Hash}$. But perhaps this should be an adversarial game, in which case it is over the coins of the adversary, too...}
 
-
+\heading{Discussion. } Our syntax captures settings in which there is some (potentially empty) initial set~$S$, whose representation~$M$ may undergo updates over time.  Effectively, this allows for expansion of~$S$ to a larger set, or even a multiset, as new elements ``arrive''.    The update algorithm is responsible for altering the current representation.  We allow it to take in a string that encodes inputs needed to carry out the updating.  For example, counting Bloom filters may receive update strings that encode $(x,c)$ where $x \in U$ is the element whose representation should be incremented, and $c \in \mathbb{N}$ is the amount of the increment.  Network applications, such as looking for heavy-hitters across TCP/IP streams seen by a router, may have $x = (\mathrm{IP_{src}},\mathrm{IP_{dst}})$, the source and destintation address of a packet, and~$c$ the number of bytes in the packet payload.  When necessary we will specify what is encoded in the update string, but will assume some implicit and fixed encoding scheme.
 
 
 \heading{Multiset-oriented hash-based filters. }
@@ -49,13 +49,13 @@ We assume that all $\mathsc{Rep},\mathsc{Qry},\mathsc{Up},\mathsc{Test}$ all hav
 
 Let $\mathbb{M}_\mathcal{U}$ be the set of multisets over~$\mathcal{U}$.  We can denote any multiset as $\{(x,\ell) \,|\, x \in \mathcal{U}, \ell \in \mathbb{N}\}$, and for a particular multiset~$S$ we define the multiplicity of~$x$ as $\mu_S(x) = \ell$ where $(x,\ell)\in S$.
 
-An $(n,k,[m_1,m_2])$-filter with operations is a tuple  $B=(\mathsc{H},\mathsc{Rep},\mathsc{Qry}, \mathcal{F})$.  
+An $(n,k,[m_1,m_2])$-filter with operations is a tuple  $B=(\mathsc{Hash},\mathsc{Rep},\mathsc{Qry}, \mathcal{F})$.  
 The set $\mathcal{F}$ is the finite collection of allowable operations.  All operations are of the form 
 $f: \mathbb{M}_{\mathcal{U}} \times \mathbb{M}_{\mathcal{U}} \rightarrow \mathbb{M}_{\mathcal{U}} \cup \{\bot\}$.  
 %
 The deterministic representation algorithm $\mathsc{Rep}\colon \mathbb{M}_\mathcal{U} \rightarrow \bigcup_{m=m_1}^{m_2}\Sigma^m$ takes a multiset~$S$, and outputs representation~$M$ of length~$m_1 \leq m \leq m_2$, or the distinguished symbol~$\bot$.  We assume that if the multiset~$S=\{(x_1,\ell_1),(x_2,\ell_2),\ldots,(x_t,\ell_t)\}$ is such that $n < \sum_{i=1}^t \ell_i$ then $\mathsc{Rep}(S)=\bot$.
 %
-The randomized hash-sampling algorithm~$\mathsc{H}$ is as before.
+The randomized hash-sampling algorithm~$\mathsc{Hash}$ is as before.
 %
 The determinisitic query algorithm $\mathsc{Qry}$... \tsnote{Not sure how to define this!  See my comment, below...}
 
