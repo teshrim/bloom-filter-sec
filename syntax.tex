@@ -1,5 +1,4 @@
 \section{Syntax}
-\tsnote{Very much a work-in-progress.}
 As a first step, let us try to better formalize Bloom filters as a primitive.
 
 \heading{Hash-based (Bloom) filters.}
@@ -18,6 +17,7 @@ For correctness, we demand that for all $\mathcal{H}$ and $S$, and for all $x \i
 \heading{Discusssion.}
 This syntax captures classical Bloom filters by setting~$\Sigma=\bits$ and defining $\mathsc{Rep},\mathsc{Qry}$ in the obvious way.  Setting $\Sigma=\bits^{\leq L}$ allows one to store a bitstring of length at most~$L$ at each location. \tsnote{Would let us capture a construction from NY, among other things.}
 
+\tsnote{Very much a work-in-progress.}
 
 \heading{Mutuable hash-based filters. }
 Fix a nonempty sets $U,\Sigma$ and integers $k,m_1,m_2,>0$ with $m_1 \leq m_2$.  Fix a symbol $\bot \not\in U$.  An $(k,[m_1,m_2])$-filter (over universe~$U$) is a tuple  $B=(\mathsc{H},\mathsc{Rep},\mathsc{Qry},\mathsc{Up})$.   
@@ -39,6 +39,7 @@ For correctness, we demand that...
 
 
 
+\tsnote{Below is an alternative way to formalize things like counting Bloom filters, count-min sketch, scaling Bloom filters, etc.  Neither is solid, yet.}
 
 \heading{Multiset-oriented hash-based filters. }
 Here we extend the basic Bloom filter syntax to allow for variations on the traditional Bloom filter, e.g. counting Bloom filters.  \tsnote{We should find out what are the important variations! I only know of a few.  None of these require randomness, so I'll continue to formalize everything as deterministic.}\tsnote{“Scaling Bloom filters”, appear to allow the parameter~$m$, below, to vary. I've altered the syntax to allow this.}\tsnote{This syntax might naturally support count-min sketches, too.}
