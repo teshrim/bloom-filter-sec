@@ -24,12 +24,11 @@ Our syntax also does not capture filters that are allowed to grow over time (e.g
 \heading{Mutuable hash-based filters. }
 Here we extend the basic Bloom filter syntax to allow for variations on the traditional Bloom filter, e.g. counting Bloom filters, spectral Bloom filters, count-min sketches.  \tsnote{We should find out what are the important variations! I only know of a few.  None of them require randomness for representation or querying, so I'll continue to formalize everything as deterministic.}
 
-Fix a nonempty sets $U,\Sigma$ and integers $k,m_1,m_2,>0$ with $m_1 \leq m_2$.  Fix a symbol $\bot \not\in U$.  An $(k,[m_1,m_2])$-filter (over universe~$U$) is a tuple  $B=(\mathsc{H},\mathsc{Rep},\mathsc{Qry},\mathsc{Up}, \mathsc{Test})$.   
+Fix a nonempty sets $U,\Sigma$ and integers $k,m_1,m_2,n>0$ with $m_1 \leq m_2$.  Fix a symbol $\bot \not\in U$.  An $(n,k,[m_1,m_2])$-filter (over universe~$U$) is a tuple  $B=(\mathsc{H},\mathsc{Rep},\mathsc{Qry},\mathsc{Up}, \mathsc{Test})$.   
 %
 The randomized \emph{hash-sampling} algorithm~$\mathsc{H}$ samples a size~$k$ subset~$\mathcal{H} \subset \mathrm{Func}(U,\{0,1,\ldots,m_2-1\})$.  We write $\mathcal{H} \getsr \mathsc{H}$ for this operation.
 %
 The deterministic representation algorithm $\mathsc{Rep}\colon [U]^n \rightarrow \left(\bigcup_{m=m_1}^{m_2}\Sigma^m\right)$ takes a set~$S$ of~$n$ elements as input, and outputs representation~$M$ of length~$m_1 \leq m \leq m_2$.
-%\mbox{s.t. } \mu_S(x)>0, \mu_T(x)>0\}$.  On the other hand, we may end up deciding it is overkill... }
 %
 The determinisitc query algorithm $\mathsc{Qry}\colon \left(\bigcup_{m=m_1}^{m_2}\Sigma^m \right)\times U \rightarrow \bits^*$ takes a representation $M$ and an element $x \in U$ and returns a bitstring.  
 %
@@ -50,11 +49,11 @@ We assume that all $\mathsc{Rep},\mathsc{Qry},\mathsc{Up},\mathsc{Test}$ all hav
 
 Let $\mathbb{M}_\mathcal{U}$ be the set of multisets over~$\mathcal{U}$.  We can denote any multiset as $\{(x,\ell) \,|\, x \in \mathcal{U}, \ell \in \mathbb{N}\}$, and for a particular multiset~$S$ we define the multiplicity of~$x$ as $\mu_S(x) = \ell$ where $(x,\ell)\in S$.
 
-An $(k,[m_1,m_2])$-filter with operations is a tuple  $B=(\mathsc{H},\mathsc{Rep},\mathsc{Qry}, \mathcal{F})$.  
+An $(n,k,[m_1,m_2])$-filter with operations is a tuple  $B=(\mathsc{H},\mathsc{Rep},\mathsc{Qry}, \mathcal{F})$.  
 The set $\mathcal{F}$ is the finite collection of allowable operations.  All operations are of the form 
 $f: \mathbb{M}_{\mathcal{U}} \times \mathbb{M}_{\mathcal{U}} \rightarrow \mathbb{M}_{\mathcal{U}} \cup \{\bot\}$.  
 %
-The deterministic representation algorithm $\mathsc{Rep}\colon \mathbb{M}_\mathcal{U} \rightarrow \bigcup_{m=m_1}^{m_2}\Sigma^m$ takes a multiset~$S$, and outputs representation~$M$ of length~$m_1 \leq m \leq m_2$.   
+The deterministic representation algorithm $\mathsc{Rep}\colon \mathbb{M}_\mathcal{U} \rightarrow \bigcup_{m=m_1}^{m_2}\Sigma^m$ takes a multiset~$S$, and outputs representation~$M$ of length~$m_1 \leq m \leq m_2$, or the distinguished symbol~$\bot$.  We assume that if the multiset~$S=\{(x_1,\ell_1),(x_2,\ell_2),\ldots,(x_t,\ell_t)\}$ is such that $n < \sum_{i=1}^t \ell_i$ then $\mathsc{Rep}(S)=\bot$.
 %
 The randomized hash-sampling algorithm~$\mathsc{H}$ is as before.
 %
