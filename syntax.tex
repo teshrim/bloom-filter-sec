@@ -15,13 +15,15 @@ We assume that both $\mathsc{Rep}$ and $\mathsc{Qry}$ have the following blackbo
 For correctness, we demand that for all~$S$ of size~$n$, we have that for all $x \in S, \Prob{\mathsc{Qry}^{\mathcal{H}}(\mathsc{Rep}^{\mathcal{H}}(S),x)=1}$, where the probability is over the sampling $\mathcal{H}\getsr\mathsc{H}$.  
 
 \heading{Discusssion.}
-This syntax captures classical Bloom filters by setting~$\Sigma=\bits$ and defining $\mathsc{Rep},\mathsc{Qry}$ in the obvious way.  Setting $\Sigma=\bits^{\leq L}$ allows one to store a bitstring of length at most~$L$ at each location. \tsnote{Would let us capture a construction from NY, among other things.}  We note that even though this would allow for the storage of counters (say) at each filter location, our restriction that~$\mathsc{Qry}$ returns a bit does not capture functionality of Bloom filters that employ counters, e.g., returning a counter value. (One could, however, have $\mathsc{Qry}$ compute an arbitrary predicate.  For example, ``has~$x$ been seen at least 5 times?''.)  Nonetheless, this restriction allows us to state a simple correctness condition, and covers a broad range of hash-based filters.
+This syntax captures classical Bloom filters by setting~$\Sigma=\bits$ and defining $\mathsc{Rep},\mathsc{Qry}$ in the obvious way.  Setting $\Sigma=\bits^{\leq L}$ allows one to store a bitstring of length at most~$L$ at each location. \tsnote{Would let us capture a construction from NY, among other things.}  We note that even though this would allow for the storage of counters (say) at each filter location, our restriction that~$\mathsc{Qry}$ returns a bit does not capture functionality of Bloom filters that employ counters, e.g., returning a counter value. (One could, however, have $\mathsc{Qry}$ compute an arbitrary, fixed predicate.  For example, ``has~$x$ been seen at least 5 times?''.)  Nonetheless, this restriction allows us to state a simple correctness condition, and covers a broad range of hash-based filters.
 
 Our syntax also does not capture filters that are allowed to grow over time (e.g. ``scalable Bloom filters'') or cdertain kinds of hierarchical Bloom filters.  We turn our attention to this next.
 
 \tsnote{Very much a work-in-progress.}
 
 \heading{Mutuable hash-based filters. }
+Here we extend the basic Bloom filter syntax to allow for variations on the traditional Bloom filter, e.g. counting Bloom filters, spectral Bloom filters, count-min sketches.  \tsnote{We should find out what are the important variations! I only know of a few.  None of them require randomness for representation or querying, so I'll continue to formalize everything as deterministic.}
+
 Fix a nonempty sets $U,\Sigma$ and integers $k,m_1,m_2,>0$ with $m_1 \leq m_2$.  Fix a symbol $\bot \not\in U$.  An $(k,[m_1,m_2])$-filter (over universe~$U$) is a tuple  $B=(\mathsc{H},\mathsc{Rep},\mathsc{Qry},\mathsc{Up}, \mathsc{Test})$.   
 %
 The randomized \emph{hash-sampling} algorithm~$\mathsc{H}$ samples a size~$k$ subset~$\mathcal{H} \subset \mathrm{Func}(U,\{0,1,\ldots,m_2-1\})$.  We write $\mathcal{H} \getsr \mathsc{H}$ for this operation.
@@ -42,10 +44,9 @@ We assume that all $\mathsc{Rep},\mathsc{Qry},\mathsc{Up},\mathsc{Test}$ all hav
 
 
 
-\tsnote{Below is an alternative way to formalize things like counting Bloom filters, count-min sketch, scaling Bloom filters, etc.  Neither is solid, yet.}
-
 \heading{Multiset-oriented hash-based filters. }
-Here we extend the basic Bloom filter syntax to allow for variations on the traditional Bloom filter, e.g. counting Bloom filters.  \tsnote{We should find out what are the important variations! I only know of a few.  None of these require randomness, so I'll continue to formalize everything as deterministic.}\tsnote{“Scaling Bloom filters”, appear to allow the parameter~$m$, below, to vary. I've altered the syntax to allow this.}\tsnote{This syntax might naturally support count-min sketches, too.}
+\tsnote{Below is an alternative way to formalize mutable hash-based filters.  This way directly address the inputs as multisets, instead of starting with a set and then updating the represenation a step at a time.  Not sure which is cleaner and more easily applied to real problems, yet.}
+
 
 Let $\mathbb{M}_\mathcal{U}$ be the set of multisets over~$\mathcal{U}$.  We can denote any multiset as $\{(x,\ell) \,|\, x \in \mathcal{U}, \ell \in \mathbb{N}\}$, and for a particular multiset~$S$ we define the multiplicity of~$x$ as $\mu_S(x) = \ell$ where $(x,\ell)\in S$.
 
@@ -53,14 +54,14 @@ An $(k,[m_1,m_2])$-filter with operations is a tuple  $B=(\mathsc{H},\mathsc{Rep
 The set $\mathcal{F}$ is the finite collection of allowable operations.  All operations are of the form 
 $f: \mathbb{M}_{\mathcal{U}} \times \mathbb{M}_{\mathcal{U}} \rightarrow \mathbb{M}_{\mathcal{U}} \cup \{\bot\}$.  
 %
-The deterministic representation algorithm $\mathsc{Rep}\colon \mathbb{M}_\mathcal{U} \rightarrow \bigcup_{m=m_1}^{m_2}\Sigma^m$ takes a multiset~$S$, and outputs representation~$M$ of length~$m_1 \leq m m_2$.   
+The deterministic representation algorithm $\mathsc{Rep}\colon \mathbb{M}_\mathcal{U} \rightarrow \bigcup_{m=m_1}^{m_2}\Sigma^m$ takes a multiset~$S$, and outputs representation~$M$ of length~$m_1 \leq m \leq m_2$.   
 %
 The randomized hash-sampling algorithm~$\mathsc{H}$ is as before.
 %
-The determinisitic query algorithm $\mathsc{Qry}$ \tsnote{Not sure how to define this!  See my comment, below...}
+The determinisitic query algorithm $\mathsc{Qry}$... \tsnote{Not sure how to define this!  See my comment, below...}
 
 %Correctness is defined as follows.  Let $S,T$ be arbitrary multisets and let~$f$ be an arbitrary operation in $\mathcal{F}$.  If $f(S,T) = S'\neq \bot$, then for all $x \in S'$ we demand that $\mathsc{Qry}(\mathsc{Rep}(S'),x)=1$.  \tsnote{might need a stronger condition that this holds for any sequence of operations that do not result in $\bot$.}
 
 Let us see how this syntax captures various kinds of Bloom filters.  First, let $\Sigma = \mathbb{N}$ and define $f_{\mathrm{add}}(S,T)=\{(x,\mu_S(x)+\mu_T(x)) \,|\, x \in \mathcal{U}\}$ and $f_\mathrm{del}(S,T) = \{(x,\min\{0,\mu_S(x)-\mu_T(x)\}) \,|\, x \in \mathcal{U} \}$.  Define $\mathsc{Rep}(S')$ as follows: for each $(x,\ell)\in S'$ and $j\in\{1,2,\ldots,k\}$, set $M[h_j(x)]=\ell$.   Finally, define $\mathsc{Qry}(M,x) = 1 \Leftrightarrow \forall j \in \{1,2,\ldots,k\},\; M[h_j(x)] > 0$.  This allows us to capture counting Bloom filters. \tsnote{Does it?  Acutally, you might want $\mathsc{Qry}(M,x)$ to return a number, i.e., a counter value.  How do you define correctness then?}
 
-\tsnote{There are more direct ways to formalize counting Bloom filters.  But this less direct way will allow us to capture other kinds ``advanced'' Bloom filters proposed in the literature or (more importantly) used in practice. For example, $f_{\mathrm{setify}}(S,T)=\{(x,1) \,|\, x \in \mathcal{U} \mbox{s.t. } \mu_S(x)>0, \mu_T(x)>0\}$.  On the other hand, we may end up deciding it is overkill... }
+\tsnote{There are more direct ways to formalize counting Bloom filters, like the syntax above.  But this less direct way will allow us to capture other kinds ``advanced'' Bloom filters proposed in the literature or (more importantly) used in practice. For example, $f_{\mathrm{setify}}(S,T)=\{(x,1) \,|\, x \in \mathcal{U} \mbox{s.t. } \mu_S(x)>0, \mu_T(x)>0\}$.  On the other hand, we may end up deciding it is overkill... }
