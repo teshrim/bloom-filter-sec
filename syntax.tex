@@ -24,14 +24,14 @@ Fix a nonempty sets $U,\Sigma$ and integers $k,m_1,m_2,>0$ with $m_1 \leq m_2$. 
 %
 The randomized \emph{hash-sampling} algorithm~$\mathsc{H}$ samples a size~$k$ subset~$\mathcal{H} \subset \mathrm{Func}(U,\{0,1,\ldots,m_2-1\})$.  We write $\mathcal{H} \getsr \mathsc{H}$ for this operation.
 %
-The deterministic representation algorithm $\mathsc{Rep}\colon [U]^n \rightarrow \bigcup_{m=m_1}^{m_2}\Sigma^m$ takes a set~$S$ of~$n$ elements as input, and outputs representation~$M$ of length~$m_1 \leq m \leq m_2$.
+The deterministic representation algorithm $\mathsc{Rep}\colon [U]^n \rightarrow \left(\bigcup_{m=m_1}^{m_2}\Sigma^m\right)$ takes a set~$S$ of~$n$ elements as input, and outputs representation~$M$ of length~$m_1 \leq m \leq m_2$.
 %\mbox{s.t. } \mu_S(x)>0, \mu_T(x)>0\}$.  On the other hand, we may end up deciding it is overkill... }
 %
-The determinisitc query algorithm $\mathsc{Qry}\colon \bigcup_{m=m_1}^{m_2}\Sigma^m \times U \rightarrow \bits^*$ takes a representation $M$ and an element $x \in U$ and returns a bitstring.  
+The determinisitc query algorithm $\mathsc{Qry}\colon \left(\bigcup_{m=m_1}^{m_2}\Sigma^m \right)\times U \rightarrow \bits^*$ takes a representation $M$ and an element $x \in U$ and returns a bitstring.  
 %
-The deterministic \emph{update} algorithm $\mathsc{Up}\colon \bigcup_{m=m_1}^{m_2}\Sigma^m \times \bits^* \rightarrow \left(\bigcup_{m=m_1}^{m_2}\Sigma^m \right) \cup \{\bot\}$ takes a representation and an update string, and returns an updated representation or the distinguished symbol~$\bot$. 
+The deterministic \emph{update} algorithm $\mathsc{Up}\colon \left(\bigcup_{m=m_1}^{m_2}\Sigma^m \right)\times \bits^* \rightarrow \left(\bigcup_{m=m_1}^{m_2}\Sigma^m \right) \cup \{\bot\}$ takes a representation and an update string, and returns an updated representation or the distinguished symbol~$\bot$. 
 %
-The deterministic \emph{test} algorithm $\mathsc{Test} \colon \bigcup_{m=m_1}^{m_2}\Sigma^m \times U \rightarrow \bits$ takes a representation~$M$ and an element~$x \in U$ and returns a bit.
+The deterministic \emph{test} algorithm $\mathsc{Test} \colon \left(\bigcup_{m=m_1}^{m_2}\Sigma^m \right) \times U \rightarrow \bits$ takes a representation~$M$ and an element~$x \in U$ and returns a bit.
 %
 We assume that all $\mathsc{Rep},\mathsc{Qry},\mathsc{Up},\mathsc{Test}$ all have blackbox access to the functions $h_1,h_2,\ldots,h_k \in \mathcal{H}$, which we denote by writing~$\mathcal{H}$ as a superscript.   
 
