@@ -11,11 +11,13 @@ The deterministic representation algorithm $\mathsc{Rep}\colon [U]^n \rightarrow
 The determinisitc query algorithm $\mathsc{Qry}\colon \Sigma^m \times U \rightarrow \bits$ takes a representation $M$ and an element $x \in U$ and returns a bit.  
 %
 We assume that both $\mathsc{Rep}$ and $\mathsc{Qry}$ have the following blackbox access to the functions $h_1,h_2,\ldots,h_k \in \mathcal{H}$, which we denote by writing~$\mathcal{H}$ as a superscript.   Thus, we write $M \gets \mathsc{Rep}^{\mathcal{H}}(S)$ and $b \gets \mathsc{Qry}^{\mathcal{H}}(M,x)$ for the execution of the representation and query algorithms, respectively.
-
-For correctness, we demand that for all $\mathcal{H}$ and~$S$, and for all $x \in S, \mathsc{Qry}^{\mathcal{H}}(\mathsc{Rep}^{\mathcal{H}}(S),x)=1$.  
+%
+For correctness, we demand that for all~$S$ of size~$n$, we have that for all $x \in S, \Prob{\mathsc{Qry}^{\mathcal{H}}(\mathsc{Rep}^{\mathcal{H}}(S),x)=1}$, where the probability is over the sampling $\mathcal{H}\getsr\mathsc{H}$.  
 
 \heading{Discusssion.}
-This syntax captures classical Bloom filters by setting~$\Sigma=\bits$ and defining $\mathsc{Rep},\mathsc{Qry}$ in the obvious way.  Setting $\Sigma=\bits^{\leq L}$ allows one to store a bitstring of length at most~$L$ at each location. \tsnote{Would let us capture a construction from NY, among other things.}
+This syntax captures classical Bloom filters by setting~$\Sigma=\bits$ and defining $\mathsc{Rep},\mathsc{Qry}$ in the obvious way.  Setting $\Sigma=\bits^{\leq L}$ allows one to store a bitstring of length at most~$L$ at each location. \tsnote{Would let us capture a construction from NY, among other things.}  We note that even though this would allow for the storage of counters (say) at each filter location, our restriction that~$\mathsc{Qry}$ returns a bit does not capture functionality of Bloom filters that employ counters, e.g., returning a counter value.
+
+Our syntax also does not capture filters that are allowed to grow over time (e.g. ``scalable Bloom filters'') or cdertain kinds of hierarchical Bloom filters.  We turn our attention to this next.
 
 \tsnote{Very much a work-in-progress.}
 
