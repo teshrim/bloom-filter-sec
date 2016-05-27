@@ -32,7 +32,7 @@ The deterministic representation algorithm $\mathsc{Rep}\colon [U]^n \rightarrow
 %
 The determinisitc query algorithm $\mathsc{Qry}\colon \left(\bigcup_{m=m_1}^{m_2}\Sigma^m \right)\times U \rightarrow \bits^*$ takes a representation $M$ and an element $x \in U$ and returns a bitstring.  
 %
-The deterministic \emph{update} algorithm $\mathsc{Up}\colon \left(\bigcup_{m=m_1}^{m_2}\Sigma^m \right)\times \bits^* \rightarrow \left(\bigcup_{m=m_1}^{m_2}\Sigma^m \right) \cup \{\bot\}$ takes a representation and an update string, and returns an updated representation or the distinguished symbol~$\bot$. 
+The randomized \emph{update} algorithm $\mathsc{Up}\colon \left(\bigcup_{m=m_1}^{m_2}\Sigma^m \right)\times \bits^* \rightarrow \left(\bigcup_{m=m_1}^{m_2}\Sigma^m \right) \cup \{\bot\}$ takes a representation and an update string, and returns an updated representation or the distinguished symbol~$\bot$.  \tsnote{I allow randomized update to admit things like the ``Stable Bloom filter'' construction, which has a randomized forgetting feature.  Other constructions may have something similar.}
 %
 The deterministic \emph{test} algorithm $\mathsc{Test} \colon \left(\bigcup_{m=m_1}^{m_2}\Sigma^m \right) \times U \rightarrow \bits$ takes a representation~$M$ and an element~$x \in U$ and returns a bit.
 %
