@@ -41,7 +41,7 @@ This syntax captures classical Bloom filters by setting~$\Sigma=\bits$,  and def
 Our syntax also does not capture filters that are mutable, that is, whose representation may change over time. 
 On the other hand, we can state a simple correctness condition for these kinds of filters; this will not be true when we further generalize to capture, properly, counters and mutability.
 
-\heading{Soundness of hash-based filters.} \tsnote{To do.  Note that it makes sense to consider soundness both in the public and private hash setting.  NY give it in the private hash setting (sort of); but, intuitively, it should be hard to find false-positives even if you know that MD5 or SHA-x are the hash functions  It might be interesting to run some experiments, e.g. set up a bloom filter of URLs or IP/port information, and then open up a network tap and see how many false positives we observe.}
+\heading{Soundness of hash-based filters.} \tsnote{To do.  Note that it makes sense to consider soundness both in the public and private hash setting.  NY give it in the private hash setting (sort of); but, intuitively, it should be hard to find false-positives even if you know that MD5 or SHA-x are the hash functions  It might be interesting to run some experiments, e.g. set up a bloom filter of URLs or IP/port information, and then open up a network tap and see how many false positives we observe.} \tsnote{Actually, I think Mitzenmacher and Vadhan address this (somewhat) in their paper about using hash functions in practice.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
