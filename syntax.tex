@@ -41,7 +41,7 @@ This syntax captures classical Bloom filters by setting~$\Sigma=\bits$,  and def
 Our syntax also does not capture filters that are mutable, that is, whose representation may change over time. 
 On the other hand, we can state a simple correctness condition for these kinds of filters; this will not be true when we further generalize to capture, properly, counters and mutability.
 
-\heading{Soundness of hash-based filters.} \tsnote{To do.}
+\heading{Soundness of hash-based filters.} \tsnote{To do.  Note that it makes sense to consider soundness both in the public and private hash setting.  NY give it in the private hash setting (sort of); but, intuitively, it should be hard to find false-positives even if you know that MD5 or SHA-x are the hash functions  It might be interesting to run some experiments, e.g. set up a bloom filter of URLs or IP/port information, and then open up a network tap and see how many false positives we observe.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -108,7 +108,7 @@ Ret $h_i(x)$\\
 \end{figure}
 
 
-\heading{Soundness for mutable hash-based filters. } \tsnote{To do.}
+\heading{Soundness for mutable hash-based filters. } \tsnote{To do.  Same comments as for the simple case, only it's more complicated here what it means to violate soundness.}
 
 
 \if{0}
