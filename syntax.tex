@@ -13,13 +13,13 @@
 \newcommand{\UpdateOracle}{\mathsf{Update}}
 \newcommand{\HashOracle}{\mathsf{Hash}}
 
-\section{Syntax}
+\section{Hash-based Filters}
 \heading{Preliminaries.}
 When~$U$ is a set and $n>0$ is an integer, we let $[U]^n$ denote the set of all size-$n$ subsets of~$U$.  We let $\multiset{U}$ denote the set of all finite multisets of~$U$.  We can denote any multiset~$S$ as $\{(x,\ell) \,|\, x \in U, \ell > 0\}$ where each~$x$ appears exactly once, and each~$\ell$ is an integer.  We define the multiplicity of~$x$ as $\mu_S(x) = \ell$.  We write $|S|= \sum_{(x,\ell)\in S}\mu_S(x)$, and let $\multiset{U,n}$ denote the set of multisets~$S$ where $|S|=n$. 
 
 We write $x \getsr U$ to denote sampling an element from~$U$ and assigning this to~$x$, and we extend this notation to randomized algorithms.
 
-\heading{Hash-based filters.}
+\heading{Syntax.}
 Fix a nonempty sets $U,\Sigma$ and integers $k,m,n>0$.  Fix a symbol $\bot \not\in U$.  An $(n,k,m)$-filter (over universe~$U$) is a tuple  $B=(\Hash,\Rep,\Qry)$.   
 %
 The randomized \emph{hash-sampling} algorithm~$\Hash$ samples a size~$k$ family of functions~$\mathcal{H}=\{h_1,h_2,\ldots,h_k\}$ where each $h_i \in  \mathrm{Func}(U,\{0,1,\ldots,m-1\})$.  We write $\mathcal{H} \getsr \Hash$ for this operation.
@@ -41,12 +41,15 @@ This syntax captures classical Bloom filters by setting~$\Sigma=\bits$,  and def
 Our syntax also does not capture filters that are mutable, that is, whose representation may change over time. 
 On the other hand, we can state a simple correctness condition for these kinds of filters; this will not be true when we further generalize to capture, properly, counters and mutability.
 
+\heading{Soundness of hash-based filters.} \tsnote{To do.}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\heading{Mutuable hash-based filters. }
+\section{Mutuable hash-based filters}
 Here we extend the basic Bloom filter syntax to allow for variations on the traditional Bloom filter, e.g. counting Bloom filters~\cite{xxx}, spectral Bloom filters~\cite{xxx}, count-min sketches~\cite{xxx}, stable Bloom filters~\cite{xxx}, etc.   Before giving it, let us briefly describe what is formalized.  Our syntax captures settings in which there is some (potentially empty) initial set~$S$, whose representation~$M$ may undergo updates over time.  Effectively, this allows for expansion of~$S$ to a larger set, or even a multiset, as new elements ``arrive''.    The update algorithm is responsible for altering the current representation.  We allow it to take in a string that encodes inputs needed to carry out the updating.  For example, counting Bloom filters may receive update strings that encode $(x,c)$ where $x \in U$ is the element whose representation should be incremented, and $c \in \mathbb{N}$ is the amount of the increment.  Network applications, such as looking for heavy-hitters across TCP/IP streams seen by a router, may have $x = (\mathrm{IP_{src}},\mathrm{IP_{dst}})$, the source and destintation address of a packet, and~$c$ the number of bytes in the packet payload.  When necessary we will specify what is encoded in the update string, but will assume some implicit and fixed encoding scheme.  Note that our syntax allows for randomized updating.  This accommodates stable Bloom filters, for example, which has a randomized ``forgetting'' feature as part of its update.
 
-
+\heading{Syntax. }
 Fix nonempty sets $U,\Sigma$ and integers $k,m_1,m_2,n>0$ with $m_1 \leq m_2$.  Fix a symbol $\bot \not\in U$.  An $(n,k,[m_1,m_2])$-filter (over universe~$U$) is a tuple  $B=(\Hash,\Init,\Qry,\Update, \Test)$.   
 %
 The randomized \emph{hash-sampling} algorithm~$\Hash$ samples a size~$k$ family of functions~$\mathcal{H}=\{h_1,h_2,\ldots,h_k\}$ where each $h_i \in  \mathrm{Func}(U,\{0,1,\ldots,m_2-1\})$.  We write $\mathcal{H} \getsr \Hash$ for this operation. 
@@ -60,6 +63,8 @@ The randomized \emph{update} algorithm $\Update\colon \left(\bigcup_{m=m_1}^{m_2
 The deterministic \emph{test} algorithm $\Test \colon \multiset{U}\times \left(\bigcup_{m=m_1}^{m_2}\Sigma^m \right)\cup\{\bot\} \times U \rightarrow \bits$ takes a multiset~$S$, a representation~$M$ and an element~$x \in U$ and returns a bit.
 %
 %We assume that all $\Init,\Qry,\Update,\Test$ all have blackbox access to the functions $h_1,h_2,\ldots,h_k \in \mathcal{H}$, which we denote by writing~$\mathcal{H}$ as a superscript.   
+
+\heading{Correctness. } The kind of filters we capture, here, can have \emph{two-sided} error.  That is, they may result in false-negatives as well as false-positives.  We captures two versions of correctness in Figure~\ref{fig:correctness-mutable}, corresponding to whether or not the adversary is given access to the hash functions used to create and update the multiset representation.
 
 \begin{figure}
 \centering
@@ -102,12 +107,13 @@ Ret $h_i(x)$\\
 \label{fig:correctness-mutable}
 \end{figure}
 
-\tsnote{Not sure how to define correctness, since these kinds of filters/sketches can have two-sided error.}
+
+\heading{Soundness for mutable hash-based filters. } \tsnote{To do.}
 
 
+\if{0}
 \heading{Multiset-oriented hash-based filters. }
 \tsnote{Commented out, but in the source: an alternative way to formalize mutable hash-based filters.  This way directly address the inputs as multisets, instead of starting with a set and then updating the represenation a step at a time.  Not sure which is cleaner and more easily applied to real problems, yet.}
-\if{0}
 
 Let $\mathbb{M}_\mathcal{U}$ be the set of multisets over~$\mathcal{U}$.  We can denote any multiset as $\{(x,\ell) \,|\, x \in \mathcal{U}, \ell \in \mathbb{N}\}$, and for a particular multiset~$S$ we define the multiplicity of~$x$ as $\mu_S(x) = \ell$ where $(x,\ell)\in S$.
 
