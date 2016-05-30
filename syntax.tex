@@ -68,7 +68,7 @@ The deterministic \emph{test} algorithm $\Test \colon \multiset{U}\times \left(\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
 $M \gets \Init^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle,\UpdateOracle}(S)$\\
-if $\Test^{\HashOracle}(S,M,x) \neq 0$ then Ret 1\\
+if $\Test^{\HashOracle}(S,M,x) \neq 1$ then Ret 1\\
 Ret 0\\
 
 \medskip
@@ -76,7 +76,7 @@ Ret 0\\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
 $M \gets \Init^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle,\UpdateOracle,\HashOracle}(S)$\\
-if $\Test^{\HashOracle}(S,M,x) \neq 0$ then Ret 1\\
+if $\Test^{\HashOracle}(S,M,x) \neq 1$ then Ret 1\\
 Ret 0
 }
 %
