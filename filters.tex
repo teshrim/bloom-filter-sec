@@ -95,7 +95,7 @@ Ret $\Qry^{\HashOracle}(M,x)$\\
 Ret $h_i(x)$\\
 }
 }
-\caption{False-positive security (soundness) for an $(n,k,m)$-filter~$B$ with private hash functions (top); black-box queriable hash functions (middle), and public hash functions (bottom). }
+\caption{False-positive security (soundness) for an $(n,k,m)$-filter~$B$ with private hash functions (top), black-box queriable hash functions (middle), and public hash functions (bottom). }
 \label{fig:fp-filter}
 \end{figure}
 
@@ -114,9 +114,43 @@ $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
 $M \gets \Init^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle}()$\\
 if $x\in S$ then Ret 1\\
-Ret 0\\
+Ret 0
+}
+%
+{
+\oracle{$\QryOracle(x)$}\\
+Ret $\Qry^{\HashOracle}(M,x)$\\
 
 \medskip
+\oracle{$\HashOracle(i,x)$}\\
+Ret $h_i(x)$\\
+}
+}
+%%%%%%%%%%
+\fpage{.6}{
+\hpagess{.6}{.35}
+{
+\experimentv{$\ExpPrivPubHashBB{S,B}{A}$}\\
+$ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
+$M \gets \Init^{\HashOracle}(S)$\\
+$x \getsr A^{\QryOracle,\HashOracle}()$\\
+if $x\in S$ then Ret 1\\
+Ret 0\\
+}
+%
+{
+\oracle{$\QryOracle(x)$}\\
+Ret $\Qry^{\HashOracle}(M,x)$\\
+
+\medskip
+\oracle{$\HashOracle(i,x)$}\\
+Ret $h_i(x)$\\
+}
+}
+%%%%%%%
+\fpage{.6}{
+\hpagess{.6}{.35}
+{
 \experimentv{$\ExpPrivPubHash{S,B}{A}$}\\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
 $M \gets \Init^{\HashOracle}(S)$\\
@@ -134,6 +168,6 @@ Ret $\Qry^{\HashOracle}(M,x)$\\
 Ret $h_i(x)$\\
 }
 }
-\caption{Set-privacy for an $(n,k,m)$-filter~$B$ for private (top) and public (bottom) hash functions. \textcolor{cyan}{Revisit when the FP notion settles out.}}
+\caption{Set-privacy for an $(n,k,m)$-filter~$B$ for private (top), black-box queriable (middle),  and public (bottom) hash functions. \textcolor{cyan}{Revisit when the FP notion settles out.}}
 \label{fig:fp-filter}
 \end{figure}
