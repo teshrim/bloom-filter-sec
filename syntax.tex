@@ -9,6 +9,10 @@
 \newcommand{\ExpCorrectPubHash}[2]{\mathrm{Exp}^{\mathrm{cor\mbox{-}pub}}_{#1}(#2)}
 \newcommand{\ExpCorrect}[2]{\mathrm{Exp}^{\mathrm{cor}}_{#1}(#2)}
 
+\newcommand{\ExpFPSecHash}[2]{\mathrm{Exp}^{\mathrm{fp\mbox{-}prv}}_{#1}(#2)}
+\newcommand{\ExpFPPubHash}[2]{\mathrm{Exp}^{\mathrm{fp\mbox{-}pub}}_{#1}(#2)}
+\newcommand{\ExpFP}[2]{\mathrm{Exp}^{\mathrm{fp}}_{#1}(#2)}
+
 \newcommand{\QryOracle}{\mathsf{Query}}
 \newcommand{\UpdateOracle}{\mathsf{Update}}
 \newcommand{\HashOracle}{\mathsf{Hash}}
@@ -41,7 +45,44 @@ This syntax captures classical Bloom filters by setting~$\Sigma=\bits$,  and def
 Our syntax also does not capture filters that are mutable, that is, whose representation may change over time. 
 On the other hand, we can state a simple correctness condition for these kinds of filters; this will not be true when we further generalize to capture, properly, counters and mutability.
 
-\heading{Soundness of hash-based filters.} \tsnote{To do.  Note that it makes sense to consider soundness both in the public and private hash setting.  NY give it in the private hash setting (sort of); but, intuitively, it should be hard to find false-positives even if you know that MD5 or SHA-x are the hash functions  It might be interesting to run some experiments, e.g. set up a bloom filter of URLs or IP/port information, and then open up a network tap and see how many false positives we observe.} \tsnote{Actually, I think Mitzenmacher and Vadhan address this (somewhat) in their paper about using hash functions in practice.}
+\heading{FP-security of hash-based filters.} \tsnote{Write text.  Note that it makes sense to consider soundness both in the public and private hash setting.  NY give it in the private hash setting (sort of); but, intuitively, it should be hard to find false-positives even if you know that MD5 or SHA-x are the hash functions  It might be interesting to run some experiments, e.g. set up a bloom filter of URLs or IP/port information, and then open up a network tap and see how many false positives we observe.} 
+
+\begin{figure}
+\centering
+\fpage{.6}{
+\hpagess{.6}{.35}
+{
+\experimentv{$\ExpFPSecHash{S,B}{A}$}\\
+$ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
+$M \gets \Init^{\HashOracle}(S)$\\
+$x \getsr A^{\QryOracle}(S)$\\
+if $x \not\in S \wedge \Qry^{\HashOracle}(M,x)=1$ then\\
+\nudge Ret 1\\
+Ret 0\\
+
+\medskip
+\experimentv{$\ExpFPPubHash{S,B}{A}$}\\
+$ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
+$M \gets \Init^{\HashOracle}(S)$\\
+$x \getsr A^{\QryOracle,\HashOracle}(S)$\\
+if $x \not\in S \wedge \Qry^{\HashOracle}(M,x)=1$ then\\
+\nudge Ret 1\\
+Ret 0
+}
+%
+{
+\oracle{$\QryOracle(x)$}\\
+if $M = \bot$ then Ret $\bot$\\
+Ret $\Qry^{\HashOracle}(M,x)$\\
+
+\medskip
+\oracle{$\HashOracle(i,x)$}\\
+Ret $h_i(x)$\\
+}
+}
+\caption{False-positive security (soundness) for an $(n,k,m)$-filter~$B$.  {\bf Top:} when the hash functions are private.  {\bf Bottom:} when the hash functions are public.}
+\label{fig:fp-filter}
+\end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
