@@ -18,15 +18,17 @@ Continuing on this point, it seems that the coins of~$\mathbf{B}_1$ (whatever th
 \tsnote{Could also point out that their positive results use constructions that have secret keys, and these are unlikely to be of any use in major applications like CDNs or P2P networks.  But maybe the horse is sufficiently beaten by now...}
 
 \heading{Our contributions. }
-Given these shortcomings and the prevalent use of Bloom filters in practice, we revisit the matter of formalizing them as primitives with explicit security goals, these goals being abstracted from the attack surface they expose in practice.   We begin by giving a new syntax for an approximate-set-membership primitive (ASM) that clearly captures Bloom filters... \tsnote{finish}
+Given these shortcomings and the prevalent use of Bloom filters in practice, we revisit the matter of formalizing them as primitives with explicit security goals, these goals being abstracted from the attack surface they expose in practice.   We begin by giving a new syntax for hash-based filters, which more clearly captures Bloom filters...
 
-We provided various security notions for ASMs... FP with private, public representation coins; set privacy with private, public representation coins; FP/set privacy in the multi-representation setting (outsider attack, think CDNs); FP/set privacy in the multi-representation setting with corruptions (insider attack, think P2P networks) \tsnote{Those are just the ones that come to mind now.  Could also consider authenicity of representations, think CDN or P2P settings.}
+We generalize this syntax to hash-based filters that are mutable, in the sense that they allow for updating of the representation.  This allows us to capture counting Bloom filters, spectral Bloom filters, stable Bloom filters, count-min sketches, and other compact set respresentation data structures...
 
-Later, we give syntax for ASM primitives that also admit operations upon the set representation.  This captures so-called counting Bloom filters that are used, for example, in fairness-enforcing algorithms for routing of TCP streams.  It also captures... 
+We provide various security notions for these primitives... FP with private, public representation coins; set privacy with private, public representation coins; FP/set privacy in the multi-representation setting (outsider attack, think CDNs); FP/set privacy in the multi-representation setting with corruptions (insider attack, think P2P networks) \tsnote{Those are just the ones that come to mind now.  Could also consider authenicity of representations, think CDN or P2P settings.}
+
 
 We show that... 
 
 \heading{Related work. }
+Niedermayer et al., breaking privacy of secret-hash-function Bloom filters.
 Mitzenmacher and Vadhan.\tsnote{Might only be tangential.}
 
 
