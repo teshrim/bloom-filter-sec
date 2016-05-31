@@ -26,7 +26,7 @@ This syntax captures classical Bloom filters by setting~$\Sigma=\bits$,  and def
 Our syntax also does not capture filters that are mutable, that is, whose representation may change over time. 
 On the other hand, we can state a simple correctness condition for these kinds of filters; this will not be true when we further generalize to capture, properly, counters and mutability.
 
-\heading{FP-security of hash-based filters.} \tsnote{Write text.  Note that it makes sense to consider soundness both in the public and private hash setting.  NY give it in the private hash setting (sort of); but, intuitively, it should be hard to find false-positives even if you know that MD5 or SHA-x are the hash functions  It might be interesting to run some experiments, e.g. set up a bloom filter of URLs or IP/port information, and then open up a network tap and see how many false positives we observe.} 
+\heading{FP-security of hash-based filters.} \tsnote{NY give it in the private hash setting (sort of); but, intuitively, it should be hard to find false-positives even if you know that MD5 or SHA-x are the hash functions.  Not totally sure how to capture this intuition nicely.} 
 
 \begin{figure}
 \centering
@@ -39,10 +39,23 @@ $M \gets \Init^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle}(S)$\\
 if $x \not\in S \wedge \Qry^{\HashOracle}(M,x)=1$ then\\
 \nudge Ret 1\\
-Ret 0\\
+Ret 0
+}
+%
+{
+\oracle{$\QryOracle(x)$}\\
+Ret $\Qry^{\HashOracle}(M,x)$\\
 
 \medskip
-\experimentv{$\ExpFPPubHash{S,B}{A}$}\\
+\oracle{$\HashOracle(i,x)$}\\
+Ret $h_i(x)$\\
+}
+}
+%%%%%%%
+\fpage{.6}{
+\hpagess{.6}{.35}
+{
+\experimentv{$\ExpFPPubHashBB{S,B}{A}$}\\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
 $M \gets \Init^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle,\HashOracle}(S)$\\
@@ -53,7 +66,6 @@ Ret 0
 %
 {
 \oracle{$\QryOracle(x)$}\\
-if $M = \bot$ then Ret $\bot$\\
 Ret $\Qry^{\HashOracle}(M,x)$\\
 
 \medskip
@@ -61,9 +73,67 @@ Ret $\Qry^{\HashOracle}(M,x)$\\
 Ret $h_i(x)$\\
 }
 }
-\caption{False-positive security (soundness) for an $(n,k,m)$-filter~$B$.  {\bf Top:} when the hash functions are private.  {\bf Bottom:} when the hash functions are public.}
+%%%%%%%
+\fpage{.6}{
+\hpagess{.6}{.35}
+{
+\experimentv{$\ExpFPPubHash{S,B}{A}$}\\
+$ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
+$M \gets \Init^{\HashOracle}(S)$\\
+$x \getsr A^{\QryOracle}(S,\{h_1,h_2,\ldots,h_k\})$\\
+if $x \not\in S \wedge \Qry^{\HashOracle}(M,x)=1$ then\\
+\nudge Ret 1\\
+Ret 0
+}
+%
+{
+\oracle{$\QryOracle(x)$}\\
+Ret $\Qry^{\HashOracle}(M,x)$\\
+
+\medskip
+\oracle{$\HashOracle(i,x)$}\\
+Ret $h_i(x)$\\
+}
+}
+\caption{False-positive security (soundness) for an $(n,k,m)$-filter~$B$ with private hash functions (top); black-box queriable hash functions (middle), and public hash functions (bottom). }
 \label{fig:fp-filter}
 \end{figure}
 
-\heading{Privacy of hash-based filters.} \tsnote{To-do.}
 
+\tsnote{It might be interesting to run some experiments, e.g. set up a bloom filter of URLs or IP/port information, and then open up a network tap and see how many false positives we observe.  I quite like the idea of empirically supported/driven crypto.} 
+
+\heading{Privacy of hash-based filters.} \tsnote{This is wide open.  Privacy of~$S$?  Privacy of~$M$?  (The latter may or may not imply the former, depending on how we define things.)  }
+
+\begin{figure}
+\centering
+\fpage{.6}{
+\hpagess{.6}{.35}
+{
+\experimentv{$\ExpPrivSecHash{S,B}{A}$}\\
+$ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
+$M \gets \Init^{\HashOracle}(S)$\\
+$x \getsr A^{\QryOracle}()$\\
+if $x\in S$ then Ret 1\\
+Ret 0\\
+
+\medskip
+\experimentv{$\ExpPrivPubHash{S,B}{A}$}\\
+$ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
+$M \gets \Init^{\HashOracle}(S)$\\
+$x \getsr A^{\QryOracle}(\{h_1,h_2,\ldots,h_k\})$\\
+if $x\in S$ then Ret 1\\
+Ret 0\\
+}
+%
+{
+\oracle{$\QryOracle(x)$}\\
+Ret $\Qry^{\HashOracle}(M,x)$\\
+
+\medskip
+\oracle{$\HashOracle(i,x)$}\\
+Ret $h_i(x)$\\
+}
+}
+\caption{Set-privacy for an $(n,k,m)$-filter~$B$ for private (top) and public (bottom) hash functions. \textcolor{cyan}{Revisit when the FP notion settles out.}}
+\label{fig:fp-filter}
+\end{figure}

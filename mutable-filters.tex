@@ -28,10 +28,30 @@ $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
 $M \gets \Init^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle,\UpdateOracle}(S)$\\
 if $\Test^{\HashOracle}(S,M,x) \neq 1$ then Ret 1\\
-Ret 0\\
+Ret 0
+}
+%
+{
+\oracle{$\QryOracle(x)$}\\
+if $M = \bot$ then Ret $\bot$\\
+Ret $\Qry^{\HashOracle}(M,x)$\\
 
 \medskip
-\experimentv{$\ExpCorrectPubHash{S,B}{A}$}\\
+\oracle{$\UpdateOracle(\sigma)$}\\
+if $M = \bot$ then Ret $\bot$ \\
+$S \gets S \uplus \{\sigma\}$\\
+$M \getsr \Update^{\HashOracle}(M,\sigma)$\\
+
+\medskip
+\oracle{$\HashOracle(i,x)$}\\
+Ret $h_i(x)$\\
+}
+}
+%%%%%%%%%%
+\fpage{.6}{
+\hpagess{.6}{.35}
+{
+\experimentv{$\ExpCorrectPubHashBB{S,B}{A}$}\\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
 $M \gets \Init^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle,\UpdateOracle,\HashOracle}(S)$\\
@@ -55,7 +75,35 @@ $M \getsr \Update^{\HashOracle}(M,\sigma)$\\
 Ret $h_i(x)$\\
 }
 }
-\caption{Trying to define correctness for an $(n,k,[m_1,m_2])$-filter~$B$.}
+%%%%%%%%%%%
+\fpage{.6}{
+\hpagess{.6}{.35}
+{
+\experimentv{$\ExpCorrectPubHash{S,B}{A}$}\\
+$ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
+$M \gets \Init^{\HashOracle}(S)$\\
+$x \getsr A^{\QryOracle,\UpdateOracle}(S,\{h_1,h_2,\ldots,h_k\})$\\
+if $\Test^{\HashOracle}(S,M,x) \neq 1$ then Ret 1\\
+Ret 0
+}
+%
+{
+\oracle{$\QryOracle(x)$}\\
+if $M = \bot$ then Ret $\bot$\\
+Ret $\Qry^{\HashOracle}(M,x)$\\
+
+\medskip
+\oracle{$\UpdateOracle(\sigma)$}\\
+if $M = \bot$ then Ret $\bot$ \\
+$S \gets S \uplus \{\sigma\}$\\
+$M \getsr \Update^{\HashOracle}(M,\sigma)$\\
+
+\medskip
+\oracle{$\HashOracle(i,x)$}\\
+Ret $h_i(x)$\\
+}
+}
+\caption{Trying to define correctness for an $(n,k,[m_1,m_2])$-filter~$B$.  \textcolor{cyan}{Revisit once picture for ``plain'' filters settles.}}
 \label{fig:correctness-mutable}
 \end{figure}
 
