@@ -6,14 +6,29 @@
 %\usepackage{amsfonts}
 
 \input{defs}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%% MACROS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%% ADDITIONAL MACROS %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\Rep}{\mathsc{Rep}}
+\newcommand{\Hash}{\mathsc{Hash}}
+\newcommand{\Qry}{\mathsc{Qry}}
+\newcommand{\Update}{\mathsc{Up}}
+\newcommand{\Init}{\mathsc{Init}}
+\newcommand{\Test}{\mathsc{Test}}
+\newcommand{\multiset}[1]{\mathbb{M}_{#1}}
+\newcommand{\ExpCorrectSecHash}[2]{\mathrm{Exp}^{\mathrm{cor\mbox{-}prv}}_{#1}(#2)}
+\newcommand{\ExpCorrectPubHash}[2]{\mathrm{Exp}^{\mathrm{cor\mbox{-}pub}}_{#1}(#2)}
+\newcommand{\ExpCorrect}[2]{\mathrm{Exp}^{\mathrm{cor}}_{#1}(#2)}
+
+\newcommand{\ExpFPSecHash}[2]{\mathrm{Exp}^{\mathrm{fp\mbox{-}prv}}_{#1}(#2)}
+\newcommand{\ExpFPPubHash}[2]{\mathrm{Exp}^{\mathrm{fp\mbox{-}pub}}_{#1}(#2)}
+\newcommand{\ExpFP}[2]{\mathrm{Exp}^{\mathrm{fp}}_{#1}(#2)}
+
+\newcommand{\QryOracle}{\mathsf{Query}}
+\newcommand{\UpdateOracle}{\mathsf{Update}}
+\newcommand{\HashOracle}{\mathsf{Hash}}
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%% TITLE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \title{On the Security of Hash-Based\\ Approximate Set-Membership Primitives}
 \date{\today}
 \author{Last updated: \today}
@@ -21,24 +36,19 @@
 \maketitle
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%% ABSTRACT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \begin{abstract}
 \centering
 %\input{abstract}
 \end{abstract}
 
 \input{intro}
-\input{syntax}
-\input{security-notions}
+\input{filters}
+\input{mutable-filters}
 %\appendix
 %\input{proofs}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%% BIBLIOGRAPHY %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\bibliographystyle{alpha}
 %\bibliography{main}
 
