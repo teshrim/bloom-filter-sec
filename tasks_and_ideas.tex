@@ -7,14 +7,13 @@
 
 \item  If I recall properly, a Bloom filter leaks the number of elements that it represents, if you know the filter size and the number of hash functions.  Verify this.  Also, what about set-intersection attacks on Bloom filters?
 
-\item Break a Squid server!  I'm thinking about a privacy break here.  One could start by simulating the (very simple) Bloom filter that Squid implements, and eventually stand up an actual Squid proxy.  Perhaps populate the filter with a random sampling of URLs from the Alexa top 1000.  (How large a sample?)  Given access to the filter, we can probably use the same attacks leveraged by Niedermayer et al.\ to infer information about which URLs are cached.  Of course, there's a timing based attack, just pinging the Squid proxy with URLs.   But this is probably harder than it sounds, and I don't know if/how Squid updates its filter on false-positive/cache misses.
-
-\item Fix a Squid server!  Implement a fix that is *fast* and doesn't suffer from deployment headaches at interesting scales.  If the attack is bad enough, and the fix is efficient enough, we might even get this pushed into the Squid codebase.
-
 \item Find measurement info on false positive rates for Squid filters/HTTP proxies in practice.  This must have been done already.
 
-\item Considering the P2P setting, how should we formalize insider attacks?  I'm thinking something like FP and privacy with corruptions.  What about authenticity of published Bloom filters?
+\item Break a Squid server!  I'm thinking about a privacy break here.  One could start by simulating the (very simple) Bloom filter that Squid implements, and eventually stand up an actual Squid proxy.  Perhaps populate the filter with a random sampling of URLs from the Alexa top 1000.  (How large a sample?)  Given access to the filter, we can probably use the same attacks leveraged by Niedermayer et al.\ to infer information about which URLs are cached.  Of course, there's a timing based attack, just pinging the Squid proxy with URLs.   But this is probably harder than it sounds, and I don't know if/how Squid updates its filter on false-positive/cache misses.
 
+\item Fix a Squid server!  Implement a fix that is \emph{fast} and doesn't suffer from deployment headaches at interesting scales.  If the attack is bad enough, and the fix is efficient enough, we might even get this pushed into the Squid codebase.
+
+\item Considering the P2P setting, how should we formalize insider attacks?  I'm thinking something like FP and privacy with corruptions.  What about authenticity of published Bloom filters?
 
 \item Formalize a security goal for Stochastic Fair Blue (or similar TCP stream routing primitives) and prove that a secure, mutable hash-based filter implies secure Stochastic Fair Blue.
 
@@ -24,6 +23,8 @@
 
 \item What about Google's BigTable or HBase?  What is the security threat there?
 
-\item Would a secure Bloom filter (of some kind) give us a secure strike list (whatever secure means), like what was originally proposed in QUIC?
+\item Would a secure Bloom filter (of some kind) give us a secure strike list (whatever secure means), like what was originally proposed in QUIC?  Are Bloom filters used in edge network servers for big providers like Facebook, LinkedIn, Google, etc.?
+
+\item Generally speaking, can we characterize operational settings in a way that surfaces an interesting security/performance trade-off?  For example, the Bloom filters used by Akamai's CDN are on the order of 600-700MB in size and are shared among several machines in a local area.  The Bloom filters used in a simple spam-detection system (do these exist) are likely to be much smaller, maintained locally on a single machine, and much easier to update.  Solutions in one setting are not going to be useful in another....
 
 \end{itemize}
