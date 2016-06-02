@@ -13,7 +13,9 @@
 
 \item Fix a Squid server!  Implement a fix that is \emph{fast} and doesn't suffer from deployment headaches at interesting scales.  If the attack is bad enough, and the fix is efficient enough, we might even get this pushed into the Squid codebase.
 
-\item Speaking of the Niedermayer et al. attacks, these exploit the fact that there are different bloom filters for different record identifiers (i.e. one for last name, one for first name, one for city, etc.).  They propose various way to render their attacks useless, or at least very inefficient.  Can we actually prove something about one or more of the proposed countermeasures?
+\item Speaking of the Niedermayer et al. attacks, these exploit the fact that there are different bloom filters for different record identifiers (i.e. one for last name, one for first name, one for city, etc.).  They propose various way to render their attacks useless, or at least very inefficient.  Can we actually prove something about one or more of the proposed countermeasures?  
+
+\item This raises the more general question of schemes/protocols that use multiple Bloom filters to represent a single set based on distinct features of set elements.  We should dig into this.
 
 \item Considering the P2P setting, how should we formalize insider attacks?  I'm thinking something like FP and privacy with corruptions.  What about authenticity of published Bloom filters?
 
