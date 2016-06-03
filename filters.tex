@@ -28,11 +28,20 @@ On the other hand, we can state a simple correctness condition for these kinds o
 \heading{FP-security of hash-based filters.} \tsnote{NY give it in the private hash setting (sort of); but, intuitively, it should be hard to find false-positives even if you know that MD5 or SHA-x are the hash functions.  Not totally sure how to capture this intuition nicely.} 
 The traditional notion of soundness for a Bloom filter captures the difficulty of finding false-positives when the attacker is non-adaptive.  Following NY, we consider soundness against adaptive adversaries.  But we further generalize to allow for settings in which the attacker may have some a priori knowledge about the contents of~$S$. (The Niedermaier et al.~\cite{xxx} attacks, for example, exploit knowledge about the distribution of German last names.)   In particular, our notions take as input an explicit distribution $\distr{U}{n}$ over $[U]^n$.   
 
-In Figure~\ref{fig:fp-notions} we give three distinct notions, characterized by what access the adversary has to the underlying hash functions used by the filter.  In the top notion, the hash functions are secret.  This is the setting addressed by NY, and it capture applications in which the ``hash functions'' are (say) secretly keyed PRFs, and in which no explicit, external interface to these is surfaced.  
+In Figure~\ref{fig:fp-filter} we give three distinct notions, characterized by what access the adversary has to the underlying hash functions used by the filter.  In the top notion, the hash functions are secret.  This is the setting addressed by NY, and it capture applications in which the ``hash functions'' are (say) secretly keyed PRFs, and in which no explicit, external interface to these is surfaced.  
 %
 The bottom notion considers the case that the full code of the hash functions is known to the attacker.  This is the case, for example, when attacking the Bloom filters used in the Squid proxy~\cite{xxx}.
 %
-The middle notion is a compromise: it makes the hash functions public, but assumes that the adversary only accesses them in a black-box manner.  That is, the adversary does not exploit structural features of the hash functions in its attack.  This notion makes it easy to track the query complexity of an attack.  
+The middle notion is a compromise: it makes the hash functions public, but assumes that the adversary only accesses them in a black-box manner.  That is, the adversary does not exploit structural features of the hash functions in its attack.  This notion makes it easy to track the query complexity of an attack. 
+
+For each experiment, we define an associated advantage notion.  Namely, given an $(n,k,m)$-filter~$B=(\Hash,\Rep,\Qry)$, distribution~$\distr{U}{n}$ and adversary~$A$, we define:
+\begin{align*}
+\AdvFPSecHash{B}{\distr{U}{n},A} &= \Prob{\ExpFPSecHash{B}{\distr{U}{n},A}} \\
+\AdvFPPubHashBB{B}{\distr{U}{n},A} &= \Prob{\ExpFPPubHashBB{B}{\distr{U}{n},A}} \\
+\AdvFPSecHash{B}{\distr{U}{n},A} &= \Prob{\ExpFPPubHash{B}{\distr{U}{n},A}}
+\end{align*}
+The probabilities are over the sampling of the set~$S$ and the hash functions $h_1,h_2,\ldots,h_k$, as well as the coins of the adversary.   In all experiments, we track time-complexity~$t$ of~$A$, as well as the number of set-membership ($\QryOracle$ oracle) queries~$q_{\mathrm{sm}}$ that it makes.   In the second, we also track the number of hash-queries $q_{\mathrm{h}}$ that the adversary makes.
+
 
 \begin{figure}
 \centering
@@ -109,82 +118,80 @@ Ret $h_i(x)$\\
 \end{figure}
 
 
-\if{0}
-\begin{figure}
-\centering
-\fpage{.6}{
-\hpagess{.6}{.35}
-{
-\experimentv{$\ExpFPSecHash{S,B}{A}$}\\
-$ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
-$M \gets \Init^{\HashOracle}(S)$\\
-$x \getsr A^{\QryOracle}(S)$\\
-if $x \not\in S \wedge \Qry^{\HashOracle}(M,x)=1$ then\\
-\nudge Ret 1\\
-Ret 0
-}
-%
-{
-\oracle{$\QryOracle(x)$}\\
-Ret $\Qry^{\HashOracle}(M,x)$\\
+%%%%
+% \if{0}
+% \begin{figure}
+% \centering
+% \fpage{.6}{
+% \hpagess{.6}{.35}
+% {
+% \experimentv{$\ExpFPSecHash{S,B}{A}$}\\
+% $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
+% $M \gets \Init^{\HashOracle}(S)$\\
+% $x \getsr A^{\QryOracle}(S)$\\
+% if $x \not\in S \wedge \Qry^{\HashOracle}(M,x)=1$ then\\
+% \nudge Ret 1\\
+% Ret 0
+% }
+% %
+% {
+% \oracle{$\QryOracle(x)$}\\
+% Ret $\Qry^{\HashOracle}(M,x)$\\
 
-\medskip
-\oracle{$\HashOracle(i,x)$}\\
-Ret $h_i(x)$\\
-}
-}
-%%%%%%%
-\fpage{.6}{
-\hpagess{.6}{.35}
-{
-\experimentv{$\ExpFPPubHashBB{S,B}{A}$}\\
-$ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
-$M \gets \Init^{\HashOracle}(S)$\\
-$x \getsr A^{\QryOracle,\HashOracle}(S)$\\
-if $x \not\in S \wedge \Qry^{\HashOracle}(M,x)=1$ then\\
-\nudge Ret 1\\
-Ret 0
-}
-%
-{
-\oracle{$\QryOracle(x)$}\\
-Ret $\Qry^{\HashOracle}(M,x)$\\
+% \medskip
+% \oracle{$\HashOracle(i,x)$}\\
+% Ret $h_i(x)$\\
+% }
+% }
+% %%%%%%%
+% \fpage{.6}{
+% \hpagess{.6}{.35}
+% {
+% \experimentv{$\ExpFPPubHashBB{S,B}{A}$}\\
+% $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
+% $M \gets \Init^{\HashOracle}(S)$\\
+% $x \getsr A^{\QryOracle,\HashOracle}(S)$\\
+% if $x \not\in S \wedge \Qry^{\HashOracle}(M,x)=1$ then\\
+% \nudge Ret 1\\
+% Ret 0
+% }
+% %
+% {
+% \oracle{$\QryOracle(x)$}\\
+% Ret $\Qry^{\HashOracle}(M,x)$\\
 
-\medskip
-\oracle{$\HashOracle(i,x)$}\\
-Ret $h_i(x)$\\
-}
-}
-%%%%%%%
-\fpage{.6}{
-\hpagess{.6}{.35}
-{
-\experimentv{$\ExpFPPubHash{S,B}{A}$}\\
-$ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
-$M \gets \Init^{\HashOracle}(S)$\\
-$x \getsr A^{\QryOracle}(S,\{h_1,h_2,\ldots,h_k\})$\\
-if $x \not\in S \wedge \Qry^{\HashOracle}(M,x)=1$ then\\
-\nudge Ret 1\\
-Ret 0
-}
-%
-{
-\oracle{$\QryOracle(x)$}\\
-Ret $\Qry^{\HashOracle}(M,x)$\\
+% \medskip
+% \oracle{$\HashOracle(i,x)$}\\
+% Ret $h_i(x)$\\
+% }
+% }
+% %%%%%%%
+% \fpage{.6}{
+% \hpagess{.6}{.35}
+% {
+% \experimentv{$\ExpFPPubHash{S,B}{A}$}\\
+% $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
+% $M \gets \Init^{\HashOracle}(S)$\\
+% $x \getsr A^{\QryOracle}(S,\{h_1,h_2,\ldots,h_k\})$\\
+% if $x \not\in S \wedge \Qry^{\HashOracle}(M,x)=1$ then\\
+% \nudge Ret 1\\
+% Ret 0
+% }
+% %
+% {
+% \oracle{$\QryOracle(x)$}\\
+% Ret $\Qry^{\HashOracle}(M,x)$\\
 
-\medskip
-\oracle{$\HashOracle(i,x)$}\\
-Ret $h_i(x)$\\
-}
-}
-\caption{False-positive security (soundness) for an $(n,k,m)$-filter~$B$ with private hash functions (top), black-box queriable hash functions (middle), and public hash functions (bottom). }
-\label{fig:fp-filter}
-\end{figure}
-\fi
-
-\tsnote{It might be interesting to run some experiments, e.g. set up a bloom filter of URLs or IP/port information, and then open up a network tap and see how many false positives we observe.  I quite like the idea of empirically supported/driven crypto.} 
-
-
+% \medskip
+% \oracle{$\HashOracle(i,x)$}\\
+% Ret $h_i(x)$\\
+% }
+% }
+% \caption{False-positive security (soundness) for an $(n,k,m)$-filter~$B$ with private hash functions (top), black-box queriable hash functions (middle), and public hash functions (bottom). }
+% \label{fig:fp-filter}
+% \end{figure}
+%\fi
+%%%%%
 
 
 
@@ -195,7 +202,8 @@ Ret $h_i(x)$\\
 \fpage{.6}{
 \hpagess{.6}{.35}
 {
-\experimentv{$\ExpPrivSecHash{S,B}{A}$}\\
+\experimentv{$\ExpPrivSecHash{B}{\distr{U}{n}, A}$}\\
+$S \getsr \distr{U}{n}$\\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
 $M \gets \Init^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle}()$\\
@@ -216,7 +224,8 @@ Ret $h_i(x)$\\
 \fpage{.6}{
 \hpagess{.6}{.35}
 {
-\experimentv{$\ExpPrivPubHashBB{S,B}{A}$}\\
+\experimentv{$\ExpPrivPubHashBB{B}{\distr{U}{n}, A}$}\\
+$ S \getsr \distr{U}{n}$\\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
 $M \gets \Init^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle,\HashOracle}()$\\
@@ -237,7 +246,8 @@ Ret $h_i(x)$\\
 \fpage{.6}{
 \hpagess{.6}{.35}
 {
-\experimentv{$\ExpPrivPubHash{S,B}{A}$}\\
+\experimentv{$\ExpPrivPubHash{B}{\distr{U}{n}, A}$}\\
+$ S \getsr \distr{U}{n}$\\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
 $M \gets \Init^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle}(\{h_1,h_2,\ldots,h_k\})$\\
