@@ -2,20 +2,20 @@
 Here we extend the basic Bloom filter syntax to allow for variations on the traditional Bloom filter, e.g. counting Bloom filters~\cite{xxx}, spectral Bloom filters~\cite{xxx}, count-min sketches~\cite{xxx}, stable Bloom filters~\cite{xxx}, etc.   Before giving it, let us briefly describe what is formalized.  Our syntax captures settings in which there is some (potentially empty) initial set~$S$, whose representation~$M$ may undergo updates over time.  Effectively, this allows for expansion of~$S$ to a larger set, or even a multiset, as new elements ``arrive''.    The update algorithm is responsible for altering the current representation.  We allow it to take in a string that encodes inputs needed to carry out the updating.  For example, counting Bloom filters may receive update strings that encode $(x,c)$ where $x \in U$ is the element whose representation should be incremented, and $c \in \mathbb{N}$ is the amount of the increment.  Network applications, such as looking for heavy-hitters across TCP/IP streams seen by a router, may have $x = (\mathrm{IP_{src}},\mathrm{IP_{dst}})$, the source and destintation address of a packet, and~$c$ the number of bytes in the packet payload.  When necessary we will specify what is encoded in the update string, but will assume some implicit and fixed encoding scheme.  Note that our syntax allows for randomized updating.  This accommodates stable Bloom filters, for example, which has a randomized ``forgetting'' feature as part of its update.
 
 \heading{Preliminaries.}
-When~$U$ is a set, we let $\multiset{U}$ denote the set of all finite multisets of~$U$.  We can denote any multiset~$S$ as $\{(x,\ell) \,|\, x \in U, \ell > 0\}$ where each~$x$ appears exactly once, and each~$\ell$ is an integer.  We define the multiplicity of~$x$ as $\mu_S(x) = \ell$.  We write $|S|= \sum_{(x,\ell)\in S}\mu_S(x)$, and let $\multiset{U,n}$ denote the set of multisets~$S$ where $|S|=n$.   The notation $S \uplus \{x\}$ denotes multiset union.
+When~$U$ is a set, we let $\multiset{U}{}$ denote the set of all finite multisets of~$U$.  We can denote any multiset~$S$ as $\{(x,\ell) \,|\, x \in U, \ell > 0\}$ where each~$x$ appears exactly once, and each~$\ell$ is an integer.  We define the multiplicity of~$x$ as $\mu_S(x) = \ell$.  We write $|S|= \sum_{(x,\ell)\in S}\mu_S(x)$, and let $\multiset{U}{n}$ denote the set of multisets~$S$ where $|S|=n$.   The notation $S \uplus \{x\}$ denotes multiset union.
 
 \heading{Syntax. }
 Fix nonempty sets $U,\Sigma$ and integers $k,m_1,m_2,n>0$ with $m_1 \leq m_2$.  Fix a symbol $\bot \not\in U$.  An $(n,k,[m_1,m_2])$-filter (over universe~$U$) is a tuple  $B=(\Hash,\Init,\Qry,\Update, \Test)$.   
 %
 The randomized \emph{hash-sampling} algorithm~$\Hash$ samples a size~$k$ family of functions~$\mathcal{H}=\{h_1,h_2,\ldots,h_k\}$ where each $h_i \in  \mathrm{Func}(U,\{0,1,\ldots,m_2-1\})$.  We write $\mathcal{H} \getsr \Hash$ for this operation. 
 %
-The deterministic \emph{initial-representation} algorithm $\Init\colon \multiset{U,n} \rightarrow \left(\bigcup_{m=m_1}^{m_2}\Sigma^m\right)$ takes a multiset~$S$ of size~$n$ as input, and outputs representation~$M$ of length~$m_1 \leq m \leq m_2$.
+The deterministic \emph{initial-representation} algorithm $\Init\colon \multiset{U}{n} \rightarrow \left(\bigcup_{m=m_1}^{m_2}\Sigma^m\right)$ takes a multiset~$S$ of size~$n$ as input, and outputs representation~$M$ of length~$m_1 \leq m \leq m_2$.
 %
 The determinisitc query algorithm $\Qry\colon \left(\bigcup_{m=m_1}^{m_2}\Sigma^m \right)\times U \rightarrow \bits^*$ takes a representation $M$ and an element $x \in U$ and returns a bitstring.  
 %
 The randomized \emph{update} algorithm $\Update\colon \left(\bigcup_{m=m_1}^{m_2}\Sigma^m \right)\times \bits^* \rightarrow \left(\bigcup_{m=m_1}^{m_2}\Sigma^m \right) \cup \{\bot\}$ takes a representation and an update string, and returns an updated representation or the distinguished symbol~$\bot$.  
 %
-The deterministic \emph{test} algorithm $\Test \colon \multiset{U}\times \left(\bigcup_{m=m_1}^{m_2}\Sigma^m \right)\cup\{\bot\} \times U \rightarrow \bits$ takes a multiset~$S$, a representation~$M$ and an element~$x \in U$ and returns a bit.
+The deterministic \emph{test} algorithm $\Test \colon \multiset{U}{} \times \left(\bigcup_{m=m_1}^{m_2}\Sigma^m \right)\cup\{\bot\} \times U \rightarrow \bits$ takes a multiset~$S$, a representation~$M$ and an element~$x \in U$ and returns a bit.
 %
 %We assume that all $\Init,\Qry,\Update,\Test$ all have blackbox access to the functions $h_1,h_2,\ldots,h_k \in \mathcal{H}$, which we denote by writing~$\mathcal{H}$ as a superscript.   
 
@@ -26,7 +26,8 @@ The deterministic \emph{test} algorithm $\Test \colon \multiset{U}\times \left(\
 \fpage{.6}{
 \hpagess{.6}{.35}
 {
-\experimentv{$\ExpCorrectSecHash{S,B}{A}$}\\
+\experimentv{$\ExpCorrectSecHash{B}{\distr{U}{n}, A}$}\\
+$S \getsr \distr{U}{n}$\\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
 $M \gets \Init^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle,\UpdateOracle}(S)$\\
@@ -42,7 +43,8 @@ Ret $\Qry^{\HashOracle}(M,x)$\\
 \medskip
 \oracle{$\UpdateOracle(\sigma)$}\\
 if $M = \bot$ then Ret $\bot$ \\
-$S \gets S \uplus \{\sigma\}$\\
+$\mathrm{op},\mathrm{val} \gets \sigma$\\
+$S \gets S \uplus \{\mathrm{val}\}$\\
 $M \getsr \Update^{\HashOracle}(M,\sigma)$\\
 
 \medskip
@@ -54,7 +56,8 @@ Ret $h_i(x)$\\
 \fpage{.6}{
 \hpagess{.6}{.35}
 {
-\experimentv{$\ExpCorrectPubHashBB{S,B}{A}$}\\
+\experimentv{$\ExpCorrectPubHashBB{B}{\distr{U}{n} , A}$}\\
+$S \getsr \distr{U}{n}$\\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
 $M \gets \Init^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle,\UpdateOracle,\HashOracle}(S)$\\
@@ -70,7 +73,8 @@ Ret $\Qry^{\HashOracle}(M,x)$\\
 \medskip
 \oracle{$\UpdateOracle(\sigma)$}\\
 if $M = \bot$ then Ret $\bot$ \\
-$S \gets S \uplus \{\sigma\}$\\
+$\mathrm{op},\mathrm{val} \gets \sigma$\\
+$S \gets S \uplus \{\mathrm{val}\}$\\
 $M \getsr \Update^{\HashOracle}(M,\sigma)$\\
 
 \medskip
@@ -82,7 +86,8 @@ Ret $h_i(x)$\\
 \fpage{.6}{
 \hpagess{.6}{.35}
 {
-\experimentv{$\ExpCorrectPubHash{S,B}{A}$}\\
+\experimentv{$\ExpCorrectPubHash{B}{\distr{U}{n} , A}$}\\
+$S \getsr \distr{U}{n}$\\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
 $M \gets \Init^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle,\UpdateOracle}(S,\{h_1,h_2,\ldots,h_k\})$\\
@@ -98,7 +103,8 @@ Ret $\Qry^{\HashOracle}(M,x)$\\
 \medskip
 \oracle{$\UpdateOracle(\sigma)$}\\
 if $M = \bot$ then Ret $\bot$ \\
-$S \gets S \uplus \{\sigma\}$\\
+$\mathrm{op},\mathrm{val} \gets \sigma$\\
+$S \gets S \uplus \{\\mathrm{val}\}$\\
 $M \getsr \Update^{\HashOracle}(M,\sigma)$\\
 
 \medskip
@@ -106,7 +112,7 @@ $M \getsr \Update^{\HashOracle}(M,\sigma)$\\
 Ret $h_i(x)$\\
 }
 }
-\caption{Trying to define correctness for an $(n,k,[m_1,m_2])$-filter~$B$.  \textcolor{cyan}{Revisit once picture for ``plain'' filters settles.}}
+\caption{Trying to define correctness for an $(n,k,[m_1,m_2])$-filter~$B$.  \textcolor{cyan}{Revisit once picture for ``plain'' filters settles.  Also, not exactly right since $\distr{U}{n}$ currently defined to sample from $[U]^n$; here should be multisets.}}
 \label{fig:correctness-mutable}
 \end{figure}
 
