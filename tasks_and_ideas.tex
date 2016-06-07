@@ -6,10 +6,12 @@
 
 \item Show the same thing for the simpler $h_j(x) = f_{K}(\langle j \rangle \concat x) \bmod m$.  This, by the way, does give independent $h_j$ when you replace~$f_K$ by a random function.  (The previous ``double hashing'' construction seems clunky if you're going to assume you have a PRF and secret keys; is this just an example of people in one domain naively using a tool developed for another? )
 
-\item  If I recall properly, a Bloom filter leaks the number of elements that it represents, if you know the filter size and the number of hash functions.  Verify this.  Also, what about set-intersection attacks on Bloom filters?
+\item  If I recall properly, a Bloom filter leaks the number of elements that it represents, if you know the filter size and the number of hash functions.  Verify this.  \tsnote{Approximately true.  If the distribution of the expected number of zero bits is tight around its mean, then you can use the actual number of 0-bits as the expected number, and then deduce the size of the set.}  Also, what about set-intersection attacks on Bloom filters?
 \item This raises the more general question of schemes/protocols that use multiple Bloom filters to represent a single set based on distinct features of set elements.  We should dig into this.
 
 \item Considering the P2P setting, how should we formalize insider attacks?  I'm thinking something like FP and privacy with corruptions.  What about authenticity of published Bloom filters?
+
+\item Formalize ``unlinkability'', i.e. given some initial information about two representations $M_0,M_1$ before an element~$x$ is added, an adversary can't distinguish between $M_0 \cup x$ and $M_1 \cup x$ (abusing notation).  \tsnote{This is somewhat defined in Kerschbaum.}
 
 \item Formalize a security goal for Stochastic Fair Blue (or similar TCP stream routing primitives) and prove that a secure, mutable hash-based filter implies secure Stochastic Fair Blue.
 
