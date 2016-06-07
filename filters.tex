@@ -51,7 +51,7 @@ The probabilities are over the sampling of the set~$S$ and the hash functions $h
 \experimentv{$\ExpFPSecHash{B}{\distr{U}{n},A}$}\\
 $S \getsr \distr{U}{n}$\\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
-$M \gets \Init^{\HashOracle}(S)$\\
+$M \gets \Rep^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle}(S)$\\
 if $x \not\in S \wedge \Qry^{\HashOracle}(M,x)=1$ then\\
 \nudge Ret 1\\
@@ -74,7 +74,7 @@ Ret $h_i(x)$\\
 \experimentv{$\ExpFPPubHashBB{B}{\distr{U}{n}, A}$}\\
 $S \getsr \distr{U}{n}$\\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
-$M \gets \Init^{\HashOracle}(S)$\\
+$M \gets \Rep^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle,\HashOracle}(S)$\\
 if $x \not\in S \wedge \Qry^{\HashOracle}(M,x)=1$ then\\
 \nudge Ret 1\\
@@ -97,7 +97,7 @@ Ret $h_i(x)$\\
 \experimentv{$\ExpFPPubHash{B}{\distr{U}{n}, A}$}\\
 $S \getsr \distr{U}{n}$\\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
-$M \gets \Init^{\HashOracle}(S)$\\
+$M \gets \Rep^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle}(S,\{h_1,h_2,\ldots,h_k\})$\\
 if $x \not\in S \wedge \Qry^{\HashOracle}(M,x)=1$ then\\
 \nudge Ret 1\\
@@ -127,7 +127,7 @@ Ret $h_i(x)$\\
 % {
 % \experimentv{$\ExpFPSecHash{S,B}{A}$}\\
 % $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
-% $M \gets \Init^{\HashOracle}(S)$\\
+% $M \gets \Rep^{\HashOracle}(S)$\\
 % $x \getsr A^{\QryOracle}(S)$\\
 % if $x \not\in S \wedge \Qry^{\HashOracle}(M,x)=1$ then\\
 % \nudge Ret 1\\
@@ -149,7 +149,7 @@ Ret $h_i(x)$\\
 % {
 % \experimentv{$\ExpFPPubHashBB{S,B}{A}$}\\
 % $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
-% $M \gets \Init^{\HashOracle}(S)$\\
+% $M \gets \Rep^{\HashOracle}(S)$\\
 % $x \getsr A^{\QryOracle,\HashOracle}(S)$\\
 % if $x \not\in S \wedge \Qry^{\HashOracle}(M,x)=1$ then\\
 % \nudge Ret 1\\
@@ -171,7 +171,7 @@ Ret $h_i(x)$\\
 % {
 % \experimentv{$\ExpFPPubHash{S,B}{A}$}\\
 % $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
-% $M \gets \Init^{\HashOracle}(S)$\\
+% $M \gets \Rep^{\HashOracle}(S)$\\
 % $x \getsr A^{\QryOracle}(S,\{h_1,h_2,\ldots,h_k\})$\\
 % if $x \not\in S \wedge \Qry^{\HashOracle}(M,x)=1$ then\\
 % \nudge Ret 1\\
@@ -205,7 +205,7 @@ Ret $h_i(x)$\\
 \experimentv{$\ExpPrivSecHash{B}{\distr{U}{n}, A}$}\\
 $S \getsr \distr{U}{n}$\\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
-$M \gets \Init^{\HashOracle}(S)$\\
+$M \gets \Rep^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle}()$\\
 if $x\in S$ then Ret 1\\
 Ret 0
@@ -227,7 +227,7 @@ Ret $h_i(x)$\\
 \experimentv{$\ExpPrivPubHashBB{B}{\distr{U}{n}, A}$}\\
 $ S \getsr \distr{U}{n}$\\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
-$M \gets \Init^{\HashOracle}(S)$\\
+$M \gets \Rep^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle,\HashOracle}()$\\
 if $x\in S$ then Ret 1\\
 Ret 0\\
@@ -249,7 +249,7 @@ Ret $h_i(x)$\\
 \experimentv{$\ExpPrivPubHash{B}{\distr{U}{n}, A}$}\\
 $ S \getsr \distr{U}{n}$\\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
-$M \gets \Init^{\HashOracle}(S)$\\
+$M \gets \Rep^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle}(\{h_1,h_2,\ldots,h_k\})$\\
 if $x\in S$ then Ret 1\\
 Ret 0\\
@@ -265,5 +265,101 @@ Ret $h_i(x)$\\
 }
 }
 \caption{Set-privacy for an $(n,k,m)$-filter~$B$ for private (top), black-box queriable (middle),  and public (bottom) hash functions. \textcolor{cyan}{Revisit when the FP notion settles out.}}
+\label{fig:fp-filter}
+\end{figure}
+
+\heading{Security in multiple-server settings. }
+\begin{figure}
+\centering
+\fpage{.6}{
+\hpagess{.6}{.35}
+{
+\experimentv{$\ExpFPSecHash{B,\ell}{\distr{U}{n}, A}$}\\
+$S_1,S_2,\ldots,S_\ell \getsr \distr{U}{n}$\\
+$ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
+$\mathcal{C} \gets \emptyset$\\
+for $i=1$ to $\ell$\\
+\nudge $M_i \gets \Rep^{\HashOracle}(S_i)$\\
+$(i,x) \getsr A^{\QryOracle,\CorruptOracle}()$\\
+if $i \not\in \mathcal{C} \wedge \Qry^{\HashOracle}(M_i,x)=1$ then \\
+\nudge Ret 1\\
+Ret 0
+}
+%
+{
+\oracle{$\QryOracle(i,x)$}\\
+Ret $\Qry^{\HashOracle}(M_i,x)$\\
+
+\medskip
+\oracle{$\HashOracle(i,x)$}\\
+Ret $h_i(x)$\\
+
+\medskip
+\oracle{$\CorruptOracle(i,x)$}\\
+$\mathcal{C} \gets \mathcal{C} \cup \{i\}$\\
+Ret $S_i,M_i$\\
+}
+}
+%%%%%%%%%%
+\fpage{.6}{
+\hpagess{.6}{.35}
+{
+\experimentv{$\ExpFPPubHashBB{B,\ell}{\distr{U}{n}, A}$}\\
+$S_1,S_2,\ldots,S_\ell \getsr \distr{U}{n}$\\
+$ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
+$\mathcal{C} \gets \emptyset$\\
+for $i=1$ to $\ell$\\
+\nudge $M_i \gets \Rep^{\HashOracle}(S_i)$\\
+$(i,x) \getsr A^{\QryOracle,\HashOracle,\CorruptOracle}()$\\
+if $i \not\in \mathcal{C} \wedge \Qry^{\HashOracle}(M_i,x)=1$ then \\
+\nudge Ret 1\\ 
+Ret 0
+}
+%
+{
+\oracle{$\QryOracle(i,x)$}\\
+Ret $\Qry^{\HashOracle}(M_i,x)$\\
+
+\medskip
+\oracle{$\HashOracle(i,x)$}\\
+Ret $h_i(x)$\\
+
+\medskip
+\oracle{$\CorruptOracle(i,x)$}\\
+$\mathcal{C} \gets \mathcal{C} \cup \{i\}$\\
+Ret $S_i,M_i$\\
+}
+}
+%%%%%%%
+\fpage{.6}{
+\hpagess{.6}{.35}
+{
+\experimentv{$\ExpFPPubHash{B,\ell}{\distr{U}{n}, A}$}\\
+$S_1,S_2,\ldots,S_\ell \getsr \distr{U}{n}$\\
+$ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
+$\mathcal{C} \gets \emptyset$\\
+for $i=1$ to $\ell$\\
+\nudge $M_i \gets \Rep^{\HashOracle}(S_i)$\\
+$(i,x) \getsr A^{\QryOracle,\CorruptOracle}(\{h_1,h_2,\ldots,h_k\})$\\
+if $i \not\in \mathcal{C} \wedge \Qry^{\HashOracle}(M_i,x)=1$ then \\
+\nudge Ret 1\\
+Ret 0
+}
+%
+{
+\oracle{$\QryOracle(i,x)$}\\
+Ret $\Qry^{\HashOracle}(M_i,x)$\\
+
+\medskip
+\oracle{$\HashOracle(i,x)$}\\
+Ret $h_i(x)$\\
+
+\medskip
+\oracle{$\CorruptOracle(i,x)$}\\
+$\mathcal{C} \gets \mathcal{C} \cup \{i\}$\\
+Ret $S_i,M_i$\\
+}
+}
+\caption{False-positive security for an $(n,k,m)$-filter~$B$ in the multiple-server setting.  (Three variations, depending on access to/knowledge of hash functions.) In these notions, the same hash functions are used across multiple servers, and each server has its own, independent set to represent. \textcolor{cyan}{This is a reasonable(?) modeling of the Squid setting.}}
 \label{fig:fp-filter}
 \end{figure}
