@@ -268,7 +268,8 @@ Ret $h_i(x)$\\
 \label{fig:fp-filter}
 \end{figure}
 
-\heading{Security in multiple-server settings. }
+\heading{Security in multiple-server settings. }  In this section, we consider security notions for settings in which there may be multiple servers, each holding a filter representation of a set.  To allow for each server to embed server-specific information into its representation, we abstract the servers as $B_1,B_2,\ldots,B_\ell$ where each $B_i=(\Hash_i,\Rep_i,\Qry_i)$ is an $(n,k,m)$-filter.  \tsnote{Still some kinks to be ironed out though.  The current notions sample fresh hash functions for each server.  But in, say, the Squid setting, the same hash functions are used across all Squid instances.}
+
 \begin{figure}
 \centering
 \fpage{.6}{
@@ -278,9 +279,9 @@ Ret $h_i(x)$\\
 $\mathcal{C} \gets \emptyset$\\
 for $i=1$ to $\ell$\\
 \nudge $S_i \getsr \distr{U}{n}$\\
-\nudge $ \{h^i_1,h^i_2,\ldots,h^i_k\} \getsr \Hash_i$\\
+\nudge $ \mathcal{H}_i \gets \{h^i_1,h^i_2,\ldots,h^i_k\} \getsr \Hash_i$\\
 \nudge $M_i \gets \Rep_i^{\HashOracle}(S_i)$\\
-$(i,x) \getsr A^{\QryOracle,\CorruptOracle}()$\\
+$(i,x) \getsr A^{\QryOracle,\CorruptOracle}(S_1,S_2,\ldots,S_\ell)$\\
 if $i \not\in \mathcal{C} \wedge \Qry_i^{\HashOracle}(M_i,x)=1$ then \\
 \nudge Ret 1\\
 Ret 0
@@ -297,7 +298,7 @@ Ret $h^i_j(x)$\\
 \medskip
 \oracle{$\CorruptOracle(i,x)$}\\
 $\mathcal{C} \gets \mathcal{C} \cup \{i\}$\\
-Ret $S_i,M_i,\{h^i_1,\ldots,h^i_k\}$\\
+Ret $M_i,\mathcal{H}_i$\\
 }
 }
 %%%%%%%%%%
@@ -310,7 +311,7 @@ for $i=1$ to $\ell$\\
 \nudge $S_i \getsr \distr{U}{n}$\\
 \nudge $ \{h^i_1,h^i_2,\ldots,h^i_k\} \getsr \Hash_i$\\
 \nudge $M_i \gets \Rep_i^{\HashOracle}(S_i)$\\
-$(i,x) \getsr A^{\QryOracle,\HashOracle,\CorruptOracle}()$\\
+$(i,x) \getsr A^{\QryOracle,\HashOracle,\CorruptOracle}(S_1,S_2,\ldots,S_\ell)$\\
 if $i \not\in \mathcal{C} \wedge \Qry_i^{\HashOracle}(M_i,x)=1$ then \\
 \nudge Ret 1\\ 
 Ret 0
@@ -327,7 +328,7 @@ Ret $h^i_j(x)$\\
 \medskip
 \oracle{$\CorruptOracle(i,x)$}\\
 $\mathcal{C} \gets \mathcal{C} \cup \{i\}$\\
-Ret $S_i,M_i$\\
+Ret $M_i$\\
 }
 }
 %%%%%%%
@@ -340,7 +341,7 @@ for $i=1$ to $\ell$\\
 \nudge $S_i \getsr \distr{U}{n}$\\
 \nudge $ \mathcal{H}_i \gets \{h^i_1,h^i_2,\ldots,h^i_k\} \getsr \Hash_i$\\
 \nudge $M_i \gets \Rep_i^{\HashOracle}(S_i)$\\
-$(i,x) \getsr A^{\QryOracle,\CorruptOracle}(\mathcal{H}_1,\mathcal{H}_2,\ldots,\mathcal{H}_\ell)$\\
+$(i,x) \getsr A^{\QryOracle,\CorruptOracle}(S_1,S_2,\ldots,S_\ell,\mathcal{H}_1,\mathcal{H}_2,\ldots,\mathcal{H}_\ell)$\\
 if $i \not\in \mathcal{C} \wedge \Qry_i^{\HashOracle}(M_i,x)=1$ then \\
 \nudge Ret 1\\
 Ret 0
@@ -357,9 +358,9 @@ Ret $h^i_j(x)$\\
 \medskip
 \oracle{$\CorruptOracle(i,x)$}\\
 $\mathcal{C} \gets \mathcal{C} \cup \{i\}$\\
-Ret $S_i,M_i$\\
+Ret $M_i$\\
 }
 }
-\caption{False-positive security for an $(n,k,m)$-filter~$B$ in the multiple-server setting.  (Three variations, depending on access to/knowledge of hash functions.) \textcolor{cyan}{Revisit when basic notions settles.}}
+\caption{False-positive security for an $(n,k,m)$-filter~$B$ in the multiple-server setting.  (Three variations, depending on access to/knowledge of hash functions.) \textcolor{cyan}{Not clear which of these notions really makes sense.}}
 \label{fig:fp-filter}
 \end{figure}
