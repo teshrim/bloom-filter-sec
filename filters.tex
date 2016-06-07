@@ -274,44 +274,44 @@ Ret $h_i(x)$\\
 \fpage{.6}{
 \hpagess{.6}{.35}
 {
-\experimentv{$\ExpFPSecHash{B,\ell}{\distr{U}{n}, A}$}\\
-$S_1,S_2,\ldots,S_\ell \getsr \distr{U}{n}$\\
-$ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
+\experimentv{$\ExpFPSecHash{B_1,B_2,\ldots,B_\ell}{\distr{U}{n}, A}$}\\
 $\mathcal{C} \gets \emptyset$\\
 for $i=1$ to $\ell$\\
-\nudge $M_i \gets \Rep^{\HashOracle}(S_i)$\\
+\nudge $S_i \getsr \distr{U}{n}$\\
+\nudge $ \{h^i_1,h^i_2,\ldots,h^i_k\} \getsr \Hash_i$\\
+\nudge $M_i \gets \Rep_i^{\HashOracle}(S_i)$\\
 $(i,x) \getsr A^{\QryOracle,\CorruptOracle}()$\\
-if $i \not\in \mathcal{C} \wedge \Qry^{\HashOracle}(M_i,x)=1$ then \\
+if $i \not\in \mathcal{C} \wedge \Qry_i^{\HashOracle}(M_i,x)=1$ then \\
 \nudge Ret 1\\
 Ret 0
 }
 %
 {
 \oracle{$\QryOracle(i,x)$}\\
-Ret $\Qry^{\HashOracle}(M_i,x)$\\
+Ret $\Qry_i^{\HashOracle}(M_i,x)$\\
 
 \medskip
-\oracle{$\HashOracle(i,x)$}\\
-Ret $h_i(x)$\\
+\oracle{$\HashOracle(i,j,x)$}\\
+Ret $h^i_j(x)$\\
 
 \medskip
 \oracle{$\CorruptOracle(i,x)$}\\
 $\mathcal{C} \gets \mathcal{C} \cup \{i\}$\\
-Ret $S_i,M_i$\\
+Ret $S_i,M_i,\{h^i_1,\ldots,h^i_k\}$\\
 }
 }
 %%%%%%%%%%
 \fpage{.6}{
 \hpagess{.6}{.35}
 {
-\experimentv{$\ExpFPPubHashBB{B,\ell}{\distr{U}{n}, A}$}\\
-$S_1,S_2,\ldots,S_\ell \getsr \distr{U}{n}$\\
-$ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
+\experimentv{$\ExpFPPubHashBB{B_1,B_2,\ldots, B_\ell}{\distr{U}{n}, A}$}\\
 $\mathcal{C} \gets \emptyset$\\
 for $i=1$ to $\ell$\\
-\nudge $M_i \gets \Rep^{\HashOracle}(S_i)$\\
+\nudge $S_i \getsr \distr{U}{n}$\\
+\nudge $ \{h^i_1,h^i_2,\ldots,h^i_k\} \getsr \Hash_i$\\
+\nudge $M_i \gets \Rep_i^{\HashOracle}(S_i)$\\
 $(i,x) \getsr A^{\QryOracle,\HashOracle,\CorruptOracle}()$\\
-if $i \not\in \mathcal{C} \wedge \Qry^{\HashOracle}(M_i,x)=1$ then \\
+if $i \not\in \mathcal{C} \wedge \Qry_i^{\HashOracle}(M_i,x)=1$ then \\
 \nudge Ret 1\\ 
 Ret 0
 }
@@ -321,8 +321,8 @@ Ret 0
 Ret $\Qry^{\HashOracle}(M_i,x)$\\
 
 \medskip
-\oracle{$\HashOracle(i,x)$}\\
-Ret $h_i(x)$\\
+\oracle{$\HashOracle(i,j,x)$}\\
+Ret $h^i_j(x)$\\
 
 \medskip
 \oracle{$\CorruptOracle(i,x)$}\\
@@ -334,14 +334,14 @@ Ret $S_i,M_i$\\
 \fpage{.6}{
 \hpagess{.6}{.35}
 {
-\experimentv{$\ExpFPPubHash{B,\ell}{\distr{U}{n}, A}$}\\
-$S_1,S_2,\ldots,S_\ell \getsr \distr{U}{n}$\\
-$ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
+\experimentv{$\ExpFPPubHash{B_1,B_2,\ldots,B_\ell}{\distr{U}{n}, A}$}\\
 $\mathcal{C} \gets \emptyset$\\
 for $i=1$ to $\ell$\\
-\nudge $M_i \gets \Rep^{\HashOracle}(S_i)$\\
-$(i,x) \getsr A^{\QryOracle,\CorruptOracle}(\{h_1,h_2,\ldots,h_k\})$\\
-if $i \not\in \mathcal{C} \wedge \Qry^{\HashOracle}(M_i,x)=1$ then \\
+\nudge $S_i \getsr \distr{U}{n}$\\
+\nudge $ \mathcal{H}_i \gets \{h^i_1,h^i_2,\ldots,h^i_k\} \getsr \Hash_i$\\
+\nudge $M_i \gets \Rep_i^{\HashOracle}(S_i)$\\
+$(i,x) \getsr A^{\QryOracle,\CorruptOracle}(\mathcal{H}_1,\mathcal{H}_2,\ldots,\mathcal{H}_\ell)$\\
+if $i \not\in \mathcal{C} \wedge \Qry_i^{\HashOracle}(M_i,x)=1$ then \\
 \nudge Ret 1\\
 Ret 0
 }
@@ -351,8 +351,8 @@ Ret 0
 Ret $\Qry^{\HashOracle}(M_i,x)$\\
 
 \medskip
-\oracle{$\HashOracle(i,x)$}\\
-Ret $h_i(x)$\\
+\oracle{$\HashOracle(i,j,x)$}\\
+Ret $h^i_j(x)$\\
 
 \medskip
 \oracle{$\CorruptOracle(i,x)$}\\
@@ -360,6 +360,6 @@ $\mathcal{C} \gets \mathcal{C} \cup \{i\}$\\
 Ret $S_i,M_i$\\
 }
 }
-\caption{False-positive security for an $(n,k,m)$-filter~$B$ in the multiple-server setting.  (Three variations, depending on access to/knowledge of hash functions.) In these notions, the same hash functions are used across multiple servers, and each server has its own, independent set to represent. \textcolor{cyan}{This is a reasonable(?) modeling of the Squid setting.}}
+\caption{False-positive security for an $(n,k,m)$-filter~$B$ in the multiple-server setting.  (Three variations, depending on access to/knowledge of hash functions.) }
 \label{fig:fp-filter}
 \end{figure}
