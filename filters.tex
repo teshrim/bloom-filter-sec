@@ -268,7 +268,7 @@ Ret $h_i(x)$\\
 \label{fig:fp-filter}
 \end{figure}
 
-\heading{Security in multiple-server settings. }  In this section, we consider security notions for settings in which there may be multiple servers, each holding a filter representation of a set.  To allow for each server to embed server-specific information into its representation, we abstract the servers as $B_1,B_2,\ldots,B_\ell$ where each $B_i=(\Hash_i,\Rep_i,\Qry_i)$ is an $(n,k,m)$-filter.  \tsnote{Still some kinks to be ironed out though.  The current notions sample fresh hash functions for each server.  But in, say, the Squid setting, the same hash functions are used across all Squid instances.}
+\heading{Security in multiple-server settings. }  In this section, we consider security notions for settings in which there may be multiple servers, each holding a filter representation of a set.  To allow for each server to embed server-specific information into its representation, we abstract the servers as $B_1,B_2,\ldots,B_\ell$ where each $B_i=(\Hash_i,\Rep_i,\Qry_i)$ is an $(n,k,m)$-filter.  \tsnote{Still some kinks to be ironed out though.  The current notions sample fresh hash functions for each server.  But in (say) the Squid setting, the same hash functions are used across all Squid instances... maybe it suffices, for that setting, to say that the $\Hash_i$ are all the same, and each simply returns a fixed set of~$k$ hash functions (i.e., deterministic).}
 
 \begin{figure}
 \centering
@@ -280,9 +280,9 @@ $\mathcal{C} \gets \emptyset$\\
 for $i=1$ to $\ell$\\
 \nudge $S_i \getsr \distr{U}{n}$\\
 \nudge $ \mathcal{H}_i \gets \{h^i_1,h^i_2,\ldots,h^i_k\} \getsr \Hash_i$\\
-\nudge $M_i \gets \Rep_i^{\HashOracle}(S_i)$\\
-$(i,x) \getsr A^{\QryOracle,\CorruptOracle}(S_1,S_2,\ldots,S_\ell)$\\
-if $i \not\in \mathcal{C} \wedge \Qry_i^{\HashOracle}(M_i,x)=1$ then \\
+\nudge $M_i \gets \Rep_i^{\HashOracle(i,\cdot,\cdot)}(S_i)$\\
+$(i,x) \getsr A^{\QryOracle,\CorruptOracle}(\{S_i\}_{i=1}^{\ell})$\\
+if $i \not\in \mathcal{C} \wedge \Qry_i^{\HashOracle(i,\cdot,\cdot)}(M_i,x)=1$ then \\
 \nudge Ret 1\\
 Ret 0
 }
@@ -310,9 +310,9 @@ $\mathcal{C} \gets \emptyset$\\
 for $i=1$ to $\ell$\\
 \nudge $S_i \getsr \distr{U}{n}$\\
 \nudge $ \{h^i_1,h^i_2,\ldots,h^i_k\} \getsr \Hash_i$\\
-\nudge $M_i \gets \Rep_i^{\HashOracle}(S_i)$\\
-$(i,x) \getsr A^{\QryOracle,\HashOracle,\CorruptOracle}(S_1,S_2,\ldots,S_\ell)$\\
-if $i \not\in \mathcal{C} \wedge \Qry_i^{\HashOracle}(M_i,x)=1$ then \\
+\nudge $M_i \gets \Rep_i^{\HashOracle(i,\cdot,\cdot)}(S_i)$\\
+$(i,x) \getsr A^{\QryOracle,\HashOracle,\CorruptOracle}(\{S_i\}_{i=1}^{\ell})$\\
+if $i \not\in \mathcal{C} \wedge \Qry_i^{\HashOracle(i,\cdot,\cdot)}(M_i,x)=1$ then \\
 \nudge Ret 1\\ 
 Ret 0
 }
@@ -340,9 +340,9 @@ $\mathcal{C} \gets \emptyset$\\
 for $i=1$ to $\ell$\\
 \nudge $S_i \getsr \distr{U}{n}$\\
 \nudge $ \mathcal{H}_i \gets \{h^i_1,h^i_2,\ldots,h^i_k\} \getsr \Hash_i$\\
-\nudge $M_i \gets \Rep_i^{\HashOracle}(S_i)$\\
-$(i,x) \getsr A^{\QryOracle,\CorruptOracle}(S_1,S_2,\ldots,S_\ell,\mathcal{H}_1,\mathcal{H}_2,\ldots,\mathcal{H}_\ell)$\\
-if $i \not\in \mathcal{C} \wedge \Qry_i^{\HashOracle}(M_i,x)=1$ then \\
+\nudge $M_i \gets \Rep_i^{\HashOracle(i,\cdot,\cdot)}(S_i)$\\
+$(i,x) \getsr A^{\QryOracle,\CorruptOracle}(\{S_i\}_{i=1}^{\ell},\{\mathcal{H}_i\}_{i=1}^{\ell})$\\
+if $i \not\in \mathcal{C} \wedge \Qry_i^{\HashOracle(i,\cdot,\cdot)}(M_i,x)=1$ then \\
 \nudge Ret 1\\
 Ret 0
 }
