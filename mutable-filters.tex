@@ -9,7 +9,7 @@ Fix nonempty sets $U,\Sigma$ and integers $k,m_1,m_2,n>0$ with $m_1 \leq m_2$.  
 %
 The randomized \emph{hash-sampling} algorithm~$\Hash$ samples a size~$k$ family of functions~$\mathcal{H}=\{h_1,h_2,\ldots,h_k\}$ where each $h_i \in  \mathrm{Func}(U,\{0,1,\ldots,m_2-1\})$.  We write $\mathcal{H} \getsr \Hash$ for this operation. 
 %
-The deterministic \emph{initial-representation} algorithm $\Init\colon \multiset{U}{n} \rightarrow \left(\bigcup_{m=m_1}^{m_2}\Sigma^m\right)$ takes a multiset~$S$ of size~$n$ as input, and outputs representation~$M$ of length~$m_1 \leq m \leq m_2$.
+The randomized \emph{initial-representation} algorithm $\Init\colon \multiset{U}{n} \rightarrow \left(\bigcup_{m=m_1}^{m_2}\Sigma^m\right)$ takes a multiset~$S$ of size~$n$ as input, and outputs representation~$M$ of length~$m_1 \leq m \leq m_2$.
 %
 The determinisitc query algorithm $\Qry\colon \left(\bigcup_{m=m_1}^{m_2}\Sigma^m \right)\times U \rightarrow \bits^*$ takes a representation $M$ and an element $x \in U$ and returns a bitstring.  
 %
@@ -29,7 +29,7 @@ The deterministic \emph{test} algorithm $\Test \colon \multiset{U}{} \times \lef
 \experimentv{$\ExpCorrectSecHash{B}{\distr{U}{n}, A}$}\\
 $S \getsr \distr{U}{n}$\\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
-$M \gets \Init^{\HashOracle}(S)$\\
+$M \getsr \Init^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle,\UpdateOracle}(S)$\\
 if $\Test^{\HashOracle}(S,M,x) \neq 1$ then Ret 1\\
 Ret 0
@@ -59,7 +59,7 @@ Ret $h_i(x)$\\
 \experimentv{$\ExpCorrectPubHashBB{B}{\distr{U}{n} , A}$}\\
 $S \getsr \distr{U}{n}$\\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
-$M \gets \Init^{\HashOracle}(S)$\\
+$M \getsr \Init^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle,\UpdateOracle,\HashOracle}(S)$\\
 if $\Test^{\HashOracle}(S,M,x) \neq 1$ then Ret 1\\
 Ret 0
@@ -89,7 +89,7 @@ Ret $h_i(x)$\\
 \experimentv{$\ExpCorrectPubHash{B}{\distr{U}{n} , A}$}\\
 $S \getsr \distr{U}{n}$\\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
-$M \gets \Init^{\HashOracle}(S)$\\
+$M \getsr \Init^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle,\UpdateOracle}(S,\{h_1,h_2,\ldots,h_k\})$\\
 if $\Test^{\HashOracle}(S,M,x) \neq 1$ then Ret 1\\
 Ret 0
