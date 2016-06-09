@@ -1,40 +1,44 @@
 \section{Hash-based Filters}
 \heading{Preliminaries.}
-When~$U$ is a set and $n>0$ is an integer, we let $[U]^n$ denote the set of all size-$n$ subsets of~$U$.  
+When~$U$ is a set and $n>0$ is an integer, we let $[U]^n$ denote the set of all size-$n$ subsets of~$U$.
 We write $x \getsr U$ to denote sampling an element from~$U$ and assigning this to~$x$, and we extend this notation to randomized algorithms.
 
 \heading{Syntax.}
-Fix a nonempty sets $U,\Sigma$ and integers $k,m,n>0$.  Fix a symbol $\bot \not\in U$.  An $(n,k,m)$-filter (over universe~$U$) is a tuple  $B=(\Hash,\Rep,\Qry)$.   
+Fix a nonempty sets $U,\Sigma$ and integers $k,m,n>0$.  Fix a symbol $\bot \not\in U$.  An $(n,k,m)$-filter (over universe~$U$) is a tuple  $B=(\Hash,\Rep,\Qry)$.
 %
 The randomized \emph{hash-sampling} algorithm~$\Hash$ samples a size~$k$ family of functions~$\mathcal{H}=\{h_1,h_2,\ldots,h_k\}$ where each $h_i \in  \mathrm{Func}(U,\{0,1,\ldots,m-1\})$.  We write $\mathcal{H} \getsr \Hash$ for this operation.
 %
 The randomized representation algorithm $\Rep\colon [U]^n \rightarrow \Sigma^m$ takes a set~$S$ of~$n$ elements as input, and outputs representation~$M$ of length~$m$.
 %
-The determinisitc query algorithm $\Qry\colon \Sigma^m \times U \rightarrow \bits$ takes a representation $M$ and an element $x \in U$ and returns a bit.  
+The determinisitc query algorithm $\Qry\colon \Sigma^m \times U \rightarrow \bits$ takes a representation $M$ and an element $x \in U$ and returns a bit.
 %
 We assume that both $\Rep$ and $\Qry$ have the following blackbox access to the functions $h_1,h_2,\ldots,h_k \in \mathcal{H}$.
-%which we denote by writing~$\mathcal{H}$ as a superscript.   
+%which we denote by writing~$\mathcal{H}$ as a superscript.
 %Thus, we write $M \gets \Rep^{\mathcal{H}}(S)$ and $b \gets \Qry^{\mathcal{H}}(M,x)$ for the execution of the representation and query algorithms, respectively.
 %
 %We write $M \gets \Rep(S)$ and $b \gets \Qry(M,x)$ for the execution of the representation and query algorithms, respectively.
-For correctness, we demand that for all~$S$ of size~$n$, we have that for all $x \in S, \Prob{\Qry(\Rep(S),x)=1}=1$, where the probability is over the coins of $\Hash$ and $\Rep$.  
+For correctness, we demand that for all~$S$ of size~$n$, we have that for all $x \in S, \Prob{\Qry(\Rep(S),x)=1}=1$, where the probability is over the coins of $\Hash$ and $\Rep$.
 
 
-%\heading{Discusssion.}
+%\heading{Discussion.}
 This syntax captures classical Bloom filters by setting~$\Sigma=\bits$,  and defining $\Rep,\Qry$ in the obvious way. We note that even though $\Rep$ may be randomized, it does not have to be; for the classical Bloom filter, it is deterministic.
 
-Setting $\Sigma=\bits^{\leq L}$ allows one to store a bitstring of length at most~$L$ at each location.  This allows our syntax to capture the cuckoo-hashing construction from NY, as well as the ``garbled Bloom filter'' from Dong, Chen and Wen~\cite{xxx}, among other things. We note that even though this would allow for the storage of counters (say) at each filter location, our restriction that~$\Qry$ returns a bit does not capture functionality typically demanded of Bloom filters that employ counters, e.g., returning a counter value. (One could, however, have $\Qry$ compute an arbitrary, fixed predicate.  For example, ``has~$x$ been seen at least 5 times?''.)  
-Our syntax also does not capture filters that are mutable, that is, whose representation may change over time. 
+Setting $\Sigma=\bits^{\leq L}$ allows one to store a bitstring of length at most~$L$ at each location.  This allows our syntax to capture the cuckoo-hashing construction from NY, as well as the ``garbled Bloom filter'' from Dong, Chen and Wen~\cite{xxx}, among other things. We note that even though this would allow for the storage of counters (say) at each filter location, our restriction that~$\Qry$ returns a bit does not capture functionality typically demanded of Bloom filters that employ counters, e.g., returning a counter value. (One could, however, have $\Qry$ compute an arbitrary, fixed predicate.  For example, ``has~$x$ been seen at least 5 times?''.)
+Our syntax also does not capture filters that are mutable, that is, whose representation may change over time.
 On the other hand, we can state a simple correctness condition for these kinds of filters; this will not be true when we further generalize to capture, properly, counters and mutability.
 
-\heading{FP-security of hash-based filters.} \tsnote{NY give it in the private hash setting (sort of); but, intuitively, it should be hard to find false-positives even if you know that MD5 or SHA-x are the hash functions.  Not totally sure how to capture this intuition nicely.} 
-The traditional notion of soundness for a Bloom filter captures the difficulty of finding false-positives when the attacker is non-adaptive.  Following NY, we consider soundness against adaptive adversaries.  But we further generalize to allow for settings in which the attacker may have some a priori knowledge about the contents of~$S$. (The Niedermaier et al.~\cite{xxx} attacks, for example, exploit knowledge about the distribution of German last names.)   In particular, our notions take as input an explicit distribution $\distr{U}{n}$ over $[U]^n$.   
+\heading{FP-security of hash-based filters.} \tsnote{NY give it in the private hash setting (sort of); but, intuitively, it should be hard to find false-positives even if you know that MD5 or SHA-x are the hash functions.  Not totally sure how to capture this intuition nicely.}
+The traditional notion of soundness for a Bloom filter captures the difficulty of finding false-positives when the attacker is non-adaptive.  Following NY, we consider soundness against adaptive adversaries.  But we further generalize to allow for settings in which the attacker may have some a priori knowledge about the contents of~$S$. (The Niedermaier et al.~\cite{xxx} attacks, for example, exploit knowledge about the distribution of German last names.)   In particular, our notions take as input an explicit distribution $\distr{U}{n}$ over $[U]^n$.
 
-In Figure~\ref{fig:fp-filter} we give three distinct notions, characterized by what access the adversary has to the underlying hash functions used by the filter.  In the top notion, the hash functions are secret.  This is the setting addressed by NY, and it capture applications in which the ``hash functions'' are (say) secretly keyed PRFs, and in which no explicit, external interface to these is surfaced.  
+\jknote{We also want to capture the fact that finding the first false positive should not
+make it any easier to find subsequent false positives. This is not really captured by
+the Naor paper, either.}
+
+In Figure~\ref{fig:fp-filter} we give three distinct notions, characterized by what access the adversary has to the underlying hash functions used by the filter.  In the top notion, the hash functions are secret.  This is the setting addressed by NY, and it capture applications in which the ``hash functions'' are (say) secretly keyed PRFs, and in which no explicit, external interface to these is surfaced.
 %
 The bottom notion considers the case that the full code of the hash functions is known to the attacker.  This is the case, for example, when attacking the Bloom filters used in the Squid proxy~\cite{xxx}.
 %
-The middle notion is a compromise: it makes the hash functions public, but assumes that the adversary only accesses them in a black-box manner.  That is, the adversary does not exploit structural features of the hash functions in its attack.  This notion makes it easy to track the query complexity of an attack. 
+The middle notion is a compromise: it makes the hash functions public, but assumes that the adversary only accesses them in a black-box manner.  That is, the adversary does not exploit structural features of the hash functions in its attack.  This notion makes it easy to track the query complexity of an attack.
 
 For each experiment, we define an associated advantage notion.  Namely, given an $(n,k,m)$-filter~$B=(\Hash,\Rep,\Qry)$, distribution~$\distr{U}{n}$ and adversary~$A$, we define:
 \begin{align*}
@@ -315,7 +319,7 @@ for $i=1$ to $\ell$\\
 \nudge $M_i \getsr \Rep_i^{\HashOracle(i,\cdot,\cdot)}(S_i)$\\
 $(i,x) \getsr A^{\QryOracle,\HashOracle,\CorruptOracle}(\{S_i\}_{i=1}^{\ell})$\\
 if $i \not\in \mathcal{C} \wedge \Qry_i^{\HashOracle(i,\cdot,\cdot)}(M_i,x)=1$ then \\
-\nudge Ret 1\\ 
+\nudge Ret 1\\
 Ret 0
 }
 %
