@@ -17,7 +17,7 @@ We assume that both $\Rep$ and $\Qry$ have the following blackbox access to the 
 %Thus, we write $M \gets \Rep^{\mathcal{H}}(S)$ and $b \gets \Qry^{\mathcal{H}}(M,x)$ for the execution of the representation and query algorithms, respectively.
 %
 %We write $M \gets \Rep(S)$ and $b \gets \Qry(M,x)$ for the execution of the representation and query algorithms, respectively.
-For correctness, we demand that for all~$S$ of size~$n$, we have that for all $x \in S, \Prob{\Qry(\Rep(S),x)=1}=1$, where the probability is over the coins of $\Hash$.  
+For correctness, we demand that for all~$S$ of size~$n$, we have that for all $x \in S, \Prob{\Qry(\Rep(S),x)=1}=1$, where the probability is over the coins of $\Hash$ and $\Rep$.  
 
 
 %\heading{Discusssion.}
@@ -42,7 +42,7 @@ For each experiment, we define an associated advantage notion.  Namely, given an
 \AdvFPPubHashBB{B}{\distr{U}{n},A} &= \Prob{\ExpFPPubHashBB{B}{\distr{U}{n},A}} \\
 \AdvFPSecHash{B}{\distr{U}{n},A} &= \Prob{\ExpFPPubHash{B}{\distr{U}{n},A}}
 \end{align*}
-The probabilities are over the sampling of the set~$S$ and the hash functions $h_1,h_2,\ldots,h_k$, as well as the coins of the adversary.   In all experiments, we track time-complexity~$t$ of~$A$, as well as the number of set-membership ($\QryOracle$ oracle) queries~$q_{\mathrm{sm}}$ that it makes.   In the second, we also track the number of hash-queries $q_{\mathrm{h}}$ that the adversary makes.
+The probabilities are over the coins of the indicated experiment, and he coins of the adversary.   In all experiments, we track time-complexity~$t$ of~$A$, as well as the number of set-membership ($\QryOracle$ oracle) queries~$q_{\mathrm{sm}}$ that it makes.   In the second, we also track the number of hash-queries $q_{\mathrm{h}}$ that the adversary makes.
 
 
 \begin{figure}
@@ -53,7 +53,7 @@ The probabilities are over the sampling of the set~$S$ and the hash functions $h
 \experimentv{$\ExpFPSecHash{B}{\distr{U}{n},A}$}\\
 $S \getsr \distr{U}{n}$\\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
-$M \gets \Rep^{\HashOracle}(S)$\\
+$M \getsr \Rep^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle}(S)$\\
 if $x \not\in S \wedge \Qry^{\HashOracle}(M,x)=1$ then\\
 \nudge Ret 1\\
@@ -76,7 +76,7 @@ Ret $h_i(x)$\\
 \experimentv{$\ExpFPPubHashBB{B}{\distr{U}{n}, A}$}\\
 $S \getsr \distr{U}{n}$\\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
-$M \gets \Rep^{\HashOracle}(S)$\\
+$M \getsr \Rep^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle,\HashOracle}(S)$\\
 if $x \not\in S \wedge \Qry^{\HashOracle}(M,x)=1$ then\\
 \nudge Ret 1\\
@@ -312,7 +312,7 @@ $\mathcal{C} \gets \emptyset$\\
 for $i=1$ to $\ell$\\
 \nudge $S_i \getsr \distr{U}{n}$\\
 \nudge $ \{h^i_1,h^i_2,\ldots,h^i_k\} \getsr \Hash_i$\\
-\nudge $M_i \gets \Rep_i^{\HashOracle(i,\cdot,\cdot)}(S_i)$\\
+\nudge $M_i \getsr \Rep_i^{\HashOracle(i,\cdot,\cdot)}(S_i)$\\
 $(i,x) \getsr A^{\QryOracle,\HashOracle,\CorruptOracle}(\{S_i\}_{i=1}^{\ell})$\\
 if $i \not\in \mathcal{C} \wedge \Qry_i^{\HashOracle(i,\cdot,\cdot)}(M_i,x)=1$ then \\
 \nudge Ret 1\\ 
@@ -342,7 +342,7 @@ $\mathcal{C} \gets \emptyset$\\
 for $i=1$ to $\ell$\\
 \nudge $S_i \getsr \distr{U}{n}$\\
 \nudge $ \mathcal{H}_i \gets \{h^i_1,h^i_2,\ldots,h^i_k\} \getsr \Hash_i$\\
-\nudge $M_i \gets \Rep_i^{\HashOracle(i,\cdot,\cdot)}(S_i)$\\
+\nudge $M_i \getsr \Rep_i^{\HashOracle(i,\cdot,\cdot)}(S_i)$\\
 $(i,x) \getsr A^{\QryOracle,\CorruptOracle}(\{S_i\}_{i=1}^{\ell},\{\mathcal{H}_i\}_{i=1}^{\ell})$\\
 if $i \not\in \mathcal{C} \wedge \Qry_i^{\HashOracle(i,\cdot,\cdot)}(M_i,x)=1$ then \\
 \nudge Ret 1\\
