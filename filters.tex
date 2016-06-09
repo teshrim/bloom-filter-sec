@@ -207,7 +207,7 @@ Ret $h_i(x)$\\
 \experimentv{$\ExpPrivSecHash{B}{\distr{U}{n}, A}$}\\
 $S \getsr \distr{U}{n}$\\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
-$M \gets \Rep^{\HashOracle}(S)$\\
+$M \getsr \Rep^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle}()$\\
 if $x\in S$ then Ret 1\\
 Ret 0
@@ -229,7 +229,7 @@ Ret $h_i(x)$\\
 \experimentv{$\ExpPrivPubHashBB{B}{\distr{U}{n}, A}$}\\
 $ S \getsr \distr{U}{n}$\\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
-$M \gets \Rep^{\HashOracle}(S)$\\
+$M \getsr \Rep^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle,\HashOracle}()$\\
 if $x\in S$ then Ret 1\\
 Ret 0\\
@@ -251,7 +251,7 @@ Ret $h_i(x)$\\
 \experimentv{$\ExpPrivPubHash{B}{\distr{U}{n}, A}$}\\
 $ S \getsr \distr{U}{n}$\\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
-$M \gets \Rep^{\HashOracle}(S)$\\
+$M \getsr \Rep^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle}(\{h_1,h_2,\ldots,h_k\})$\\
 if $x\in S$ then Ret 1\\
 Ret 0\\
