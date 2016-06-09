@@ -8,7 +8,7 @@ Fix a nonempty sets $U,\Sigma$ and integers $k,m,n>0$.  Fix a symbol $\bot \not\
 %
 The randomized \emph{hash-sampling} algorithm~$\Hash$ samples a size~$k$ family of functions~$\mathcal{H}=\{h_1,h_2,\ldots,h_k\}$ where each $h_i \in  \mathrm{Func}(U,\{0,1,\ldots,m-1\})$.  We write $\mathcal{H} \getsr \Hash$ for this operation.
 %
-The deterministic representation algorithm $\Rep\colon [U]^n \rightarrow \Sigma^m$ takes a set~$S$ of~$n$ elements as input, and outputs representation~$M$ of length~$m$.
+The randomized representation algorithm $\Rep\colon [U]^n \rightarrow \Sigma^m$ takes a set~$S$ of~$n$ elements as input, and outputs representation~$M$ of length~$m$.
 %
 The determinisitc query algorithm $\Qry\colon \Sigma^m \times U \rightarrow \bits$ takes a representation $M$ and an element $x \in U$ and returns a bit.  
 %
@@ -21,7 +21,9 @@ For correctness, we demand that for all~$S$ of size~$n$, we have that for all $x
 
 
 %\heading{Discusssion.}
-This syntax captures classical Bloom filters by setting~$\Sigma=\bits$,  and defining $\Rep,\Qry$ in the obvious way.  Setting $\Sigma=\bits^{\leq L}$ allows one to store a bitstring of length at most~$L$ at each location. \tsnote{Would let us capture a construction from NY, among other things.}  We note that even though this would allow for the storage of counters (say) at each filter location, our restriction that~$\Qry$ returns a bit does not capture functionality typically demanded of Bloom filters that employ counters, e.g., returning a counter value. (One could, however, have $\Qry$ compute an arbitrary, fixed predicate.  For example, ``has~$x$ been seen at least 5 times?''.)  
+This syntax captures classical Bloom filters by setting~$\Sigma=\bits$,  and defining $\Rep,\Qry$ in the obvious way. We note that even though $\Rep$ may be randomized, it does not have to be; for the classical Bloom filter, it is deterministic.
+
+Setting $\Sigma=\bits^{\leq L}$ allows one to store a bitstring of length at most~$L$ at each location.  This allows our syntax to capture the cuckoo-hashing construction from NY, as well as the ``garbled Bloom filter'' from Dong, Chen and Wen, among other things. We note that even though this would allow for the storage of counters (say) at each filter location, our restriction that~$\Qry$ returns a bit does not capture functionality typically demanded of Bloom filters that employ counters, e.g., returning a counter value. (One could, however, have $\Qry$ compute an arbitrary, fixed predicate.  For example, ``has~$x$ been seen at least 5 times?''.)  
 Our syntax also does not capture filters that are mutable, that is, whose representation may change over time. 
 On the other hand, we can state a simple correctness condition for these kinds of filters; this will not be true when we further generalize to capture, properly, counters and mutability.
 
@@ -280,7 +282,7 @@ $\mathcal{C} \gets \emptyset$\\
 for $i=1$ to $\ell$\\
 \nudge $S_i \getsr \distr{U}{n}$\\
 \nudge $ \mathcal{H}_i \gets \{h^i_1,h^i_2,\ldots,h^i_k\} \getsr \Hash_i$\\
-\nudge $M_i \gets \Rep_i^{\HashOracle(i,\cdot,\cdot)}(S_i)$\\
+\nudge $M_i \getsr \Rep_i^{\HashOracle(i,\cdot,\cdot)}(S_i)$\\
 $(i,x) \getsr A^{\QryOracle,\CorruptOracle}(\{S_i\}_{i=1}^{\ell})$\\
 if $i \not\in \mathcal{C} \wedge \Qry_i^{\HashOracle(i,\cdot,\cdot)}(M_i,x)=1$ then \\
 \nudge Ret 1\\
