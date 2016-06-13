@@ -220,11 +220,14 @@
 \def\getsone{\stackrel{{\scriptscriptstyle1}}{\leftarrow}}
 \def\getstwo{\stackrel{{\scriptscriptstyle2}}{\leftarrow}}
 
-\newcommand{\getsr}{{\:{\leftarrow{\hspace*{-3pt}\raisebox{.75pt}{$\scriptscriptstyle\$$}}}\:}}
+%\newcommand{\getsr}{{\:{\leftarrow{\hspace*{-3pt}\raisebox{.75pt}{$\scriptscriptstyle\$$}}}\:}}
+\newcommand{\getsr}{{\:\stackrel{{\scriptscriptstyle \hspace{0.2em}\$}} {\leftarrow}\:}}
+\newcommand{\sendsr}{{\:\stackrel{{\scriptscriptstyle \hspace{0.2em}\$}} {\rightarrow}\:}}
+\newcommand{\sends}{{\:\stackrel{{\scriptscriptstyle \hspace{0.2em}}} {\rightarrow}\:}}
 %\newcommand{\getsr}{{\:{\raisebox{3pt}{\veryshortleftarrow{15}}{\raisebox{1pt}{$\scriptscriptstyle\$$}}}\:}}
 %\newcommand{\getsr}{{\:{\xleftarrow{\scriptscriptstyle\$}}\:}}
 %\newcommand{\getsr}{{\:\stackrel{\raisebox{-0.5em}{$\scriptscriptstyle \hspace{0.2em}\$$}}{\leftarrow}\:}}
-\newcommand{\sendsr}{{\:\stackrel{\scriptscriptstyle \hspace{0.2em}\$}{\rightarrow}\:}}
+%\newcommand{\sendsr}{{\:\stackrel{\scriptscriptstyle \hspace{0.2em}\$}{\rightarrow}\:}}
 \renewcommand{\choose}[2]{{{#1}\atopwithdelims(){#2}}}
 \newcommand{\abs}[1]{{\displaystyle \left| {#1} \right| }}
 \newcommand{\E}{{\mbox{\bf E}}}
@@ -535,6 +538,7 @@
  \newcommand{\AdvIKCCA}[2]{\Adv^{\mathrm{ik\dash cca}}_{#1}(#2)}
  \newcommand{\AdvRA}[2]{\Adv^{\mathrm{ra}}_{#1}(#2)}
  \newcommand{\AdvIND}[2]{\Adv^{\mathrm{ind}}_{#1}(#2)}
+ \newcommand{\ExpPRF}[2]{\Adv^{\mathrm{prf}}_{#1}(#2)}
  \newcommand{\AdvPRF}[2]{\Adv^{\mathrm{prf}}_{#1}(#2)}
  \newcommand{\AdvCD}[2]{\Adv^{\mathrm{cd}}_{#1}(#2)}
  \newcommand{\AdvINDCCA}[2]{\Adv^{\mathrm{ind\dash cca}}_{#1}(#2)}
@@ -880,6 +884,7 @@
 \newcommand{\authfnote}[2]{\footnote{\textbf{#1 says:} #2}}
 \newcommand{\jknote}[1]{\authcnote{JK}{#1}{cyan}}
 \newcommand{\tsnote}[1]{\authcnote{TS}{#1}{magenta}}
+\newcommand{\acnote}[1]{\authcnote{AC}{#1}{green}}
 
 \newcommand{\semi}{\:;\:}
 \newcommand{\bitset}{B}

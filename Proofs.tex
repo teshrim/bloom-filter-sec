@@ -1,0 +1,72 @@
+\section{Theorems and proofs}
+\begin{theorem}
+Fix $n,k, m > 0$ and define a hash-based filter as in section \ref{sec:hbf}, except the hash functions are defined by $h_j(x) = \left( f_{K0}(x) + j\cdot g_{K1}(x)\right) \bmod m$. Let $Func(m,m)$ be the set of all functions $\rho \colon \calK \times \bits^m \sends \bits^m$. Let $B_1, B_2$ be 2 adversaries with keys $K_1, K_2 \getsr \calK$ attacking the PRF advantage of $F \colon \calK \times \bits^m \sends \bits^m$ and $A$ be another adversary attacking the false positive game of hash-based filters, then 
+\begin{equation}
+\AdvFPSecHash{B}{\distr{U}{n},A}  = 0.5\Big[\AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}\Big] + \varepsilon, \nudge where \nudge \varepsilon = (1-(1-e^{-kn/m})^k)
+\end{equation}
+
+\end{theorem}
+
+\begin{proof}
+Let adversary $B$ simulate the fp-priv game of $A$ as shown in Fig. \ref{fig:AdvB}, where the hash functions are defined as $h_j(x) = \left( f_{K0}(x) + j\cdot g_{K1}(x)\right) \bmod m$. Based on the variable $c(c\getsr \bits)$,  $B$ either acts as adversary $B_1$ or $B_2$. Fig. \ref{fig:PRFexp} shows the PRF experiment of $B$. When $B$ makes an oracle query on behalf of $A$ and  $b=0$, it exactly simulates $A's$ experiment as the hash functions are uniformly random. When $b=1$, it exactly simulates the double hashing scheme proposed by Kirsh and Mitzenmacher. The fp-error($\varepsilon$)  for the double hashing scheme for large $n$ is $\varepsilon = (1-e^{-kn/m})^k$ \cite{less hashing paper}.
+
+\begin{figure}[t]
+\centering
+\fpage{.5}
+{
+\experimentv{Adversary $B^{\calO}$:}\\
+$c \getsr \bits$\\
+$K \getsr \calK$\\
+$S \getsr \distr{U}{n}$\\
+if $c=0$\\
+$ \nudge h_j = \calO(\cdot) + jF_K(\cdot), \nudge \mathrm{where} \nudge j \in [1,k]$\\
+else\\
+$\nudge  h_j = F_K(\cdot) + j\calO(\cdot), \nudge \mathrm{where} \nudge j \in [1,k]$\\
+$M \getsr \Rep^{h_1, \cdots, h_k}(S)$\\
+Run $A$\\
+When $A$ asks $\QryOracle(x)$: \\
+$\nudge$ Ret $\QryOracle^{h_1, \cdots, h_k}(M, x)$ to $A$\\
+When $A$ halts with output $x^{'}$: \\
+if $x^{'} \not\in S \wedge \Qry^{h_1, \cdots, h_k}(M,x^{'})=1$ then\\
+$\nudge$ Ret 1\\
+Ret 0
+}
+\caption{Adversary $B$ simulating $A^{'}s$ fp-prv game}\label{fig:AdvB}
+\end{figure}
+
+\begin{figure}[h]
+\center
+\fpage{.45}{
+\hpagess{.4}{.5}
+{
+\experimentv{$\ExpPRF{F}{B}$:}\\
+$b \getsr \bits$\\
+$\rho \getsr Func(m,m)$\\
+$K_1 \getsr \calK$\\
+$b^{'} \getsr B^{\calO(\cdot,\cdot)}$\\
+Ret $[b=b']$
+}
+{
+\oracle{$\calO(x)$}\\
+$Y \gets \calF_{K_1}(M)$\\
+if $b=0$\\
+\nudge$Y \getsr \rho(x)$\\
+Ret $Y$
+}
+}
+\caption{PRF experiment}\label{fig:PRFexp}
+\end{figure}
+\acnote{Equations to be aligned}
+\begin{multline*}
+\Prob{\ExpPRF{F}{B} = 1} =   .5\Prob{\ExpPRF{F}{B} = 1 | b =0} + .5\Prob{\ExpPRF{F}{B} = 1 | b = 1}\\
+.5\Prob{\ExpPRF{F}{B} = 1|c=0} + .5\Prob{\ExpPRF{F}{B} = 1|c=1}  = .5\Prob{\ExpFPSecHash{B}{\distr{U}{n},A}=1} + .5(1-e^{-kn/m})^k  \\
+.5\Prob{\ExpPRF{F}{B} = 1|c=0} + .5\Prob{\ExpPRF{F}{B} = 1|c=1}  = .5\Prob{\ExpFPSecHash{B}{\distr{U}{n},A}=1} + .5(1-e^{-kn/m})^k \\
+\Prob{\ExpPRF{F}{B} = 1|c=0} + \Prob{\ExpPRF{F}{B} = 1|c=1} = \Prob{\ExpFPSecHash{B}{\distr{U}{n},A}=1} + (1-e^{-kn/m})^k \\
+ 2\Prob{\ExpPRF{F}{B_1} = 1} - 1 + 2\Prob{\ExpPRF{F}{B_2} = 1} - 1 = 2\AdvFPSecHash{B}{\distr{U}{n},A} + 2(1-e^{-kn/m})^k -2\\
+\AdvPRF{F}{B_1} + \AdvPRF{F}{B_2} = 2\AdvFPSecHash{B}{\distr{U}{n},A} + 2(1-e^{-kn/m})^k -2\\
+ \AdvFPSecHash{B}{\distr{U}{n},A} = 0.5(\AdvPRF{F}{B_1} + \AdvPRF{F}{B_2})  + \varepsilon, \nudge \mathrm{where} \nudge \varepsilon = 1-(1-e^{-kn/m})^k
+\end{multline*}
+
+\end{proof}
+
+

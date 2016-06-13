@@ -1,4 +1,4 @@
-\section{Hash-based Filters}
+\section{Hash-based Filters}\label{sec:hbf}
 \heading{Preliminaries.}
 When~$U$ is a set and $n>0$ is an integer, we let $[U]^n$ denote the set of all size-$n$ subsets of~$U$.
 We write $x \getsr U$ to denote sampling an element from~$U$ and assigning this to~$x$, and we extend this notation to randomized algorithms.
@@ -57,16 +57,16 @@ The probabilities are over the coins of the indicated experiment, and he coins o
 \experimentv{$\ExpFPSecHash{B}{\distr{U}{n},A}$}\\
 $S \getsr \distr{U}{n}$\\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
-$M \getsr \Rep^{\HashOracle}(S)$\\
-$x \getsr A^{\QryOracle}(S)$\\
-if $x \not\in S \wedge \Qry^{\HashOracle}(M,x)=1$ then\\
+$M \getsr \Rep^{\HashOracle(\cdot, \cdot)}(S)$\\
+$x \getsr A^{\QryOracle(\cdot)}(S)$\\
+if $x \not\in S \wedge \Qry^{\HashOracle(\cdot, \cdot)}(M,x)=1$ then\\
 \nudge Ret 1\\
 Ret 0
 }
 %
 {
 \oracle{$\QryOracle(x)$}\\
-Ret $\Qry^{\HashOracle}(M,x)$\\
+Ret $\Qry^{\HashOracle(\cdot, \cdot)}(M,x)$\\
 
 \medskip
 \oracle{$\HashOracle(i,x)$}\\
@@ -80,16 +80,16 @@ Ret $h_i(x)$\\
 \experimentv{$\ExpFPPubHashBB{B}{\distr{U}{n}, A}$}\\
 $S \getsr \distr{U}{n}$\\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
-$M \getsr \Rep^{\HashOracle}(S)$\\
-$x \getsr A^{\QryOracle,\HashOracle}(S)$\\
-if $x \not\in S \wedge \Qry^{\HashOracle}(M,x)=1$ then\\
+$M \getsr \Rep^{\HashOracle(\cdot, \cdot)}(S)$\\
+$x \getsr A^{\QryOracle(\cdot),\HashOracle(\cdot, \cdot)}(S)$\\
+if $x \not\in S \wedge \Qry^{\HashOracle(\cdot, \cdot)}(M,x)=1$ then\\
 \nudge Ret 1\\
 Ret 0
 }
 %
 {
 \oracle{$\QryOracle(x)$}\\
-Ret $\Qry^{\HashOracle}(M,x)$\\
+Ret $\Qry^{\HashOracle(\cdot, \cdot)}(M,x)$\\
 
 \medskip
 \oracle{$\HashOracle(i,x)$}\\
@@ -103,16 +103,16 @@ Ret $h_i(x)$\\
 \experimentv{$\ExpFPPubHash{B}{\distr{U}{n}, A}$}\\
 $S \getsr \distr{U}{n}$\\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
-$M \gets \Rep^{\HashOracle}(S)$\\
-$x \getsr A^{\QryOracle}(S,\{h_1,h_2,\ldots,h_k\})$\\
-if $x \not\in S \wedge \Qry^{\HashOracle}(M,x)=1$ then\\
+$M \gets \Rep^{\HashOracle(\cdot, \cdot)}(S)$\\
+$x \getsr A^{\QryOracle(\cdot)}(S,\{h_1,h_2,\ldots,h_k\})$\\
+if $x \not\in S \wedge \Qry^{\HashOracle(\cdot, \cdot)}(M,x)=1$ then\\
 \nudge Ret 1\\
 Ret 0
 }
 %
 {
 \oracle{$\QryOracle(x)$}\\
-Ret $\Qry^{\HashOracle}(M,x)$\\
+Ret $\Qry^{\HashOracle(\cdot, \cdot)}(M,x)$\\
 
 \medskip
 \oracle{$\HashOracle(i,x)$}\\
@@ -211,15 +211,15 @@ Ret $h_i(x)$\\
 \experimentv{$\ExpPrivSecHash{B}{\distr{U}{n}, A}$}\\
 $S \getsr \distr{U}{n}$\\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
-$M \getsr \Rep^{\HashOracle}(S)$\\
-$x \getsr A^{\QryOracle}()$\\
+$M \getsr \Rep^{\HashOracle(\cdot, \cdot)}(S)$\\
+$x \getsr A^{\QryOracle(\cdot)}()$\\
 if $x\in S$ then Ret 1\\
 Ret 0
 }
 %
 {
 \oracle{$\QryOracle(x)$}\\
-Ret $\Qry^{\HashOracle}(M,x)$\\
+Ret $\Qry^{\HashOracle(\cdot, \cdot)}(M,x)$\\
 
 \medskip
 \oracle{$\HashOracle(i,x)$}\\
@@ -233,15 +233,15 @@ Ret $h_i(x)$\\
 \experimentv{$\ExpPrivPubHashBB{B}{\distr{U}{n}, A}$}\\
 $ S \getsr \distr{U}{n}$\\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
-$M \getsr \Rep^{\HashOracle}(S)$\\
-$x \getsr A^{\QryOracle,\HashOracle}()$\\
+$M \getsr \Rep^{\HashOracle(\cdot, \cdot)}(S)$\\
+$x \getsr A^{\QryOracle(\cdot),\HashOracle(\cdot, \cdot)}()$\\
 if $x\in S$ then Ret 1\\
 Ret 0\\
 }
 %
 {
 \oracle{$\QryOracle(x)$}\\
-Ret $\Qry^{\HashOracle}(M,x)$\\
+Ret $\Qry^{\HashOracle(\cdot, \cdot)}(M,x)$\\
 
 \medskip
 \oracle{$\HashOracle(i,x)$}\\
@@ -255,15 +255,15 @@ Ret $h_i(x)$\\
 \experimentv{$\ExpPrivPubHash{B}{\distr{U}{n}, A}$}\\
 $ S \getsr \distr{U}{n}$\\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
-$M \getsr \Rep^{\HashOracle}(S)$\\
-$x \getsr A^{\QryOracle}(\{h_1,h_2,\ldots,h_k\})$\\
+$M \getsr \Rep^{\HashOracle(\cdot, \cdot)}(S)$\\
+$x \getsr A^{\QryOracle(\cdot)}(\{h_1,h_2,\ldots,h_k\})$\\
 if $x\in S$ then Ret 1\\
 Ret 0\\
 }
 %
 {
 \oracle{$\QryOracle(x)$}\\
-Ret $\Qry^{\HashOracle}(M,x)$\\
+Ret $\Qry^{\HashOracle(\cdot, \cdot)}(M,x)$\\
 
 \medskip
 \oracle{$\HashOracle(i,x)$}\\
