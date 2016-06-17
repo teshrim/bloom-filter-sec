@@ -8,7 +8,8 @@
 %\documentclass{acm_proc_article-sp}
 
 \usepackage[letterpaper,hmargin=0.9in,vmargin=1in]{geometry}
-\usepackage{amssymb,amsmath,latexsym,url,amsfonts,xspace}
+\usepackage{amssymb,latexsym,url,amsfonts,xspace}
+\usepackage[fleqn]{amsmath}
 %\usepackage[dvipdf]{graphicx}
 \usepackage[usenames]{color}
 
@@ -538,7 +539,7 @@
  \newcommand{\AdvIKCCA}[2]{\Adv^{\mathrm{ik\dash cca}}_{#1}(#2)}
  \newcommand{\AdvRA}[2]{\Adv^{\mathrm{ra}}_{#1}(#2)}
  \newcommand{\AdvIND}[2]{\Adv^{\mathrm{ind}}_{#1}(#2)}
- \newcommand{\ExpPRF}[2]{\Adv^{\mathrm{prf}}_{#1}(#2)}
+ \newcommand{\ExpPRF}[2]{\Exp^{\mathrm{prf}}_{#1}(#2)}
  \newcommand{\AdvPRF}[2]{\Adv^{\mathrm{prf}}_{#1}(#2)}
  \newcommand{\AdvCD}[2]{\Adv^{\mathrm{cd}}_{#1}(#2)}
  \newcommand{\AdvINDCCA}[2]{\Adv^{\mathrm{ind\dash cca}}_{#1}(#2)}
@@ -834,13 +835,7 @@
 \newcommand{\fpage}[2]{\framebox{\begin{minipage}{#1\textwidth} #2 \end{minipage}}}
 
 \newcommand{\hfpages}[3]{\hfpagess{#1}{#1}{#2}{#3}}
-\newcommand{\hfpagess}[4]{
-        \begin{tabular}{c@{\hspace*{.5em}}c}
-        \framebox{\begin{minipage}[t]{#1\textwidth} #3 \end{minipage}}
-        &
-        \framebox{\begin{minipage}[t]{#2\textwidth} #4 \end{minipage}}
-        \end{tabular}
-    }
+
 \newcommand{\hfpagesss}[6]{
         \begin{tabular}{c@{\hspace*{.5em}}c@{\hspace*{.5em}}c}
         \framebox{\begin{minipage}[t]{#1\textwidth} #4 \end{minipage}}
@@ -856,7 +851,11 @@
 \newcommand{\hpagesl}[3]{\begin{tabular}{c|c}\begin{minipage}{#1\textwidth} #2 \end{minipage} & \begin{minipage}{#1\textwidth} #3 \end{minipage}\end{tabular}}
 \newcommand{\hpagessl}[4]{\begin{tabular}{c|c}\begin{minipage}[t]{#1\textwidth} #3 \end{minipage} & \begin{minipage}[t]{#2\textwidth} #4 \end{minipage}\end{tabular}}
 \newcommand{\hpages}[3]{\begin{tabular}{cc}\begin{minipage}[t]{#1\textwidth} #2 \end{minipage} & \begin{minipage}[t]{#1\textwidth} #3 \end{minipage}\end{tabular}}
-\newcommand{\hpagess}[4]{\begin{tabular}{cc}\begin{minipage}[t]{#1\textwidth} #3 \end{minipage} & \begin{minipage}[t]{#2\textwidth} #4 \end{minipage}\end{tabular}}
+\newcommand{\hpagess}[4]{\begin{tabular}{cc}\begin{minipage}[t]{#1\textwidth}#3\end{minipage} & \begin{minipage}[t]{#2\textwidth}#4\end{minipage}\end{tabular}}
+\newcommand{\hpagessd}[6]{\begin{tabular}{c|c}\begin{minipage}[t]{#1\textwidth}#3\end{minipage} & \begin{minipage}[t]{#1\textwidth}#4\end{minipage}\\&\\
+\hline
+\begin{minipage}[t]{#1\textwidth}#5\end{minipage} & \begin{minipage}[t]{#1\textwidth}#6\end{minipage}
+\end{tabular}}
 \newcommand{\hpagesss}[6]{
     \begin{tabular}{ccc}
     \begin{minipage}[t]{#1\textwidth} #4 \end{minipage} &
@@ -877,7 +876,13 @@
     \begin{minipage}[t]{#2\textwidth} #5 \end{minipage} &
     \begin{minipage}[t]{#3\textwidth} #6 \end{minipage}
     \end{tabular}}
-
+\newcommand{\hfpagess}[4]{
+        \begin{tabular}{c@{\hspace*{.5em}}c}
+        \framebox{\begin{minipage}[t]{#1\textwidth} #3 \end{minipage}}
+        &
+        \framebox{\begin{minipage}[t]{#2\textwidth} #4 \end{minipage}}
+        \end{tabular}
+    }
 
 \newcommand{\authnote}[2]{\textcolor{cyan}{ [{\textbf{#1 says:} #2]}} }
 \newcommand{\authcnote}[3]{\textcolor{#3}{ [{\textbf{#1 says:} #2]}} }
