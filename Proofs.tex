@@ -1,6 +1,7 @@
 \section{Proofs}
-\begin{theorem}
+\begin{theorem}\label{thm}
 Fix $n,k, m > 0$ and define a hash-based filter as in section \ref{sec:hbf}, except the hash functions are defined by $h_j(x) = \left( f_{K0}(x) + j\cdot g_{K1}(x)\right) \bmod m$. Let $Func(m,m)$ be the set of all functions $\rho \colon \calK \times \bits^m \sends \bits^m$. Let $B_1, B_2$ be 2 adversaries with keys $K_1, K_2 \getsr \calK$ attacking the PRF advantage of $F \colon \calK \times \bits^m \sends \bits^m$ and $A$ be another adversary attacking the false positive game of hash-based filters, then 
+
 \begin{equation}
 \AdvFPSecHash{B}{\distr{U}{n},A}  = 0.5\Big[\AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}\Big] + 1-\epsilon, \nudge where \nudge \epsilon = (1-e^{-kn/m})^k
 \end{equation}
@@ -72,21 +73,21 @@ Ret $\Qry^{h_1, \cdots, h_k}(M,x)$
 \caption{Game playing argument}\label{fig:Game}
 \end{figure}
 
-\begin{eqnarray*}
-\Prob{\game{3}(A)=1} &=&\frac{1}{4}\Prob{\game{3}(A)=1|b_1=0, b_2=0} + \frac{1}{4}\Prob{\game{3}(A)=1|b_1=0, b_2=1}\\
-& + & \frac{1}{4}\Prob{\game{3}(A)=1|b_1=1, b_2=0}+ \frac{1}{4}\Prob{\game{3}(A)=1|b_1=1, b_2=1}\\
-& = & \frac{1}{4}\Prob{\game{0}(A)=1} + \frac{1}{4}\Prob{\game{2}(A)=1}\\
-&\nudge + & \frac{1}{4}\Prob{\game{3}(A)=1} + \frac{1}{4}\Prob{\game{2}(A)=1|b=1}\\
-& = & \frac{1}{4}\Prob{\game{0}(A)=1} + \frac{1}{4}\Prob{\game{2}(A)=1}\\
-&\nudge + & \frac{1}{4}\Prob{\game{2}(A)=1} + \frac{1}{4}\Prob{\game{2}(A)=1|b=1}\\
-& = & \frac{1}{4}\Prob{\game{0}(A)=1} + \frac{1}{2}\Prob{\game{2}(A)=1}\\
-&\nudge + & \frac{1}{4}\Prob{\game{2}(A)=1|b=1}\\
-& = & \frac{1}{4}\Prob{\game{0}(A)=1} + \frac{1}{2}\Big[\frac{1}{2}\Prob{\game{2}(A)=1|b=0}\\
-	& \nudge + & \frac{1}{2}\Prob{\game{2}(A)=1|b=1}\Big] + \frac{1}{4}\Prob{\game{2}(A)=1|b=1}\\
-& = & \frac{1}{4}\Prob{\game{0}(A)=1} + \frac{1}{4}\Prob{\game{0}(A)=1}\\
-& \nudge + & \frac{1}{4}\Prob{\game{2}(A)=1|b=1} + \frac{1}{4}\Prob{\game{2}(A)=1|b=1}\\
+\begin{eqnarray}
+\nonumber \Prob{\game{3}(A)=1} &=&\frac{1}{4}\Prob{\game{3}(A)=1|b_1=0, b_2=0} + \frac{1}{4}\Prob{\game{3}(A)=1|b_1=0, b_2=1}\\
+\nonumber & + & \frac{1}{4}\Prob{\game{3}(A)=1|b_1=1, b_2=0}+ \frac{1}{4}\Prob{\game{3}(A)=1|b_1=1, b_2=1}\\
+\nonumber & = & \frac{1}{4}\Prob{\game{0}(A)=1} + \frac{1}{4}\Prob{\game{2}(A)=1}\\
+\nonumber &\nudge + & \frac{1}{4}\Prob{\game{3}(A)=1} + \frac{1}{4}\Prob{\game{2}(A)=1|b=1}\\
+\nonumber & = & \frac{1}{4}\Prob{\game{0}(A)=1} + \frac{1}{4}\Prob{\game{2}(A)=1}\\
+\nonumber&\nudge + & \frac{1}{4}\Prob{\game{2}(A)=1} + \frac{1}{4}\Prob{\game{2}(A)=1|b=1}\\
+\nonumber& = & \frac{1}{4}\Prob{\game{0}(A)=1} + \frac{1}{2}\Prob{\game{2}(A)=1}\\
+\nonumber &\nudge + & \frac{1}{4}\Prob{\game{2}(A)=1|b=1}\\
+\nonumber & = & \frac{1}{4}\Prob{\game{0}(A)=1} + \frac{1}{2}\Big[\frac{1}{2}\Prob{\game{2}(A)=1|b=0}\\
+\nonumber	& \nudge + & \frac{1}{2}\Prob{\game{2}(A)=1|b=1}\Big] + \frac{1}{4}\Prob{\game{2}(A)=1|b=1}\\
+\nonumber & = & \frac{1}{4}\Prob{\game{0}(A)=1} + \frac{1}{4}\Prob{\game{0}(A)=1}\\
+\nonumber & \nudge + & \frac{1}{4}\Prob{\game{2}(A)=1|b=1} + \frac{1}{4}\Prob{\game{2}(A)=1|b=1}\\
 & = & \frac{1}{2}\Prob{\game{0}(A)=1} + \frac{1}{2}\Prob{\game{2}(A)=1|b=1}
-\end{eqnarray*}
+\end{eqnarray}
  
 The PRF-adversary $B$ simulates $\game{3}(A)$ as shown in Fig. \ref{fig:AdvB}. 
 \begin{figure}[h]
@@ -130,32 +131,104 @@ $\nudge \nudge \calO_1 \gets F_K$\\
 \end{figure}
 
 $B$ exactly simulates \game{3}(A).
-\setlength{\mathindent}{1pt}
-\begin{eqnarray*}
-\Prob{\ExpPRF{F}{B} = 1} &=&  \Prob{\game{3}(A)=1}\\
- &=& \frac{1}{2}\Prob{\game{0}(A)=1} + \frac{1}{2}\Prob{\game{2}(A)=1|b=1}\\
- &=&  \frac{1}{2}\Prob{\ExpFPSecHash{B}{A}=1} + \frac{1}{2}\epsilon\\
+%\setlength{\mathindent}{1pt}
+\begin{eqnarray}
+\nonumber\Prob{\ExpPRF{F}{B} = 1} &=&  \Prob{\game{3}(A)=1}\\
+\nonumber &=& \frac{1}{2}\Prob{\game{0}(A)=1} + \frac{1}{2}\Prob{\game{2}(A)=1|b=1}\\
+\nonumber &=&  \frac{1}{2}\Prob{\ExpFPSecHash{B}{A}=1} + \frac{1}{2}\epsilon\\
  & \mathrm{where}& \epsilon = (1-e^{-kn/m})^k = \text{FP-error in double hashing scheme}
-\end{eqnarray*}
-\setlength{\mathindent}{1pt}
-\begin{eqnarray*}
+\end{eqnarray}
+
+%\setlength{\mathindent}{1pt}
+\begin{eqnarray}
 \Prob{\ExpPRF{F}{B} = 1|d=1} &= \Prob{\ExpPRF{F}{B_1} = 1}\\
 \Prob{\ExpPRF{F}{B} = 1|d=0} &= \Prob{\ExpPRF{F}{B_2} = 1}
-\end{eqnarray*}
-\setlength{\mathindent}{1pt}
-\begin{eqnarray*}
-\Prob{\ExpPRF{F}{B} = 1} &=& \frac{1}{2}\Prob{\ExpPRF{F}{B} = 1|d=1}  + \frac{1}{2}\Prob{\ExpPRF{F}{B} = 1|d=0}\\
+\end{eqnarray}
+
+%\setlength{\mathindent}{1pt}
+\begin{eqnarray}
+\nonumber\Prob{\ExpPRF{F}{B} = 1} &=& \frac{1}{2}\Prob{\ExpPRF{F}{B} = 1|d=1}  + \frac{1}{2}\Prob{\ExpPRF{F}{B} = 1|d=0}\\
  &=&  \frac{1}{2}\Big[\Prob{\ExpPRF{F}{B_1} = 1} + \Prob{\ExpPRF{F}{B_2} = 1}\Big]
-\end{eqnarray*}
-\setlength{\mathindent}{1pt}
-\begin{flalign*}
-\frac{1}{2}\Big[\Prob{\ExpPRF{F}{B_1} = 1} &+ \Prob{\ExpPRF{F}{B_2} = 1}\Big] = \frac{1}{2}\Prob{\ExpFPSecHash{B}{A}=1} + \frac{1}{2}\epsilon\\
-2\Prob{\ExpPRF{F}{B_1} = 1}-1 &+ 2\Prob{\ExpPRF{F}{B_2} = 1}-1  = 2\Big[\Prob{\ExpFPSecHash{B}{A}=1} + \epsilon -1\Big]\\
-\frac{1}{2}\Big[\AdvPRF{B_1}{A} &+ \AdvPRF{B_2}{A}\Big]  =  \AdvFPSecHash{B}{A} + \epsilon -1\\
+\end{eqnarray}
+%\setlength{\mathindent}{1pt}
+\begin{flalign}
+\nonumber\frac{1}{2}\Big[\Prob{\ExpPRF{F}{B_1} = 1} &+ \Prob{\ExpPRF{F}{B_2} = 1}\Big] = \frac{1}{2}\Prob{\ExpFPSecHash{B}{A}=1} + \frac{1}{2}\epsilon\\
+\nonumber2\Prob{\ExpPRF{F}{B_1} = 1}-1 &+ 2\Prob{\ExpPRF{F}{B_2} = 1}-1  = 2\Big[\Prob{\ExpFPSecHash{B}{A}=1} + \epsilon -1\Big]\\
+\nonumber \frac{1}{2}\Big[\AdvPRF{B_1}{A} &+ \AdvPRF{B_2}{A}\Big]  =  \AdvFPSecHash{B}{A} + \epsilon -1\\
 \AdvFPSecHash{B}{A}  &=  \frac{1}{2}\Big[\AdvPRF{B_1}{A} + \AdvPRF{B_2}{A}\Big] + \Big[1-\epsilon\Big]
-\end{flalign*}
+\end{flalign}
 
 \end{proof}
 
+%***Theorem 2
+\begin{theorem}
+In Theorem \ref{thm}, let $h_j(x) = f_{K}(\langle j \rangle \concat x) \bmod m$, where $f$ is a PRF. This setting compared to the double hashing scheme ensures independence of hash functions. Let $B$ be an adversary attacking the PRF advantage of $F \colon \calK \times \bits^m \sends \bits^m$ and $A$ be another adversary attacking the false positive game of the modified hash-based filter, then 
 
+\begin{equation}
+\AdvFPSecHash{B}{\distr{U}{n},A}  = 0.5\Big[\AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}\Big] + 1-\epsilon, \nudge \mathrm{where} \nudge \epsilon = (1-e^{-kn/m})^k
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+
+\begin{figure}[h]
+\centering
+\fpage{0.6}{
+$\experimentv{Adversary \nudge B^{\calO}:}$\\
+$h_j \getsr \calO(j\times \cdot), \nudge \mathrm{where} \nudge j\in [k]$\\
+$S \getsr \distr{U}{n}$\\
+$M \getsr \Rep^{h_1, \cdots, h_k}(S)$\\
+$x \getsr A^{\QryOracle(\cdot)}(S)$\\
+if $x \not\in S \wedge \Qry^{h_1, \cdots, h_k}(M,x)=1$ then\\
+\nudge Ret 1\\
+Ret 0\\
+%
+\oracle{$\QryOracle(x)$}\\
+Ret $\Qry^{h_1, \cdots, h_k}(M,x)$
+}
+\caption{Adversary $B$ simulating modified hash-based filter}\label{fig:AdvB1}
+\end{figure}
+
+Adversary $B$ simulates $A^{'}s$ game as shown in Fig. \ref{fig:AdvB1}. When, $b=0$, $B$ exactly simulates $\ExpFPSecHash{B}{A}$. 
+
+\begin{eqnarray*}
+\Prob{\ExpPRF{F}{B} = 1|b=0} &=&  \Prob{\ExpFPSecHash{B}{A}=1}
+\end{eqnarray*}
+
+When $b=1$, adversary $B$ attacks fp-priv game of the modified scheme. The false positive error of this scheme is calculated in section \ref{sec:fpe_calculation} using Lemma 4.1 of Kirch et. al. paper\cite{xxx}.
+
+\subsection{False positive error of hash-based filter with $h_j(x) = f_{K}(\langle j \rangle \concat x) \bmod m$ }\label{sec:fpe_calculation}
+
+In the proposed hash-based filter, since, $f_K$ is a PRF, each hash function $h_j$ is independent and uniformly distributed over $[m]$, and hence, satisifies condition 1 of Lemma 4.1\cite{xxx}. Conditions $2$ and $5$ are trivially satisfied. Fix $u \in U$, $r, r_1, r_2 \in [m]$ and $j, j_1, j_2 \in [k]$.
+
+\begin{eqnarray}
+\nonumber\Prob{\exists j | h_j(u)=r} & \leq & \sum_{j}\Prob{f_K(\langle j \rangle \concat x)=r}\\
+& = & \frac{k}{m}\\\nonumber & &\\
+\nonumber\Prob{h_{j1}(u) = r_1, h_{j2}(u) = r_2} & = & \Prob{h_{j1}(u) = r_1}\Prob{h_{j2}(u) = r_2 | h_{j1}(u) = r_1}\\
+\nonumber& = & \frac{1}{m} \times \frac{k}{m}\\
+&=&	 O\Big(\frac{1}{n^2}\Big)\\\nonumber & &\\
+\nonumber \Prob{\exists j | h_j(u)=r } & \geq & \sum_{j} \Prob{h_j(u)=r} - \sum_{j_1 < j_2}\Prob{h_{j1}(u) = r, h_{j2}(u) = r}\\
+& = & \frac{k}{m} - k^2O\Big(\frac{1}{n^2}\Big)\label{eq:1}\
+\end{eqnarray}
+
+For $\lambda = k^2/c, \nudge \mathrm{where} \nudge c=n/m$,  and $\gamma(n)=\frac{1}{n^2}$, $\Prob{r\in H(u)} = \Prob{\exists j \in {k}: h_j(u)=r }$ which satisfies condition 3 of Lemma 4.1. 
+\begin{eqnarray}
+\nonumber\Prob{r_1, r_2 \in H(u)} & \leq & \sum_{j_1 < j_2}\Prob{h_{j1}(u) = r_1, h_{j2}(u) = r_2} \\
+\nonumber& = & k^2O\Big(\frac{1}{n^2}\Big)\\
+& = & O\Big(\frac{1}{n^2}\Big)\label{eq:2}
+\end{eqnarray}
+From eqn. \ref{eq:2}, condition 4 of Lemma 4.1 is satisfied. Since, all conditions of the Lemma are satisfied, Theorem 4.1 can be applied to the proposed hash-based filter. Let $\calF$ is the false positive probability of the proposed scheme.
+\begin{eqnarray}
+\nonumber\lim_{n \rightarrow \infty}\Prob{\calF} & = & (1-e^{-\lambda/k})^k \\
+\nonumber& = & (1-e^{-\frac{k^2/c}{k}})^k\\
+& = & (1-e^{-\frac{kn}{m}})^k
+\end{eqnarray}
+Let $\epsilon = (1-e^{-\frac{kn}{m}})^k$.
+\begin{eqnarray}
+\nonumber\Prob{\ExpPRF{F}{B}=} & = & .5\Prob{\ExpPRF{F}{B}=1|b=0} + .5\Prob{\ExpPRF{F}{B}=1|b=1}\\
+\nonumber\Prob{\ExpPRF{F}{B}=} & = & .5\Prob{\ExpFPSecHash{B}{A}=1} + .5\Prob{\calF}\\
+\nonumber 2\Prob{\ExpPRF{F}{B}=}-1 & = & \Prob{\ExpFPSecHash{B}{A}=1} + \epsilon - 1\\
+\AdvFPSecHash{B}{A} & = & \AdvPRF{F}{B} + [1-\epsilon]
+\end{eqnarray}
+\end{proof}
 
