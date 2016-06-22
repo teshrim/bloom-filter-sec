@@ -2,7 +2,29 @@
 
 \heading{Theory tasks.}
 \begin{itemize}
-\item Prove that a Bloom filter using hash functions defined by $h_j(x) = \left( f_{K0}(x) + j\cdot g_{K1}(x)\right) \bmod m$, for secret keys $K0,K1$, is FP-secure when either~$f$ or~$g$ is a secure PRF.  (This is a real proposal, see the intro.)  Interesting that these $h_j$ are not independent, even if $f_{K0},g_{K1}$ are replaced by independent random functions, whereas the traditional BF false positive analysis treats the $h_j$ as independent.  I wonder if the analysis for determining the number of hash functions still holds when the $h_j$ are dependent?  Note: definitely not in general, just consider $h_j$ a fixed function for all $j$; but it's an interesting question to ask for this particular kind of dependence.  (Should check the Kirsh, Mitzenmacher paper first; they probably address this. \tsnote{They show that two random functions, combined in this way (for a prime~$m$), suffices.  No increase in asymptotic FP probability.  They also argue that construction of $h_j$ is thus better than one can do using generic pairwise-independent $h_j$.  They also point out the difference between the FP \emph{probability} (the probability that a particular $x \not\in S$ causes a FP) and the FP \emph{rate} (the average FP probability over $x \not\in S$), which I hadn't really considered before. })
+\item Prove that a Bloom filter using hash functions defined by
+    $h_j(x) = \left( f_{K0}(x) + j\cdot g_{K1}(x)\right) \bmod
+    m$, for secret keys $K0,K1$, is FP-secure when either~$f$
+    or~$g$ is a secure PRF.  (This is a real proposal, see the
+    intro.)  Interesting that these $h_j$ are not independent,
+    even if $f_{K0},g_{K1}$ are replaced by independent random
+    functions, whereas the traditional BF false positive
+    analysis treats the $h_j$ as independent.  I wonder if the
+    analysis for determining the number of hash functions still
+    holds when the $h_j$ are dependent?  Note: definitely not in
+    general, just consider $h_j$ a fixed function for all $j$;
+    but it's an interesting question to ask for this particular
+    kind of dependence.  (Should check the Kirsh, Mitzenmacher
+    paper first; they probably address this. \tsnote{They show
+    that two random functions, combined in this way (for a
+    prime~$m$), suffices.  No increase in asymptotic FP
+    probability.  They also argue that construction of $h_j$ is
+    thus better than one can do using generic
+    pairwise-independent $h_j$.  They also point out the
+    difference between the FP \emph{probability} (the
+    probability that a particular $x \not\in S$ causes a FP) and
+    the FP \emph{rate} (the average FP probability over $x
+    \not\in S$), which I hadn't really considered before. })
 
 \item Show the same thing for the simpler $h_j(x) =
     f_{K}(\langle j \rangle \concat x) \bmod m$.  This, by the
