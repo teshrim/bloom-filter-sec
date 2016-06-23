@@ -58,7 +58,7 @@ find a string~$x$ such that $(h_1(x),h_2(x),\ldots,h_k(x))$
 falls in a given set of tuples when $h_i(x)=\mathrm{truncate}(\mathrm{SHA256}(\langle i \rangle
 \concat x), m)$, say. (Even more so if my setting admits relatively
 expensive hash computations, e.g. SCRYPT.)  BTW, your suggestion to
-have a FP notion with secret~$\mathrm{S}$ is interesting here. }
+have a FP notion with secret~$\mathcal{S}$ is interesting here. }
 
 
 The traditional notion of soundness
@@ -124,7 +124,8 @@ $1-(1-\epsilon)^q$ plus negligible?}
 you like, we can throw a paramter~$n$ in there, for the number of FPs
 it must find.)  Perhaps informally we say that a bloom filter is
 secure if, for ``reasonable'' $t,q_h,q_m$, the value of~$\epsilon$ is
-not ``significantly larger'' than the designer's target.}
+not ``significantly larger'' than the designer's target.  I guess
+that's not far off from one of your suggestions.}
 
 \jnote{One thing that is nice about the
 NY notion is that you get a ``clean'' definition of security: no
@@ -132,7 +133,8 @@ matter how many FPs the attacker has found so far, the probability
 that it can output a fresh FP is still $\epsilon$.}
 
 \jnote{What parameters are needed to get negligible $\epsilon$? Are
-they reasonable in practice?}
+they reasonable in practice?} \tsnote{Again, I don't think that
+negligible is reasonable in practice :P}
 
 \begin{figure}
 \centering
@@ -368,7 +370,13 @@ Ret $h_i(x)$\\
 
 \heading{Security in multiple-server settings. }  \jnote{What is the
 goal here? If they don't share hash functions, I'm not sure what is
-gained by considering this definition.} In this section, we consider
+gained by considering this definition.} \tsnote{Perhaps not the same
+hash functions, but correlated ones.  For example, server~$j$ uses
+hash functions $\tilde{h}_i(x) = h_i(\langle \mathrm{id}_j \rangle \concat x)$ for
+some $h_i$ shared among servers.  The $\mathrm{id}_j$ may or may not
+be public, e.g. in a P2P network your ID might be a nonce learned only
+when you join.  Also, the sets $\mathcal{S_j}$ stored at each server
+might be correlated.} In this section, we consider
 security notions for settings in which there may be multiple
 servers, each holding a filter representation of a set.  To allow
 for each server to embed server-specific information into its
