@@ -43,7 +43,25 @@ nicely.} \jnote{Not sure I agree. First of all, if $\epsilon$ is not
 negligible then a random element is a false positive with noticeable
 probability. Beyond that, I think that intuitively it makes sense
 that if you want false positives to be hard to find then you need to
-make the hash functions secret.} The traditional notion of soundness
+make the hash functions secret.} \tsnote{I don't think it makes sense
+to talk about asymptotics or negligibility, for exactly the reason you
+state. I think the key point here is: what is ``hard''?   The designer decides what FP rate is
+acceptable for a given application, a given set of efficiency
+constraints, the side-effects of a FP, etc.  For a fixed FP target,
+she optimizes the filter size and/or the number of hash functions for
+her setting. Whether the target FP rate is 0.01 or $2^{-80}$, we should be able to say (in the ROM, at least)
+that it will take this-many hash computations, and this many on-line
+set-membership queries, to find the first FP.  In the standard model,
+with public hash functions, it is clearly more difficult to make
+formal claims.  Even so, in practice I expect it would be quite expensive to
+find a string~$x$ such that $(h_1(x),h_2(x),\ldots,h_k(x))$
+falls in a given set of tuples when $h_i(x)=\mathrm{truncate}(\mathrm{SHA256}(\langle i \rangle
+\concat x), m)$, say. (Even more so if my setting admits relatively
+expensive hash computations, e.g. SCRYPT.)  BTW, your suggestion to
+have a FP notion with secret~$\mathrm{S}$ is interesting here. }
+
+
+The traditional notion of soundness
 for a Bloom filter captures the difficulty of finding false
 positives when the attacker is non-adaptive. Following NY, we
 consider soundness against adaptive adversaries. But we further
@@ -57,7 +75,7 @@ take as input an explicit distribution $\distr{U}{n}$ over~$[U]^n$.
 false positive should not make it any easier to find subsequent
 false positives. This is not really captured by the Naor paper,
 either (at least not directly, though it may end up being implied by
-their definition).}
+their definition).} \tsnote{See my comment in the intro.}
 
 In Figure~\ref{fig:fp-filter} we give three distinct notions,
 characterized by what access the adversary has to the underlying
@@ -95,7 +113,20 @@ $q_{\mathrm{h}}$ that the adversary makes.
 informally)? Do we want to say that the probability of finding a
 false positive is negligible? Or that if we set the FP rate to
 $\epsilon$ then the best an attacker can do with $q$ hash queries is
-$1-(1-\epsilon)^q$ plus negligible? One thing that is nice about the
+$1-(1-\epsilon)^q$ plus negligible?} 
+\tsnote{Formally, I don't think we can (and still be rooted in
+  reality.)  Even informally it's hard, since the fact is that the
+  designer decides what is ``secure'' for her setting.  I think we
+  just say something like ``A bloom filter is
+  $(t,q_h,q_m,\epsilon)$-secure if no attacker running in time at
+  most~$t$, asking at most~$q_h$ hash queries and $q_m$ set-membership
+  queries, has probability more than~$\epsilon$ of finding a FP.''  (If
+you like, we can throw a paramter~$n$ in there, for the number of FPs
+it must find.)  Perhaps informally we say that a bloom filter is
+secure if, for ``reasonable'' $t,q_h,q_m$, the value of~$\epsilon$ is
+not ``significantly larger'' than the designer's target.}
+
+\jnote{One thing that is nice about the
 NY notion is that you get a ``clean'' definition of security: no
 matter how many FPs the attacker has found so far, the probability
 that it can output a fresh FP is still $\epsilon$.}

@@ -37,8 +37,8 @@ well-known way.) NY recast this soundness condition as a game in
 which an adversary~$A$ is given~$\mathcal{S}$ and an oracle for
 set-membership queries, and it attempts to find a false positive.
 The fact that~$A$ can \emph{adapt} its queries and its output based
-on what it learns from the set-membership oracle is the key
-definitional distribution of~NY.
+on what it learns from the set-membership oracle (but, as we will see,
+not upon the hash functions) is the key definitional contribution of~NY.
 
 Bloom filters have a broad range of practical applications, for
 example, in content-distribution networks, large database query
@@ -63,7 +63,14 @@ $\Prob{\mathbf{B}_2(\mathbf{B}_1(\mathcal{S}),x)=1}=1$.  For
 soundness, adversary~$A$ plays the following game,
 ``Adversarial-resilient Bloom Filter with a steady representation''.
 First, $M \getsr \mathbf{B}_1(\mathcal{S})$. \jnote{Where does the
-set come from? Is it random? Adversarially chosen?} Then the
+set come from? Is it random? Adversarially chosen?}
+\tsnote{In their formalism, it is implicitly an input to the security experiment.
+Security is universally quantified over sets~$\mathcal{S}$.  This
+would seem to be equivalent to letting the adversary
+pick~$\mathcal{S}$ (prior to the hash functions being picked), with
+the time to compute and write out~$\mathcal{S}$ folded into the
+adversary's running time. } 
+Then the
 adversary is given the set~$\mathcal{S}$ and may make queries
 $x_1,x_2,\ldots,x_q$ to an oracle for $\mathbf{B}_2(M,\cdot)$.  At
 the end of its execution, the adversary outputs~$x^*$ and wins the
@@ -72,16 +79,51 @@ and (2) $\mathbf{B}_2(M,x^*)=1$.
 
 First, we note that the security notion forbids~$A$ to win if it
 outputs $x^* \in \{x_1,x_2,\ldots,x_q\}$, even if one of these was a
-false positive. \jnote{We discussed this on the phone, but let me
+false positive. 
+\jnote{We discussed this on the phone, but let me
 put it in writing here. I think this is actually a reasonable choice
 because it captures the notion that ``even after finding some false
 positives, it remains hard to find additional false positives.''
 Note that in practice finding false positives is ``easy'' since
-$\epsilon$ might be $1/1000$ rather than negligible.}
-%
+$\epsilon$ might be $1/1000$ rather than negligible.} 
+\tsnote{For me the question is: is security violated once the first FP is found, or
+the second?  My answer, which is in line with the traditional
+soundness notion, is that the first FP is a security violation
+even if finding it isn't ``hard'' by cryptographic standards.
+But I do appreciate your point.  A natural goal is to say that, in some sense,
+\emph{adaptivity doesn't make it any easier} to find a FP.  Adapting
+to what, though?  In the traditional notion, $x$~is picked before the
+coins of~$\mathbf{B}_1$ are flipped, i.e., before the hash functions
+are sampled.  The direct non-adaptive generalization is to say that
+$x_1,x_2,\ldots,x_q$ are all picked up front.  The direct
+\emph{adaptive} generalization would allow $x_1,x_2,\ldots,x_q$ to
+depend in the coins of~$\mathbf{B}_1$, i.e., the hash functions.  The
+NY definition captures only indirect dependence: adversaries that can adapt to set-membership queries,
+but \emph{not} (directly) to the input-output behaviors of the hash
+functions. }
+\tsnote{Perhaps a more obvious way to capture the idea that ``finding
+  some FPs doesn't help find additional ones'' is to parameterize my notion(s) with a number~$n$, and say
+that that the adversary wins iff it outputs~$n$ FPs (these may have
+been previously queried to the set-membership oracle).  
+Note that in the ROM (and probably in practice) finding~$n>1$ FPs will
+require~$n$ times the work; finding the first won't help in finding
+the second.} 
+%\tsnote{Here's an off-the-wall idea.  What if the basic FP security
+%notion gave the adversary an oracle for set-membership (and the hash functions, depending on the setting), and after interacting with these
+%it is challenged with either $x_0$ or $x_1$, where $x_0$ is a random
+%point from the set of non-FPs, and $x_1$ is a random point from the
+%set of FPs?  (No oracles after being challenged.)  The adversary has
+%to decide which it received.}
+
+
 Second, we note that the NY syntax does not capture the size of~$M$
-as a parameter \jnote{I think this is also reasonable; typically
-security is defined without regard for efficiency}; the surrounding
+as a parameter; 
+\jnote{I think this is also reasonable; typically
+security is defined without regard for efficiency}
+\tsnote{My complaint isn't about efficiency. It's about the fact that,
+by not including $|M|$ in the definition, the trivial scheme I give
+(just below) is allowed, and is secure.  Anyway, as I say at the end
+of this paragraph, this is a small(er) complaint that what follows}. The surrounding
 text does say that $\mathbf{B}_1$ ``outputs a compressed
 representation [of $\mathcal{S}$] $\mathbf{B}_1(\mathcal{S})=M$''
 but what exactly this means is never addressed.  The formal syntax
@@ -123,6 +165,20 @@ data structure. On the other hand, if they are fixed, then the
 false-positive rate is not well-defined (since there is no
 probability space to speak of). So in that sense, NY just carried
 over the problem from the classical literature.}
+\tsnote{One can suggest that it \emph{should} be counted in the classical
+  description, but the fact is that it isn't :)  And in the 30+ years
+  since the original paper, no one saw fit to correct this?  From an
+  algorithmic perspective, I think the classical approach makes
+  sense.  The questions being answered are: how many bits do I need to
+  store a representation of the set for a given FP rate, and how does this compare to the
+  combinatorially computed lower-bound?  The description length of the
+hash functions may be bigger or smaller, but the number of bits you
+need to hold the set representation is independent of that.  (Imagine
+that you have long random bitstrings in the set~$\mathcal{S}$.  Then
+whether your hash functions simply truncate, or they are random
+oracles, the size of the representation as a function of the target FP
+rate doesn't change.  Yet the description lengths of the hash
+functions are drastically different.)}
 
 On the other hand, assume the hash functions are implicitly
 hard-coded into~$\mathbf{B}_1$ (and $\mathbf{B}_2$). Then we can
@@ -137,8 +193,14 @@ reason about difficulty of finding a false-positive. Moreover, NY
 stresses (at least once) that the representation is \emph{not} given
 to the adversary in their notions.  So it seems unlikely that they
 intended for $h_1,h_2,\ldots,h_k$ to be hard-coded into the
-algorithms. \jnote{Perhaps it is reasonable to consider a definition
+algorithms. 
+\jnote{Perhaps it is reasonable to consider a definition
 in which the set is not given to the adversary?}
+\tsnote{A FP security notion?  Yes, perhaps so.  It's probably a more
+  realistic notion anyway -- is a spammer really going to know my
+  whitelist a priori?  (If he does, I probably have bigger problems in
+my system than receiving new spam email.)  Or set of URLs cached by a
+CDN server?}
 
 Continuing on this point, it seems that the coins of~$\mathbf{B}_1$
 (whatever their use) are intended to be kept secret from the
@@ -186,7 +248,12 @@ We generalize this syntax to hash-based filters that are mutable
 \jnote{I find ``mutable'' a slightly awkward term,  maybe because it
 makes me think of mutability in the context of programming
 languages. In much data structures literature, this is called the
-``dynamic'' case, in contrast to the ``static'' case.}, in the sense
+``dynamic'' case, in contrast to the ``static'' case.} \tsnote{I
+adopted this term after reading it in some bloom filter
+paper(s). Ironically, I liked it for the same reason you think it is
+awkward :)  My PL association to the term is that an immutable object
+is one whose state cannot be modified after it is created, and a
+mutable object is the opposite.  ButI don't really care too much.}, in the sense
 that they allow for updating of the representation. This allows us
 to capture counting Bloom filters, spectral Bloom filters, stable
 Bloom filters, count-min sketches, and other compact set
