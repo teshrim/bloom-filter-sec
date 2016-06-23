@@ -100,14 +100,17 @@ $x_1,x_2,\ldots,x_q$ are all picked up front.  The direct
 depend in the coins of~$\mathbf{B}_1$, i.e., the hash functions.  The
 NY definition captures only indirect dependence: adversaries that can adapt to set-membership queries,
 but \emph{not} (directly) to the input-output behaviors of the hash
-functions. }
+functions.  The three notions I've proposed in Figure 1 cover a
+spectrum adaptivity: the first is adapting to set-membership queries
+only, the second to those and hash input-output behavior, the third to
+set-membership queries and full knowledge of the hash functions.  Each
+has it's own associated (informal) security interpretation.}
 \tsnote{Perhaps a more obvious way to capture the idea that ``finding
-  some FPs doesn't help find additional ones'' is to parameterize my notion(s) with a number~$n$, and say
-that that the adversary wins iff it outputs~$n$ FPs (these may have
+  some FPs doesn't help find additional ones'' is to parameterize my notion(s) with a number~$f$, and say
+that that the adversary wins iff it outputs~$f$ FPs (these may have
 been previously queried to the set-membership oracle).  
-Note that in the ROM (and probably in practice) finding~$n>1$ FPs will
-require~$n$ times the work; finding the first won't help in finding
-the second.} 
+Note that in the ROM (and probably in practice) finding~$f>1$ FPs will
+require~$f$ times the work.  Right?} 
 %\tsnote{Here's an off-the-wall idea.  What if the basic FP security
 %notion gave the adversary an oracle for set-membership (and the hash functions, depending on the setting), and after interacting with these
 %it is challenged with either $x_0$ or $x_1$, where $x_0$ is a random
