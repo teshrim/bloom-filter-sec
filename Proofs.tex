@@ -4,7 +4,7 @@
 Fix $k, m, n > 0$ and define a hash-based filter as in section \ref{sec:hbf}, except the hash functions are defined by $h_j(x) = \left( f_{K_0}(x) + j\cdot g_{K_1}(x)\right) \bmod m$. Let $Func(m,m)$ be the set of all functions $\rho \colon \calK \times \bits^m \sends \bits^m$. Let $B_1, B_2$ be 2 adversaries attacking the PRF advantage of $F \colon \calK \times \bits^m \sends \bits^m$ and $A$ be another adversary attacking the false positive game of hash-based filters, then 
 
 \begin{equation}
-\AdvFPSecHash{B}{A} = \abs{ \AdvPRF{F}{B_2} - \AdvPRF{F}{B_1}} \pm q \cdot \epsilon
+\AdvFPSecHash{B}{A} \leq  q \cdot \epsilon + \AdvPRF{F}{B_1} - \AdvPRF{F}{B_2}  
 \end{equation}
 Note: Here, $q$ is the number of queries made to the $\QryOracle$ oracle and $\epsilon$ is the false positive error in the double hashing scheme given by Kirsch and Mitzenmacher. $\epsilon \rightarrow 0$, if $m/n \rightarrow \infty$ and/or $k \rightarrow \infty$ \cite{xxx}
 \end{theorem}
@@ -157,9 +157,10 @@ $\mathrm{Ret} \nudge \calO(x) + i\cdot \rho_2(x)$
  1 + \AdvPRF{F}{B_2} &=& \Prob{\game{2}(A)=1} + \Prob{\game{1}(A)=1}\label{eq:2}
 \end{eqnarray}
 
-Subtracting \ref{eq:1} from \ref{eq:2}, we have
+From \ref{eq:1} and \ref{eq:2}, we have
 \begin{eqnarray}
-\abs{ \AdvPRF{F}{B_2} - \AdvPRF{F}{B_1}} &= \abs{\Prob{\game{2}(A)=1} - \Prob{\game{0}(A)=1}}\label{eq:2a}
+\nonumber 1+\AdvPRF{F}{B_2} &=& \Prob{\game{2}(A)=1} + 1+\AdvPRF{F}{B_1} - \Prob{\game{0}(A)=1}\\
+\Prob{\game{0}(A)=1} &=& \Prob{\game{2}(A)=1} + \AdvPRF{F}{B_1} - \AdvPRF{F}{B_2}\label{eq:2a}
 \end{eqnarray}
 
 In $\game{3}(A)$, assume, without loss of generality that $A$ halts with output $x$ immediately, if it asks $x$ to $\QryOracle$ and $\QryOracle$ returns $1$. Thus, all queries to $\QryOracle$ return 0 until the first one. Hence,
@@ -204,7 +205,7 @@ Ret $h_i(x)$
 
 From eqn. \ref{eq:0}, \ref{eq:2a}, \ref{eq:3} and \ref{eq:4}: \\
 \begin{eqnarray}
-\nonumber \abs{ \AdvPRF{F}{B_2} - \AdvPRF{F}{B_1}} &=& \abs{q \cdot \epsilon - \Prob{\ExpFPSecHash{B}{A}=1}}\\
-\AdvFPSecHash{B}{A} &=& \abs{ \AdvPRF{F}{B_2} - \AdvPRF{F}{B_1}} \pm q \cdot \epsilon
+\nonumber \Prob{\ExpFPSecHash{B}{A}=1} &\leq& q \cdot \epsilon + \AdvPRF{F}{B_1} - \AdvPRF{F}{B_2}  \\
+\AdvFPSecHash{B}{A} &\leq&  q \cdot \epsilon + \AdvPRF{F}{B_1} - \AdvPRF{F}{B_2}  
 \end{eqnarray}
 \end{proof}
