@@ -101,7 +101,7 @@ depend in the coins of~$\mathbf{B}_1$, i.e., the hash functions.  The
 NY definition captures only indirect dependence: adversaries that can adapt to set-membership queries,
 but \emph{not} (directly) to the input-output behaviors of the hash
 functions.  The three notions I've proposed in Figure 1 cover a
-spectrum adaptivity: the first is adapting to set-membership queries
+spectrum of adaptivity: the first is adapting to set-membership queries
 only, the second to those and hash input-output behavior, the third to
 set-membership queries and full knowledge of the hash functions.  Each
 has it's own associated (informal) security interpretation.}
@@ -127,7 +127,7 @@ security is defined without regard for efficiency}
 \tsnote{My complaint isn't about efficiency. It's about the fact that,
 by not including $|M|$ in the definition, the trivial scheme I give
 (just below) is allowed, and is secure.  Anyway, as I say at the end
-of this paragraph, this is a small(er) complaint that what follows}. The surrounding
+of this paragraph, this is a small(er) complaint than what follows}. The surrounding
 text does say that $\mathbf{B}_1$ ``outputs a compressed
 representation [of $\mathcal{S}$] $\mathbf{B}_1(\mathcal{S})=M$''
 but what exactly this means is never addressed.  The formal syntax
@@ -257,7 +257,7 @@ adopted this term after reading it in some bloom filter
 paper(s). Ironically, I liked it for the same reason you think it is
 awkward :)  My PL association to the term is that an immutable object
 is one whose state cannot be modified after it is created, and a
-mutable object is the opposite.  ButI don't really care too much.}, in the sense
+mutable object is the opposite.  But I don't really care too much.}, in the sense
 that they allow for updating of the representation. This allows us
 to capture counting Bloom filters, spectral Bloom filters, stable
 Bloom filters, count-min sketches, and other compact set
@@ -268,22 +268,35 @@ We provide various security notions for these primitives... FP with private, pub
 
 We show that...
 
-\heading{Related work. }
+\heading{Related work: attacks}
 \begin{itemize}
 \item Niedermayer et al., ``Cryptanalysis of Basic Bloom Filters Used for Privacy-Preserving Record Linkage'', breaking privacy of secret-hash-function Bloom filters. \tsnote{Journal of Privacy and Confidentiality, 2014}
-\item Mitzenmacher and Vadhan.\tsnote{Might only be tangential.}
 \item Gerbet, Kumar and Lauradoux, ``The power of evil choices in bloom filters''.  \tsnote{DSN'15: Looks like a real goldmine of related work!}
-\item Nojima and Kadobayashi, ``Cryptographically Secure Bloom Filters''. \tsnote{Gives some security definitions for privacy. Quick scan, not super clear what they achieve. The definition of client-privacy (Definition 1) for example, makes no sense to me.  Actually, likewise for server-privacy (Definition 2).  Both seem vague and thoroughly underspecified.}
 \item Crosby and Wallach, ``Denial of Service via Algorithmic Complexity Attacks'' \tsnote{Gives attacks on Squid}
+\item Gao et al., ``Internet Cache Pollution Attacks and Countermeasures''
+\end{itemize}
+
+\heading{Related work: definitions(?)}
+\begin{itemize}
+\item Nojima and Kadobayashi, ``Cryptographically Secure Bloom Filters''. \tsnote{Gives some security definitions for privacy. Quick scan, not super clear what they achieve. The definition of client-privacy (Definition 1) for example, makes no sense to me.  Actually, likewise for server-privacy (Definition 2).  Both seem vague and thoroughly underspecified.}
+\item Naor and Yogev
+\end{itemize}
+
+\heading{Related work: constructions}
+\begin{itemize}
 \item Bellovin and Cheswick, ``Privacy-Enhanced Searches Using Encrypted Bloom Filters''.
 \item Kerschbaum , ``Public-Key Encrypted Bloom Filters with Applications to Supply Chain Integrity''.
 \item S\"{a}rell\"{a} et al., ``BloomCasting: Security in Bloom Filter Based Multicast''.
-\item Gao et al., ``Internet Cache Pollution Attacks and Countermeasures''
 \item Dong, Chen, Wen, ``When Private Set Intersection Meets Big Data: An Efficient and Scaleable Protocol'' \tsnote{``garbled bloom filters'', which actually store the set element by storing~$k$ xor-shares, one at each of the~$k$ hash indices (with care for reusing shares if hash collisions occur), and``oblivious bloom intersection''}\tsnote{If the filter and the hash functions are public, there is a naive attack that works for some interesting parameters.  Pick~$k$ positions $i_1,i_2,\ldots,i_k$, xor strings at these positions to get a candidate~$x$.   If $h_{1}(x)=i_1 \wedge h_2(x)=i_2 \wedge \cdots \wedge h_k(x) = i_k$ then either $x \in S$ or~$x$ is a false-positive. (You don't have to do all~$k$ hashes, you can stop as soon as one fails to match the index.)  Say you have a 1000-position filter ($m=1000$) and a 100-element set ($n=100$), and you are willing to tolerate a 1\% FP rate.  Then you'd set $k=4$ (a la Squid).  There are roughly $2^{35}$ subsets of 4 indices to consider, which is reasonable on a laptop these days.  (Also, since $n=100$ the expected number of trials is roughly $2^{28}$.)  With the FP rate of 1\%, if you find a winner then almost certainly it is in the set.  Granted, this attack is naive, but notice that you \emph{cannot} mount it against a standard Bloom filter. Also notice that this attack might be significantly more efficient than brute force guessing over the universe of inputs (imagine that $U=\bits^{64}$), even if you know that the distribution deviates significantly from uniform. }
 \item Tarkoma, Rothenberg, Lagerspetz ``Theory and Practice of Bloom Filters in Distributed Systems'' \tsnote{Great high-level coverage.  Only found preprint version though.}
-\item Dodis et al. ``Fuzzy Extractors: How to Generate Strong Keys from Biometrics and Other Noisy Data'' \tsnote{Introduces ``secure sketches'', which is a representation of a single-element set that is information theoretically private (up to some function of the min-entropy of the element); only tangentially related to ``sketches'' as defined in the Bloom filter literature.}
+\item Durham, Kantarcioglu, Xue, Kuzu, Malin ``Composite Bloom Filters for Secure Record Linkage'' \tsnote{Per-field BFs, sampled and composed into single BF that is then permuted by a secret random permtation.  No clear statement of the problem that is being solved.}
 \end{itemize}
 
+\heading{Related work: tangential}
+\begin{itemize}
+\item Mitzenmacher and Vadhan.\tsnote{Might only be tangential.}
+\item Dodis et al. ``Fuzzy Extractors: How to Generate Strong Keys from Biometrics and Other Noisy Data'' \tsnote{Introduces ``secure sketches'', which is a representation of a single-element set that is information theoretically private (up to some function of the min-entropy of the element); only tangentially related to ``sketches'' as defined in the Bloom filter literature.}
+\end{itemize}
 
 
 
