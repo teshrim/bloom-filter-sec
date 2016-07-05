@@ -280,6 +280,7 @@ We show that...
 \begin{itemize}
 \item Nojima and Kadobayashi, ``Cryptographically Secure Bloom Filters''. \tsnote{Gives some security definitions for privacy. Quick scan, not super clear what they achieve. The definition of client-privacy (Definition 1) for example, makes no sense to me.  Actually, likewise for server-privacy (Definition 2).  Both seem vague and thoroughly underspecified.}
 \item Naor and Yogev
+\item Eujin Goh, ``Secure Indexes'' \tsnote{A secure index can be used for set membership.  Builds a secret-key data structure (an Index) that allows searching for keyword~$w$ if one holds the trapdoor $T_w$ for~$w$, where the trapdoor depends on the secret key.  Main construction uses traditional Bloom filters and a PRF.  Construction appears quite inefficient, needing a very long secret key, turning a keyword~$w$ into a bunch of PRF outputs, and then storing each of these PRF outputs in the BF.  Havent read the full analysis; don't know if this was ever published. }
 \end{itemize}
 
 \heading{Related work: constructions}
