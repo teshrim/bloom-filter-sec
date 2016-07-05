@@ -33,7 +33,7 @@ probability is over the coins of $\Hash$ and~$\Rep$.
 %\heading{Discussion.}
 This syntax captures classical Bloom filters by setting~$\Sigma=\bits$,  and defining $\Rep,\Qry$ in the obvious way, with $\tau=\emptystring$. We note that even though $\Rep$ may be randomized, it does not have to be; for the classical Bloom filter, it is deterministic.
 
-By allowing $\Rep$ to output side-information, we allow for (say) $\Rep$ and $\Qry$ to share a secret key selected during representation generation.\tsnote{Ultimately it might be cleaner to fold the hash functions into the side-information, too.  But in that case, we will likely want an explicit separation between private side-information (e.g. the key for a secret permutation of the bits of~$M$) and public side-information (e.g. the hash functions used to create~$M$).  For now, since the only public side-information I see in the literature are the hash functions, I'm leaving it as is.}
+By allowing $\Rep$ to output side-information, we allow for (say) $\Rep$ and $\Qry$ to share a secret key selected during representation generation.\tsnote{Ultimately it might be cleaner to fold the hash functions into the side-information, too.  But in that case, we will likely want an explicit separation between private side-information (e.g. the key for a secret permutation of the bits of~$M$) and public side-information (e.g. the hash functions used to create~$M$).  For now, since the only public side-information I see in the literature are the hash functions, I'm leaving it as is.}  In our security notions, any side-information will be kept secret from the adversary.
 
 Setting $\Sigma=\bits^{\leq L}$ allows one to store a bitstring of length at most~$L$ at each location.  This allows our syntax to capture the cuckoo-hashing construction from NY, as well as the ``garbled Bloom filter'' from Dong, Chen and Wen~\cite{xxx}, among other things. We note that even though this would allow for the storage of counters (say) at each filter location, our restriction that~$\Qry$ returns a bit does not capture functionality typically demanded of Bloom filters that employ counters, e.g., returning a counter value. (One could, however, have $\Qry$ compute an arbitrary, fixed predicate.  For example, ``has~$x$ been seen at least 5 times?''.)
 Our syntax also does not capture filters that are mutable, that is, whose representation may change over time.
@@ -149,16 +149,16 @@ negligible is reasonable in practice :P}
 $S \getsr \distr{U}{n}$\\
 $h_1,\ldots,h_k \getsr \Hash$\\
 $\HashOracle = (h_1, \ldots, h_k)$\\
-$M \getsr \Rep^{\HashOracle}(S)$\\
+$(M,\tau) \getsr \Rep^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle}(S)$\\
-if $x \not\in S \wedge \Qry^{\HashOracle}(M,x)=1$ then\\
+if $x \not\in S \wedge \Qry^{\HashOracle}(M,\tau,x)=1$ then\\
 \nudge Ret 1\\
 Ret 0
 }
 %
 {
 \oracle{$\QryOracle(x)$}\\
-Ret $\Qry^{\HashOracle}(M,x)$\\
+Ret $\Qry^{\HashOracle}(M,\tau,x)$\\
 
 \medskip
 \oracle{$\HashOracle(i,x)$}\\
@@ -173,16 +173,16 @@ Ret $h_i(x)$\\
 $S \getsr \distr{U}{n}$\\
 $h_1,\ldots,h_k \getsr \Hash$\\
 $\HashOracle = (h_1, \ldots, h_k)$\\
-$M \getsr \Rep^{\HashOracle}(S)$\\
+$(M,\tau) \getsr \Rep^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle,\HashOracle}(S)$\\
-if $x \not\in S \wedge \Qry^{\HashOracle}(M,x)=1$ then\\
+if $x \not\in S \wedge \Qry^{\HashOracle}(M,\tau,x)=1$ then\\
 \nudge Ret 1\\
 Ret 0
 }
 %
 {
 \oracle{$\QryOracle(x)$}\\
-Ret $\Qry^{\HashOracle}(M,x)$\\
+Ret $\Qry^{\HashOracle}(M,\tau,x)$\\
 
 \medskip
 \oracle{$\HashOracle(i,x)$}\\
@@ -197,16 +197,16 @@ Ret $h_i(x)$\\
 $S \getsr \distr{U}{n}$\\
 $h_1,\ldots,h_k \getsr \Hash$\\
 $\HashOracle = (h_1, \ldots, h_k)$\\
-$M \gets \Rep^{\HashOracle}(S)$\\
+$(M,\tau) \gets \Rep^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle}(S,\{h_1,h_2,\ldots,h_k\})$\\
-if $x \not\in S \wedge \Qry^{\HashOracle}(M,x)=1$ then\\
+if $x \not\in S \wedge \Qry^{\HashOracle}(M,\tau,x)=1$ then\\
 \nudge Ret 1\\
 Ret 0
 }
 %
 {
 \oracle{$\QryOracle(x)$}\\
-Ret $\Qry^{\HashOracle}(M,x)$\\
+Ret $\Qry^{\HashOracle}(M,\tau,x)$\\
 
 \medskip
 \oracle{$\HashOracle(i,x)$}\\
