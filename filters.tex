@@ -307,7 +307,7 @@ adversary.} } \label{fig:fp-filter}
 $S \getsr \distr{U}{n}$\\
 $h_1,\ldots,h_k \getsr \Hash$\\
 $\HashOracle = (h_1, \ldots, h_k)$\\
-$M \getsr \Rep^{\HashOracle}(S)$\\
+$(M,\tau) \getsr \Rep^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle}()$\\
 if $x\in S$ then Ret 1\\
 Ret 0
@@ -315,7 +315,7 @@ Ret 0
 %
 {
 \oracle{$\QryOracle(x)$}\\
-Ret $\Qry^{\HashOracle}(M,x)$\\
+Ret $\Qry^{\HashOracle}(M,\tau,x)$\\
 
 \medskip
 \oracle{$\HashOracle(i,x)$}\\
@@ -330,7 +330,7 @@ Ret $h_i(x)$\\
 $ S \getsr \distr{U}{n}$\\
 $h_1,\ldots,h_k \getsr \Hash$\\
 $\HashOracle = (h_1, \ldots, h_k)$\\
-$M \getsr \Rep^{\HashOracle}(S)$\\
+$(M,\tau) \getsr \Rep^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle,\HashOracle}()$\\
 if $x\in S$ then Ret 1\\
 Ret 0\\
@@ -338,7 +338,7 @@ Ret 0\\
 %
 {
 \oracle{$\QryOracle(x)$}\\
-Ret $\Qry^{\HashOracle}(M,x)$\\
+Ret $\Qry^{\HashOracle}(M,\tau,x)$\\
 
 \medskip
 \oracle{$\HashOracle(i,x)$}\\
@@ -353,7 +353,7 @@ Ret $h_i(x)$\\
 $ S \getsr \distr{U}{n}$\\
 $h_1,\ldots,h_k \getsr \Hash$\\
 $\HashOracle = (h_1, \ldots, h_k)$\\
-$M \getsr \Rep^{\HashOracle}(S)$\\
+$(M,\tau) \getsr \Rep^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle}(\{h_1,h_2,\ldots,h_k\})$\\
 if $x\in S$ then Ret 1\\
 Ret 0\\
@@ -361,7 +361,7 @@ Ret 0\\
 %
 {
 \oracle{$\QryOracle(x)$}\\
-Ret $\Qry^{\HashOracle}(M,x)$\\
+Ret $\Qry^{\HashOracle}(M,\tau,x)$\\
 
 \medskip
 \oracle{$\HashOracle(i,x)$}\\
