@@ -111,7 +111,7 @@ has it's own associated (informal) security interpretation.}
 that that the adversary wins iff it outputs~$f$ FPs (these may have
 been previously queried to the set-membership oracle).  
 Note that in the ROM (and probably in practice) finding~$f>1$ FPs will
-require~$f$ times the work.  Right?} 
+require~$f$ times the work.  Right?} \tsnote{FYI: this is how MAC security against multiple forgeries is defined.  See \texttt{https://eprint.iacr.org/2006/095.pdf} for details.}
 %\tsnote{Here's an off-the-wall idea.  What if the basic FP security
 %notion gave the adversary an oracle for set-membership (and the hash functions, depending on the setting), and after interacting with these
 %it is challenged with either $x_0$ or $x_1$, where $x_0$ is a random
