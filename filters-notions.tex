@@ -111,7 +111,6 @@ negligible is reasonable in practice :P}
 \experimentv{$\ExpFPSecHash{B}{\distr{U}{n},A}$}\\
 $S \getsr \distr{U}{n}$\\
 $h_1,\ldots,h_k \getsr \Hash$\\
-$\HashOracle = (h_1, \ldots, h_k)$\\
 $(M,\tau) \getsr \Rep^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle}(S)$\\
 if $x \not\in S \wedge \Qry^{\HashOracle}(M,\tau,x)=1$ then\\
@@ -135,7 +134,6 @@ Ret $h_i(x)$\\
 \experimentv{$\ExpFPPubHashBB{B}{\distr{U}{n}, A}$}\\
 $S \getsr \distr{U}{n}$\\
 $h_1,\ldots,h_k \getsr \Hash$\\
-$\HashOracle = (h_1, \ldots, h_k)$\\
 $(M,\tau) \getsr \Rep^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle,\HashOracle}(S)$\\
 if $x \not\in S \wedge \Qry^{\HashOracle}(M,\tau,x)=1$ then\\
@@ -159,7 +157,6 @@ Ret $h_i(x)$\\
 \experimentv{$\ExpFPPubHash{B}{\distr{U}{n}, A}$}\\
 $S \getsr \distr{U}{n}$\\
 $h_1,\ldots,h_k \getsr \Hash$\\
-$\HashOracle = (h_1, \ldots, h_k)$\\
 $(M,\tau) \gets \Rep^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle}(S,\{h_1,h_2,\ldots,h_k\})$\\
 if $x \not\in S \wedge \Qry^{\HashOracle}(M,\tau,x)=1$ then\\
@@ -273,7 +270,6 @@ A weaker notion of privacy would not give~$M$ to the adversary.  However, this w
 \experimentv{$\ExpPrivSecHash{B}{\distr{U}{n}, A}$}\\
 $S \getsr \distr{U}{n}$\\
 $h_1,\ldots,h_k \getsr \Hash$\\
-$\HashOracle = (h_1, \ldots, h_k)$\\
 $(M,\tau) \getsr \Rep^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle}(M)$\\
 if $x\in S$ then Ret 1\\
@@ -296,7 +292,6 @@ Ret $h_i(x)$\\
 \experimentv{$\ExpPrivPubHashBB{B}{\distr{U}{n}, A}$}\\
 $ S \getsr \distr{U}{n}$\\
 $h_1,\ldots,h_k \getsr \Hash$\\
-$\HashOracle = (h_1, \ldots, h_k)$\\
 $(M,\tau) \getsr \Rep^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle,\HashOracle}(M)$\\
 if $x\in S$ then Ret 1\\
@@ -319,7 +314,6 @@ Ret $h_i(x)$\\
 \experimentv{$\ExpPrivPubHash{B}{\distr{U}{n}, A}$}\\
 $ S \getsr \distr{U}{n}$\\
 $h_1,\ldots,h_k \getsr \Hash$\\
-$\HashOracle = (h_1, \ldots, h_k)$\\
 $(M,\tau) \getsr \Rep^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle}(M,\{h_1,h_2,\ldots,h_k\})$\\
 if $x\in S$ then Ret 1\\
