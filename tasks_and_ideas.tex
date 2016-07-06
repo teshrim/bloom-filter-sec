@@ -35,7 +35,8 @@
     one domain naively using a tool developed for another? )
 
 \item  If I recall properly, a Bloom filter leaks the number of elements that it represents, if you know the filter size and the number of hash functions.  Verify this.  \tsnote{Approximately true.  If the distribution of the expected number of zero bits is tight around its mean, then you can use the actual number of 0-bits as the expected number, and then deduce the size of the set.}  Also, what about set-intersection attacks on Bloom filters?
-\item This raises the more general question of schemes/protocols that use multiple Bloom filters to represent a single set based on distinct features of set elements.  We should dig into this.
+
+\item This raises the more general question of schemes/protocols that use multiple Bloom filters to represent a single set based on distinct features of set elements.  We should dig into this. \tsnote{Not sure if this requires new syntax and/or notions.  But basically this is what the Neidermayer et al.\ attacks exploit -- that medical records consist of multiple fields, and the record-linkage protocol produces a BF for each field.  (If you think of records as rows in a DB, there's a BF for each column.) One of the fields is the patient's surname, and the attack uses clever frequency analysis to recover surnames.}
 
 \item Considering the P2P setting, how should we formalize insider attacks?  I'm thinking something like FP and privacy with corruptions.  What about authenticity of published Bloom filters?
 

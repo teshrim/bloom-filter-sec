@@ -15,11 +15,11 @@ The determinisitc query algorithm $\Qry\colon \left(\bigcup_{m=m_1}^{m_2}\Sigma^
 %
 The randomized \emph{update} algorithm $\Update\colon \left(\bigcup_{m=m_1}^{m_2}\Sigma^m \right)\times \bits^* \rightarrow \left(\bigcup_{m=m_1}^{m_2}\Sigma^m \right) \cup \{\bot\}$ takes a representation and an update string, and returns an updated representation or the distinguished symbol~$\bot$.  
 %
-The deterministic \emph{test} algorithm $\Test \colon \multiset{U}{} \times \left(\bigcup_{m=m_1}^{m_2}\Sigma^m \right)\cup\{\bot\} \times U \rightarrow \bits$ takes a multiset~$S$, a representation~$M$ and an element~$x \in U$ and returns a bit.
+The deterministic \emph{test} algorithm $\Test \colon \multiset{U}{} \times \left(\bigcup_{m=m_1}^{m_2}\Sigma^m \right)\cup\{\bot\} \times U \rightarrow \bits$ takes a multiset~$S$, a representation~$M$ and an element~$x \in U$ and returns a bit. \tsnote{The point of $\Test$ is to capture correctness, which is not guaranteed in this setting.  (It isn't something one would actually implement in practice.)  Intuitively, $\Test$ outputs 1 iff $x \in S$ but the representation~$M$ ``says'' it is not.}
 %
 %We assume that all $\Init,\Qry,\Update,\Test$ all have blackbox access to the functions $h_1,h_2,\ldots,h_k \in \mathcal{H}$, which we denote by writing~$\mathcal{H}$ as a superscript.   
 
-\heading{Correctness. } The kind of filters we capture, here, can have \emph{two-sided} error.  That is, they may result in false-negatives as well as false-positives.  We captures two versions of correctness in Figure~\ref{fig:correctness-mutable}, corresponding to whether or not the adversary is given access to the hash functions used to create and update the multiset representation.
+\heading{Correctness. } The kind of filters we capture, here, can have \emph{two-sided} error.  That is, they may result in false-negatives as well as false-positives.  We captures two versions of correctness in Figure~\ref{fig:correctness-mutable}, corresponding to whether or not the adversary is given access to the hash functions used to create and update the multiset representation. \tsnote{These are draft experiments!}
 
 \begin{figure}
 \centering
@@ -31,7 +31,8 @@ $S \getsr \distr{U}{n}$\\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
 $M \getsr \Init^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle,\UpdateOracle}(S)$\\
-if $\Test^{\HashOracle}(S,M,x) \neq 1$ then Ret 1\\
+if $\Test^{\HashOracle}(S,M,x) \neq 1$ then\\
+\nudge Ret 1\\
 Ret 0
 }
 %
@@ -120,7 +121,7 @@ Ret $h_i(x)$\\
 \heading{Soundness for mutable hash-based filters. } \tsnote{To do.  Same comments as for the simple case, only it's more complicated here because I have no idea what soundness even means in this setting.  Might generically specify two tests as part of the syntax, one for correctness and one for soundness?}
 
 
-\heading{Privacy of hash-based filters.} \tsnote{To-do.}
+\heading{Privacy of Mutable hash-based filters.} \tsnote{To-do.}
 
 
 \if{0}
