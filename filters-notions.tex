@@ -26,15 +26,7 @@ expensive hash computations, e.g. SCRYPT.)  BTW, your suggestion to
 have a FP notion with secret~$\mathcal{S}$ is interesting here. }
 
 
-The traditional notion of soundness
-for a Bloom filter captures the difficulty of finding false
-positives when the attacker is non-adaptive. Following NY, we
-consider soundness against adaptive adversaries. But we further
-generalize to allow for settings in which the attacker may have some
-a priori knowledge about the contents of~$S$. (The Niedermaier et
-al.~\cite{xxx} attacks, for example, exploit knowledge about the
-distribution of German last names.)   In particular, our notions
-take as input an explicit distribution $\distr{U}{n}$ over~$[U]^n$.
+The traditional notion of soundness for a Bloom filter captures the difficulty of finding false positives when the attacker is non-adaptive. Following NY, we consider soundness against adaptive adversaries. But we further generalize to allow for settings in which the attacker may have some a priori knowledge about the contents of~$S$. (The Niedermaier et al.~\cite{xxx} attacks, for example, exploit knowledge about the distribution of German last names.) In particular, our notions take as input an explicit distribution $\distr{U}{n}$ over~$[U]^n$.
 
 \jknote{We also want to capture the fact that finding the first
 false positive should not make it any easier to find subsequent
@@ -42,22 +34,11 @@ false positives. This is not really captured by the Naor paper,
 either (at least not directly, though it may end up being implied by
 their definition).} \tsnote{See my comment in the intro.}
 
-In Figure~\ref{fig:fp-filter} we give three distinct notions,
-characterized by what access the adversary has to the underlying
-hash functions used by the filter.  In the top notion, the hash
-functions are secret.  This is the setting addressed by NY, and it
-captures applications in which the hash functions are (say) secretly
-keyed PRFs, and in which no explicit, external interface to these is
-surfaced.
+In Figure~\ref{fig:fp-filter} we give three distinct notions, characterized by what access the adversary has to the underlying hash functions used by the filter.  In the top notion, the hash functions are secret.  This is the setting addressed by NY, and it captures applications in which the hash functions are (say) secretly keyed PRFs, and in which no explicit, external interface to these is surfaced.
 %
 The bottom notion considers the case that the full code of the hash functions is known to the attacker.  This is the case, for example, when attacking the Bloom filters used in the Squid proxy~\cite{xxx}.
 %
-The middle notion is a compromise: it makes the hash functions
-public, but assumes that the adversary only accesses them in a
-black-box manner.  That is, the adversary does not exploit
-structural features of the hash functions in its attack.  This
-notion makes it easy to track the query complexity of an attack, and
-also allows us to capture constructions in the random-oracle model. \tsnote{I'm not sure this is really useful for anything other than ROM analysis.  Perhaps for settings in which the hash-functions are secret, but the attack surface expose a way for the adversary to see their outputs?}
+The middle notion is a compromise: it makes the hash functions public, but assumes that the adversary only accesses them in a black-box manner.  That is, the adversary does not exploit structural features of the hash functions in its attack.  This notion makes it easy to track the query complexity of an attack, and also allows us to capture constructions in the random-oracle model. \tsnote{This is the setting for the Neidermayer et al.\  attacks.  It's also the setting for ROM attacks.}
 
 For each experiment, we define an associated advantage
 notion.  Namely, given an $(n,k,m)$-filter~$B=(\Hash,\Rep,\Qry)$,
