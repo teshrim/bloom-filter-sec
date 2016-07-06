@@ -124,6 +124,17 @@ Ret $h_i(x)$\\
 \heading{Privacy of Mutable hash-based filters.} \tsnote{To-do.}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Security Results for Mutable Hash-Based Filters}
+\begin{itemize}
+\item Prove privacy of ``Stable'' Bloom Filters
+\item Ditto for count-min sketch (with and without conservative update)
+\item Ditto for scaling BF 
+\item Correctness and soundness bounds for these?  (Not sure this is possible without a lot of work; see what's already been done in the papers that propose them)
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \if{0}
 \heading{Multiset-oriented hash-based filters. }
 \tsnote{Commented out, but in the source: an alternative way to formalize mutable hash-based filters.  This way directly address the inputs as multisets, instead of starting with a set and then updating the represenation a step at a time.  Not sure which is cleaner and more easily applied to real problems, yet.}
