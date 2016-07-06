@@ -378,6 +378,12 @@ Ret $h_i(x)$\\
 \label{fig:fp-filter}
 \end{figure}
 
+\heading{Achieving FP-security and privacy.}
+\tsnote{Under our current notions, you can never hope to prove privacy bounds that beat the min-entropy of $\distr{U}{n}$.}
+\tsnote{We should prove privacy for the bigram/PRF-based double-hashing construction that Neidermayer et al.\ attacks. I'm pretty sure the attack is in the public-BB setting, and the provable security bound is considerably worse than the min-entropy because of the way the representation is made.  (Essentially, the Hamming weight of the representation is a good estimate of the length of the longest surname in filter.)  Note that their attack would allow one to recover \emph{every} name, not just one.}
+\tsnote{Prove that the basic BF, in the ROM, is private.  This also shows that the basic BF with $h_j(x)=F_K(\langle j,x \rangle)$ is private.  I believe this also shows that the bigram approach examined by Neidermayer et al.\ is secure when the hash functions are the $h_j(x)$ just described. }
+\tsnote{Prove privacy of other suggestions, such as the record-level BF from Durham et al.?}
+
 \heading{Security in multiple-server settings. }  \jnote{What is the
 goal here? If they don't share hash functions, I'm not sure what is
 gained by considering this definition.} \tsnote{Perhaps not the same
