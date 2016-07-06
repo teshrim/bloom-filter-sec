@@ -215,15 +215,16 @@ real-world applications of Bloom filters have no secrets.  NY point
 to web proxies, which use Bloom filters to compactly represent the
 objects they store locally, as motivation for their work.  But real
 web proxies like Squid~\cite{xxx} do \emph{not} use secrets in their
-Bloom filters.  They use the basic Bloom filter with four hash
+Bloom filters.  Squid, in particular, uses the basic Bloom filter with four hash
 functions, defined as follows: $h_1(x) =
 \mathrm{MD5}(x)[0,\ldots,31]$,
 $h_2(x)=\mathrm{MD5}(x)[32,\ldots,63]$,
 $h_3(x)=\mathrm{MD5}(x)[64,\ldots,95]$, and
 $h_4(x)=\mathrm{MD5}(x)[96,\ldots,127]$.  Likewise, there are no
 secrets in the Bloom filters used by Google's BigTable~\cite{xxx},
-HBase~\cite{xxx}, \tsnote{make an impressive list.}  There are
-applications in which the proposed Bloom filter instantiations do
+HBase~\cite{xxx}, \tsnote{make an impressive list.}  
+
+There are applications in which the proposed Bloom filter instantiations do
 use secretly keyed hash functions, e.g. $h_j(x) = (f(K_0,x) + j\cdot
 g(K_1,x))\bmod m$, where $j\in[1,k]$, $m$ is the number of bits in
 the array, and where $f,g$ are PRFs keyed by secrets $K_0,K_1$.
