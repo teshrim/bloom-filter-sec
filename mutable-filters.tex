@@ -1,4 +1,4 @@
-\section{Mutuable hash-based filters}
+\section{Mutuable Hash-Based Filters}
 Here we extend the basic Bloom filter syntax to allow for variations on the traditional Bloom filter, e.g. counting Bloom filters~\cite{xxx}, spectral Bloom filters~\cite{xxx}, count-min sketches~\cite{xxx}, stable Bloom filters~\cite{xxx}, etc.   Before giving it, let us briefly describe what is formalized.  Our syntax captures settings in which there is some (potentially empty) initial set~$S$, whose representation~$M$ may undergo updates over time.  Effectively, this allows for expansion of~$S$ to a larger set, or even a multiset, as new elements ``arrive''.    The update algorithm is responsible for altering the current representation.  We allow it to take in a string that encodes inputs needed to carry out the updating.  For example, counting Bloom filters may receive update strings that encode $(x,c)$ where $x \in U$ is the element whose representation should be incremented, and $c \in \mathbb{N}$ is the amount of the increment.  Network applications, such as looking for heavy-hitters across TCP/IP streams seen by a router, may have $x = (\mathrm{IP_{src}},\mathrm{IP_{dst}})$, the source and destintation address of a packet, and~$c$ the number of bytes in the packet payload.  When necessary we will specify what is encoded in the update string, but will assume some implicit and fixed encoding scheme.  Note that our syntax allows for randomized updating.  This accommodates stable Bloom filters, for example, which has a randomized ``forgetting'' feature as part of its update.
 
 \heading{Preliminaries.}
@@ -9,13 +9,13 @@ Fix nonempty sets $U,\Sigma$ and integers $k,m_1,m_2,n>0$ with $m_1 \leq m_2$.  
 %
 The randomized \emph{hash-sampling} algorithm~$\Hash$ samples a size~$k$ family of functions~$\mathcal{H}=\{h_1,h_2,\ldots,h_k\}$ where each $h_i \in  \mathrm{Func}(U,\{0,1,\ldots,m_2-1\})$.  We write $\mathcal{H} \getsr \Hash$ for this operation. 
 %
-The randomized \emph{initial-representation} algorithm $\Init\colon \multiset{U}{n} \rightarrow \left(\bigcup_{m=m_1}^{m_2}\Sigma^m\right)$ takes a multiset~$S$ of size~$n$ as input, and outputs representation~$M$ of length~$m_1 \leq m \leq m_2$.
+The randomized \emph{initial-representation} algorithm $\Init\colon \multiset{U}{n} \rightarrow \left(\bigcup_{m=m_1}^{m_2}\Sigma^m\right) \times \bits^*$ takes a multiset~$S$ of size~$n$ as input, and outputs representation~$M$ of length~$m_1 \leq m \leq m_2$, and side-information~$\tau$.
 %
-The determinisitc query algorithm $\Qry\colon \left(\bigcup_{m=m_1}^{m_2}\Sigma^m \right)\times U \rightarrow \bits^*$ takes a representation $M$ and an element $x \in U$ and returns a bitstring.  
+The determinisitc query algorithm $\Qry\colon \left(\bigcup_{m=m_1}^{m_2}\Sigma^m \right)\times \bits^* \times U \rightarrow \bits^*$ takes a representation $M$, side-information~$\tau$, and an element $x \in U$ as input, and returns a bitstring.  
 %
-The randomized \emph{update} algorithm $\Update\colon \left(\bigcup_{m=m_1}^{m_2}\Sigma^m \right)\times \bits^* \rightarrow \left(\bigcup_{m=m_1}^{m_2}\Sigma^m \right) \cup \{\bot\}$ takes a representation and an update string, and returns an updated representation or the distinguished symbol~$\bot$.  
+The randomized \emph{update} algorithm $\Update\colon \left(\bigcup_{m=m_1}^{m_2}\Sigma^m \right)\times \bits^* \times \bits^*\rightarrow \left(\bigcup_{m=m_1}^{m_2}\Sigma^m \right) \cup \{\bot\}$ takes a representation~$M$, side-information~$\tau$, and an update string~$\sigma$ as input, and returns an updated representation or the distinguished symbol~$\bot$.  
 %
-The deterministic \emph{test} algorithm $\Test \colon \multiset{U}{} \times \left(\bigcup_{m=m_1}^{m_2}\Sigma^m \right)\cup\{\bot\} \times U \rightarrow \bits$ takes a multiset~$S$, a representation~$M$ and an element~$x \in U$ and returns a bit. \tsnote{The point of $\Test$ is to capture correctness, which is not guaranteed in this setting.  (It isn't something one would actually implement in practice.)  Intuitively, $\Test$ outputs 1 iff $x \in S$ but the representation~$M$ ``says'' it is not.}
+The deterministic \emph{test} algorithm $\Test \colon \multiset{U}{} \times \left(\bigcup_{m=m_1}^{m_2}\Sigma^m \right)\cup\{\bot\} \times \bits^* \times U \rightarrow \bits$ takes a multiset~$S$, a representation~$M$, side-information~$\tau$, and an element~$x \in U$ as input, and returns a bit. \tsnote{The point of $\Test$ is to capture correctness, which is not guaranteed in this setting.  (It isn't something one would actually implement in practice.)  Intuitively, $\Test$ outputs 1 iff $x \in S$ but the representation~$M$ ``says'' it is not.}
 %
 %We assume that all $\Init,\Qry,\Update,\Test$ all have blackbox access to the functions $h_1,h_2,\ldots,h_k \in \mathcal{H}$, which we denote by writing~$\mathcal{H}$ as a superscript.   
 
@@ -29,9 +29,9 @@ The deterministic \emph{test} algorithm $\Test \colon \multiset{U}{} \times \lef
 \experimentv{$\ExpCorrectSecHash{B}{\distr{U}{n}, A}$}\\
 $S \getsr \distr{U}{n}$\\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
-$M \getsr \Init^{\HashOracle}(S)$\\
+$(M,\tau) \getsr \Init^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle,\UpdateOracle}(S)$\\
-if $\Test^{\HashOracle}(S,M,x) \neq 1$ then\\
+if $\Test^{\HashOracle}(S,M,\tau,x) \neq 1$ then\\
 \nudge Ret 1\\
 Ret 0
 }
@@ -39,14 +39,14 @@ Ret 0
 {
 \oracle{$\QryOracle(x)$}\\
 if $M = \bot$ then Ret $\bot$\\
-Ret $\Qry^{\HashOracle}(M,x)$\\
+Ret $\Qry^{\HashOracle}(M,\tau,x)$\\
 
 \medskip
 \oracle{$\UpdateOracle(\sigma)$}\\
 if $M = \bot$ then Ret $\bot$ \\
 $\mathrm{op},\mathrm{val} \gets \sigma$\\
 $S \gets S \uplus \{\mathrm{val}\}$\\
-$M \getsr \Update^{\HashOracle}(M,\sigma)$\\
+$M \getsr \Update^{\HashOracle}(M,\tau,\sigma)$\\
 
 \medskip
 \oracle{$\HashOracle(i,x)$}\\
@@ -60,23 +60,23 @@ Ret $h_i(x)$\\
 \experimentv{$\ExpCorrectPubHashBB{B}{\distr{U}{n} , A}$}\\
 $S \getsr \distr{U}{n}$\\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
-$M \getsr \Init^{\HashOracle}(S)$\\
+$(M,\tau) \getsr \Init^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle,\UpdateOracle,\HashOracle}(S)$\\
-if $\Test^{\HashOracle}(S,M,x) \neq 1$ then Ret 1\\
+if $\Test^{\HashOracle}(S,M,\tau,x) \neq 1$ then Ret 1\\
 Ret 0
 }
 %
 {
 \oracle{$\QryOracle(x)$}\\
 if $M = \bot$ then Ret $\bot$\\
-Ret $\Qry^{\HashOracle}(M,x)$\\
+Ret $\Qry^{\HashOracle}(M,\tau,x)$\\
 
 \medskip
 \oracle{$\UpdateOracle(\sigma)$}\\
 if $M = \bot$ then Ret $\bot$ \\
 $\mathrm{op},\mathrm{val} \gets \sigma$\\
 $S \gets S \uplus \{\mathrm{val}\}$\\
-$M \getsr \Update^{\HashOracle}(M,\sigma)$\\
+$M \getsr \Update^{\HashOracle}(M,\tau,\sigma)$\\
 
 \medskip
 \oracle{$\HashOracle(i,x)$}\\
@@ -90,23 +90,23 @@ Ret $h_i(x)$\\
 \experimentv{$\ExpCorrectPubHash{B}{\distr{U}{n} , A}$}\\
 $S \getsr \distr{U}{n}$\\
 $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
-$M \getsr \Init^{\HashOracle}(S)$\\
+$(M,\tau) \getsr \Init^{\HashOracle}(S)$\\
 $x \getsr A^{\QryOracle,\UpdateOracle}(S,\{h_1,h_2,\ldots,h_k\})$\\
-if $\Test^{\HashOracle}(S,M,x) \neq 1$ then Ret 1\\
+if $\Test^{\HashOracle}(S,M,\tau,x) \neq 1$ then Ret 1\\
 Ret 0
 }
 %
 {
 \oracle{$\QryOracle(x)$}\\
 if $M = \bot$ then Ret $\bot$\\
-Ret $\Qry^{\HashOracle}(M,x)$\\
+Ret $\Qry^{\HashOracle}(M,\tau,x)$\\
 
 \medskip
 \oracle{$\UpdateOracle(\sigma)$}\\
 if $M = \bot$ then Ret $\bot$ \\
 $\mathrm{op},\mathrm{val} \gets \sigma$\\
 $S \gets S \uplus \{\\mathrm{val}\}$\\
-$M \getsr \Update^{\HashOracle}(M,\sigma)$\\
+$M \getsr \Update^{\HashOracle}(M,\tau,\sigma)$\\
 
 \medskip
 \oracle{$\HashOracle(i,x)$}\\
