@@ -96,7 +96,7 @@ public, but assumes that the adversary only accesses them in a
 black-box manner.  That is, the adversary does not exploit
 structural features of the hash functions in its attack.  This
 notion makes it easy to track the query complexity of an attack, and
-also allows us to capture constructions in the random-oracle model.
+also allows us to capture constructions in the random-oracle model. \tsnote{I'm not sure this is really useful for anything other than ROM analysis.  Perhaps for settings in which the hash-functions are secret, but the attack surface expose a way for the adversary to see their outputs?}
 
 For each experiment, we define an associated advantage
 notion.  Namely, given an $(n,k,m)$-filter~$B=(\Hash,\Rep,\Qry)$,
