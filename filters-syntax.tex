@@ -4,11 +4,13 @@ When~$U$ is a set and $n>0$ is an integer, we let $[U]^n$ denote the set of all 
 We write $x \getsr U$ to denote sampling an element from~$U$ and assigning this to~$x$, and we extend this notation to randomized algorithms.
 
 \heading{Syntax.}
-Fix a nonempty sets $U,\Sigma$ and integers $k,m,n>0$.  Fix a symbol $\bot \not\in U$.  An $(n,k,m)$-filter (over universe~$U$) is a tuple  $B=(\Hash,\Rep,\Qry)$.
+Fix a nonempty sets $U,\Sigma$ and integers $k,m,n>0$.  Fix a symbol $\bot \not\in U$.
+An $(n,k,m)$-filter (over universe~$U$) is a tuple  $B=(\Hash,\Rep,\Qry)$.
 %
 The randomized \emph{hash-sampling} algorithm~$\Hash$ samples a
 size~$k$  family of functions~$\mathcal{H}=\{h_1,h_2,\ldots,h_k\}$
-where each $h_i \in  \mathrm{Func}(U,[m])$.  We write $\mathcal{H}
+where each $h_i \in  \mathrm{Func}(U,[m])$.  \jnote{This doesn't seem to work super-well with
+the random oracle model.} We write $\mathcal{H}
 \getsr \Hash$ for this operation.
 %
 The randomized representation algorithm $\Rep\colon [U]^n \rightarrow

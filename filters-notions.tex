@@ -55,15 +55,18 @@ time-complexity~$t$ of~$A$, as well as the number of set-membership
 the second, we also track the number of hash-queries
 $q_{\mathrm{h}}$ that the adversary makes.
 
+\jnote{Do our definitions imply the Naor definition? If so, then why do they use a PRP
+in their construction?}
+
 We note that the distribution~$\distr{U}{n}$ must be independent of the hash functions $h_1,h_2,\ldots,h_k$ that are used to create~$M$.  Otherwise, when (say) $\Sigma=\bits$, the distribution may only assign positive probability to sets~$S$ that cause an abnormally large number of bits in~$M$ to be set to 1.  Our security notions enforce this independence.
 
 \jnote{How do we want to define a ``secure'' Bloom filter (even
 informally)? Do we want to say that the probability of finding a
 false positive is negligible? Or that if we set the FP rate to
 $\epsilon$ then the best an attacker can do with $q$ hash queries is
-$1-(1-\epsilon)^q$ plus negligible?} 
+$1-(1-\epsilon)^q$ plus negligible?}
 \tsnote{Formally, I don't think we can (and still be rooted in
-  reality.)  Even informally it's hard, since the fact is that the
+  reality).  Even informally it's hard, since the fact is that the
   designer decides what is ``secure'' for her setting.  I think we
   just say something like ``A bloom filter is
   $(t,q_h,q_m,\epsilon)$-secure if no attacker running in time at
@@ -80,9 +83,6 @@ NY notion is that you get a ``clean'' definition of security: no
 matter how many FPs the attacker has found so far, the probability
 that it can output a fresh FP is still $\epsilon$.}
 
-\jnote{What parameters are needed to get negligible $\epsilon$? Are
-they reasonable in practice?} \tsnote{Again, I don't think that
-negligible is reasonable in practice :P}
 
 \begin{figure}
 \centering
@@ -241,7 +241,7 @@ adversary.} } \label{fig:fp-filter}
 
 We note that~$S$ must be independent of the hash functions~$h_1,h_2,\ldots,h_k$ used to create the representation of~$S$.  \tsnote{I thought this would be needed, but now I'm not sure it is. }
 
-A weaker notion of privacy would not give~$M$ to the adversary.  However, this would not capture attacks such as those mounted by Neidermayer et al.\cite{XXX}, and would not speak to settings in which (say) an honest-but-curious third party is given the representation~$M$ in order to carry out some task on behalf of the holder of~$S$.  
+A weaker notion of privacy would not give~$M$ to the adversary.  However, this would not capture attacks such as those mounted by Neidermayer et al.\cite{XXX}, and would not speak to settings in which (say) an honest-but-curious third party is given the representation~$M$ in order to carry out some task on behalf of the holder of~$S$.
 
 \begin{figure}
 \centering
@@ -313,5 +313,3 @@ Ret $h_i(x)$\\
 \caption{Set-privacy for an $(n,k,m)$-filter~$B$ for private (top), black-box queriable (middle),  and public (bottom) hash functions. \textcolor{cyan}{Revisit when the FP notion settles out.}}
 \label{fig:fp-filter}
 \end{figure}
-
-

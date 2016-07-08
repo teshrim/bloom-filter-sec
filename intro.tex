@@ -62,30 +62,22 @@ $x \in \mathcal{S}$ we have
 $\Prob{\mathbf{B}_2(\mathbf{B}_1(\mathcal{S}),x)=1}=1$.  For
 soundness, adversary~$A$ plays the following game,
 ``Adversarial-resilient Bloom Filter with a steady representation''.
-First, $M \getsr \mathbf{B}_1(\mathcal{S})$. \jnote{Where does the
-set come from? Is it random? Adversarially chosen?}
-\tsnote{In their formalism, it is implicitly an input to the security experiment.
-Security is universally quantified over sets~$\mathcal{S}$.  This
-would seem to be equivalent to letting the adversary
-pick~$\mathcal{S}$ (prior to the hash functions being picked), with
-the time to compute and write out~$\mathcal{S}$ folded into the
-adversary's running time. } 
-Then the
-adversary is given the set~$\mathcal{S}$ and may make queries
-$x_1,x_2,\ldots,x_q$ to an oracle for $\mathbf{B}_2(M,\cdot)$.  At
-the end of its execution, the adversary outputs~$x^*$ and wins the
-game if (1) $x^* \not\in \mathcal{S} \cup \{x_1,x_2,\ldots,x_q\}$,
-and (2) $\mathbf{B}_2(M,x^*)=1$.
+First, $M \getsr \mathbf{B}_1(\mathcal{S})$ for some set
+$\mathcal{S}$ that can be adversarially chosen. Then the adversary
+may make queries $x_1,x_2,\ldots,x_q$ to an oracle for
+$\mathbf{B}_2(M,\cdot)$.  At the end of its execution, the adversary
+outputs~$x^*$ and wins the game if (1) $x^* \not\in \mathcal{S} \cup
+\{x_1,x_2,\ldots,x_q\}$, and (2) $\mathbf{B}_2(M,x^*)=1$.
 
 First, we note that the security notion forbids~$A$ to win if it
 outputs $x^* \in \{x_1,x_2,\ldots,x_q\}$, even if one of these was a
-false positive. 
+false positive.
 \jnote{We discussed this on the phone, but let me
 put it in writing here. I think this is actually a reasonable choice
 because it captures the notion that ``even after finding some false
 positives, it remains hard to find additional false positives.''
 Note that in practice finding false positives is ``easy'' since
-$\epsilon$ might be $1/1000$ rather than negligible.} 
+$\epsilon$ might be $1/1000$ rather than negligible.}
 \tsnote{For me the question is: is security violated once the first FP is found, or
 the second?  My answer, which is in line with the traditional
 soundness notion, is that the first FP is a security violation
@@ -109,7 +101,7 @@ has it's own associated (informal) security interpretation.}
 \tsnote{Perhaps a more obvious way to capture the idea that ``finding
   some FPs doesn't help find additional ones'' is to parameterize my notion(s) with a number~$f$, and say
 that that the adversary wins iff it outputs~$f$ FPs (these may have
-been previously queried to the set-membership oracle).  
+been previously queried to the set-membership oracle).
 Note that in the ROM (and probably in practice) finding~$f>1$ FPs will
 require~$f$ times the work.  Right?} \tsnote{FYI: this is how MAC security against multiple forgeries is defined.  See \texttt{https://eprint.iacr.org/2006/095.pdf} for details.}
 %\tsnote{Here's an off-the-wall idea.  What if the basic FP security
@@ -121,14 +113,14 @@ require~$f$ times the work.  Right?} \tsnote{FYI: this is how MAC security again
 
 
 Second, we note that the NY syntax does not capture the size of~$M$
-as a parameter; 
-\jnote{I think this is also reasonable; typically
-security is defined without regard for efficiency}
-\tsnote{My complaint isn't about efficiency. It's about the fact that,
-by not including $|M|$ in the definition, the trivial scheme I give
-(just below) is allowed, and is secure.  Anyway, as I say at the end
-of this paragraph, this is a small(er) complaint than what follows}. The surrounding
-text does say that $\mathbf{B}_1$ ``outputs a compressed
+as a parameter; \jnote{I think this is also reasonable; typically
+security is defined without regard for efficiency} \tsnote{My
+complaint isn't about efficiency. It's about the fact that, by not
+including $|M|$ in the definition, the trivial scheme I give (just
+below) is allowed, and is secure.  Anyway, as I say at the end of
+this paragraph, this is a small(er) complaint than what follows}.
+\jnote{I would say that the trivial scheme \emph{is} secure!} The
+surrounding text does say that $\mathbf{B}_1$ ``outputs a compressed
 representation [of $\mathcal{S}$] $\mathbf{B}_1(\mathcal{S})=M$''
 but what exactly this means is never addressed.  The formal syntax
 admits $\mathbf{B}_1(\mathcal{S})=\mathcal{S}$ and
@@ -197,7 +189,7 @@ reason about difficulty of finding a false-positive. Moreover, NY
 stresses (at least once) that the representation is \emph{not} given
 to the adversary in their notions.  So it seems unlikely that they
 intended for $h_1,h_2,\ldots,h_k$ to be hard-coded into the
-algorithms. 
+algorithms.
 \jnote{Perhaps it is reasonable to consider a definition
 in which the set is not given to the adversary?}
 \tsnote{A FP security notion?  Yes, perhaps so.  It's probably a more
@@ -222,7 +214,7 @@ $h_2(x)=\mathrm{MD5}(x)[32,\ldots,63]$,
 $h_3(x)=\mathrm{MD5}(x)[64,\ldots,95]$, and
 $h_4(x)=\mathrm{MD5}(x)[96,\ldots,127]$.  Likewise, there are no
 secrets in the Bloom filters used by Google's BigTable~\cite{xxx},
-HBase~\cite{xxx}, \tsnote{make an impressive list.}  
+HBase~\cite{xxx}, \tsnote{make an impressive list.}
 
 There are applications in which the proposed Bloom filter instantiations do
 use secretly keyed hash functions, e.g. $h_j(x) = (f(K_0,x) + j\cdot
@@ -281,12 +273,25 @@ We show that...
 \begin{itemize}
 \item Nojima and Kadobayashi, ``Cryptographically Secure Bloom Filters''. \tsnote{Gives some security definitions for privacy. Quick scan, not super clear what they achieve. The definition of client-privacy (Definition 1) for example, makes no sense to me.  Actually, likewise for server-privacy (Definition 2).  Both seem vague and thoroughly underspecified.}
 \item Naor and Yogev
-\item Eujin Goh, ``Secure Indexes'' \tsnote{A secure index can be used for set membership.  Builds a secret-key data structure (an Index) that allows searching for keyword~$w$ if one holds the trapdoor $T_w$ for~$w$, where the trapdoor depends on the secret key.  Main construction uses traditional Bloom filters and a PRF.  Construction appears quite inefficient, needing a very long secret key, turning a keyword~$w$ into a bunch of PRF outputs, and then storing each of these PRF outputs in the BF.  Havent read the full analysis; don't know if this was ever published. }
+\item Eujin Goh, ``Secure Indexes'' \tsnote{A secure index can
+    be used for set membership.  Builds a secret-key data
+    structure (an Index) that allows searching for keyword~$w$
+    if one holds the trapdoor $T_w$ for~$w$, where the trapdoor
+    depends on the secret key.  Main construction uses
+    traditional Bloom filters and a PRF.  Construction appears
+    quite inefficient, needing a very long secret key, turning a
+    keyword~$w$ into a bunch of PRF outputs, and then storing
+    each of these PRF outputs in the BF.  Havent read the full
+    analysis; don't know if this was ever published. }
+    \jnote{Never published. I think this work uses Bloom filters
+    for encrypted search; I don't remember the paper having much
+    to say about Bloom filters themselves.}
 \end{itemize}
 
 \heading{Related work: constructions}
 \begin{itemize}
-\item Bellovin and Cheswick, ``Privacy-Enhanced Searches Using Encrypted Bloom Filters''.
+\item Bellovin and Cheswick, ``Privacy-Enhanced Searches Using
+    Encrypted Bloom Filters''.
 \item Kerschbaum , ``Public-Key Encrypted Bloom Filters with Applications to Supply Chain Integrity''.
 \item S\"{a}rell\"{a} et al., ``BloomCasting: Security in Bloom Filter Based Multicast''.
 \item Dong, Chen, Wen, ``When Private Set Intersection Meets Big Data: An Efficient and Scaleable Protocol'' \tsnote{``garbled bloom filters'', which actually store the set element by storing~$k$ xor-shares, one at each of the~$k$ hash indices (with care for reusing shares if hash collisions occur); also and``oblivious bloom intersection''}\tsnote{If the filter and the hash functions are public, there is a naive attack that works for some interesting parameters.  Pick~$k$ positions $i_1,i_2,\ldots,i_k$, xor strings at these positions to get a candidate~$x$.  If $h_{1}(x)=i_1 \wedge h_2(x)=i_2 \wedge \cdots \wedge h_k(x) = i_k$ then either $x \in S$ or~$x$ is a false-positive. (You don't have to do all~$k$ hashes, you can stop as soon as one fails to match the index.) Say you have a 1000-position filter ($m=1000$) and a 100-element set ($n=100$), and you are willing to tolerate a 1\% FP rate.  Then you'd set $k=4$ (a la Squid).  There are roughly $2^{35}$ subsets of 4 indices to consider, which is reasonable on a laptop these days.  (Also, since $n=100$ the expected number of trials is roughly $2^{28}$.) With the FP rate of 1\%, if you find a winner then almost certainly it is in the set.  Granted, this attack is naive, but notice that you \emph{cannot} mount it against a standard Bloom filter. Also notice that this attack might be significantly more efficient than brute force guessing over the universe of inputs (imagine that $U=\bits^{64}$), even if you know that the distribution deviates significantly from uniform. }
