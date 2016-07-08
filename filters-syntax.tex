@@ -1,42 +1,32 @@
 \section{Hash-based Filters}
 \heading{Preliminaries.}
-When~$U$ is a set and $n>0$ is an integer, we let $[U]^n$ denote the set of all size-$n$ subsets of~$U$.
-We write $x \getsr U$ to denote sampling an element from~$U$ and assigning this to~$x$, and we extend this notation to randomized algorithms.
+When~$U$ is a set and $n>0$ is an integer, we let $[U]^n$ denote the set of all size-$n$ subsets of~$U$. We write $x \getsr U$ to denote sampling an element from~$U$ and assigning this to~$x$, and we extend this notation to randomized algorithms.
 
 \heading{Syntax.}
-Fix a nonempty sets $U,\Sigma$ and integers $k,m,n>0$.  Fix a symbol $\bot \not\in U$.
-An $(n,k,m)$-filter (over universe~$U$) is a tuple  $B=(\Hash,\Rep,\Qry)$.
+Fix a nonempty sets $U,\Sigma$ and integers $k,m,n>0$.  Fix a symbol $\bot \not\in U$. An $(n,k,m)$-filter (over universe~$U$) is a tuple $B=(\Hash,\Rep,\Qry)$.
 %
-The randomized \emph{hash-sampling} algorithm~$\Hash$ samples a
-size~$k$  family of functions~$\mathcal{H}=\{h_1,h_2,\ldots,h_k\}$
-where each $h_i \in  \mathrm{Func}(U,[m])$.  \jnote{This doesn't seem to work super-well with
-the random oracle model.} We write $\mathcal{H}
-\getsr \Hash$ for this operation.
+The randomized \emph{hash-sampling} algorithm~$\Hash$ samples a size~$k$ family of functions~$\mathcal{H}=\{h_1,h_2,\ldots,h_k\}$ where each $h_i \in \mathrm{Func}(U,[m])$.  
+\jnote{This doesn't seem to work super-well with the random oracle model.} 
+\tsnote{Why not?  As we discussed on the phone, this should be fine.  In the ROM, if we ever need to simulate $\Hash$, we just do it by lazy sampling.}
+We write $\mathcal{H} \getsr \Hash$ for this operation.
 %
-The randomized representation algorithm $\Rep\colon [U]^n \rightarrow
-\Sigma^m \times \bits^*$ takes a set~$S$ of~$n$ elements as input, and outputs
-representation~$M$ of length~$m$ along with (possibly empty) side-information~$\tau$.
+The randomized representation algorithm $\Rep\colon [U]^n \rightarrow \Sigma^m \times \bits^*$ takes a set~$S$ of~$n$ elements as input, and outputs representation~$M$ of length~$m$ along with (possibly empty) side-information~$\tau$.
 %
-The deterministic query algorithm $\Qry\colon \Sigma^m \times \bits^* \times U
-\rightarrow \bits$ takes a representation $M$, side-information~$\tau$, and an element $x \in
-U$, and returns a bit.
+The deterministic query algorithm $\Qry\colon \Sigma^m \times \bits^* \times U \rightarrow \bits$ takes a representation $M$, side-information~$\tau$, and an element $x \in U$, and returns a bit.
 %
-We assume that both $\Rep$ and $\Qry$ have blackbox access to the
-functions $h_1,h_2,\ldots,h_k \in \mathcal{H}$.  Typically this access will be implicit, but when we need to make it explicit we will write~$\mathcal{H}$ (or the individual hash functions) as superscripts.
+We assume that both $\Rep$ and $\Qry$ have blackbox access to the functions $h_1,h_2,\ldots,h_k \in \mathcal{H}$.  Typically this access will be implicit, but when we need to make it explicit we will write~$\mathcal{H}$ (or the individual hash functions) as superscripts.
 %which we denote by writing~$\mathcal{H}$ as a superscript.
 %Thus, we write $M \gets \Rep^{\mathcal{H}}(S)$ and $b \gets \Qry^{\mathcal{H}}(M,x)$ for the execution of the representation and query algorithms, respectively.
 %
 %We write $M \gets \Rep(S)$ and $b \gets \Qry(M,x)$ for the execution of the representation and query algorithms, respectively.
-For correctness, we demand that for all~$S$ of size~$n$ and all $x
-\in S$, it holds that $\Prob{\mathcal{H}\getsr\Hash;\,(M,\tau)\getsr\Rep(S)\,:\,\Qry(M,\tau,x)=1}=1$, where the
-probability is over the coins of $\Hash$ and~$\Rep$.
+For correctness, we demand that for all~$S$ of size~$n$ and all $x \in S$, it holds that $\Prob{\mathcal{H}\getsr\Hash;\,(M,\tau)\getsr\Rep(S)\,:\,\Qry(M,\tau,x)=1}=1$, where the probability is over the coins of $\Hash$ and~$\Rep$.
 
 
 %\heading{Discussion.}
-This syntax captures classical Bloom filters by setting~$\Sigma=\bits$,  and defining $\Rep,\Qry$ in the obvious way, with $\tau=\emptystring$. We note that even though $\Rep$ may be randomized, it does not have to be; for the classical Bloom filter, it is deterministic.
+This syntax captures classical Bloom filters by setting~$\Sigma=\bits$, and defining $\Rep,\Qry$ in the obvious way, with $\tau=\emptystring$. We note that even though $\Rep$ may be randomized, it does not have to be; for the classical Bloom filter, it is deterministic.
 
-By allowing $\Rep$ to output side-information, we allow for (say) $\Rep$ and $\Qry$ to share a secret key selected during representation generation.  \tsnote{Ultimately it might be cleaner to fold the hash functions into the side-information, too.  But in that case, we will likely want an explicit separation between private side-information (e.g., the key for a secret permutation of the bits of~$M$) and public side-information (e.g., the hash functions used to create~$M$).  Note that we do see constructions that have \emph{no} ``stand-alone'' hash functions yet use a secret key (e.g., the PRF-based double-hashing construction), and also schemes that employ \emph{both} stand-alone hash functions and a secret key (e.g. the record BF from Durham et al.)}  In our security notions, any side-information will be kept secret from the adversary.
-
-Setting $\Sigma=\bits^{\leq L}$ allows one to store a bitstring of length at most~$L$ at each location.  This allows our syntax to capture the cuckoo-hashing construction from NY, as well as the ``garbled Bloom filter'' from Dong, Chen and Wen~\cite{xxx}, among other things. We note that even though this would allow for the storage of counters (say) at each filter location, our restriction that~$\Qry$ returns a bit does not capture functionality typically demanded of Bloom filters that employ counters, e.g., returning a counter value. (One could, however, have $\Qry$ compute an arbitrary, fixed predicate.  For example, ``has~$x$ been seen at least 5 times?''.)
-Our syntax also does not capture filters that are mutable, that is, whose representation may change over time.
-On the other hand, we can state a simple correctness condition for these kinds of filters; this will not be true when we further generalize to capture, properly, counters and mutability.
+By allowing $\Rep$ to output side-information, we allow for (say) $\Rep$ and $\Qry$ to share a secret key selected during representation generation.  In our security notions, any side-information will be kept secret from the adversary.
+\tsnote{Ultimately it might be cleaner to fold the hash functions into the side-information, too.  But in that case, we will likely want an explicit separation between private side-information (e.g., the key for a secret permutation of the bits of~$M$) and public side-information (e.g., the hash functions used to create~$M$).  Note that we do see constructions that have \emph{no} ``stand-alone'' hash functions yet use a secret key (e.g., the PRF-based double-hashing construction), and also schemes that employ \emph{both} stand-alone hash functions and a secret key (e.g. the record BF from Durham et al.)} 
+%
+\tsnote{Per our phone call 7/8, we're going to leave things as they are for now.  Jon will create an appendix with more general syntax and notions; we'll see how results play out, and decide later if we want to adopt the change in syntax.}
+Setting $\Sigma=\bits^{\leq L}$ allows one to store a bitstring of length at most~$L$ at each location.  This allows our syntax to capture the cuckoo-hashing construction from NY, as well as the ``garbled Bloom filter'' from Dong, Chen and Wen~\cite{xxx}, among other things. We note that even though this would allow for the storage of counters (say) at each filter location, our restriction that~$\Qry$ returns a bit does not capture functionality typically demanded of Bloom filters that employ counters, e.g., returning a counter value. (One could, however, have $\Qry$ compute an arbitrary, fixed predicate.  For example, ``has~$x$ been seen at least 5 times?''.) Our syntax also does not capture filters that are mutable, that is, whose representation may change over time. On the other hand, we can state a simple correctness condition for these kinds of filters; this will not be true when we further generalize to capture, properly, counters and mutability.
