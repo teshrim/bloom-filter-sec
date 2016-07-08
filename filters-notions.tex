@@ -221,7 +221,7 @@ A weaker notion of privacy would not give~$M$ to the adversary.  However, this w
 $\calS \getsr \distr{U}{n}$\\
 $h_1,\ldots,h_k \getsr \Hash$\\
 $(M,\tau) \getsr \Rep^{\HashOracle}(\calS)$\\
-$x \getsr A^{\QryOracle}(M)$\\
+$x \getsr A^{\MemOracle,\QryOracle}(M)$\\
 if $x\in \calS$ then Ret 1\\
 Ret 0
 }
@@ -247,7 +247,7 @@ Ret $\left(h_1(x),\ldots,h_k(x)\right)$\\
 $ \calS \getsr \distr{U}{n}$\\
 $h_1,\ldots,h_k \getsr \Hash$\\
 $(M,\tau) \getsr \Rep^{\HashOracle}(\calS)$\\
-$x \getsr A^{\QryOracle,\HashOracle}(M)$\\
+$x \getsr A^{\MemOracle,\QryOracle,\HashOracle}(M)$\\
 if $x\in \calS$ then Ret 1\\
 Ret 0\\
 }
@@ -273,7 +273,7 @@ Ret $\left(h_1(x),\ldots,h_k(x)\right)$\\
 $ \calS \getsr \distr{U}{n}$\\
 $h_1,\ldots,h_k \getsr \Hash$\\
 $(M,\tau) \getsr \Rep^{\HashOracle}(\calS)$\\
-$x \getsr A^{\QryOracle}(M,\{h_1,h_2,\ldots,h_k\})$\\
+$x \getsr A^{\MemOracle,\QryOracle}(M,\{h_1,h_2,\ldots,h_k\})$\\
 if $x\in \calS$ then Ret 1\\
 Ret 0\\
 }
