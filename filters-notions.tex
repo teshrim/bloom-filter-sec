@@ -204,11 +204,11 @@ adversary.} } \label{fig:fp-filter}
 
 
 
-\heading{Privacy of hash-based filters.} We now define privacy notions for $(n,k,m)$-filters.  Informally, the adversary is given the representation~$M$ of a secret set~$S$, and its goal is to guess one of the elements of~$S$.  Of course, if the distribution~$\distr{U}{n}$ has low min-entropy with respect to any particular element $x \in U$, then it will be relatively easy to guess~$x$.  To capture this min-entropy, let $p_{\mathrm{max}} = \max_{x \in U} \Prob{S \getsr \distr{U}{n}:\, x \in S}$ and define $\mu = -\log_2 p_{\mathrm{max}}$ to be the (element-wise) min-entropy of distribution $\distr{U}{n}$.
+\heading{Privacy of hash-based filters.} We now define privacy notions for $(n,k,m)$-filters.  Informally, the adversary is given the representation~$M$ of a secret set~$\calS$, and its goal is to guess one of the elements of~$\calS$.  Of course, if the distribution~$\distr{U}{n}$ has low min-entropy with respect to any particular element $x \in U$, then it will be relatively easy to guess~$x$.  To capture this min-entropy, let $p_{\mathrm{max}} = \max_{x \in U} \Prob{\calS \getsr \distr{U}{n}:\, x \in \calS}$ and define $\mu = -\log_2 p_{\mathrm{max}}$ to be the (element-wise) min-entropy of distribution $\distr{U}{n}$.
 
-We note that~$S$ must be independent of the hash functions~$h_1,h_2,\ldots,h_k$ used to create the representation of~$S$.  \tsnote{I thought this would be needed, but now I'm not sure it is. }
+We note that~$\calS$ must be independent of the hash functions~$h_1,h_2,\ldots,h_k$ used to create the representation of~$\calS$.  \tsnote{I thought this would be needed, but now I'm not sure it is. }
 
-A weaker notion of privacy would not give~$M$ to the adversary.  However, this would not capture attacks such as those mounted by Neidermayer et al.\cite{XXX}, and would not speak to settings in which (say) an honest-but-curious third party is given the representation~$M$ in order to carry out some task on behalf of the holder of~$S$.
+A weaker notion of privacy would not give~$M$ to the adversary.  However, this would not capture attacks such as those mounted by Neidermayer et al.\cite{XXX}, and would not speak to settings in which (say) an honest-but-curious third party is given the representation~$M$ in order to carry out some task on behalf of the holder of~$\calS$.
 
 \begin{figure}
 \centering
