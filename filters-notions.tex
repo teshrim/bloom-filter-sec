@@ -23,9 +23,9 @@ For each experiment, we define an associated advantage
 notion.  Namely, given an $(n,k,m)$-filter~$B=(\Hash,\Rep,\Qry)$,
 distribution~$\distr{U}{n}$ and adversary~$A$, we define:
 \begin{align*}
-\AdvFPSecHash{B}{\distr{U}{n},A} &= \Prob{\ExpFPSecHash{B}{\distr{U}{n},A}} \\
-\AdvFPPubHashBB{B}{\distr{U}{n},A} &= \Prob{\ExpFPPubHashBB{B}{\distr{U}{n},A}} \\
-\AdvFPSecHash{B}{\distr{U}{n},A} &= \Prob{\ExpFPPubHash{B}{\distr{U}{n},A}}
+\AdvFPSecHash{B,t}{\distr{U}{n},A} &= \Prob{\ExpFPSecHash{B,t}{\distr{U}{n},A}=1} \\
+\AdvFPPubHashBB{B,t}{\distr{U}{n},A} &= \Prob{\ExpFPPubHashBB{B,t}{\distr{U}{n},A}=1} \\
+\AdvFPSecHash{B,t}{\distr{U}{n},A} &= \Prob{\ExpFPPubHash{B,t}{\distr{U}{n},A}=1}
 \end{align*}
 The probabilities are over the coins of the indicated experiment,
 and the coins of the adversary.   In all experiments, we track the
