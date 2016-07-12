@@ -1,6 +1,6 @@
 \section{Proofs}
 \tsnote{Jon: ignore these for now.  This is Animesh's workspace.}
-\begin{theorem}\label{thm}
+\begin{theorem}\label{thm1}
 Fix $k, m, n > 0$ and define a hash-based filter as in section \ref{sec:hbf}, except the hash functions are defined by $h_j(x) =  F_{K_0}(x) + j\cdot F_{K_1}(x) \bmod m$, where $F \colon \calK \times U \sends [m]$ is a PRF. Let $Func(U,[m])$ be the set of all functions $\rho \colon \calK \times U \sends [m]$. Let $B_1, B_2$ be 2 adversaries attacking the PRF advantage of $F$, and $A$ be another adversary attacking the false positive game of hash-based filters with private hash functions, then 
 \begin{equation}
 \AdvFPSecHash{B,t}{A} \leq  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2} + q \cdot \epsilon
@@ -32,7 +32,7 @@ and $\game{1}(A)$. While, for $b=0$, $B_1$ wins, if $\game{1}(A)$ outputs 0, and
 \par{In a classical Bloom filter, adversary $A^{'}$ is non-adaptive, i.e., for some fixed $x \notin S$, $A^{'}$ targets the false-positive error conditioned on randomness of hash functions. But in the $\ExpFPSecHash{B,t}{A}$ game, $A$ is adaptive, as it can adapt its queries as well as its output based on response of $\QryOracle$ oracle. Let $A$ makes $q>t$ queries $x_1, x_2, ..., x_q$ to the $\QryOracle$ oracle. $\game{3}(A)$ simulates $fp-error$ game of $A^{'}$ as shown in Fig. \ref{fig:Game}.}
 
 %\caption{Game playing argument}\label{fig:Game}
-\begin{figure}[h]
+\begin{figure}
 \fpage{.95}{
 \hpagessd{.5}{.5}
 {
@@ -121,11 +121,11 @@ $h_i(x) = \rho_1(x)+i \cdot \rho_2(x)$, for $i\in[1,k]$\\
 Ret $\left(h_1(x),\ldots,h_k(x)\right)$
 }
 }
-\caption{Game playing argument}\label{fig:Game}
+\caption{Theorem \ref{thm1}:Game playing argument}\label{fig:Game}
 \end{figure}
 
 %\caption{Adversary $B_1, B_2$ simulating $\game{1}(A)$ and $\game{2}(A)$ respectively}\label{fig:BGame1}
-\begin{figure}[h]
+\begin{figure}
 \centering
 \fpage{0.9}{
 \hpagessl{0.5}{0.5}
@@ -164,7 +164,7 @@ Ret 1\\\\
 $\mathrm{Ret} \nudge \calO(x) + i\cdot \rho_2(x)$, for $i\in[1,k]$
 }
 }
-\caption{Adversary $B_1, B_2$ simulating $\game{1}(A)$ and $\game{2}(A)$ respectively}\label{fig:BGame1}
+\caption{Theorem \ref{thm1}:Adversary $B_1, B_2$ simulating $\game{1}(A)$ and $\game{2}(A)$ respectively}\label{fig:BGame1}
 \end{figure}
 
 From eqns. \ref{eq:m1}, \ref{eq:m2}, \ref{eq:m3} and \ref{eq:m4},
@@ -225,7 +225,7 @@ When $A$ halts with output $\calX^{'}$\\
 $h_i(x) = \rho_1(x)+i \cdot \rho_2(x)$, for $i\in[1,k]$\\
 Ret $\left(h_1(x),\ldots,h_k(x)\right)$
 }
-\caption{Adversary $A^{'}$ simulating $\game{3}(A)$} \label{AGame3}
+\caption{Theorem \ref{thm1}:Adversary $A^{'}$ simulating $\game{3}(A)$} \label{AGame3}
 \end{figure}	
 
 From eqn. \ref{eq:0}, \ref{eq:2a}, \ref{eq:3} and \ref{eq:4}: \\
@@ -236,6 +236,178 @@ From eqn. \ref{eq:0}, \ref{eq:2a}, \ref{eq:3} and \ref{eq:4}: \\
 \end{eqnarray}
 \end{proof}
 
+\newcommand{\FK}{F_K(\langle j,x \rangle)}
+\newcommand{\rhoK}{\rho(\langle j,x \rangle)}
+\begin{theorem}\label{thm2}
+A hash-based filter with private hash functions $h_j(x) = \FK$ is secure in the false positive game of an adaptive adversary (A) who makes $q$ set-membership queries in time $O(t)$ , if F is PRF secure and the filter has low FP-error($\epsilon$) in the non-adaptive setting. Here, adversary $B$ attacks the PRF game in time $O(t)$, makes $q$ oracle queries, and 
+\begin{equation}
+\AdvFPSecHash{B,t}{A} \leq  \AdvPRF{F}{B} + q \cdot \epsilon
+\end{equation}
+Note: $\FK$ provides domain separation and hence mutual independence, unlike hash functions in theorem \ref{thm1}
+\end{theorem}
+
+\acnote{Not complete yet}
+\begin{proof}
+We use a game playing argument similar to theorem \ref{thm1} to prove this theorem. In \game{0}(A), adversary attacks the FP game with private hash functions $h_j(x) = \FK $, and hence exactly simulates $\ExpFPSecHash{B,t}{A}$.
+\begin{equation}
+\AdvFPSecHash{B,t}{A} = \Prob{\game{0}(A)=1}\label{eq:0T2}
+\end{equation}
+\game{1}(A) simulates $\ExpFPSecHash{B,t}{A}$ with a random function $\rho \getsr Func(U,[m])$ used to generate uniformly random  hash-indices with domain separation, of elements $x \in U$. Let $A^{'}$ be the non-adaptive friend of $A$. \game{2}(A) simulates behavior of $A^{'}$ as closely as possible. The three games are shown in Fig. \ref{fig:GameT2}.
+
+%\caption{Game playing argument}\label{fig:Game}
+\begin{figure}
+\fpage{.93}{
+\hpagesssl{.3}{.3}{.3}
+{
+\underline{\game{0}(A)}\\
+$K \getsr \calK $\\
+$S \getsr \distr{U}{n}$\\
+$(M,\tau) \getsr \Rep^{\HashOracle}(\calS)$\\
+$\calX \getsr A^{\QryOracle}(\calS)$\\
+if $|\calX| < t$ or $\calX \cap \calS \neq \emptyset$ then \\
+\nudge Ret 0\\
+if $\exists x \in \calX$ s.t. $\Qry^{\HashOracle}(M,\tau,x)=0$ then\\
+\nudge Ret 0\\
+Ret 1\\\\
+%
+\oracle{$\QryOracle(x)$}\\
+Ret $\Qry^{\HashOracle}(M,\tau,x)$\\\\
+%
+\oracle{$\HashOracle(x)$}\\
+$h_j(x) = \FK$, for $j\in[1,k]$\\
+Ret $\left(h_1(x),\ldots,h_k(x)\right)$
+}
+{
+\underline{\game{1}(A)}\\
+$\rho \getsr Func(U,[m])$\\
+$S \getsr \distr{U}{n}$\\
+$(M,\tau) \getsr \Rep^{\HashOracle}(\calS)$\\
+$\calX \getsr A^{\QryOracle}(\calS)$\\
+if $|\calX| < t$ or $\calX \cap \calS \neq \emptyset$ then \\
+\nudge Ret 0\\
+if $\exists x \in \calX$ s.t. $\Qry^{\HashOracle}(M,\tau,x)=0$ then\\
+\nudge Ret 0\\
+Ret 1\\\\
+%
+\oracle{$\QryOracle(x)$}\\
+Ret $\Qry^{\HashOracle}(M,\tau,x)$\\\\
+%
+\oracle{$\HashOracle(x)$}\\
+$h_j(x) = \rhoK $, for $j\in[1,k]$\\
+Ret $\left(h_1(x),\ldots,h_k(x)\right)$
+}
+{
+\underline{$\game{2}(A)$}\\
+$\ell \getsr [q]$, where $[q] = {0,1, \cdots, q-1}$\\
+$count = 0$ \\%count will be used to keep track of queries made to $\QryOracle$\\
+$win \gets false$\\
+$\rho \getsr Func(U,[m])$\\
+$S \getsr \distr{U}{n}$\\
+$(M,\tau) \getsr \Rep^{\HashOracle}(\calS)$\\
+$\calX \getsr A^{\QryOracle}(\calS)$\\
+if $|\calX| < t$ or $\calX \cap \calS \neq \emptyset$ then \\
+\nudge Ret 0\\
+if $\exists x \in \calX$ s.t. $\Qry^{\HashOracle}(M,\tau,x)=0$ then\\
+\nudge Ret 0\\
+Ret 1\\\\
+%
+\oracle{$\QryOracle(x)$}\\
+$count=count +1$\\
+if $(count == \ell)$\\
+$\nudge win = true$\\
+$\nudge \mathrm{Ret} \nudge \Qry^{\HashOracle}(M,\tau,x)$\\
+else \\
+$\nudge \mathrm{Ret}\nudge 0$\\\\
+%
+\oracle{$\HashOracle(x)$}\\
+$h_j(x) = \rhoK$, for $j\in[1,k]$\\
+Ret $\left(h_1(x),\ldots,h_k(x)\right)$
+}
+}
+\caption{Theorem \ref{thm2}:Game playing argument}\label{fig:GameT2}
+\end{figure}
+
+In Fig. \ref{fig:BGame1T2}, adversary $B$ simulates $\game{1}(A)$ and $\game{2}(A)$ for $b=1$ and $b=0$ respectively .
+
+%\caption{Adversary $B$ and $A^{'}$ simulating $\game{1}(A)$ and $\game{2}(A)$ respectively}
+\begin{figure}
+\centering
+\fpage{0.9}{
+\hpagessl{0.5}{0.5}
+{
+$\experimentv{Adversary \nudge B^{\calO}:}$\\
+$S \getsr \distr{U}{n}$\\
+$(M,\tau) \getsr \Rep^{\HashOracle}(\calS)$\\
+When $A$ asks $\QryOracle(x)$:\\
+$\nudge$ Ret $\Qry^{\HashOracle}(M,\tau,x)$\\
+When $A$ halts with output $\calX^{'}$: \\
+if $|\calX^{'}| < t$ or $\calX^{'} \cap \calS \neq \emptyset$ then \\
+\nudge Ret 0\\
+if $\exists x \in \calX^{'}$ s.t. $\Qry^{\HashOracle}(M,\tau,x)=0$ then\\
+\nudge Ret 0\\
+Ret 1\\\\
+\oracle{$\HashOracle(x)$}\\
+$ \mathrm{Ret} \nudge \calO(\langle j,x \rangle)$, for $j\in[1,k]$\\
+}
+{
+$\experimentv{Adversary \nudge A^{'\HashOracle}:}$\\
+$\ell \getsr [q]$, where $[q] = {0,1, \cdots, q-1}$\\
+$count = 0$\\
+$\rho \getsr Func(U,[m])$\\
+$S \getsr \distr{U}{n}$\\
+$(M,\tau) \getsr \Rep^{\HashOracle}(\calS)$\\
+When $A$ asks $\QryOracle(x)$:\\
+$\nudge cnt = cnt + 1$\\
+\nudge if $count == \ell$\\
+$\nudge$ $\nudge r \gets \Qry^{\HashOracle}(M,\tau,x)$\\
+\nudge else\\
+$\nudge$ $\nudge r = 0$\\
+\nudge Ret $r$\\
+When $A$ halts with output $\calX^{'}$\\
+\nudge if $|\calX^{'}| < t$ or $\calX^{'} \cap \calS \neq \emptyset$ then \\
+\nudge\nudge Ret 0\\
+\nudge if $\exists x \in \calX^{'}$ s.t. $\Qry^{\HashOracle}(M,\tau,x)=0$ then\\
+\nudge \nudge Ret 0\\
+\nudge Ret 1\\\\
+%
+\oracle{$\HashOracle(x)$}\\
+$\mathrm{Ret} \nudge \rhoK$, for $j\in[1,k]$
+}
+}
+\caption{Theorem \ref{thm2}:Adversary $B$ and $A^{'}$ simulating $\game{1}(A)$ and $\game{2}(A)$ respectively }\label{fig:BGame1T2}
+\end{figure}
+
+\begin{eqnarray}
+\Prob{\ExpPRF{F}{B} = 1|b=1} &=& \Prob{\game{0}(A)=1}\label{eq:m1T2}\\
+\Prob{\ExpPRF{F}{B} = 1|b=0} &=& 1-\Prob{\game{1}(A)=1}\label{eq:m2T2}
+\end{eqnarray}
+
+From eqns. \ref{eq:m1T2}, \ref{eq:m2T2},
+\begin{eqnarray}
+\nonumber \Prob{\ExpPRF{F}{B} = 1} &=& .5\Prob{\ExpPRF{F}{B_1}=1|b=0} + .5\Prob{\ExpPRF{F}{B_1} = 1|b=1}\\
+\nonumber 2\Prob{\ExpPRF{F}{B} = 1} &=& 1-\Prob{\game{1}(A)=1} + \Prob{\game{0}(A)=1}\\
+\nonumber (2\Prob{\ExpPRF{F}{B} = 1} - 1)  &=& \Prob{\game{0}(A)=1} - \Prob{\game{1}(A)=1}\\
+ \AdvPRF{F}{B} &=& \Prob{\game{0}(A)=1} - \Prob{\game{1}(A)=1} \label{eq:1T2}
+\end{eqnarray}
+
+Following a similar argument from theorem \ref{thm1},
+\begin{equation}
+\Prob{\game{1}(A)=1} \leq q \cdot \Prob{\game{2}(A)=1} = q \cdot \Prob{\game{2}(A)=1|win=true}\label{eq:3T2}
+\end{equation}
+\begin{eqnarray}
+\nonumber \Prob{\game{2}(A)|win=true} &=& \Prob{A^{'} \mathrm{outputs \nudge FP}}\\
+& \leq & \epsilon, \nudge \mathrm{where} \nudge \epsilon = (1-e^{-kn/m})^k\label{eq:4T2}
+\end{eqnarray}
+
+From eqn. \ref{eq:0T2}, \ref{eq:1T2}, \ref{eq:3T2},  and \ref{eq:4T2}: \\
+\begin{eqnarray}
+\nonumber \AdvFPSecHash{B,t}{A} &-& \Prob{\game{1}(A)=1} =  \AdvPRF{F}{B}   \\
+\nonumber \AdvFPSecHash{B,t}{A}  &=&  \AdvPRF{F}{B} + \Prob{\game{1}(A)=1}  \\
+\AdvFPSecHash{B,t}{A} &\leq&  \AdvPRF{F}{B}  + q \cdot \epsilon
+\end{eqnarray}
+
+
+\end{proof}
 \clearpage
 \section{Summary of attacks(based on Bloom filter exploit) on Squid}
 \acnote{For reference}\\
