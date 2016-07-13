@@ -1,15 +1,18 @@
-\begin{theorem}\label{thm1}
-Fix $k, m, n > 0$ and define a hash-based filter as in section \ref{sec:hbf}, except the hash functions are defined by $h_j(x) =  F_{K_0}(x) + j\cdot F_{K_1}(x) \bmod m$, where $F \colon \calK \times U \sends [m]$ is a PRF. Let $Func(U,[m])$ be the set of all functions $\rho \colon \calK \times U \sends [m]$. Let $B_1, B_2$ be 2 adversaries attacking the PRF advantage of $F$, and $A$ be another adversary attacking the false positive game of hash-based filters with private hash functions, then 
-\begin{equation}
-\AdvFPSecHash{B,t}{A} \leq  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2} + q \cdot \epsilon
-\end{equation}
-Note: Here, $q$ is the number of queries made to the $\QryOracle$ oracle and $\epsilon$ is the false positive error in the double hashing scheme given by Kirsch and Mitzenmacher. $\epsilon \rightarrow 0$, if $m/n \rightarrow \infty$ and/or $k \rightarrow \infty$ \cite{xxx}
-\end{theorem}
+\heading{Linear-PRF construction. }
+Here we consider a hash-based filter that was attacked by Neidermayer et al. in~\cite{xxx}.  Let $B_{\mathrm{lin}}=(\Hash,\Rep,\Qry)$ be defined as follows.  Fix non-empty sets~$\univ, \univ$ and integers $k,m>0$.  Let $F\colon\mathcal{K} \times \univ \to [m]$ be a function family.  The $\Hash$ algorithm samples two keys $K_0,K_1 \getsr \mathcal{K}$ and defines $h_j(x) = F_{K_0}(x) + j\cdot F_{K_1}(x) \bmod m$ for $j \in [k]$.  The $\Rep$ and $\Qry$ algorithms are the standard (determinisitic) BF ones. \tsnote{Should define these someplace.}  The following result shows, informally, that if~$F$ is a good PRF and the (non-adaptive) FP rate is sufficiently small, then $B_\mathrm{lin}$ is secure against adaptive FP-finding adversaries.
 
-\begin{proof}
+\begin{theorem}\label{thm1}
+Fix $k,m,n>0$, and let $B_\mathrm{lin}=(\Hash,\Rep,\Qry)$ be the hash-based filter just described. 
+Let~$A$ be an adversary, compatible with $\ExpFPSecHash{B_\mathrm{lin},t}{\cdot}$, that asks at most~$q$ queries to its $\QryOracle$ oracle.  Then there exist adversaries~$B_1$ and $B_2$ such that
+\[
+\AdvFPSecHash{B_{\mathrm{lin}},t}{A} \leq  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2} + q \cdot  (1-e^{-kn/m})^k
+\]
+\end{theorem}
+Before giving the proof, we note that  $(1-e^{-kn/m})^k \rightarrow 0$ as the ratio between the bit-length of the representation~$M$ and the size of the represented set~$S$, i.e.,$m/n$ tends to $\infty$.
+\begin{proof}[Theorem~\ref{thm1}]
 The proof of the theorem will use a game playing argument as shown in Fig. \ref{fig:Game}. $\game{0}(A)$ exactly simulates $\ExpFPSecHash{B,t}{A}$ with hash functions $h_j(x) =  F_{K_0}(x) + j\cdot F_{K_1}(x) \bmod m$. So,
 \begin{equation}
-\AdvFPSecHash{B,t}{A} = \Prob{\game{0}(A)=1}\label{eq:0}
+\AdvFPSecHash{B_{\mathrm{lin}},t}{A} = \Prob{\game{0}(A)=1}\label{eq:0}
 \end{equation}
  $\game{1}(A)$ and $\game{2}(A)$ attack 2 different filters with hash functions 
 \begin{eqnarray*}
@@ -17,7 +20,7 @@ h_j(x) &=& ( F_{K_0}(x) + j\cdot \rho_2(x)) \bmod m\\
 \mathrm{and,}\nudge h_j(x) &=& ( \rho_1(x) + j \cdot \rho_2(x)) \bmod m 
 \end{eqnarray*}
 
-Here, $\rho_1$ and $\rho_2$ are random functions sampled from $Func(U,[m])$. Let adversaries $B_1, B_2$ simulate $\game{1}(A)$ and $\game{2}(A)$ respectively as shown in Fig. \ref{fig:BGame1}. When $b=1$, $B_1$ and $B_2$ exactly simulate $\game{0}(A)$
+Here, $\rho_1$ and $\rho_2$ are random functions sampled from $Func(\univ,[m])$. Let adversaries $B_1, B_2$ simulate $\game{1}(A)$ and $\game{2}(A)$ respectively as shown in Fig. \ref{fig:BGame1}. When $b=1$, $B_1$ and $B_2$ exactly simulate $\game{0}(A)$
 and $\game{1}(A)$. While, for $b=0$, $B_1$ wins, if $\game{1}(A)$ outputs 0, and  $B_2$ wins, if $\game{2}(A)$ returns 0.
 
 \begin{eqnarray}
@@ -36,7 +39,7 @@ and $\game{1}(A)$. While, for $b=0$, $B_1$ wins, if $\game{1}(A)$ outputs 0, and
 {
 \underline{\game{0}(A)}\\
 $K_1, K_2 \getsr \calK$\\
-$S \getsr \distr{U}{n}$\\
+$S \getsr \distr{\univ}{n}$\\
 $(M,\tau) \getsr \Rep^{\HashOracle}(\calS)$\\
 $\calX \getsr A^{\QryOracle}(\calS)$\\
 if $|\calX| < t$ or $\calX \cap \calS \neq \emptyset$ then \\
@@ -55,8 +58,8 @@ Ret $\left(h_1(x),\ldots,h_k(x)\right)$
 {
 \underline{\game{1}(A)}\\
 $K_1 \getsr \calK$\\
-$\rho \getsr Func(U,[m])$\\
-$S \getsr \distr{U}{n}$\\
+$\rho \getsr Func(\univ,[m])$\\
+$S \getsr \distr{\univ}{n}$\\
 $(M,\tau) \getsr \Rep^{\HashOracle}(\calS)$\\
 $\calX \getsr A^{\QryOracle}(\calS)$\\
 if $|\calX| < t$ or $\calX \cap \calS \neq \emptyset$ then \\
@@ -74,8 +77,8 @@ Ret $\left(h_1(x),\ldots,h_k(x)\right)$
 }
 {
 \underline{\game{2}(A)}\\
-$\rho_1,\rho_2 \getsr Func(U,[m])$\\
-$S \getsr \distr{U}{n}$\\
+$\rho_1,\rho_2 \getsr Func(\univ,[m])$\\
+$S \getsr \distr{\univ}{n}$\\
 $(M,\tau) \getsr \Rep^{\HashOracle}(\calS)$\\
 $\calX \getsr A^{\QryOracle}(\calS)$\\
 if $|\calX| < t$ or $\calX \cap \calS \neq \emptyset$ then \\
@@ -96,8 +99,8 @@ Ret $\left(h_1(x),\ldots,h_k(x)\right)$
 $\ell \getsr [q]$, where $[q] = {0,1, \cdots, q-1}$\\
 $count = 0$ \\%count will be used to keep track of queries made to $\QryOracle$\\
 $win \gets false$\\
-$\rho_1,\rho_2 \getsr Func(U,[m])$\\
-$S \getsr \distr{U}{n}$\\
+$\rho_1,\rho_2 \getsr Func(\univ,[m])$\\
+$S \getsr \distr{\univ}{n}$\\
 $(M,\tau) \getsr \Rep^{\HashOracle}(\calS)$\\
 $\calX \getsr A^{\QryOracle}(\calS)$\\
 if $|\calX| < t$ or $\calX \cap \calS \neq \emptyset$ then \\
@@ -130,7 +133,7 @@ Ret $\left(h_1(x),\ldots,h_k(x)\right)$
 {
 $\experimentv{Adversary \nudge B_1^{\calO}:}$\\
 $K_1 \getsr \calK $\\
-$S \getsr \distr{U}{n}$\\
+$S \getsr \distr{\univ}{n}$\\
 $(M,\tau) \getsr \Rep^{\HashOracle}(\calS)$\\
 When $A$ asks $\QryOracle(x)$:\\
 $\nudge$ Ret $\Qry^{\HashOracle}(M,\tau,x)$\\
@@ -146,8 +149,8 @@ $ \mathrm{Ret} \nudge F_{K_1}(x) + i\cdot \calO(x)$, for $i\in[1,k]$\\
 {
 $\experimentv{Adversary \nudge B_2^{\calO}:}$\\
 %$d \getsr \bits $\\
-$\rho_2 \getsr Func(U,[m])$\\
-$S \getsr \distr{U}{n}$\\
+$\rho_2 \getsr Func(\univ,[m])$\\
+$S \getsr \distr{\univ}{n}$\\
 $(M,\tau) \getsr \Rep^{\HashOracle}(\calS)$\\
 When $A$ asks $\QryOracle(x)$:\\
 $\nudge$ Ret $\Qry^{\HashOracle}(M,\tau,x)$\\
@@ -202,8 +205,8 @@ In Fig. \ref{AGame3}, adversary $A^{'}$ simulates $\game{3}(A)$. Since, adversar
 $\experimentv{Adversary \nudge A^{{'}\HashOracle}:}$\\
 $\ell \getsr [q]$, where $[q] = {0,1, \cdots, q-1}$\\
 $count = 0$\\
-$\rho_1,\rho_2 \getsr Func(U,[m])$\\
-$S \getsr \distr{U}{n}$\\
+$\rho_1,\rho_2 \getsr Func(\univ,[m])$\\
+$S \getsr \distr{\univ}{n}$\\
 $(M,\tau) \getsr \Rep^{\HashOracle}(\calS)$\\
 When $A$ asks $\QryOracle(x)$:\\
 $\nudge count = count + 1$\\

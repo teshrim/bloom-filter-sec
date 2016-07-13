@@ -1,18 +1,18 @@
 \section{Hash-based Filters}
 \heading{Preliminaries.}
-When~$U$ is a set and $n>0$ is an integer, we let $[U]^n$ denote the set of all size-$n$ subsets of~$U$. We write $x \getsr U$ to denote sampling an element from~$U$ and assigning this to~$x$, and we extend this notation to randomized algorithms.
+When~$\univ$ is a set and $n>0$ is an integer, we let $[\univ]^n$ denote the set of all size-$n$ subsets of~$\univ$. We write $x \getsr \univ$ to denote sampling an element from~$\univ$ and assigning this to~$x$, and we extend this notation to randomized algorithms.
 
 \heading{Syntax.}
-Fix nonempty sets $U,\Sigma$ and integers $k,m,n>0$.  Fix a symbol $\bot \not\in U$. An $(n,k,m)$-filter (over universe~$U$) is a tuple $B=(\Hash,\Rep,\Qry)$.
+Fix nonempty sets $\univ,\Sigma$ and integers $k,m,n>0$.  Fix a symbol $\bot \not\in \univ$. An $(n,k,m)$-filter (over universe~$\univ$) is a tuple $B=(\Hash,\Rep,\Qry)$.
 %
-The randomized \emph{hash-sampling} algorithm~$\Hash$ samples a size~$k$ family of functions~$\mathcal{H}=\{h_1,h_2,\ldots,h_k\}$ where each $h_i \in \mathrm{Func}(U,[m])$.  
+The randomized \emph{hash-sampling} algorithm~$\Hash$ samples a size~$k$ family of functions~$\mathcal{H}=\{h_1,h_2,\ldots,h_k\}$ where each $h_i \in \mathrm{Func}(\univ,[m])$.  
 \jnote{This doesn't seem to work super-well with the random oracle model.} 
 \tsnote{Why not?  As we discussed on the phone, this should be fine.  In the ROM, if we ever need to simulate $\Hash$, we just do it by lazy sampling.}
 We write $\mathcal{H} \getsr \Hash$ for this operation.
 %
-The randomized representation algorithm $\Rep\colon [U]^n \rightarrow \Sigma^m \times \bits^*$ takes a set~$S$ of~$n$ elements as input, and outputs representation~$M$ of length~$m$ along with (possibly empty) side-information~$\tau$.
+The randomized representation algorithm $\Rep\colon [\univ]^n \rightarrow \Sigma^m \times \bits^*$ takes a set~$S$ of~$n$ elements as input, and outputs representation~$M$ of length~$m$ along with (possibly empty) side-information~$\tau$.
 %
-The deterministic query algorithm $\Qry\colon \Sigma^m \times \bits^* \times U \rightarrow \bits$ takes a representation $M$, side-information~$\tau$, and an element $x \in U$, and returns a bit.
+The deterministic query algorithm $\Qry\colon \Sigma^m \times \bits^* \times \univ \rightarrow \bits$ takes a representation $M$, side-information~$\tau$, and an element $x \in \univ$, and returns a bit.
 %
 We assume that both $\Rep$ and $\Qry$ have blackbox access to the functions $h_1,h_2,\ldots,h_k \in \mathcal{H}$.  Typically this access will be implicit, but when we need to make it explicit we will write~$\mathcal{H}$ (or the individual hash functions) as superscripts.
 %which we denote by writing~$\mathcal{H}$ as a superscript.
