@@ -199,7 +199,7 @@ In $\game{3}(A)$, assume, without loss of generality that $A$ halts with output 
 In Fig. \ref{AGame3}, adversary $A^{'}$ simulates $\game{3}(A)$. Since, adversary $A^{'}$ exactly simulates $\game{3}(A)$ conditioned on $win = true$, 
 \begin{eqnarray}
 \nonumber \Prob{\game{3}(A)\,|\,\win=\true} &=& \Prob{A' \mbox{outputs FP}}\\
-& \leq & \epsilon, \nudge \mathrm{where} \nudge \epsilon = (1-e^{-kn/m})^k\label{eq:4}
+& \leq & \epsilon,\mbox{ where } \epsilon = (1-e^{-kn/m})^k\label{eq:4}
 \end{eqnarray}
 
 %\caption{Adversary $A^{'}$ simulating $\game{3}(A)$} \label{AGame3}
@@ -235,9 +235,9 @@ Ret $\left(h_1(x),\ldots,h_k(x)\right)$
 
 From eqn. \ref{eq:0}, \ref{eq:2a}, \ref{eq:3} and \ref{eq:4}: \\
 \begin{eqnarray}
-\nonumber \AdvFPSecHash{B,t}{A} &-& \Prob{\game{2}(A)=1} =  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}   \\
-\nonumber \AdvFPSecHash{B,t}{A}  &=&  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2} + \Prob{\game{2}(A)=1}  \\
-\AdvFPSecHash{B,t}{A} &\leq&  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}  + q \cdot \epsilon
+\nonumber \AdvFPSecHash{B_{\mathrm{lin}},t}{A} &-& \Prob{\game{2}(A)=1} =  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}   \\
+\nonumber \AdvFPSecHash{B_{\mathrm{lin}},t}{A}  &=&  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2} + \Prob{\game{2}(A)=1}  \\
+\AdvFPSecHash{B_{\mathrm{lin}},t}{A} &\leq&  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}  + q \cdot \epsilon
 \end{eqnarray}
 \end{proof}
 
