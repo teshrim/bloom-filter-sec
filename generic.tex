@@ -43,13 +43,16 @@ by giving $\Rep, \Qry$ access to a random oracle. In that case,
 the probability in Equation~(\ref{eqn:correctness})
 is also taken over choice of the random oracle.
 
+\subsection{Adversarial Soundness}
 \heading{FP security.}
 As highlighted by Naor and Yogev,
 Equation~(\ref{eqn:correctness}) is a non-adaptive version of correctness;
 we are interested in defining an adaptive (i.e., adversarial) notion of correctness.
 The general style of the definition is as follows:
 first, a set $S$ is chosen according to some distribution over~$\mathcal{S}$ and then
-$\Rep(S)$ is run to generate $(\pub, M)$. The attacker $A$ is given $\pub$ and (possibly)~$S$;
+$\Rep(S)$ is run to generate $(\pub, M)$. (Unless stated otherwise, we assume
+security holds for all distributions and thus for all sets $S$.)
+The attacker $A$ is given $\pub$ and (possibly)~$S$;
 in addition, $A$ is given \emph{oracle access} to~$\Qry(\pub, M, \cdot)$.
 If $(\Rep, \Qry)$ is defined in the random-oracle model, then
 $A$ is given access to the random oracle as well.
@@ -91,6 +94,9 @@ the data structure is $(t, \bin(T,\epsilon; t))$-FP-secure against any attacker 
 at most $T$~queries. \jnote{Need to find different terms to use for a query $q \in \mathcal{Q}$
 and a query that the attacker makes to its oracle.}
 
+\jnote{One option is to define the adversary's \emph{advantage} as the difference between
+its success probability and the success probability of the above, trivial attack. Just a thought.}
+
 \heading{Comparison to Naor-Yogev definition.}
 The style of the Naor-Yogev (NY) definition is slightly different. \jnote{Even if we ignore
 all the other issues, chief among them the inconsistent way it treats the hash functions.}
@@ -113,7 +119,24 @@ to have a data structure that always has \emph{exactly one} false positive that 
 given the public information.
 
 \item If a scheme is $(1,\epsilon_{FP})$-FP-secure for an attacker making $T$ queries
-then it is also $\epsilon_{FP}$-secure under the NY definition, at least for attackers making at most $T-1$
+then it is also $\epsilon_{FP}$-secure under the NY definition,
+at least for attackers making at most $T-1$
 queries.
 This is immediate.
+\end{enumerate}
+
+\subsection{Privacy}
+One can also consider the orthogonal notion of privacy for a data structure.
+\jnote{Actually, I am now unsure what the right way to define it is. It seems natural
+to give the attacker $\pub$. But if we give them $\pub$ and $M$ then they have everything.
+If $S$ has high min-entropy (element-wise), then it might still be possible to have security here.}
+There are several possible definitions:
+\begin{enumerate}
+\item A ``one-wayness'' definition where $S$ has high min-entropy (element-wise), and we
+give the attacker $\pub$ and either $M$ or oracle access to $\Qry$. The attacker
+succeeds if it can output an element in~$S$.
+
+\item An ``indistinguishability'' definition where either $S_0$ or $S_1$ is used, and the attacker
+must determine which. Here the attacker is given $\pub$ but only oracle access to $\Qry$, and
+it is disallowed from asking any query $q$ for which $q(S_0) \neq q(S_1)$. 
 \end{enumerate}

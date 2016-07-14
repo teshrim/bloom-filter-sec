@@ -56,12 +56,32 @@ First, we note that the security notion forbids~$A$ to win if it outputs $x^* \i
 %
 %\tsnote{FYI: this is how MAC security against multiple forgeries is defined.  See \texttt{https://eprint.iacr.org/2006/095.pdf} for details.}
 
-Second, we note that the NY syntax does not capture the size of~$M$ as a parameter;
-\jnote{I think this is also reasonable; typically security is defined without regard for efficiency} \tsnote{My complaint isn't about efficiency. It's about the fact that, by not including $|M|$ in the definition, the trivial scheme I give (just below) is allowed, and is secure.  Anyway, as I say at the end of
+Second, we note that the NY syntax does not capture the size of~$M$
+as a parameter; \jnote{I think this is also reasonable; typically
+security is defined without regard for efficiency} \tsnote{My
+complaint isn't about efficiency. It's about the fact that, by not
+including $|M|$ in the definition, the trivial scheme I give (just
+below) is allowed, and is secure.  Anyway, as I say at the end of
 this paragraph, this is a small(er) complaint than what follows}.
 \jnote{I would say that the trivial scheme \emph{is} secure!}
-\tsnote{Okay, well then we need some way to ``rule out'' the trivial solution.  Perhaps just in the text -- yes, the trivial scheme works, but it isn't interesting in practice. Also, in the concrete security bounds that we will prove, the size of the representation is going to come up, e.g.\ the number of bits in the BF array directly affect the FP rate.  Hence it makes sense to say things like ``an $(n,k,m)$-filter...'' where $m$ is the size of the representation.}
-The surrounding text does say that $\mathbf{B}_1$ ``outputs a compressed representation [of $\mathcal{S}$] $\mathbf{B}_1(\mathcal{S})=M$'' but what exactly this means is never addressed.  The formal syntax admits $\mathbf{B}_1(\mathcal{S})=\mathcal{S}$ and $\mathbf{B}_2(\mathcal{S},x)=1 \Leftrightarrow x \in \mathcal{S}$, which is also trivially secure by their definition.  These are both small, but important complaints.  But a larger complaint, and one that is much harder to see, is that that it is not clear that the NY formalism actually captures real world Bloom filters.
+\tsnote{Okay, well then we need some way to ``rule out'' the trivial
+solution. Perhaps just in the text -- yes, the trivial scheme works,
+but it isn't interesting in practice. Also, in the concrete security
+bounds that we will prove, the size of the representation is going
+to come up, e.g.\ the number of bits in the BF array directly affect
+the FP rate. Hence it makes sense to say things like ``an
+$(n,k,m)$-filter\ldots'' where $m$ is the size of the
+representation.} \jnote{I still disagree: efficiency is orthogonal
+to functionality and security.} The surrounding text does say that
+$\mathbf{B}_1$ ``outputs a compressed representation [of
+$\mathcal{S}$] $\mathbf{B}_1(\mathcal{S})=M$'' but what exactly this
+means is never addressed. The formal syntax admits
+$\mathbf{B}_1(\mathcal{S})=\mathcal{S}$ and
+$\mathbf{B}_2(\mathcal{S},x)=1 \Leftrightarrow x \in \mathcal{S}$,
+which is also trivially secure by their definition.  These are both
+small, but important complaints. But a larger complaint, and one
+that is much harder to see, is that that it is not clear that the NY
+formalism actually captures real world Bloom filters.
 
 In particular, say we implement a classic Bloom filter.  Then the hash functions $h_1, h_2, \ldots, h_k$ are either sampled from some family~$\mathcal{H}$ by~$\mathbf{B}_1$ (recall that this algorithm is randomized), or they are hard-coded into the description of~$\mathbf{B}_1$.  Let's assume the former for the moment.  In order for~$\mathbf{B}_2$ to be able to respond to set-membership queries, it must have $h_1,h_2,\ldots,h_k$ as well. Since~$\mathbf{B}_2$ receives only the representation~$M$ as input, it must be the case that $h_1,h_2,\ldots,h_k$ are encoded into~$M$ somehow.  But the text strongly suggests, in several places, that~$M$ does \emph{not} include these.  Both NY and classical analysis of Bloom filters speak of the number of bits used to represent the set~$\mathcal{S}$: the classical analysis means only the number of bits in the actual array, and NY make comparisons throughout between the number of bits~$m$ used by their instantiations and the classical bounds. Moreover, the Bloom filter they construct in one of their main positive results clearly \emph{does not} count as part of the representation size the hash functions used to indicate array locations.
 %Thus, if we assume that

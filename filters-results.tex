@@ -1,6 +1,7 @@
 \section{Achieving FP-Security and Privacy}
 \heading{FP-security. }  Here we give security proofs and attacks with respect the the FP-security notions just described.
 \begin{itemize}
+\item \jnote{Would be good to show that RO-based Bloom filter is FP-secure.}
 \item FP-security/attacks on bigram/PRF-based double-hashing construction ($h_j(x) = F_{K1}(x) + j\cdot F_{K2}(x) \bmod m$ where the~$x$ are bigrams of names, etc.) \tsnote{Animesh is doing this now}
 \item FP-security/attacks on bigram/domain-separated PRF construction ($h_j(x)=F_K(\langle j,x \rangle) \bmod m$, or just assume range of~$F$ is $[m]$.)
 \item FP-security/attacks Dong, Chen, Wen ``garbled Bloom filter'' construction
@@ -10,7 +11,7 @@
 \heading{Privacy. } Here we give security proofs and attacks with respect the the FP-security notions just described.
 \tsnote{Under our current notions, you can never hope to prove privacy bounds that beat the min-entropy of $\distr{U}{n}$.}
 \begin{itemize}
-\item Prove that the basic BF, in the ROM, is private.  \tsnote{Not at all surprising, but it is the first result one would want in this area.} 
+\item Prove that the basic BF, in the ROM, is private.  \tsnote{Not at all surprising, but it is the first result one would want in this area.}
 
 \item As a simple corrolary, show that the basic BF with $h_j(x)=F_K(\langle j,x \rangle)$ is private.  \tsnote{I believe this also shows that the bigram/PRF approach examined by Neidermayer et al.\ is secure when the hash functions are the $h_j(x)$ just described. }
 
@@ -18,7 +19,7 @@
 
 \item Cast Neidermayer et al.\ attacks on the bigram/PRF-based double-hashing construction (see their paper) into our formalism.  \tsnote{Note that their attack would allow one to recover \emph{every} name, not just one.} \tsnote{Note that Neidermayer et al.\ suggest ditching the double-hashing construction in favor of independent PRFs, so the previous item basically explores their suggestion.}
 
-\item Prove a privacy bound for the bigram/PRF-based double-hashing construction that Neidermayer et al.\ attacks. I'm pretty sure the attack is in the public-BB setting, and the provable security bound is considerably worse than the min-entropy because of the way the representation is made.  (Essentially, the Hamming weight of the representation is a good estimate of the length of the longest surname in filter.)  
+\item Prove a privacy bound for the bigram/PRF-based double-hashing construction that Neidermayer et al.\ attacks. I'm pretty sure the attack is in the public-BB setting, and the provable security bound is considerably worse than the min-entropy because of the way the representation is made.  (Essentially, the Hamming weight of the representation is a good estimate of the length of the longest surname in filter.)
 
 \item Attack privacy of Dong, Chen, Wen ``garbled Bloom Filter'' construction in the BB-hash setting \tsnote{I give the attack in the related work section.  Copy it here and flesh it out.}  Prove privacy of construction in secret-hash setting.  \tsnote{Makes the point that the application setting really matters.}
 
