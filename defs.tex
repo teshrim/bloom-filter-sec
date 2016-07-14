@@ -180,6 +180,7 @@
 \newcommand{\calK}{{\cal K}}
 \newcommand{\calH}{{\cal H}}
 \newcommand{\calM}{{\cal M}}
+\newcommand{\calU}{{\cal X}}
 \newcommand{\calX}{{\cal X}}
 \newcommand{\calY}{{\cal Y}}
 \newcommand{\calZ}{{\cal Z}}
@@ -572,6 +573,7 @@
 \newcommand{\procedurev}[1]{\underline{\procfont{proc.} {#1}:}\smallskip}
 %\newcommand{\adversary}[1]{\underline{\procfont{adversary} {#1}:}}
 \newcommand{\adversary}[1]{{\procfont{adversary} {#1}:}}
+\newcommand{\adversaryv}[1]{{\underline{\procfont{adversary}\,{#1}:}}}
 \newcommand{\algorithm}[1]{\underline{\procfont{alg.} {#1}:}}
 \newcommand{\algorithmv}[1]{\underline{\procfont{alg.} {#1}:}\smallskip}
 \newcommand{\experiment}[1]{\underline{{#1}}}
@@ -584,6 +586,7 @@
 \newcommand{\procedurev}[1]{\underline{\procfont{procedure} {#1}:}\smallskip}
 \newcommand{\algorithm}[1]{\underline{\procfont{algorithm} {#1}:}}
 \newcommand{\adversary}[1]{\underline{\procfont{adversary} {#1}:}}
+\newcommand{\adversaryv}[1]{{\underline{\procfont{adversary}\hspace*{2ex} {#1}:}}}
 \newcommand{\algorithmv}[1]{\underline{\procfont{algorithm} {#1}:}\smallskip}
 \newcommand{\experiment}[1]{\underline{\procfont{Experiment} {#1}}}
 \newcommand{\experimentv}[1]{\underline{\procfont{Experiment} {#1}}\smallskip}
@@ -821,7 +824,7 @@
 \newcommand{\hb}{\ensuremath{\mathsl{hb}}}
 \newcommand{\Angle}[1]{\ensuremath{\left\langle #1\right\rangle}}
 \newcommand{\Anglefix}[1]{\ensuremath{\langle #1\rangle}}
-\newcommand{\game}[1]{\text{Game #1}}
+\newcommand{\game}[1]{\text{G#1}}
 \newcommand{\recover}{\ensuremath{\textsc{Recover}}}
 \newcommand{\marc}[1]{\textbf{mf:} \textit{#1}}
 \newcommand{\iter}{n}
@@ -889,8 +892,9 @@
 \newcommand{\authfnote}[2]{\footnote{\textbf{#1 says:} #2}}
 \newcommand{\jnote}[1]{\authcnote{JK}{#1}{cyan}}
 \newcommand{\jknote}[1]{\jnote{#1}}
-\newcommand{\tsnote}[1]{\authcnote{TS}{#1}{magenta}}
+\newcommand{\tsnote}[1]{\authcnote{TS}{#1}{blue}}
 \newcommand{\acnote}[1]{\authcnote{AC}{#1}{green}}
+\newcommand{\fixme}[1]{\authcnote{Fix me}{\bf #1}{red}}
 
 \newcommand{\semi}{\:;\:}
 \newcommand{\bitset}{B}
