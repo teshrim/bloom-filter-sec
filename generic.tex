@@ -1,0 +1,119 @@
+\section{Secure Data Structures, Abstractly}
+We focus on the case of static data structures only (for now).
+\def\pub{{\sf pub}}
+
+\subsection{Syntax}
+Fix a universe $U$.
+
+\begin{definition}
+A (randomized) \emph{data structure} is a pair of algorithms $(\Rep, \Qry)$
+parameterized by a collection $\mathcal{S}$ of subsets of~$U$ and a collection
+of supported queries $\mathcal{Q}$ and having the following syntax:
+\begin{itemize}
+\item $\Rep$ is a randomized algorithm taking as input $S \in \mathcal{S}$,
+and outputting a pair of values $(\pub, M)$.
+\item $\Qry$ is a deterministic algorithm that takes as input $\pub, M$,
+and a query $q\in \mathcal{Q}$, and returns an answer~$a$.
+\end{itemize}
+A data structure is \emph{$\epsilon$-correct} if for all $S \in \mathcal{S}$ and
+all $q \in \mathcal{Q}$ it holds that
+\begin{eqnarray}
+\Pr[(\pub, M) \leftarrow \Rep(S) : \Qry(\pub, M, q) \neq q(S)] \leq \epsilon, \label{eqn:correctness}
+\end{eqnarray}
+where $q(S)$ denotes the correct answer to the query $q$ on the set~$S$.
+The \emph{size} of a data structure is the maximum length of any~$M$ that can be
+output by $\Rep$.
+\end{definition}
+
+Our treatment of $\pub, M$ is not symmetric, since we only count $M$ against the size
+of the data structure. When we define security
+we may give the attacker $\pub$ but not~$M$, and in that case the data structure cannot
+trivially make everything part of~$\pub$.
+
+It is not hard to see Bloom filters are one possible instantiation of the above. If we fix some
+size bound~$n$, then $\mathcal{S}$ becomes the collection of all subsets of $U$
+of size (at most)~$n$. We also fix $\mathcal{Q} = U$, where a query ``$x$'' has
+the semantics ``is $x$ in $S$?'' Algorithm $\Rep$, which has values $k, m$ hardwired,
+chooses a set of hash functions $h_1, \ldots, h_k$ and computes an $m$-bit
+array in the usual way; a natural possibility is to set $\pub = (h_1, \ldots, h_k)$ and
+to let $M$ be the bit array.
+
+The above definition can be lifted to the random-oracle model in the natural way
+by giving $\Rep, \Qry$ access to a random oracle. In that case,
+the probability in Equation~(\ref{eqn:correctness})
+is also taken over choice of the random oracle.
+
+\heading{FP security.}
+As highlighted by Naor and Yogev,
+Equation~(\ref{eqn:correctness}) is a non-adaptive version of correctness;
+we are interested in defining an adaptive (i.e., adversarial) notion of correctness.
+The general style of the definition is as follows:
+first, a set $S$ is chosen according to some distribution over~$\mathcal{S}$ and then
+$\Rep(S)$ is run to generate $(\pub, M)$. The attacker $A$ is given $\pub$ and (possibly)~$S$;
+in addition, $A$ is given \emph{oracle access} to~$\Qry(\pub, M, \cdot)$.
+If $(\Rep, \Qry)$ is defined in the random-oracle model, then
+$A$ is given access to the random oracle as well.
+$A$ \emph{succeeds} if it outputs $t$ distinct queries $q_1, \ldots, q_t \in \mathcal{Q}$ for which
+$\Qry(\pub, M, q_i) \neq q_i(S)$ for all~$i$.
+Roughly, we say that a data structure is $(t,\epsilon')$-FP-secure if the probability that
+any polynomial-time attacker succeeds is at most~$\epsilon'$. A full definition
+would also bound the number of queries to $\Qry$ (and the random oracle) made
+be the attacker; it is useful to make the convention that if $A$ outputs
+$q_1, \ldots, q_t$ then it must have made those queries to its oracle previously.
+
+The notion of FP-security defined above captures the fp-prv notion for Bloom filters
+if we put the hash
+functions in $M$ (and thus increase the size of the data structure); it also captures the fp-pub
+notion if we put the hash function in~$\pub$. It captures the fp-bb-pub notion in the
+random-oracle model.
+
+Note that the security we can hope for is somewhat limited, since there
+is always a trivial attack in which
+the attacker tries random queries $q_1, q_2, \ldots$ until it finds $t$ queries for which the
+data structure returns an incorrect answer.\footnote{This assumes the attacker
+knows the true set $S$, which need not be the case.} Roughly speaking,
+if the data structure is $\epsilon$-correct then the attacker expects to find a query on which
+an incorrect result is returned
+every $1/\epsilon$ tries; thus, an
+attacker making $t/\epsilon$ queries succeeds with constant probability.
+
+\def\bin{{\sf Bin}}
+
+Actually, it seems worthwhile to formalize this. Let $X_i$ be a random variable indicating
+whether the $i$th query of the attacker gives an incorrect result. Then an attacker making $T$
+queries can succeed
+if $N \stackrel{{\rm def}}{=} \sum_{i=1}^T X_i \geq t$. If we treat the $X_i$ as independent Bernoulli trials with
+probability~$\epsilon$, then $N$ follows the well-studied binomial distribution.
+Let $\bin(T, \epsilon; t)$ denote the probability that $N \geq t$. So the best security we can
+hope for
+is that if the data structure is $\epsilon$-correct then for any desired bound $T$
+the data structure is $(t, \bin(T,\epsilon; t))$-FP-secure against any attacker making
+at most $T$~queries. \jnote{Need to find different terms to use for a query $q \in \mathcal{Q}$
+and a query that the attacker makes to its oracle.}
+
+\heading{Comparison to Naor-Yogev definition.}
+The style of the Naor-Yogev (NY) definition is slightly different. \jnote{Even if we ignore
+all the other issues, chief among them the inconsistent way it treats the hash functions.}
+Lifting their definition to our setting, the experiment is similar but the attacker
+succeeds only if it outputs a single query $q$ for which $\Qry(\pub, M, q) \neq q(S)$ \emph{subject
+to the restriction that it did not query $q$ to its $\Qry$ oracle}.
+It will be interesting to understand formally the relation between our definition and theirs.
+Here are some observations:
+\begin{enumerate}
+\item Say a scheme is $\epsilon_{NY}$-secure under the NY definition.
+Then we claim it is $(t, T\epsilon_{NY}/t)$-secure against an attacker making $T$ queries. To see
+this, assume not. Then there is an attacker $A$ that, with probability $\epsilon'=T\epsilon_{NY}/t$,
+issues $T$ queries of which at least $t$ among those give incorrect answers.
+If we simply run $A$ and
+then choose a random query to output, we succeed with probability at least $\epsilon' \cdot t/T$.
+It is unclear whether this is tight.
+
+\item There is a contrived scheme that is $(2, 0)$-FP-secure but not NY-secure at all; the basic idea is
+to have a data structure that always has \emph{exactly one} false positive that is easy to find
+given the public information.
+
+\item If a scheme is $(1,\epsilon_{FP})$-FP-secure for an attacker making $T$ queries
+then it is also $\epsilon_{FP}$-secure under the NY definition, at least for attackers making at most $T-1$
+queries.
+This is immediate.
+\end{enumerate}
