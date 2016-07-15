@@ -22,7 +22,12 @@ all $q \in \mathcal{Q}$ it holds that
 \end{eqnarray}
 where $q(S)$ denotes the correct answer to the query $q$ on the set~$S$.
 The \emph{size} of a data structure is the maximum length of any~$M$ that can be
-output by $\Rep$.
+output by $\Rep$. \tsnote{How does one define the length of~$M$,
+  without knowing what kind of object it is (or demanding it be
+  bit-length, relative to some implict encoding into bitstrings)?
+  Also, why take the max?  Why not just the length of~$M$, whatever it
+happens to be?}\tsnote{What is a ``query''?  A predicate? A
+real-valued function? A (potentially) randomized algorithm?}
 \end{definition}
 
 Our treatment of $\pub, M$ is not symmetric, since we only count $M$ against the size
