@@ -29,7 +29,10 @@ middle notion is interesting. I disagree regarding the attacks of
 Neidermayer et al.: there, the hash functions are secret (though
 they are based on public ``random oracles'' $g$ and $h$). The ROM
 can be handled separately by giving all algorithms access to
-the~RO.}
+the~RO.}\tsnote{You're correct; I misread some of the text.  It is
+only the setup for the attack that needs access to the hash functions,
+and this is just modeling what is likely to appear in the real
+``encrypted'' BFs.}
 
 For each experiment, we define an associated advantage
 notion.  Namely, given an $(n,k,m)$-filter~$B=(\Hash,\Rep,\Qry)$,
