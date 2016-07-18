@@ -24,10 +24,14 @@ where $q(S)$ denotes the correct answer to the query $q$ on the set~$S$.
 The \emph{size} of a data structure is the maximum length of any~$M$ that can be
 output by $\Rep$. \tsnote{How does one define the length of~$M$,
   without knowing what kind of object it is (or demanding it be
-  bit-length, relative to some implict encoding into bitstrings)?
+  bit-length, relative to some implicit encoding into bitstrings)?
   Also, why take the max?  Why not just the length of~$M$, whatever it
-happens to be?}\tsnote{What is a ``query''?  A predicate? A
-real-valued function? A (potentially) randomized algorithm?}
+happens to be?}\jnote{I was assuming that $M$ is a bitstring. One can talk
+about the length of $M$ in some run of the algorithm, but when you want to talk
+about how well the data structure as a whole performs, taking the max is one natural option.}
+\tsnote{What is a ``query''?  A predicate? A
+real-valued function? A (potentially) randomized algorithm?} \jnote{A query is a deterministic
+function.}
 \end{definition}
 
 Our treatment of $\pub, M$ is not symmetric, since we only count $M$ against the size
@@ -38,13 +42,14 @@ trivially make everything part of~$\pub$. \tsnote{Is the idea that
   uses public hash functions to populate a bit-array, and then a
   secretly-keyed blockcipher to encipher the array; the
   blockcipher key is encoded in~$M$?  This may cause some issues in
-  the security defintions, i.e.\ whether we can give~$M$ to the
-  attacker or not. } \tsnote{By the way, I'm coming around to the
+  the security definitions, i.e.\ whether we can give~$M$ to the
+  attacker or not. } \jnote{Yes, anything secret is part of $M$; anything public
+  is part of $\pub$.} \tsnote{By the way, I'm coming around to the
   viewpoint that it is fair to include in the ``size'' of the
   representation any secret information.  In makes more difficult
   comparisons to classical lower-bounds (which [NY] makes, incorrectly
 IMO), but it does seem fair to say ``this is how many bits of memory
-you need to allocate to represent this set \emph{securely}.''  }
+you need to allocate to represent this set \emph{securely}.''}
 
 It is not hard to see Bloom filters are one possible instantiation of the above. If we fix some
 size bound~$n$, then $\mathcal{S}$ becomes the collection of all subsets of $U$
@@ -56,7 +61,15 @@ to let $M$ be the bit array.  \tsnote{If $\mathcal{Q}=U$ and we use the
   semantics you suggest, then isn't Equation~\ref{eqn:correctness}
   both correctness and soundness?  If so, I don't see how this
   captures the classical BF, which requires $\epsilon=0$ for one kind
-  of error, but allows $\epsilon>0$ for the other. }
+  of error, but allows $\epsilon>0$ for the other. } \jnote{The definition does not distinguish
+  between elements in the set (for which $q(S)=1$) or outside the set (for which
+  $q(S)=0$). But a Bloom filter does satisfy Equation~\ref{eqn:correctness} in either case.}
+  \jnote{In that sense, I am using ``soundness'' and ``correctness'' interchangeably here.}
+  \jnote{I'm not tied to allowing false negatives when we specialize the definition to the case
+  of set-membership queries. But in the abstract definition it seems unclear why one would choose
+  some queries on which error is ok and other queries where error is not allowed. Though if one
+  wanted to be general, one could simply have two (disjoint) sets of queries $\mathcal{Q}_1, \mathcal{Q}_2$
+  where error is allowed on the former but not on the latter.}
 
 The above definition can be lifted to the random-oracle model in the natural way
 by giving $\Rep, \Qry$ access to a random oracle. In that case,
@@ -90,8 +103,10 @@ if we put the hash
 functions in $M$ (and thus increase the size of the data structure); it also captures the fp-pub
 notion if we put the hash function in~$\pub$. \tsnote{Except that the win condition allows both
 false-positives and false-negatives, given the correctness requirement
-in the syntax.} It captures the fp-bb-pub notion in the
-random-oracle model. 
+in the syntax.} \jnote{True. But if false negatives cannot occur at all (by design of
+the data structure, not by definition of the primitive), then the attacker cannot hope to win
+by finding a false negative.} It captures the fp-bb-pub notion in the
+random-oracle model.
 
 Note that the security we can hope for is somewhat limited, since there
 is always a trivial attack in which
@@ -171,7 +186,9 @@ must determine which. Here the attacker is given $\pub$ but only oracle access t
 it is disallowed from asking any query $q$ for which $q(S_0) \neq
 q(S_1)$. \tsnote{How will the adversary know that a query satisfies
   this in (say) the case of the classical BF?  We can, of course,
-enforce it in the experiement, but then our resource accounting risks
-overcounting the number of queries.} \tsnote{Also, we need that, in general, $\pub$ itself
-does not leak information about~$S_0$ vs.\ $S_1$. }
+enforce it in the experiment, but then our resource accounting risks
+overcounting the number of queries.} \jnote{I was assuming the attacker knows $S_0, S_1$.}
+\tsnote{Also, we need that, in general, $\pub$ itself
+does not leak information about~$S_0$ vs.\ $S_1$. } \jnote{Sure, this would be implied
+by the definition in this case.}
 \end{enumerate}
