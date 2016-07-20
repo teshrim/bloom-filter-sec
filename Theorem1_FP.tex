@@ -1,7 +1,7 @@
 \heading{Linear-PRF construction. }
 Here we consider a hash-based filter that was attacked by Neidermayer et al. in~\cite{xxx}.  Let $B_{\mathrm{lin}}=(\Hash,\Rep,\Qry)$ be defined as follows.  Fix non-empty set ~$\univ$ and integers $k,m,n>0$.  Let $F\colon\mathcal{K} \times \univ \to [m]$ be a function family.  The $\Hash$ algorithm samples two keys $K_0,K_1 \getsr \mathcal{K}$ and defines $h_j(x) = F_{K_0}(x) + j\cdot F_{K_1}(x) \bmod m$ for $j \in [k]$.  The $\Rep$ and $\Qry$ algorithms are the standard (determinisitic) BF ones. \tsnote{Should define these someplace.}\acnote{Deterministic Rep and Qry defined(without side info)} $\Rep\colon [\univ]^n \rightarrow \Sigma^m$ takes a set~$S$ of~$n$ elements as input, and outputs representation~$M$ of length~$m$. $\Qry\colon \Sigma^m \times \univ \rightarrow \bits$ takes a representation $M$ and an element $x \in \univ$, and returns a bit indicating presence/absence of $x$. The following result shows, informally, that if~$F$ is a good PRF and the (non-adaptive) FP rate is sufficiently small, then $B_\mathrm{lin}$ is secure against adaptive FP-finding adversaries.
 
-\fixme{Note: the following theorem is incorrect for $t>1$.  Or, at least, the proof does not cover $t>1$.}
+\fixme{Note: the following theorem is incorrect for $t>1$.  Or, at least, the proof does not cover $t>1$.}\acnote{Modified.}
 \begin{theorem}\label{thm1}
 Fix $k,m,n>0$, and let $B_\mathrm{lin}=(\Hash,\Rep,\Qry)$ be the hash-based filter just described. 
 Let~$A$ be an adversary, compatible with $\ExpFPSecHash{B_\mathrm{lin},t}{\cdot}$, that asks at most~$q$ queries to its $\QryOracle$ oracle.  Then there exist adversaries~$B_1$ and $B_2$ such that
@@ -20,7 +20,7 @@ The proof of the theorem will use a game playing argument as shown in \Cref{fig:
 $h_j(x) = ( F_{K_0}(x) + j\cdot \rho_2(x)) \bmod m$ and $h_j(x) = ( \rho_1(x) + j \cdot \rho_2(x)) \bmod m$, respectively.
 Here, $\rho_1$ and $\rho_2$ are random functions sampled from $\Func{\univ,[m]}$. \\
 \noindent
-Let adversaries $B_1, B_2$ simulate $\game{1}(A)$ and $\game{2}(A)$ respectively as shown in \Cref{fig:BGame1}. When $b=1$, adversaries $B_1$ and $B_2$ exactly simulate $\game{0}(A)$ and $\game{1}(A)$.  When $b=0$, adversary $B_1$ wins if $\game{1}(A)$ outputs 0; adversary $B_2$ wins if $\game{2}(A)$ returns 0.  Thus we have
+Let adversaries $B_1, B_2$ simulate $\game{1}(A)$ and $\game{2}(A)$ respectively as shown in \Cref{fig:BGame1}. When $b=0$, $B_1$ wins if $\game{1}(A)$ outputs 0; $B_2$ wins if $\game{2}(A)$ returns 0. When $b=1$, $B_1$ and $B_2$ exactly simulate $\game{0}(A)$ and $\game{1}(A)$. Thus, we have
 
 \begin{align}
 \Prob{\ExpPRF{F}{B_1} = 1\,|\,b=1} &= \Prob{\game{0}(A)=1}\label{eq:m1}\\
@@ -102,7 +102,7 @@ $S \getsr \distr{\univ}{n}$\\
 $M \getsr \Rep^{\HashOracle}(\calS)$\\
 $\calZ \getsr A^{\QryOracle}(\calS)$\\
 $z_1,\cdots, z_t \getsr \calY $\\
-if $\exists i\in[1,t] \,\Qry^{\HashOracle}(M,z_i)=0$ then\\
+if $\exists i\in[1,t] \,\mbox{s.t.} \,\Qry^{\HashOracle}(M,z_i)=0$ then\\
 \nudge Ret 0\\
 Ret 1\\\\
 %
@@ -130,10 +130,10 @@ $S \getsr \distr{\univ}{n}$\\
 $M \getsr \Rep^{\HashOracle}(\calS)$\\
 When $A$ asks $\QryOracle(x)$:\\
 $\nudge$ Ret $\Qry^{\HashOracle}(M,x)$\\
-When $A$ halts with output $\calZ^{'}$: \\
-if $|\calZ^{'}| < t$ or $\calZ^{'} \cap \calS \neq \emptyset$ then \\
+When $A$ halts with output $\calZ'$: \\
+if $|\calZ'| < t$ or $\calZ' \cap \calS \neq \emptyset$ then \\
 \nudge Ret 0\\
-if $\exists z \in \calZ^{'}$ s.t. $\Qry^{\HashOracle}(M,z)=0$ then\\
+if $\exists z \in \calZ'$ s.t. $\Qry^{\HashOracle}(M,z)=0$ then\\
 \nudge Ret 0\\
 Ret 1\\\\
 \oracle{$\HashOracle(x)$}\\
@@ -147,11 +147,11 @@ $S \getsr \distr{\univ}{n}$\\
 $M \getsr \Rep^{\HashOracle}(\calS)$\\
 When $A$ asks $\QryOracle(x)$:\\
 $\nudge$ Ret $\Qry^{\HashOracle}(M,x)$\\
-When $A$ halts with output $\calZ^{'}$: \\
+When $A$ halts with output $\calZ'$: \\
 
-if $|\calZ^{'}| < t$ or $\calZ^{'} \cap \calS \neq \emptyset$ then \\
+if $|\calZ'| < t$ or $\calZ' \cap \calS \neq \emptyset$ then \\
 \nudge Ret 0\\
-if $\exists z \in \calZ^{'}$ s.t. $\Qry^{\HashOracle}(M,z)=0$ then\\
+if $\exists z \in \calZ'$ s.t. $\Qry^{\HashOracle}(M,z)=0$ then\\
 \nudge Ret 0\\
 Ret 1\\\\
 \oracle{$\HashOracle(x)$}\\
@@ -182,7 +182,7 @@ Adding \Cref{eq:1,eq:2a}, we have
 \end{equation}
 
 \noindent
-In $\game{3}(A)$, $t$ elements are sampled from the $q$ queries and tested for false positives. The probability of selecting $t$ FP elements from the set of $q$ queries is $1/\dbinom{q}{t}$. So, 
+In $\game{3}(A)$, $t$ elements are sampled from the $q$ queries with probability  $1/\dbinom{q}{t}$ and tested for false positives. So, 
 \begin{equation}
 \Prob{\game{2}(A)=1} = \frac{1}{\dbinom{q}{t}}\times\Prob{\game{3}(A)=1}\label{eq:3}
 \end{equation}
@@ -191,10 +191,10 @@ In $\game{3}(A)$, $t$ elements are sampled from the $q$ queries and tested for f
 The classical FP requirement considers only non-adaptive (and information-theoretic) adversaries and $A'$ is one such adversary simulating $\game{3}(A)$. \acnote{changed}\tsnote{The classical FP requirement considers only non-adaptive (and information-theoretic) adversaries.  It suffices to say this.} From \Cref{fig:AGame3} and $\game{3}(A)$, it is evident that
 \begin{align}
 \nonumber \Prob{\game{3}(A)=1} &= q\Prob{A' \mbox{outputs FP}}\\
-& \leq q\epsilon,\mbox{ where } \epsilon = (1-e^{-kn/m})^k \label{eq:4}
+& \leq q\times(1-e^{-kn/m})^k \label{eq:4}
 \end{align}
 
-%\caption{Adversary $A^{'}$ simulating $\game{3}(A)$} \label{AGame3}
+%\caption{Adversary $A'$ simulating $\game{3}(A)$} \label{AGame3}
 \begin{figure}
 \centering
 \fpage{0.4}{
@@ -213,7 +213,7 @@ $\nudge$ $\nudge \calY \gets \calY \cup x$\\
 \nudge else\\
 $\nudge$ $\nudge r = 0$\\
 \nudge Ret $r$\\
-When $A$ halts with output $\calZ^{'}$\\
+When $A$ halts with output $\calZ'$\\
 \nudge $z \gets \calY$\\
 \nudge if $\Qry^{\HashOracle}(M,z)=0$ then\\
 \nudge \nudge Ret 0\\
@@ -231,7 +231,6 @@ From \Cref{eq:0,eq:2,eq:3,eq:4} \\
 \begin{align}
 \nonumber \AdvFPSecHash{B_{\mathrm{lin}},t}{A} &- \Prob{\game{2}(A)=1} =  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}   \\
 \nonumber \AdvFPSecHash{B_{\mathrm{lin}},t}{A}  &=  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2} + \Prob{\game{2}(A)=1}  \\
-\nonumber \AdvFPSecHash{B_{\mathrm{lin}},t}{A} &\leq  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}  + \frac{q \cdot \epsilon}{\dbinom{q}{t}}\\
 \AdvFPSecHash{B_{\mathrm{lin}},t}{A} &\leq  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}  + \frac{q}{\dbinom{q}{t}} \times  (1-e^{-kn/m})^k
 \end{align}
 \end{proof}
