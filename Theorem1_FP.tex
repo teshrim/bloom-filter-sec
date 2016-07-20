@@ -1,33 +1,33 @@
 \heading{Linear-PRF construction. }
-Here we consider a hash-based filter that was attacked by Neidermayer et al. in~\cite{xxx}.  Let $B_{\mathrm{lin}}=(\Hash,\Rep,\Qry)$ be defined as follows.  Fix non-empty sets~$\univ, \univ$ and integers $k,m>0$.  Let $F\colon\mathcal{K} \times \univ \to [m]$ be a function family.  The $\Hash$ algorithm samples two keys $K_0,K_1 \getsr \mathcal{K}$ and defines $h_j(x) = F_{K_0}(x) + j\cdot F_{K_1}(x) \bmod m$ for $j \in [k]$.  The $\Rep$ and $\Qry$ algorithms are the standard (determinisitic) BF ones. \tsnote{Should define these someplace.}  The following result shows, informally, that if~$F$ is a good PRF and the (non-adaptive) FP rate is sufficiently small, then $B_\mathrm{lin}$ is secure against adaptive FP-finding adversaries.
+Here we consider a hash-based filter that was attacked by Neidermayer et al. in~\cite{xxx}.  Let $B_{\mathrm{lin}}=(\Hash,\Rep,\Qry)$ be defined as follows.  Fix non-empty set ~$\univ$ and integers $k,m,n>0$.  Let $F\colon\mathcal{K} \times \univ \to [m]$ be a function family.  The $\Hash$ algorithm samples two keys $K_0,K_1 \getsr \mathcal{K}$ and defines $h_j(x) = F_{K_0}(x) + j\cdot F_{K_1}(x) \bmod m$ for $j \in [k]$.  The $\Rep$ and $\Qry$ algorithms are the standard (determinisitic) BF ones. \tsnote{Should define these someplace.}\acnote{Deterministic Rep and Qry defined(without side info)} $\Rep\colon [\univ]^n \rightarrow \Sigma^m$ takes a set~$S$ of~$n$ elements as input, and outputs representation~$M$ of length~$m$. $\Qry\colon \Sigma^m \times \univ \rightarrow \bits$ takes a representation $M$ and an element $x \in \univ$, and returns a bit indicating presence/absence of $x$. The following result shows, informally, that if~$F$ is a good PRF and the (non-adaptive) FP rate is sufficiently small, then $B_\mathrm{lin}$ is secure against adaptive FP-finding adversaries.
 
 \fixme{Note: the following theorem is incorrect for $t>1$.  Or, at least, the proof does not cover $t>1$.}
 \begin{theorem}\label{thm1}
 Fix $k,m,n>0$, and let $B_\mathrm{lin}=(\Hash,\Rep,\Qry)$ be the hash-based filter just described. 
 Let~$A$ be an adversary, compatible with $\ExpFPSecHash{B_\mathrm{lin},t}{\cdot}$, that asks at most~$q$ queries to its $\QryOracle$ oracle.  Then there exist adversaries~$B_1$ and $B_2$ such that
 \[
-\AdvFPSecHash{B_{\mathrm{lin}},t}{A} \leq  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2} + q \cdot  (1-e^{-kn/m})^k
+\AdvFPSecHash{B_{\mathrm{lin}},t}{A} \leq  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}  + \frac{q}{\dbinom{q}{t}} \times  (1-e^{-kn/m})^k
 \]
 \end{theorem}
 Before giving the proof, we note that  $(1-e^{-kn/m})^k \rightarrow 0$ as the ratio between the bit-length of the representation~$M$ and the size of the represented set~$S$, i.e.,$m/n$ tends to $\infty$.
 %
-\begin{proof}[Theorem~\ref{thm1}]
-The proof of the theorem will use a game playing argument as shown in Fig. \ref{fig:Game}. $\game{0}(A)$ exactly simulates $\ExpFPSecHash{B,t}{A}$ with hash functions $h_j(x) =  F_{K_0}(x) + j\cdot F_{K_1}(x) \bmod m$. So,
+\begin{proof}[\Cref{thm1}]
+The proof of the theorem will use a game playing argument as shown in \Cref{fig:Game}. $\game{0}(A)$ exactly simulates $\ExpFPSecHash{B_\mathrm{lin},t}{A}$ with hash functions $h_j(x) =  F_{K_0}(x) + j\cdot F_{K_1}(x) \bmod m$. So,
 \begin{equation}
 \AdvFPSecHash{B_{\mathrm{lin}},t}{A} = \Prob{\game{0}(A)=1}\label{eq:0}
 \end{equation}
  $\game{1}(A)$ and $\game{2}(A)$ attack 2 different filters with hash functions 
 $h_j(x) = ( F_{K_0}(x) + j\cdot \rho_2(x)) \bmod m$ and $h_j(x) = ( \rho_1(x) + j \cdot \rho_2(x)) \bmod m$, respectively.
-Here, $\rho_1$ and $\rho_2$ are random functions sampled from $\Func{\univ,[m]}$. Let adversaries $B_1, B_2$ simulate $\game{1}(A)$ and $\game{2}(A)$ respectively as shown in Fig. \ref{fig:BGame1}. When $b=1$, adversaries $B_1$ and $B_2$ exactly simulate $\game{0}(A)$ and $\game{1}(A)$, respectively.  When $b=0$, adversary $B_1$ wins if $\game{1}(A)$ outputs 0; adversary $B_2$ wins if $\game{2}(A)$ returns 0.  Thus we have
-\begin{eqnarray}
-\Prob{\ExpPRF{F}{B_1} = 1\,|\,b=1} &=& \Prob{\game{0}(A)=1}\label{eq:m1}\\
-\Prob{\ExpPRF{F}{B_2} = 1\,|\,b=1} &=& \Prob{\game{1}(A)=1}\label{eq:m2}\\
-\Prob{\ExpPRF{F}{B_1} = 1\,|\,b=0} &=& 1-\Prob{\game{1}(A)=1}\label{eq:m3}\\
-\Prob{\ExpPRF{F}{B_2} = 1\,|\,b=0} &=& 1-\Prob{\game{2}(A)=1}\label{eq:m4}
-\end{eqnarray}
-
+Here, $\rho_1$ and $\rho_2$ are random functions sampled from $\Func{\univ,[m]}$. \\
 \noindent
-In a classical Bloom filter, adversary $A^{'}$ is non-adaptive, i.e., for some fixed $x \notin S$, $A^{'}$ targets the false-positive error conditioned on randomness of hash functions. \tsnote{The classical FP requirement considers only non-adaptive (and information-theoretic) adversaries.  It suffices to say this.}  But in the $\ExpFPSecHash{B,t}{A}$ game, $A$~is adaptive, as it can adapt its queries as well as its output based on response of $\QryOracle$ oracle. Let $A$ makes $q>t$ queries $x_1, x_2, ..., x_q$ to the $\QryOracle$ oracle. $\game{3}(A)$ simulates fp-error\tsnote{?} game of~$A^{'}$ as shown in Fig. \ref{fig:Game}.
+Let adversaries $B_1, B_2$ simulate $\game{1}(A)$ and $\game{2}(A)$ respectively as shown in \Cref{fig:BGame1}. When $b=1$, adversaries $B_1$ and $B_2$ exactly simulate $\game{0}(A)$ and $\game{1}(A)$.  When $b=0$, adversary $B_1$ wins if $\game{1}(A)$ outputs 0; adversary $B_2$ wins if $\game{2}(A)$ returns 0.  Thus we have
+
+\begin{align}
+\Prob{\ExpPRF{F}{B_1} = 1\,|\,b=1} &= \Prob{\game{0}(A)=1}\label{eq:m1}\\
+\Prob{\ExpPRF{F}{B_2} = 1\,|\,b=1} &= \Prob{\game{1}(A)=1}\label{eq:m2}\\
+\Prob{\ExpPRF{F}{B_1} = 1\,|\,b=0} &= 1-\Prob{\game{1}(A)=1}\label{eq:m3}\\
+\Prob{\ExpPRF{F}{B_2} = 1\,|\,b=0} &= 1-\Prob{\game{2}(A)=1}\label{eq:m4}
+\end{align}
 
 %\caption{Game playing argument}\label{fig:Game}
 \begin{figure}
@@ -37,16 +37,16 @@ In a classical Bloom filter, adversary $A^{'}$ is non-adaptive, i.e., for some f
 \underline{\game{0}(A)}\\
 $K_1, K_2 \getsr \calK$\\
 $S \getsr \distr{\univ}{n}$\\
-$(M,\tau) \getsr \Rep^{\HashOracle}(\calS)$\\
-$\calX \getsr A^{\QryOracle}(\calS)$\\
-if $|\calX| < t$ or $\calX \cap \calS \neq \emptyset$ then \\
+$M \getsr \Rep^{\HashOracle}(\calS)$\\
+$\calZ \getsr A^{\QryOracle}(\calS)$\\
+if $|\calZ| < t$ or $\calZ \cap \calS \neq \emptyset$ then \\
 \nudge Ret 0\\
-if $\exists x \in \calX$ s.t. $\Qry^{\HashOracle}(M,\tau,x)=0$ then\\
+if $\exists z \in \calZ$ s.t. $\Qry^{\HashOracle}(M,z)=0$ then\\
 \nudge Ret 0\\
 Ret 1\\\\
 %
 \oracle{$\QryOracle(x)$}\\
-Ret $\Qry^{\HashOracle}(M,\tau,x)$\\\\
+Ret $\Qry^{\HashOracle}(M,x)$\\\\
 %
 \oracle{$\HashOracle(x)$}\\
 $h_i(x) = F_{K_1}(x)+i \cdot F_{K_2}(x)$, for $i\in[1,k]$\\
@@ -57,16 +57,16 @@ Ret $\left(h_1(x),\ldots,h_k(x)\right)$
 $K_1 \getsr \calK$\\
 $\rho \getsr \Func{\univ,[m]}$\\
 $S \getsr \distr{\univ}{n}$\\
-$(M,\tau) \getsr \Rep^{\HashOracle}(\calS)$\\
-$\calX \getsr A^{\QryOracle}(\calS)$\\
-if $|\calX| < t$ or $\calX \cap \calS \neq \emptyset$ then \\
+$M \getsr \Rep^{\HashOracle}(\calS)$\\
+$\calZ \getsr A^{\QryOracle}(\calS)$\\
+if $|\calZ| < t$ or $\calZ \cap \calS \neq \emptyset$ then \\
 \nudge Ret 0\\
-if $\exists x \in \calX$ s.t. $\Qry^{\HashOracle}(M,\tau,x)=0$ then\\
+if $\exists z \in \calZ$ s.t. $\Qry^{\HashOracle}(M,z)=0$ then\\
 \nudge Ret 0\\
 Ret 1\\\\
 %
 \oracle{$\QryOracle(x)$}\\
-Ret $\Qry^{\HashOracle}(M,\tau,x)$\\\\
+Ret $\Qry^{\HashOracle}(M,x)$\\\\
 %
 \oracle{$\HashOracle(x)$}\\
 $h_i(x) = F_{K_1}(x)+i \cdot \rho(x)$, for $i\in[1,k]$\\
@@ -79,16 +79,16 @@ Ret $\left(h_1(x),\ldots,h_k(x)\right)$
 \underline{\game{2}(A)}\\
 $\rho_1,\rho_2 \getsr \Func{\univ,[m]}$\\
 $S \getsr \distr{\univ}{n}$\\
-$(M,\tau) \getsr \Rep^{\HashOracle}(\calS)$\\
-$\calX \getsr A^{\QryOracle}(\calS)$\\
-if $|\calX| < t$ or $\calX \cap \calS \neq \emptyset$ then \\
+$M \getsr \Rep^{\HashOracle}(\calS)$\\
+$\calZ \getsr A^{\QryOracle}(\calS)$\\
+if $|\calZ| < t$ or $\calZ \cap \calS \neq \emptyset$ then \\
 \nudge Ret 0\\
-if $\exists x \in \calX$ s.t. $\Qry^{\HashOracle}(M,\tau,x)=0$ then\\
+if $\exists z \in \calZ$ s.t. $\Qry^{\HashOracle}(M,z)=0$ then\\
 \nudge Ret 0\\
 Ret 1\\\\
 %
 \oracle{$\QryOracle(x)$}\\
-Ret $\Qry^{\HashOracle}(M,\tau,x)$\\\\
+Ret $\Qry^{\HashOracle}(M,x)$\\\\
 %
 \oracle{$\HashOracle(x)$}\\
 $h_i(x) = \rho_1(x)+i \cdot \rho_2(x)$, for $i\in[1,k]$\\
@@ -96,33 +96,26 @@ Ret $\left(h_1(x),\ldots,h_k(x)\right)$
 }
 {
 \underline{$\game{3}(A)$}\\
-$\ell \getsr [q]$\\
-$c = 0$ \\%count will be used to keep track of queries made to $\QryOracle$\\
-$\win \gets \false$\\
+$\calY \gets \emptyset $\\
 $\rho_1,\rho_2 \getsr \Func{\univ,[m]}$\\
 $S \getsr \distr{\univ}{n}$\\
-$(M,\tau) \getsr \Rep^{\HashOracle}(\calS)$\\
-$\calX \getsr A^{\QryOracle}(\calS)$\\
-if $|\calX| < t$ or $\calX \cap \calS \neq \emptyset$ then \\
-\nudge Ret 0\\
-if $\exists x \in \calX$ s.t. $\Qry^{\HashOracle}(M,\tau,x)=0$ then\\
+$M \getsr \Rep^{\HashOracle}(\calS)$\\
+$\calZ \getsr A^{\QryOracle}(\calS)$\\
+$z_1,\cdots, z_t \getsr \calY $\\
+if $\exists i\in[1,t] \,\Qry^{\HashOracle}(M,z_i)=0$ then\\
 \nudge Ret 0\\
 Ret 1\\\\
 %
 \oracle{$\QryOracle(x)$}\\
-$c=c +1$\\
-if $(c == \ell)$\\
-$\nudge \win = \true$\\
-$\nudge \mathrm{Ret} \nudge \Qry^{\HashOracle}(M,\tau,x)$\\
-else \\
-$\nudge \mathrm{Ret}\nudge 0$\\\\
+$\calY \gets \calY \cup x$\\
+Ret $\Qry^{\HashOracle}(M,x)$\\
 %
 \oracle{$\HashOracle(x)$}\\
 $h_i(x) = \rho_1(x)+i \cdot \rho_2(x)$, for $i\in[1,k]$\\
 Ret $\left(h_1(x),\ldots,h_k(x)\right)$
 }
 }
-\caption{Theorem \ref{thm1}:Game playing argument}\label{fig:Game}
+\caption{\Cref{thm1}:Game playing argument}\label{fig:Game}
 \end{figure}
 
 %\caption{Adversary $B_1, B_2$ simulating $\game{1}(A)$ and $\game{2}(A)$ respectively}\label{fig:BGame1}
@@ -134,13 +127,13 @@ Ret $\left(h_1(x),\ldots,h_k(x)\right)$
 $\adversaryv{B_1^{\calO}}$\\
 $K_1 \getsr \calK $\\
 $S \getsr \distr{\univ}{n}$\\
-$(M,\tau) \getsr \Rep^{\HashOracle}(\calS)$\\
+$M \getsr \Rep^{\HashOracle}(\calS)$\\
 When $A$ asks $\QryOracle(x)$:\\
-$\nudge$ Ret $\Qry^{\HashOracle}(M,\tau,x)$\\
-When $A$ halts with output $\calX^{'}$: \\
-if $|\calX^{'}| < t$ or $\calX^{'} \cap \calS \neq \emptyset$ then \\
+$\nudge$ Ret $\Qry^{\HashOracle}(M,x)$\\
+When $A$ halts with output $\calZ^{'}$: \\
+if $|\calZ^{'}| < t$ or $\calZ^{'} \cap \calS \neq \emptyset$ then \\
 \nudge Ret 0\\
-if $\exists x \in \calX^{'}$ s.t. $\Qry^{\HashOracle}(M,\tau,x)=0$ then\\
+if $\exists z \in \calZ^{'}$ s.t. $\Qry^{\HashOracle}(M,z)=0$ then\\
 \nudge Ret 0\\
 Ret 1\\\\
 \oracle{$\HashOracle(x)$}\\
@@ -151,13 +144,14 @@ $\adversaryv{B_2^{\calO}}$\\
 %$d \getsr \bits $\\
 $\rho_2 \getsr \Func(\univ,[m])$ \\
 $S \getsr \distr{\univ}{n}$\\
-$(M,\tau) \getsr \Rep^{\HashOracle}(\calS)$\\
+$M \getsr \Rep^{\HashOracle}(\calS)$\\
 When $A$ asks $\QryOracle(x)$:\\
-$\nudge$ Ret $\Qry^{\HashOracle}(M,\tau,x)$\\
-When $A$ halts with output $\calX^{'}$: \\
-if $|\calX^{'}| < t$ or $\calX^{'} \cap \calS \neq \emptyset$ then \\
+$\nudge$ Ret $\Qry^{\HashOracle}(M,x)$\\
+When $A$ halts with output $\calZ^{'}$: \\
+
+if $|\calZ^{'}| < t$ or $\calZ^{'} \cap \calS \neq \emptyset$ then \\
 \nudge Ret 0\\
-if $\exists x \in \calX^{'}$ s.t. $\Qry^{\HashOracle}(M,\tau,x)=0$ then\\
+if $\exists z \in \calZ^{'}$ s.t. $\Qry^{\HashOracle}(M,z)=0$ then\\
 \nudge Ret 0\\
 Ret 1\\\\
 \oracle{$\HashOracle(x)$}\\
@@ -165,78 +159,80 @@ Ret 1\\\\
 $\mathrm{Ret} \nudge \calO(x) + i\cdot \rho_2(x)$, for $i\in[1,k]$
 }
 }
-\caption{Theorem \ref{thm1}:Adversary $B_1, B_2$ simulating $\game{1}(A)$ and $\game{2}(A)$ respectively}\label{fig:BGame1}
+\caption{\Cref{thm1}:Adversary $B_1, B_2$ simulating $\game{1}(A)$ and $\game{2}(A)$ respectively}\label{fig:BGame1}
 \end{figure}
-
-From eqns. \ref{eq:m1}, \ref{eq:m2}, \ref{eq:m3} and \ref{eq:m4}, \tsnote{this can be compacted}
-\begin{eqnarray}
-\nonumber \Prob{\ExpPRF{F}{B_1} = 1} &=& .5\Prob{\ExpPRF{F}{B_1}=1\,|\,b=0} + .5\Prob{\ExpPRF{F}{B_1} = 1\,|\,b=1}\\
-\nonumber 2\Prob{\ExpPRF{F}{B_1} = 1} &=& 1-\Prob{\game{1}(A)=1} + \Prob{\game{0}(A)=1}\\
-\nonumber (2\Prob{\ExpPRF{F}{B_1} = 1} - 1)  &=& \Prob{\game{0}(A)=1} - \Prob{\game{1}(A)=1}\\
- \AdvPRF{F}{B_1} &=& \Prob{\game{0}(A)=1} - \Prob{\game{1}(A)=1} \label{eq:1}\\
+\noindent
+From \Cref{eq:m1,eq:m2,eq:m3,eq:m4}, \acnote{compacted} \tsnote{this can be compacted}
+\begin{align}
+\nonumber \Prob{\ExpPRF{F}{B_1} = 1} &= .5\Prob{\ExpPRF{F}{B_1}=1\,|\,b=0} + .5\Prob{\ExpPRF{F}{B_1} = 1\,|\,b=1}\\
+\nonumber 2\Prob{\ExpPRF{F}{B_1} = 1} &= 1-\Prob{\game{1}(A)=1} + \Prob{\game{0}(A)=1}\\
+\nonumber (2\Prob{\ExpPRF{F}{B_1} = 1} - 1)  &= \Prob{\game{0}(A)=1} - \Prob{\game{1}(A)=1}\\
+ \AdvPRF{F}{B_1} &= \Prob{\game{0}(A)=1} - \Prob{\game{1}(A)=1} \label{eq:1}\\
 \nonumber& &\\
-\nonumber \Prob{\ExpPRF{F}{B_2} = 1} &=& .5\Prob{\ExpPRF{F}{B_2}=1\,|\,b=0} + .5\Prob{\ExpPRF{F}{B_2} = 1\,|\,b=1}\\
-\nonumber 2\Prob{\ExpPRF{F}{B_2} = 1} &=& 1-\Prob{\game{2}(A)=1} + \Prob{\game{1}(A)=1}\\
-\nonumber (2\Prob{\ExpPRF{F}{B_2} = 1} - 1)  &=& \Prob{\game{1}(A)=1} - \Prob{\game{2}(A)=1}\\
- \AdvPRF{F}{B_2} &=& \Prob{\game{1}(A)=1} - \Prob{\game{2}(A)=1} \label{eq:2}
-\end{eqnarray}
+\nonumber \Prob{\ExpPRF{F}{B_2} = 1} &= .5\Prob{\ExpPRF{F}{B_2}=1\,|\,b=0} + .5\Prob{\ExpPRF{F}{B_2} = 1\,|\,b=1}\\
+\nonumber 2\Prob{\ExpPRF{F}{B_2} = 1} &= 1-\Prob{\game{2}(A)=1} + \Prob{\game{1}(A)=1}\\
+\nonumber (2\Prob{\ExpPRF{F}{B_2} = 1} - 1)  &= \Prob{\game{1}(A)=1} - \Prob{\game{2}(A)=1}\\
+ \AdvPRF{F}{B_2} &= \Prob{\game{1}(A)=1} - \Prob{\game{2}(A)=1} \label{eq:2a}
+\end{align}
 
 \noindent
-Adding eqn. \ref{eq:1} and \ref{eq:2}, we have
+Adding \Cref{eq:1,eq:2a}, we have
 \begin{equation}
-\AdvPRF{F}{B_2} +\AdvPRF{F}{B_1} = \Prob{\game{0}(A)=1} - \Prob{\game{2}(A)=1}\label{eq:2a}
+\AdvPRF{F}{B_2} +\AdvPRF{F}{B_1} = \Prob{\game{0}(A)=1} - \Prob{\game{2}(A)=1}\label{eq:2}
 \end{equation}
 
-In $\game{3}(A)$, assume, without loss of generality that $A$ halts with output $x$ immediately, if it asks $x$ to $\QryOracle$ and $\QryOracle$ returns $1$. \fixme{This only works when $t=1$!  This is where the proof breaks down for the case of $t>1$.} Thus, all queries to $\QryOracle$ return 0 until the first one. Hence,
-
+\noindent
+In $\game{3}(A)$, $t$ elements are sampled from the $q$ queries and tested for false positives. The probability of selecting $t$ FP elements from the set of $q$ queries is $1/\dbinom{q}{t}$. So, 
 \begin{equation}
-\Prob{\game{2}(A)=1} \leq q \cdot \Prob{\game{3}(A)=1} = q \cdot \Prob{\game{3}(A)=1\,|\,\win=\true}\label{eq:3}
+\Prob{\game{2}(A)=1} = \frac{1}{\dbinom{q}{t}}\times\Prob{\game{3}(A)=1}\label{eq:3}
 \end{equation}
 
-In Fig. \ref{AGame3}, adversary $A'$ simulates $\game{3}(A)$. Since, adversary $A'$ exactly simulates $\game{3}(A)$ conditioned on $\win = \true$, 
-\begin{eqnarray}
-\nonumber \Prob{\game{3}(A)\,|\,\win=\true} &=& \Prob{A' \mbox{outputs FP}}\\
-& \leq & \epsilon,\mbox{ where } \epsilon = (1-e^{-kn/m})^k\label{eq:4}
-\end{eqnarray}
+\noindent
+The classical FP requirement considers only non-adaptive (and information-theoretic) adversaries and $A'$ is one such adversary simulating $\game{3}(A)$. \acnote{changed}\tsnote{The classical FP requirement considers only non-adaptive (and information-theoretic) adversaries.  It suffices to say this.} From \Cref{fig:AGame3} and $\game{3}(A)$, it is evident that
+\begin{align}
+\nonumber \Prob{\game{3}(A)=1} &= q\Prob{A' \mbox{outputs FP}}\\
+& \leq q\epsilon,\mbox{ where } \epsilon = (1-e^{-kn/m})^k \label{eq:4}
+\end{align}
 
 %\caption{Adversary $A^{'}$ simulating $\game{3}(A)$} \label{AGame3}
 \begin{figure}
 \centering
 \fpage{0.4}{
 $\adversaryv{A'^{\HashOracle}}$\\
-$\ell \getsr [q]$, where $[q] = {0,1, \cdots, q-1}$\\
-$count = 0$\\
-$\rho_1,\rho_2 \getsr \Func{\univ,[m]}$\\
-$S \getsr \distr{\univ}{n}$\\
-$(M,\tau) \getsr \Rep^{\HashOracle}(\calS)$\\
+$\calY \gets \emptyset $ \\
+$\ell \getsr [q]$\\
+$c = 0$\\
+$\rho \getsr Func(U,[m])$\\
+$S \getsr \distr{U}{n}$\\
+$M \getsr \Rep^{\HashOracle}(\calS)$\\
 When $A$ asks $\QryOracle(x)$:\\
-$\nudge count = count + 1$\\
-\nudge if $count == \ell$\\
-$\nudge$ $\nudge r \gets \Qry^{\HashOracle}(M,\tau,x)$\\
+$\nudge c = c + 1$\\
+\nudge if $c == \ell$\\
+$\nudge$ $\nudge r \gets \Qry^{\HashOracle}(M,x)$\\
+$\nudge$ $\nudge \calY \gets \calY \cup x$\\
 \nudge else\\
 $\nudge$ $\nudge r = 0$\\
 \nudge Ret $r$\\
-When $A$ halts with output $\calX'$\\
-\nudge if $|\calX'| < t$ or $\calX' \cap \calS \neq \emptyset$ then \\
-\nudge\nudge Ret 0\\
-\nudge if $\exists x \in \calX^{'}$ s.t. $\Qry^{\HashOracle}(M,\tau,x)=0$ then\\
+When $A$ halts with output $\calZ^{'}$\\
+\nudge $z \gets \calY$\\
+\nudge if $\Qry^{\HashOracle}(M,z)=0$ then\\
 \nudge \nudge Ret 0\\
-\nudge Ret 1\\
+\nudge Ret 1\\\\
 %
 \oracle{$\HashOracle(x)$}\\
 $h_i(x) = \rho_1(x)+i \cdot \rho_2(x)$, for $i\in[1,k]$\\
 Ret $\left(h_1(x),\ldots,h_k(x)\right)$
 }
-\caption{Theorem \ref{thm1}:Adversary $A'$ simulating $\game{3}(A)$} \label{AGame3}
+\caption{\Cref{thm1}:Adversary $A'$ simulating $\game{3}(A)$} \label{fig:AGame3}
 \end{figure}	
 
-From eqn. \ref{eq:0}, \ref{eq:2a}, \ref{eq:3} and \ref{eq:4}: \\
-\begin{eqnarray}
-\nonumber \AdvFPSecHash{B_{\mathrm{lin}},t}{A} &-& \Prob{\game{2}(A)=1} =  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}   \\
-\nonumber \AdvFPSecHash{B_{\mathrm{lin}},t}{A}  &=&  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2} + \Prob{\game{2}(A)=1}  \\
-\AdvFPSecHash{B_{\mathrm{lin}},t}{A} &\leq&  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}  + q \cdot \epsilon
-\end{eqnarray}
+\noindent
+From \Cref{eq:0,eq:2,eq:3,eq:4} \\
+\begin{align}
+\nonumber \AdvFPSecHash{B_{\mathrm{lin}},t}{A} &- \Prob{\game{2}(A)=1} =  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}   \\
+\nonumber \AdvFPSecHash{B_{\mathrm{lin}},t}{A}  &=  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2} + \Prob{\game{2}(A)=1}  \\
+\nonumber \AdvFPSecHash{B_{\mathrm{lin}},t}{A} &\leq  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}  + \frac{q \cdot \epsilon}{\dbinom{q}{t}}\\
+\AdvFPSecHash{B_{\mathrm{lin}},t}{A} &\leq  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}  + \frac{q}{\dbinom{q}{t}} \times  (1-e^{-kn/m})^k
+\end{align}
 \end{proof}
 
-
-\clearpage
