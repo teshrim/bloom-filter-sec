@@ -12,7 +12,7 @@ parameterized by a collection $\mathcal{S}$ of subsets of~$U$ and a collection
 of supported queries $\mathcal{Q}=\{q \colon \mathcal{S} \to \mathbb{R}\}$, where:
 \begin{itemize}
 \item $\Rep$ is a randomized algorithm taking as input $S \in \mathcal{S}$,
-and outputting a pair of values $(M,\aux)$, the \emph{representation} (of~$S$) and the \emph{auxillary information} (of~$M$).
+and outputting a pair of strings $(M,\aux)$, the \emph{representation} (of~$S$) and the \emph{auxillary information} (of~$M$).
 \item $\Qry$ is a deterministic algorithm that takes as input $M, \aux$,
 and a query $q\in \mathcal{Q}$, and returns value~$a$.
 \end{itemize}
@@ -22,7 +22,7 @@ all $q \in \mathcal{Q}$ it holds that
 \Pr[(M,\aux) \getsr \Rep(S) : \Qry(M, \aux, q) \neq q(S)] \leq \epsilon, \label{eqn:correctness}
 \end{eqnarray}
 %where $q(S)$ denotes the correct answer to the query $q$ on the set~$S$.
-The \emph{size} of a data structure is the maximum (bit)length of any~$M$ that can be
+The \emph{size} of a data structure is the maximum length of any~$M$ that can be
 output by $\Rep$.
 \end{definition}
 
@@ -49,7 +49,7 @@ size bound~$n$, then $\mathcal{S}$ becomes the collection of all subsets of $U$
 of size (at most)~$n$. We also fix $\mathcal{Q} = U$, where a query ``$x$'' has
 the semantics ``is $x$ in $S$?'' Algorithm $\Rep$, which has values $k, m$ hardwired,
 chooses a set of hash functions $h_1, \ldots, h_k$ and computes an $m$-bit
-array in the usual way; a natural possibility is to set $\aux = (h_1, \ldots, h_k)$ and
+array in the usual way; a natural possibility is to set $\aux = (h_1, \ldots, h_k)$ (encoded as a string) and
 to let~$M$ be the bit array.  
 %\tsnote{If $\mathcal{Q}=U$ and we use the
 %  semantics you suggest, then isn't Equation~\ref{eqn:correctness}
