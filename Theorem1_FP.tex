@@ -1,15 +1,25 @@
 \heading{Linear-PRF construction. }
-Here we consider a hash-based filter that was attacked by Neidermayer et al. in~\cite{xxx}.  Let $B_{\mathrm{lin}}=(\Hash,\Rep,\Qry)$ be defined as follows.  Fix non-empty set ~$\univ$ and integers $k,m,n>0$.  Let $F\colon\mathcal{K} \times \univ \to [m]$ be a function family.  The $\Hash$ algorithm samples two keys $K_0,K_1 \getsr \mathcal{K}$ and defines $h_j(x) = F_{K_0}(x) + j\cdot F_{K_1}(x) \bmod m$ for $j \in [k]$.  The $\Rep$ and $\Qry$ algorithms are the standard (determinisitic) BF ones. \tsnote{Should define these someplace.}\acnote{Deterministic Rep and Qry defined(without side info)} $\Rep\colon [\univ]^n \rightarrow \Sigma^m$ takes a set~$S$ of~$n$ elements as input, and outputs representation~$M$ of length~$m$. $\Qry\colon \Sigma^m \times \univ \rightarrow \bits$ takes a representation $M$ and an element $x \in \univ$, and returns a bit indicating presence/absence of $x$. The following result shows, informally, that if~$F$ is a good PRF and the (non-adaptive) FP rate is sufficiently small, then $B_\mathrm{lin}$ is secure against adaptive FP-finding adversaries.
+Here we consider a hash-based filter that was attacked by Neidermayer et al. in~\cite{xxx}.  Let $B_{\mathrm{lin}}=(\Hash,\Rep,\Qry)$ be defined as follows.  Fix non-empty set ~$\univ$ and integers $k,m,n>0$.  Let $F\colon\mathcal{K} \times \univ \to [m]$ be a function family.  The $\Hash$ algorithm samples two keys $K_0,K_1 \getsr \mathcal{K}$ and defines $h_j(x) = F_{K_0}(x) + j\cdot F_{K_1}(x) \bmod m$ for $j \in [k]$.  The $\Rep$ and $\Qry$ algorithms are the standard (determinisitic) BF ones. The following result shows, informally, that if~$F$ is a good PRF and the (non-adaptive) FP rate is sufficiently small, then $B_\mathrm{lin}$ is secure against adaptive FP-finding adversaries.
 
 \fixme{Note: the following theorem is incorrect for $t>1$.  Or, at least, the proof does not cover $t>1$.}\acnote{Modified.}
 \begin{theorem}\label{thm1}
 Fix $k,m,n>0$, and let $B_\mathrm{lin}=(\Hash,\Rep,\Qry)$ be the hash-based filter just described. 
 Let~$A$ be an adversary, compatible with $\ExpFPSecHash{B_\mathrm{lin},t}{\cdot}$, that asks at most~$q$ queries to its $\QryOracle$ oracle.  Then there exist adversaries~$B_1$ and $B_2$ such that
 \[
-\AdvFPSecHash{B_{\mathrm{lin}},t}{A} \leq  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}  + \frac{q}{\dbinom{q}{t}} \times  (1-e^{-kn/m})^k
+\AdvFPSecHash{B_{\mathrm{lin}},t}{A} \leq  \AdvPRF{F}{B_1} +
+\AdvPRF{F}{B_2}  +{\dbinom{q}{t}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^t
 \]
 \end{theorem}
-Before giving the proof, we note that  $(1-e^{-kn/m})^k \rightarrow 0$ as the ratio between the bit-length of the representation~$M$ and the size of the represented set~$S$, i.e.,$m/n$ tends to $\infty$.
+Before giving the proof, we note that Kirsch and Mitzenmacher~\cite{xxx} show
+that the ($t=1$, non-adaptive) FP-probability for~$B_\mathrm{lin}$ is
+always within $O(1/n)$ of $(1-e^{-kn/m})^k$, although the asymptotic
+rate of convergence is faster than~$1/n$.  The factor of $\dbinom{q}{t}$ arises as a result
+of removing adaptivity.  Finally, $\dbinom{q}{t} \leq q^t$ (with
+reasonable tightness when~$t$ is small) in which case the final term in the bound behaves as 
+$(q (1-e^{-kn/m})^k + O(q/n) )^t$; loosely, the bound one expects for
+trying to find a single FP in each of~$t$ independent``rounds'', each round
+consisting of~$q$ attempts.
+%Before giving the proof, we note that  $(1-e^{-kn/m})^k \rightarrow 0$ as the ratio between the bit-length of the representation~$M$ and the size of the represented set~$S$, i.e.,$m/n$ tends to $\infty$.
 %
 \begin{proof}[\Cref{thm1}]
 The proof of the theorem will use a game playing argument as shown in \Cref{fig:Game}. $\game{0}(A)$ exactly simulates $\ExpFPSecHash{B_\mathrm{lin},t}{A}$ with hash functions $h_j(x) =  F_{K_0}(x) + j\cdot F_{K_1}(x) \bmod m$. So,
