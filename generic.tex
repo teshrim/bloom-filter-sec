@@ -1,28 +1,30 @@
-\section{Secure Set Representation, Abstractly}
-We focus on the case of static set-representations only (for now).
+\section{Secure Multiset Representation}
 \def\pub{{\sf pub}}
 \def\aux{{\sf aux}}
 
-\subsection{Syntax}
-Fix a universe $U$.
+\heading{Preliminaries. }
+When~$\univ$ is a set and $n>0$ is an integer, we let $[\univ]^n$ denote the set of all size-$n$ subsets of~$\univ$. We write $x \getsr \univ$ to denote sampling an element from~$\univ$ and assigning this to~$x$, and we extend this notation to randomized algorithms.
 
-\begin{definition} %\tsnote{We need a more descriptive name than ``data structure'' :)}
-A (randomized) \emph{set-representation primitive} is a pair of algorithms $(\Rep, \Qry)$
-parameterized by a collection $\mathcal{S}$ of subsets of~$U$ and a collection
+\subsection{Static (Multi)set-representations}
+\begin{definition} %\tsnote{We need a more descriptive name than ``set-representation'' :)}
+\tsnote{I think this generalizes pretty easily to multisets.}
+Fix a universe~$U$ and an alphabet~$\Sigma$.  A \emph{static (multi)set-representation primitive} is a pair of algorithms $(\Rep, \Qry)$
+parameterized by a collection $\mathcal{S}$ of multisets, each consisting of elements from~$U$ and a collection
 of supported queries $\mathcal{Q}=\{q \colon \mathcal{S} \to \mathbb{R}\}$, where:
 \begin{itemize}
 \item $\Rep$ is a randomized algorithm taking as input $S \in \mathcal{S}$,
-and outputting a pair of strings $(M,\aux)$, the \emph{representation} (of~$S$) and the \emph{auxillary information} (of~$M$).
+and outputting a pair of strings $(M,\aux)$, the \emph{representation} $M \in \Sigma^*$ (of~$S$) 
+and the \emph{auxillary information} $\aux \in \Sigma^*$ (of~$M$).
 \item $\Qry$ is a deterministic algorithm that takes as input $M, \aux$,
 and a query $q\in \mathcal{Q}$, and returns value~$a$.
 \end{itemize}
-A data structure is \emph{$\epsilon$-correct} if for all $S \in \mathcal{S}$ and
+A set-representation is \emph{$\epsilon$-correct} if for all $S \in \mathcal{S}$ and
 all $q \in \mathcal{Q}$ it holds that
 \begin{eqnarray}
 \Pr[(M,\aux) \getsr \Rep(S) : \Qry(M, \aux, q) \neq q(S)] \leq \epsilon, \label{eqn:correctness}
 \end{eqnarray}
 %where $q(S)$ denotes the correct answer to the query $q$ on the set~$S$.
-The \emph{size} of a data structure is the maximum length of any~$M$ that can be
+The \emph{size} of a set-representation is the maximum (bit)length of any~$M$ that can be
 output by $\Rep$.
 \end{definition}
 
@@ -65,6 +67,10 @@ to let~$M$ be the bit array.
   some queries on which error is ok and other queries where error is not allowed. Though if one
   wanted to be general, one could simply have two (disjoint) sets of queries $\mathcal{Q}_1, \mathcal{Q}_2$
   where error is allowed on the former but not on the latter.}
+We note that while our correctness condition does not distinguish among types of errors, it also does not preclude instantiations (like the classical Bloom filter) that admit only one type of error, e.g. false-positives.  
+
+Setting $\Sigma=\bits^{\leq L}$ allows one to store a bitstring of length at most~$L$ at each location.  This allows our syntax to capture the cuckoo-hashing construction from NY, as well as the ``garbled Bloom filter'' from Dong, Chen and Wen~\cite{xxx}, among other things.  Setting $\Sigma=\mathbb{N}$ would allow for the storage of counters (say) at each position in~$M$, and a query ``$x$'' with the semantics ``what is the multiplicity of~$x$ in~$S$.''  (This does not capture counting Bloom filters, or the like, which do not have static representations.)  \tsnote{I guess this can all be accomplished with $\Sigma=\bits^*$, but it isn't necessarily the ``natural'' way.}
+%Our syntax also does not capture filters that are mutable, that is, whose representation may change over time. On the other hand, we can state a simple correctness condition for these kinds of filters; this will not be true when we further generalize to capture, properly, counters and mutability.
 
 \subsection{Adversarial Soundness}
 \heading{FP security.}
@@ -82,7 +88,7 @@ If $(\Rep, \Qry)$ is defined in the random-oracle model, then
 $A$ is given access to the random oracle as well.
 $A$ \emph{succeeds} if it outputs $t$ distinct queries $q_1, \ldots, q_t \in \mathcal{Q}$ for which
 $\Qry(\aux, M, q_i) \neq q_i(S)$ for all~$i$.
-Roughly, we say that a data structure is $(t,\epsilon')$-FP-secure if the probability that
+Roughly, we say that a set-representation is $(t,\epsilon')$-FP-secure if the probability that
 any polynomial-time attacker succeeds is at most~$\epsilon'$. A full definition
 would also bound the number of queries to $\Qry$ (and the random oracle) made
 be the attacker; it is useful to make the convention that if $A$ outputs
@@ -90,20 +96,20 @@ $q_1, \ldots, q_t$ then it must have made those queries to its oracle previously
 
 The notion of FP-security defined above captures the fp-prv notion for Bloom filters
 if we put the hash
-functions in $M$ (and thus increase the size of the data structure); it also captures the fp-pub
+functions in $M$ (and thus increase the size of the set-representation); it also captures the fp-pub
 notion if we put the hash function in~$\aux$. \tsnote{Except that the win condition allows both
 false-positives and false-negatives, given the correctness requirement
 in the syntax.} \jnote{True. But if false negatives cannot occur at all (by design of
-the data structure, not by definition of the primitive), then the attacker cannot hope to win
+the set-representation, not by definition of the primitive), then the attacker cannot hope to win
 by finding a false negative.} It captures the fp-bb-pub notion in the
 random-oracle model.
 
 Note that the security we can hope for is somewhat limited, since there
 is always a trivial attack in which
 the attacker tries random queries $q_1, q_2, \ldots$ until it finds $t$ queries for which the
-data structure returns an incorrect answer.\footnote{This assumes the attacker
+set-representation returns an incorrect answer.\footnote{This assumes the attacker
 knows the true set $S$, which need not be the case.} Roughly speaking,
-if the data structure is $\epsilon$-correct then the attacker expects to find a query on which
+if the set-representation is $\epsilon$-correct then the attacker expects to find a query on which
 an incorrect result is returned
 every $1/\epsilon$ tries; thus, an
 attacker making $t/\epsilon$ queries succeeds with constant probability.
@@ -117,8 +123,8 @@ if $N \stackrel{{\rm def}}{=} \sum_{i=1}^T X_i \geq t$. If we treat the $X_i$ as
 probability~$\epsilon$, then $N$ follows the well-studied binomial distribution.
 Let $\bin(T, \epsilon; t)$ denote the probability that $N \geq t$. So the best security we can
 hope for
-is that if the data structure is $\epsilon$-correct then for any desired bound $T$
-the data structure is $(t, \bin(T,\epsilon; t))$-FP-secure against any attacker making
+is that if the set-representation is $\epsilon$-correct then for any desired bound $T$
+the set-representation is $(t, \bin(T,\epsilon; t))$-FP-secure against any attacker making
 at most $T$~queries. \jnote{Need to find different terms to use for a query $q \in \mathcal{Q}$
 and a query that the attacker makes to its oracle.}
 
@@ -147,7 +153,7 @@ then choose a random query to output, we succeed with probability at least $\eps
 It is unclear whether this is tight.
 
 \item There is a contrived scheme that is $(2, 0)$-FP-secure but not NY-secure at all; the basic idea is
-to have a data structure that always has \emph{exactly one} false positive that is easy to find
+to have a set-representation that always has \emph{exactly one} false positive that is easy to find
 given the public information.
 
 \item If a scheme is $(1,\epsilon_{FP})$-FP-secure for an attacker making $T$ queries
@@ -158,7 +164,7 @@ This is immediate.
 \end{enumerate}
 
 \subsection{Privacy}
-One can also consider the orthogonal notion of privacy for a data structure.
+One can also consider the orthogonal notion of privacy for a set-representation.
 \jnote{Actually, I am now unsure what the right way to define it is. It seems natural
 to give the attacker $\aux$. But if we give them $\aux$ and $M$ then they have everything.
 If $S$ has high min-entropy (element-wise), then it might still be
