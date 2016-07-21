@@ -11,7 +11,7 @@
 \usepackage{amssymb,latexsym,url,amsfonts,xspace}
 \usepackage{amsmath}
 %\usepackage[dvipdf]{graphicx}
-\usepackage[usenames]{color}
+\usepackage[usenames,dvipsnames]{color}
 \usepackage{cleveref}
 % Theorem environments
 
@@ -892,9 +892,10 @@
 \newcommand{\authfnote}[2]{\footnote{\textbf{#1 says:} #2}}
 \newcommand{\jnote}[1]{\authcnote{JK}{#1}{cyan}}
 \newcommand{\jknote}[1]{\jnote{#1}}
-\newcommand{\tsnote}[1]{\authcnote{TS}{#1}{blue}}
-\newcommand{\acnote}[1]{\authcnote{AC}{#1}{green}}
-\newcommand{\fixme}[1]{\authcnote{Fix me}{\bf #1}{red}}
+\newcommand{\tsnote}[1]{\authcnote{TS}{#1}{BurntOrange}}
+\newcommand{\acnote}[1]{\authcnote{AC}{#1}{TealBlue}}
+\newcommand{\fixme}[1]{\textcolor{Red}{ [\textbf{Fix me! #1}]}}
+\newcommand{\todo}[1]{\textcolor{ForestGreen}{ [\textbf{To Do: #1}]}}
 
 \newcommand{\semi}{\:;\:}
 \newcommand{\bitset}{B}
