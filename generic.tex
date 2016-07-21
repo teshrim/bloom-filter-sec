@@ -72,47 +72,49 @@ We note that while our correctness condition does not distinguish among types of
 Setting $\Sigma=\bits^{\leq L}$ allows one to store a bitstring of length at most~$L$ at each location.  This allows our syntax to capture the cuckoo-hashing construction from NY, as well as the ``garbled Bloom filter'' from Dong, Chen and Wen~\cite{xxx}, among other things.  Setting $\Sigma=\mathbb{N}$ would allow for the storage of counters (say) at each position in~$M$, and a query ``$x$'' with the semantics ``what is the multiplicity of~$x$ in~$S$.''  (This does not capture counting Bloom filters, or the like, which do not have static representations.)  \tsnote{I guess this can all be accomplished with $\Sigma=\bits^*$, but it isn't necessarily the ``natural'' way.}
 %Our syntax also does not capture filters that are mutable, that is, whose representation may change over time. On the other hand, we can state a simple correctness condition for these kinds of filters; this will not be true when we further generalize to capture, properly, counters and mutability.
 
-\subsection{Adversarial Soundness}
+\subsection{Adversarial Correctness}
 \heading{FP security.}
 As highlighted by Naor and Yogev,
 Equation~(\ref{eqn:correctness}) is a non-adaptive version of correctness;
 we are interested in defining an adaptive (i.e., adversarial) notion
-of correctness. \tsnote{Correctness?  Or soundness?}
+of correctness. 
+
 The general style of the definition is as follows:
-first, a set $S$ is chosen according to some distribution over~$\mathcal{S}$ and then
-$\Rep(S)$ is run to generate $(\aux, M)$. (Unless stated otherwise, we assume
+first, a set~$S$ is chosen according to some distribution over~$\mathcal{S}$ and then
+$\Rep(S)$ is run to generate $(M,\aux)$. (Unless stated otherwise, we assume
 security holds for all distributions and thus for all sets $S$.)
 The attacker $A$ is given $\aux$ and (possibly)~$S$;
-in addition, $A$ is given \emph{oracle access} to~$\Qry(\aux, M, \cdot)$.
-If $(\Rep, \Qry)$ is defined in the random-oracle model, then
-$A$ is given access to the random oracle as well.
-$A$ \emph{succeeds} if it outputs $t$ distinct queries $q_1, \ldots, q_t \in \mathcal{Q}$ for which
-$\Qry(\aux, M, q_i) \neq q_i(S)$ for all~$i$.
+in addition, $A$ is given \emph{oracle access} to~$\Qry(M,\aux,\cdot)$.
+If $(\Rep, \Qry)$ is defined in the random-oracle model, then~$A$ is given access to the random oracle as well.
+The adversary \emph{succeeds} if it outputs~$t$ distinct queries $q_1, \ldots, q_t \in \mathcal{Q}$ for which
+$\Qry(\aux, M, q_i) \neq q_i(S)$ for all~$i \in [t]$
+\tsnote{I will typeset this into an experiment.}
+
 Roughly, we say that a set-representation is $(t,\epsilon')$-FP-secure if the probability that
-any polynomial-time attacker succeeds is at most~$\epsilon'$. A full definition
-would also bound the number of queries to $\Qry$ (and the random oracle) made
-be the attacker; it is useful to make the convention that if $A$ outputs
+any polynomial-time attacker succeeds is at most~$\epsilon'$. \tsnote{$t$ might be a bad choice, since it looks like ``time''.}
+A full definition would also bound the number of queries to $\Qry$ (and the random oracle) made
+be the attacker; it is useful to make the convention that if~$A$ outputs
 $q_1, \ldots, q_t$ then it must have made those queries to its oracle previously.
 
-The notion of FP-security defined above captures the fp-prv notion for Bloom filters
-if we put the hash
-functions in $M$ (and thus increase the size of the set-representation); it also captures the fp-pub
-notion if we put the hash function in~$\aux$. \tsnote{Except that the win condition allows both
-false-positives and false-negatives, given the correctness requirement
-in the syntax.} \jnote{True. But if false negatives cannot occur at all (by design of
-the set-representation, not by definition of the primitive), then the attacker cannot hope to win
-by finding a false negative.} It captures the fp-bb-pub notion in the
-random-oracle model.
+The notion of security defined above captures the fp-prv notion for Bloom filters
+if we put the hash functions in~$M$ (and thus increase the size of the set-representation); it also captures the fp-pub
+notion if we put the hash function in~$\aux$. 
+%\tsnote{Except that the win condition allows both
+%false-positives and false-negatives, given the correctness requirement
+%in the syntax.} 
+%\jnote{True. But if false negatives cannot occur at all (by design of
+%the set-representation, not by definition of the primitive), then the attacker cannot hope to win
+%by finding a false negative.} 
+It captures the fp-bb-pub notion in the random-oracle model.
 
 Note that the security we can hope for is somewhat limited, since there
 is always a trivial attack in which
-the attacker tries random queries $q_1, q_2, \ldots$ until it finds $t$ queries for which the
+the attacker tries random queries $q_1, q_2, \ldots$ until it finds~$t$ queries for which the
 set-representation returns an incorrect answer.\footnote{This assumes the attacker
-knows the true set $S$, which need not be the case.} Roughly speaking,
+knows the true set~$S$, which need not be the case.} Roughly speaking,
 if the set-representation is $\epsilon$-correct then the attacker expects to find a query on which
-an incorrect result is returned
-every $1/\epsilon$ tries; thus, an
-attacker making $t/\epsilon$ queries succeeds with constant probability.
+an incorrect result is returned every $1/\epsilon$ tries; thus, an
+attacker making $O(t/\epsilon)$ queries succeeds with constant probability (almost always).
 
 \def\bin{{\sf Bin}}
 
@@ -121,8 +123,8 @@ whether the $i$th query of the attacker gives an incorrect result. Then an attac
 queries can succeed
 if $N \stackrel{{\rm def}}{=} \sum_{i=1}^T X_i \geq t$. If we treat the $X_i$ as independent Bernoulli trials with
 probability~$\epsilon$, then $N$ follows the well-studied binomial distribution.
-Let $\bin(T, \epsilon; t)$ denote the probability that $N \geq t$. So the best security we can
-hope for
+Let $\bin(T, \epsilon; t)$ denote the probability that $N \geq t$. \tsnote{Viewed another way, we could let~$T$ be a negative binomial RV, and ask how many queries are needed (w.h.p) for $N \geq t$.} 
+So the best security we can hope for
 is that if the set-representation is $\epsilon$-correct then for any desired bound $T$
 the set-representation is $(t, \bin(T,\epsilon; t))$-FP-secure against any attacker making
 at most $T$~queries. \jnote{Need to find different terms to use for a query $q \in \mathcal{Q}$
