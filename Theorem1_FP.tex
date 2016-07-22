@@ -111,14 +111,18 @@ $\rho_1,\rho_2 \getsr \Func{\univ,[m]}$\\
 $S \getsr \distr{\univ}{n}$\\
 $M \getsr \Rep^{\HashOracle}(\calS)$\\
 $\calZ \getsr A^{\QryOracle}(\calS)$\\
-$z_1,\cdots, z_t \getsr \calY $\\
-if $\exists i\in[1,t] \,\mbox{s.t.} \,\Qry^{\HashOracle}(M,z_i)=0$ then\\
+if $|\calY| < t$ then \\ 
 \nudge Ret 0\\
+for $i=1$ to $t$ \\
+\nudge $z_i \getsr \calY $\\
+\nudge $\calY \gets \calY \setminus \{z_i\}$\\
+\nudge if $\Qry^{\HashOracle}(M,z_i)=0$ then\\
+\nudge \nudge Ret 0\\
 Ret 1\\\\
 %
 \oracle{$\QryOracle(x)$}\\
-$\calY \gets \calY \cup x$\\
-Ret $\Qry^{\HashOracle}(M,x)$\\
+$\calY \gets \calY \cup \{x\}$\\
+Ret $\Qry^{\HashOracle}(M,x)$\\\\
 %
 \oracle{$\HashOracle(x)$}\\
 $h_i(x) = \rho_1(x)+i \cdot \rho_2(x)$, for $i\in[1,k]$\\
@@ -136,16 +140,16 @@ Ret $\left(h_1(x),\ldots,h_k(x)\right)$
 {
 $\adversaryv{B_1^{\calO}}$\\
 $K_1 \getsr \calK $\\
-$S \getsr \distr{\univ}{n}$\\
+$\calS \getsr \distr{\univ}{n}$\\
 $M \getsr \Rep^{\HashOracle}(\calS)$\\
 When $A$ asks $\QryOracle(x)$:\\
 $\nudge$ Ret $\Qry^{\HashOracle}(M,x)$\\
 When $A$ halts with output $\calZ'$: \\
-if $|\calZ'| < t$ or $\calZ' \cap \calS \neq \emptyset$ then \\
-\nudge Ret 0\\
-if $\exists z \in \calZ'$ s.t. $\Qry^{\HashOracle}(M,z)=0$ then\\
-\nudge Ret 0\\
-Ret 1\\\\
+\nudge if $|\calZ'| < t$ or $\calZ' \cap \calS \neq \emptyset$ then \\
+\nudge \nudge Ret 0\\
+\nudge if $\exists z \in \calZ'$ s.t. $\Qry^{\HashOracle}(M,z)=0$ then\\
+\nudge \nudge Ret 0\\
+\nudge Ret 1\\\\
 \oracle{$\HashOracle(x)$}\\
 $ \mathrm{Ret} \nudge F_{K_1}(x) + i\cdot \calO(x)$, for $i\in[1,k]$\\
 }
@@ -158,12 +162,11 @@ $M \getsr \Rep^{\HashOracle}(\calS)$\\
 When $A$ asks $\QryOracle(x)$:\\
 $\nudge$ Ret $\Qry^{\HashOracle}(M,x)$\\
 When $A$ halts with output $\calZ'$: \\
-
-if $|\calZ'| < t$ or $\calZ' \cap \calS \neq \emptyset$ then \\
-\nudge Ret 0\\
-if $\exists z \in \calZ'$ s.t. $\Qry^{\HashOracle}(M,z)=0$ then\\
-\nudge Ret 0\\
-Ret 1\\\\
+\nudge if $|\calZ'| < t$ or $\calZ' \cap \calS \neq \emptyset$ then \\
+\nudge \nudge Ret 0\\
+\nudge if $\exists z \in \calZ'$ s.t. $\Qry^{\HashOracle}(M,z)=0$ then\\
+\nudge \nudge Ret 0\\
+\nudge Ret 1\\\\
 \oracle{$\HashOracle(x)$}\\
 %if $d=0$\\
 $\mathrm{Ret} \nudge \calO(x) + i\cdot \rho_2(x)$, for $i\in[1,k]$
@@ -171,8 +174,10 @@ $\mathrm{Ret} \nudge \calO(x) + i\cdot \rho_2(x)$, for $i\in[1,k]$
 }
 \caption{\Cref{thm1}:Adversary $B_1, B_2$ simulating $\game{1}(A)$ and $\game{2}(A)$ respectively}\label{fig:BGame1}
 \end{figure}
+
+%
 \noindent
-From \Cref{eq:m1,eq:m2,eq:m3,eq:m4}, \acnote{compacted} \tsnote{this can be compacted}
+From \Cref{eq:m1,eq:m2,eq:m3,eq:m4}, %\acnote{compacted} \tsnote{this can be compacted}
 \begin{align}
 \nonumber \Prob{\ExpPRF{F}{B_1} = 1} &= .5\Prob{\ExpPRF{F}{B_1}=1\,|\,b=0} + .5\Prob{\ExpPRF{F}{B_1} = 1\,|\,b=1}\\
 \nonumber 2\Prob{\ExpPRF{F}{B_1} = 1} &= 1-\Prob{\game{1}(A)=1} + \Prob{\game{0}(A)=1}\\
@@ -188,52 +193,84 @@ From \Cref{eq:m1,eq:m2,eq:m3,eq:m4}, \acnote{compacted} \tsnote{this can be comp
 \noindent
 Adding \Cref{eq:1,eq:2a}, we have
 \begin{equation}
-\AdvPRF{F}{B_2} +\AdvPRF{F}{B_1} = \Prob{\game{0}(A)=1} - \Prob{\game{2}(A)=1}\label{eq:2}
+\AdvPRF{F}{B_1} +\AdvPRF{F}{B_2} = \Prob{\game{0}(A)=1} - \Prob{\game{2}(A)=1}\label{eq:2}
 \end{equation}
 
 \noindent
-In $\game{3}(A)$, $t$ elements are sampled from the $q$ queries with probability  $1/\dbinom{q}{t}$ and tested for false positives. So, 
+In $\game{3}(A)$, $t$ elements are sampled from the $q$ adaptive queries and tested for false positives. This is equivalent to $\game{2}(A)$, as the hash functions of the $\HashOracle$ oracle are random and $A$ wins this  game only if it outputs atleast $t$ FP's.\acnote{I was facing problems in connecting game2(adaptive) and game3(non-adaptive). I felt that the probability of  winning both games should be equal as the hash functions in the hash oracle are random(not independent) and adversary in game 2 has no means to output t elements which have higher chance of winning than those in game 3.}
 \begin{equation}
-\Prob{\game{2}(A)=1} = \frac{1}{\dbinom{q}{t}}\times\Prob{\game{3}(A)=1}\label{eq:3}
+\Prob{\game{2}(A)=1} = \Prob{\game{3}(A)=1}\label{eq:3}
 \end{equation}
 
 \noindent
-The classical FP requirement considers only non-adaptive (and information-theoretic) adversaries and $A'$ is one such adversary simulating $\game{3}(A)$. \acnote{changed}\tsnote{The classical FP requirement considers only non-adaptive (and information-theoretic) adversaries.  It suffices to say this.} From \Cref{fig:AGame3} and $\game{3}(A)$, it is evident that
+The classical FP requirement considers only non-adaptive (and information-theoretic) adversaries, and $D$ is one such adversary simulating $\game{3}(A)$ as closely as possible, whereas $D'$ mimics $D$ for $t=1$. $D'$ outputs a FP as in a classic Bloom filter and its FP-error is upperbounded by $[(1-e^{-kn/m})^k +O(1/n)]$ \cite{KirschMitzenmacher}.  %\acnote{changed}\tsnote{The classical FP requirement considers only non-adaptive (and information-theoretic) adversaries.  It suffices to say this.}
+From \Cref{fig:AGame3}, it is evident that
 \begin{align}
-\nonumber \Prob{\game{3}(A)=1} &= q\Prob{A' \mbox{outputs FP}}\\
-& \leq q\times(1-e^{-kn/m})^k \label{eq:4}
+\Prob{\game{3}(A)=1} &= \Prob{D \, \mbox{outputs $t$ FP} \,}\label{eq:4a}\\
+\nonumber \Prob{D \, \mbox{outputs t FP} \,} &= \dbinom{q}{t}\times \Big[\Prob{D' \, \mbox{outputs FP} \,}\Big]^t\\
+& \leq \dbinom{q}{t}\times \Big[(1-e^{-kn/m})^k +O(1/n)\Big]^t \label{eq:4b}
 \end{align}
-
-%\caption{Adversary $A'$ simulating $\game{3}(A)$} \label{AGame3}
+From \Cref{eq:4a,eq:4b}
+\begin{equation}
+\Prob{\game{3}(A)=1} \leq \dbinom{q}{t}\times [(1-e^{-kn/m})^k +O(1/n)]^t \label{eq:4}
+\end{equation}
+%\caption{Non-adaptive adversaries simulating $\game{2}(A)$} \label{AGame3}
 \begin{figure}
 \centering
-\fpage{0.4}{
-$\adversaryv{A'^{\HashOracle}}$\\
-$\calY \gets \emptyset $ \\
-$\ell \getsr [q]$\\
-$c = 0$\\
+\fpage{0.8}{
+\hpagessl{.5}{.4}
+{
+$\adversaryv{D^{\HashOracle}}$\\
+$\calY, \calZ \gets \emptyset $ \\
 $\rho \getsr Func(U,[m])$\\
-$S \getsr \distr{U}{n}$\\
+$\calS \getsr \distr{U}{n}$\\
 $M \getsr \Rep^{\HashOracle}(\calS)$\\
 When $A$ asks $\QryOracle(x)$:\\
-$\nudge c = c + 1$\\
-\nudge if $c == \ell$\\
-$\nudge$ $\nudge r \gets \Qry^{\HashOracle}(M,x)$\\
-$\nudge$ $\nudge \calY \gets \calY \cup x$\\
-\nudge else\\
-$\nudge$ $\nudge r = 0$\\
+$\nudge \calY \gets \calY \cup {x}$\\
+$\nudge r \gets \Qry^{\HashOracle}(M,x)$\\
 \nudge Ret $r$\\
 When $A$ halts with output $\calZ'$\\
-\nudge $z \gets \calY$\\
-\nudge if $\Qry^{\HashOracle}(M,z)=0$ then\\
-\nudge \nudge Ret 0\\
-\nudge Ret 1\\\\
+\nudge if $|\calZ'|<t \, \mbox{or} \, |\calY| < t$\\
+\nudge \nudge Ret $\emptyset$\\
+\nudge for $i=1$ to $t$ \\
+\nudge \nudge $z_i \getsr \calY $\\
+\nudge \nudge if $\Qry^{\HashOracle}(M,z_i)=0$ then\\
+\nudge \nudge Ret $\emptyset$\\
+\nudge \nudge $\calZ \gets \calZ \cup z_i$\\
+\nudge \nudge $\calY \gets \calY \setminus {z_i}$\\
+\nudge Ret $\calZ $\\\\
 %
 \oracle{$\HashOracle(x)$}\\
 $h_i(x) = \rho_1(x)+i \cdot \rho_2(x)$, for $i\in[1,k]$\\
 Ret $\left(h_1(x),\ldots,h_k(x)\right)$
 }
-\caption{\Cref{thm1}:Adversary $A'$ simulating $\game{3}(A)$} \label{fig:AGame3}
+{
+$\adversaryv{D'^{\HashOracle}}$\\
+$\calY \gets \emptyset $ \\
+$\ell \getsr [q]$\\
+$c = 0$\\
+$\rho \getsr Func(U,[m])$\\
+$\calS \getsr \distr{U}{n}$\\
+$M \getsr \Rep^{\HashOracle}(\calS)$\\
+When $A$ asks $\QryOracle(x)$:\\
+$\nudge c = c + 1$\\
+\nudge if $c == \ell$\\
+$\nudge$ $\nudge r \gets \Qry^{\HashOracle}(M,x)$\\
+$\nudge$ $\nudge \calY \gets \calY \cup {x}$\\
+\nudge else\\
+$\nudge$ $\nudge r = 0$\\
+\nudge Ret $r$\\
+When $A$ halts with output $\calZ'$\\
+\nudge $z \gets \calY$\\
+\nudge if $\Qry^{\HashOracle}(M,z)=1$ then\\
+\nudge \nudge Ret $z$\\\\
+%
+\oracle{$\HashOracle(x)$}\\
+$h_i(x) = \rho_1(x)+i \cdot \rho_2(x)$, for $i\in[1,k]$\\
+Ret $\left(h_1(x),\ldots,h_k(x)\right)$
+}
+}
+\caption{Non-adaptive adversaries simulating $\game{3}(A)$} \label{fig:AGame3}
 \end{figure}	
 
 \noindent
@@ -241,7 +278,8 @@ From \Cref{eq:0,eq:2,eq:3,eq:4} \\
 \begin{align}
 \nonumber \AdvFPSecHash{B_{\mathrm{lin}},t}{A} &- \Prob{\game{2}(A)=1} =  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}   \\
 \nonumber \AdvFPSecHash{B_{\mathrm{lin}},t}{A}  &=  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2} + \Prob{\game{2}(A)=1}  \\
-\AdvFPSecHash{B_{\mathrm{lin}},t}{A} &\leq  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}  + \frac{q}{\dbinom{q}{t}} \times  (1-e^{-kn/m})^k
+\AdvFPSecHash{B_{\mathrm{lin}},t}{A} &\leq  \AdvPRF{F}{B_1} +
+\AdvPRF{F}{B_2}  +{\dbinom{q}{t}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^t
 \end{align}
 \end{proof}
 
