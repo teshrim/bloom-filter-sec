@@ -21,8 +21,11 @@ to 1; if a bit is already 1, due to inserting some previous element
 of~$\mathcal{S}$, then it is left alone.  After all elements
 of~$\mathcal{S}$ have been inserted, the resulting bit-array~$M$ is
 taken as the representation.  To test if $y \in \mathcal{S}$, one
-checks if \[(M[h_1(y)]=1 \wedge M[h_2(y)]=1 \wedge \cdots \wedge
-M[h_k(y)]=1),\] returning ``yes'' if so, and ``no'' otherwise. Bloom
+checks if 
+\[
+(M[h_1(y)]=1 \wedge M[h_2(y)]=1 \wedge \cdots \wedge M[h_k(y)]=1),
+\] 
+returning ``yes'' if so, and ``no'' otherwise. Bloom
 filters are correct, in the sense that if $y \in \mathcal{S}$, the
 set-membership test always returns ``yes''.  The classical soundness
 condition asserts that for all $\mathcal{S}$ and any $y

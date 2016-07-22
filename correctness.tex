@@ -1,36 +1,56 @@
 \section{Correctness Against Adaptive Adversaries}
-As highlighted by Naor and Yogev,
-Equation~(\ref{eqn:correctness}) is a non-adaptive version of correctness;
+As highlighted by Naor and Yogev, Equation~(\ref{eqn:correctness}) is a non-adaptive version of correctness;
 we are interested in defining an adaptive (i.e., adversarial) notion
-of correctness. 
+of correctness.   Figure~\ref{fig:correctness} describes a security
+experiment that captures such a notion.
+First, a set~$S$ is chosen according to some
+distribution~$\distr{\calS}{}$ over the collection of multisets
+$\mathcal{S}$ associated to~$\Pi=(\Rep,\Qry)$, and then
+$\Rep(S)$ is run to generate $(M,\aux)$.
+%(Unless stated otherwise, we assume security holds for all distributions and thus for all sets $S$.)
+Adversary~$A$ is given~$\aux$ and (possibly) $\calS$~as input; it is
+provided an oracle~$\TestOracle$ that, on input a query~$q \in \calQ$,
+computes (and returns) the result of $\Qry(M,\aux,q)$, and increments
+a counter if this result is in error.  The adversary wins if it
+manages to cause at least~$r>0$ such errors among its queries.
 
-The general style of the definition is as follows:
-first, a set~$S$ is chosen according to some distribution over~$\mathcal{S}$ and then
-$\Rep(S)$ is run to generate $(M,\aux)$. (Unless stated otherwise, we assume
-security holds for all distributions and thus for all sets $S$.)
-The attacker $A$ is given $\aux$ and (possibly)~$S$;
-in addition, $A$ is given \emph{oracle access} to~$\Qry(M,\aux,\cdot)$.
-If $(\Rep, \Qry)$ is defined in the random-oracle model, then~$A$ is given access to the random oracle as well.
-The adversary \emph{succeeds} if it outputs~$t$ distinct queries $q_1, \ldots, q_t \in \mathcal{Q}$ for which
-$\Qry(\aux, M, q_i) \neq q_i(S)$ for all~$i \in [t]$
+The adversary \emph{succeeds} if it outputs~$r$ distinct queries $q_1, \ldots, q_r \in \mathcal{Q}$ for which
+$\Qry(\aux, M, q_i) \neq q_i(S)$ for all~$i \in [r]$
 \todo{Typeset versions of this notion into experiments.}
 
-Roughly, we say that a set-representation is $(t,\epsilon')$-FP-secure if the probability that
-any polynomial-time attacker succeeds is at most~$\epsilon'$. \tsnote{$t$ might be a bad choice, since it looks like ``time''.}
-A full definition would also bound the number of queries to $\Qry$ (and the random oracle) made
-be the attacker; it is useful to make the convention that if~$A$ outputs
-$q_1, \ldots, q_t$ then it must have made those queries to its oracle previously.
+\begin{figure}
+\centering
+\fpage{.6}{
+\hpagess{.6}{.35}
+{
+\experimentv{$\ExpCorrect{\setprim,r}{\distr{\calS}{},A}$}\\
+$S \getsr \distr{\calS}{}$\\
+$\mathrm{err}\gets 0$\\
+$(M,\aux) \getsr \Rep(S)$\\
+$z \getsr A^{\TestOracle}(S,\aux)$\\
+if $\mathrm{err} < r$ then Return 0\\
+Return 1
+}
+%
+{
+\oracle{$\TestOracle(q)$}\\
+$a \gets \Qry(M,\aux,q)$\\
+if $a \neq q(S)$ then \\
+\nudge $\mathrm{err}\gets\mathrm{err}+1$\\
+Return~$a$
+}
+}
+\caption{} 
+\label{fig:fp-filter}
+\label{fig:correctness}
+\end{figure}
 
-The notion of security defined above captures the fp-prv notion for Bloom filters
-if we put the hash functions in~$M$ (and thus increase the size of the set-representation); it also captures the fp-pub
-notion if we put the hash function in~$\aux$. 
-%\tsnote{Except that the win condition allows both
-%false-positives and false-negatives, given the correctness requirement
-%in the syntax.} 
-%\jnote{True. But if false negatives cannot occur at all (by design of
-%the set-representation, not by definition of the primitive), then the attacker cannot hope to win
-%by finding a false negative.} 
-It captures the fp-bb-pub notion in the random-oracle model.
+If $(\Rep, \Qry)$ is defined in the random-oracle model, then~$A$ is given access to the random oracle as well.
+
+Roughly, we say that a set-representation~$\Pi$ is $(r,\epsilon',t)$-FP-secure if the probability that
+any $t$-time attacker succeeds is at most~$\epsilon'$. 
+(A full definition would also bound the number of queries to $\Qry$ (and the random oracle) made
+be the attacker.)
 
 Note that the security we can hope for is somewhat limited, since there
 is always a trivial attack in which
@@ -96,20 +116,20 @@ This is immediate.
 \fpage{.6}{
 \hpagess{.6}{.35}
 {
-\experimentv{$\ExpCorrect{\setprim,t}{\distr{U}{n},A}$}\\
+\experimentv{$\ExpCorrect{\setprim,t}{\distr{\calS}{},A}$}\\
 $\calS \getsr \distr{U}{n}$\\
-$(M,\pub) \getsr \Rep^{\HashOracle}(\calS)$\\
-$\calX \getsr A^{\QryOracle}(\calS,\pub)$\\
+$(M,\aux) \getsr \Rep^{\HashOracle}(\calS)$\\
+$\calX \getsr A^{\QryOracle}(\calS,\aux)$\\
 if $|\calX| < t$ or $\calX \cap \calS \neq \emptyset$ then \\
 \nudge Ret 0\\
-If $\exists x \in \calX$ s.t. $\Qry(M,\pub,x)=0$ then\\
+If $\exists x \in \calX$ s.t. $\Qry(M,\aux,x)=0$ then\\
 \nudge Ret 0\\
 Ret 1
 }
 %
 {
 \oracle{$\QryOracle(x)$}\\
-Ret $\Qry(M,\pub,x)$\\
+Ret $\Qry(M,\aux,x)$\\
 }
 }
 \caption{} 

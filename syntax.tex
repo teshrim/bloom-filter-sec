@@ -1,36 +1,45 @@
 \section{Secure Multiset Representation}
 \def\pub{{\sf pub}}
-\def\aux{{\sf pub}}
+\def\aux{{\sf aux}}
 
 \heading{Preliminaries. }
 When~$\univ$ is a set and $n>0$ is an integer, we let $[\univ]^n$ denote the set of all size-$n$ subsets of~$\univ$. We write $x \getsr \univ$ to denote sampling an element from~$\univ$ and assigning this to~$x$, and we extend this notation to randomized algorithms.  When~$X$ is a string over some alphabet~$\Sigma$, we write $|X|$ for the bitlength of~$X$, relative to some fixed encoding.  When~$X$ is a multiset, we overload the notation so that~$|X|$ is the number of elements in~$X$ (with mutiplicity).
 
-\heading{Static (Multi)set-representations. }
+Algorithms may be provided black-box access to one or more oracles, which we write as superscripts, e.g., $F^{O_1,O_2,\ldots}$.  An \emph{adversary} is a randomized algorithm
+
+\heading{Static (Multi)set-representations. }  We being by defining a general primitive that produces a representation of a given multiset, and provides a mechanism to answer a specified collection of questions about that multiset.  Informally, the representation should serve as a good approximation of the multiset, at least with respect to the allowed questions.
 \begin{definition} 
-Fix a universe~$U$ and an alphabet~$\Sigma$.  A \emph{static (multi)set-representation primitive} is a pair of algorithms $\setprim=(\Rep, \Qry)$
+Fix a universe~$\univ$ and an alphabet~$\Sigma$.  A \emph{static (multi)set-representation primitive} (or just set-representation) is a pair of algorithms $\setprim=(\Rep, \Qry)$
 parameterized by a collection $\mathcal{S}$ of multisets, each consisting of elements from~$U$ and a collection
 of supported queries $\mathcal{Q}=\{q \colon \mathcal{S} \to \mathbb{R}\}$, where:
 \begin{itemize}
 \item $\Rep$ is a randomized algorithm taking as input $S \in \mathcal{S}$,
 and outputting a pair of strings $(M,\aux)$, the \emph{representation} $M \in \Sigma^*$ (of~$S$) 
-and the \emph{auxillary information} $\aux \in \Sigma^*$ (of~$M$).
+and the \emph{auxilliary information} $\aux \in \bits^*$ (of~$M$).
 \item $\Qry$ is a deterministic algorithm that takes as input $M, \aux$,
 and a query $q\in \mathcal{Q}$, and returns value~$a$.
 \end{itemize}
-A set-representation is \emph{$\epsilon$-correct} if for all $S \in \mathcal{S}$ and
-all $q \in \mathcal{Q}$ it holds that
+A set-representation is \emph{$\epsilon$-correct} if, for all $S \in \mathcal{S}$ and
+all $q \in \mathcal{Q}$, it holds that
 \begin{eqnarray}
 \Pr[(M,\aux) \getsr \Rep(S) : \Qry(M, \aux, q) \neq q(S)] \leq \epsilon, \label{eqn:correctness}
 \end{eqnarray}
 %where $q(S)$ denotes the correct answer to the query $q$ on the set~$S$.
 \end{definition}
 
-\todo{Readdress issue of representation size.  A general statement might be something like `` The \emph{size} of a set-representation is the maximum (bit)length of any~$M$ that can be output by $\Rep$.''  But all of the natural constructions will have representation whose size will not depend on the coins of $\Rep$, i.e. they depend on $|S|$, number of hash functions, desired error rate. }
+\noindent
+The definition can be lifted to the random-oracle model
+by giving $\Rep, \Qry$ access to a random oracle. In that case,
+the probability in Equation~(\ref{eqn:correctness}) is also taken over choice of the random oracle.
 
-Our treatment of $M,\aux$ is not symmetric, since we only count $M$ against the size
-of the set-representation. When we define security
-we may give the attacker $\aux$ but not~$M$, and in that case the set-representation cannot
-trivially make everything part of~$\aux$. 
+All of the constructions of set-representations that we will consider have the property that~$|M|$ does not depend on the coins of~$\Rep$. Thus we assume that~$|M|$ depends only on~$|S|$.  In general this need not be true, but the assumption does not restrict our syntax from capturing natural constructions (e.g., those seen in practice), and it makes it easier to state our security notions.
+%
+%\todo{Readdress issue of representation size.  A general statement might be something like `` The \emph{size} of a set-representation is the maximum (bit)length of any~$M$ that can be output by $\Rep$.''  But all of the natural constructions will have representation whose size will not depend on the coins of $\Rep$, i.e. they depend on $|S|$, number of hash functions, desired error rate. }
+
+%Our treatment of $M,\aux$ is not symmetric, since we only count $M$ against the size
+%of the set-representation. When we define security
+%we may give the attacker $\aux$ but not~$M$, and in that case the set-representation cannot
+%trivially make everything part of~$\aux$. 
 %\tsnote{Encoding secrets into~$M$ may cause some headaches in the security definitions; we'll see. }
 %\tsnote{By the way, I'm coming around to the
 %  viewpoint that it is fair to include in the ``size'' of the
@@ -39,20 +48,12 @@ trivially make everything part of~$\aux$.
 % IMO), but it does seem fair to say ``this is how many bits of memory
 % you need to allocate to represent this set \emph{securely}.''}
 
-The above definition can be lifted to the random-oracle model in the natural way
-by giving $\Rep, \Qry$ access to a random oracle. In that case,
-the probability in Equation~(\ref{eqn:correctness})
-is also taken over choice of the random oracle.
-
 \heading{Examples.}
-It is not hard to see Bloom filters are one possible instantiation of the above. If we fix some
-size bound~$n$, then $\mathcal{S}$ becomes the collection of all subsets of $U$
-of size (at most)~$n$. We also fix $\mathcal{Q} = U$, where a query ``$x$'' has
-the semantics ``is $x$ in $S$?'' Algorithm $\Rep$, which has values $k, m$ hardwired,
-chooses a set of hash functions $h_1, \ldots, h_k$ and computes an $m$-bit
-array in the usual way; a natural possibility is to set $\aux = (h_1, \ldots, h_k)$ (encoded as a string) and
-to let~$M$ be the bit array.  
-%\tsnote{If $\mathcal{Q}=U$ and we use the
+It is not hard to see Bloom filters are one possible instantiation a set-representation primitive.
+Fix an $n \geq 0$, let $\mathcal{S}=[\univ]^n$, and fix $\Sigma=\bits$.  
+Next, let $\calQ$ be a set of predicates $q_x$, one for each $x \in \univ$,
+such that $q_x(S)=1$ iff $x \in S$.  Define algorithm~$\Rep$, with integers $k, m > 0$ and a description of a hash function family~$\mathcal{H}=\{h \colon \univ \to \{1,2,\ldots,m\}\}$ hardwared into it, to sample hash functions $h_1, \ldots, h_k$ from~$\mathcal{H}$ and then computes an $m$-bit array in the standard way. It sets $\aux = (h_1, \ldots, h_k)$ and $M$ to be the bit array, and returns these.  The algorithm~$\Qry$ is defined so that, on input $(M,\aux,q_x)$, it returns 1 iff $M[h_1(x)]=1 \wedge M[h_2(x)]=1 \wedge \cdots \wedge M[h_k(x)]=1$ holds.
+  %\tsnote{If $\mathcal{Q}=U$ and we use the
 %  semantics you suggest, then isn't Equation~\ref{eqn:correctness}
 %  both correctness and soundness?  If so, I don't see how this
 %  captures the classical BF, which requires $\epsilon=0$ for one kind
@@ -61,12 +62,13 @@ to let~$M$ be the bit array.
 %  between elements in the set (for which $q(S)=1$) or outside the set (for which
 %  $q(S)=0$). But a Bloom filter does satisfy Equation~\ref{eqn:correctness} in either case.}
 %  \jnote{In that sense, I am using ``soundness'' and ``correctness'' interchangeably here.}
-  \jnote{I'm not tied to allowing false negatives when we specialize the definition to the case
-  of set-membership queries. But in the abstract definition it seems unclear why one would choose
-  some queries on which error is ok and other queries where error is not allowed. Though if one
-  wanted to be general, one could simply have two (disjoint) sets of queries $\mathcal{Q}_1, \mathcal{Q}_2$
-  where error is allowed on the former but not on the latter.}
+%  \jnote{I'm not tied to allowing false negatives when we specialize the definition to the case
+%  of set-membership queries. But in the abstract definition it seems unclear why one would choose
+%  some queries on which error is ok and other queries where error is not allowed. Though if one
+%  wanted to be general, one could simply have two (disjoint) sets of queries $\mathcal{Q}_1, \mathcal{Q}_2$
+%  where error is allowed on the former but not on the latter.}
 We note that while our correctness condition does not distinguish among types of errors, it also does not preclude instantiations (like the classical Bloom filter) that admit only one type of error, e.g. false-positives.  
 
-Setting $\Sigma=\bits^{\leq L}$ allows one to store a bitstring of length at most~$L$ at each location.  This allows our syntax to capture the cuckoo-hashing construction from NY, as well as the ``garbled Bloom filter'' from Dong, Chen and Wen~\cite{xxx}, among other things.  Setting $\Sigma=\mathbb{N}$ would allow for the storage of counters (say) at each position in~$M$, and a query ``$x$'' with the semantics ``what is the multiplicity of~$x$ in~$S$.''  (This does not capture counting Bloom filters, or the like, which do not have static representations.)  \tsnote{I guess this can all be accomplished with $\Sigma=\bits^*$, but it isn't necessarily the ``natural'' way.}
-%Our syntax also does not capture filters that are mutable, that is, whose representation may change over time. On the other hand, we can state a simple correctness condition for these kinds of filters; this will not be true when we further generalize to capture, properly, counters and mutability.
+The so-called ``garbled Bloom filter'' due to Dong, Chen and Wen~\cite{xxx}, which stores xor-shares of bitstring~$x \in S$ at positions $h_1(x),h_2(x),\ldots,h_k(x)$ in an array, can be captured by letting~$\Sigma=\bits^L$ for a specified integer~$L>0$.  Similarly, one can capture the cuckoo-hashing construction from NY, which (loosely speaking) stores a hash $g(x)$ at positions determined by $h_1(x),h_2(x),\ldots,h_k(x)$. \tsnote{Check this, I forget the exact details now.}  
+
+Expanding beyond queries that are predicates, consider $\Sigma=\bits^L$ and a scheme that stores $L$-bit counters at each position in an array.  In particular, for each~$x \in S$ the $\Rep$~algorithm increments the counters stored at $h_1(x),h_2(x),\ldots,h_k(x)$, returns the final array of counters as~$M$.  This representation naturally supports a set of queries $\calQ$ where $q_x$ has the semantics ``what is the multiplicity of~$x$ in~$S$.''   Such a construction gives a static version of a counting Bloom filter~\cite{xxx}.  (We will capture dynamic versions, as well as count-min sketches, scalable Bloom filters, etc., in a later section.)
