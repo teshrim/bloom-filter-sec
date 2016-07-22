@@ -1,13 +1,12 @@
 \section{Secure Multiset Representation}
 \def\pub{{\sf pub}}
-\def\aux{{\sf aux}}
+\def\aux{{\sf pub}}
 
 \heading{Preliminaries. }
 When~$\univ$ is a set and $n>0$ is an integer, we let $[\univ]^n$ denote the set of all size-$n$ subsets of~$\univ$. We write $x \getsr \univ$ to denote sampling an element from~$\univ$ and assigning this to~$x$, and we extend this notation to randomized algorithms.  When~$X$ is a string over some alphabet~$\Sigma$, we write $|X|$ for the bitlength of~$X$, relative to some fixed encoding.  When~$X$ is a multiset, we overload the notation so that~$|X|$ is the number of elements in~$X$ (with mutiplicity).
 
-\subsection{Static (Multi)set-representations}
-\begin{definition} %\tsnote{We need a more descriptive name than ``set-representation'' :)}
-%\tsnote{I think this generalizes pretty easily to multisets.}
+heading{{Static (Multi)set-representations. }
+\begin{definition} 
 Fix a universe~$U$ and an alphabet~$\Sigma$.  A \emph{static (multi)set-representation primitive} is a pair of algorithms $(\Rep, \Qry)$
 parameterized by a collection $\mathcal{S}$ of multisets, each consisting of elements from~$U$ and a collection
 of supported queries $\mathcal{Q}=\{q \colon \mathcal{S} \to \mathbb{R}\}$, where:
@@ -71,122 +70,3 @@ We note that while our correctness condition does not distinguish among types of
 
 Setting $\Sigma=\bits^{\leq L}$ allows one to store a bitstring of length at most~$L$ at each location.  This allows our syntax to capture the cuckoo-hashing construction from NY, as well as the ``garbled Bloom filter'' from Dong, Chen and Wen~\cite{xxx}, among other things.  Setting $\Sigma=\mathbb{N}$ would allow for the storage of counters (say) at each position in~$M$, and a query ``$x$'' with the semantics ``what is the multiplicity of~$x$ in~$S$.''  (This does not capture counting Bloom filters, or the like, which do not have static representations.)  \tsnote{I guess this can all be accomplished with $\Sigma=\bits^*$, but it isn't necessarily the ``natural'' way.}
 %Our syntax also does not capture filters that are mutable, that is, whose representation may change over time. On the other hand, we can state a simple correctness condition for these kinds of filters; this will not be true when we further generalize to capture, properly, counters and mutability.
-
-\subsection{Adversarial Correctness}
-\heading{FP security.}
-As highlighted by Naor and Yogev,
-Equation~(\ref{eqn:correctness}) is a non-adaptive version of correctness;
-we are interested in defining an adaptive (i.e., adversarial) notion
-of correctness. 
-
-The general style of the definition is as follows:
-first, a set~$S$ is chosen according to some distribution over~$\mathcal{S}$ and then
-$\Rep(S)$ is run to generate $(M,\aux)$. (Unless stated otherwise, we assume
-security holds for all distributions and thus for all sets $S$.)
-The attacker $A$ is given $\aux$ and (possibly)~$S$;
-in addition, $A$ is given \emph{oracle access} to~$\Qry(M,\aux,\cdot)$.
-If $(\Rep, \Qry)$ is defined in the random-oracle model, then~$A$ is given access to the random oracle as well.
-The adversary \emph{succeeds} if it outputs~$t$ distinct queries $q_1, \ldots, q_t \in \mathcal{Q}$ for which
-$\Qry(\aux, M, q_i) \neq q_i(S)$ for all~$i \in [t]$
-\todo{Typeset versions of this notion into experiments.}
-
-Roughly, we say that a set-representation is $(t,\epsilon')$-FP-secure if the probability that
-any polynomial-time attacker succeeds is at most~$\epsilon'$. \tsnote{$t$ might be a bad choice, since it looks like ``time''.}
-A full definition would also bound the number of queries to $\Qry$ (and the random oracle) made
-be the attacker; it is useful to make the convention that if~$A$ outputs
-$q_1, \ldots, q_t$ then it must have made those queries to its oracle previously.
-
-The notion of security defined above captures the fp-prv notion for Bloom filters
-if we put the hash functions in~$M$ (and thus increase the size of the set-representation); it also captures the fp-pub
-notion if we put the hash function in~$\aux$. 
-%\tsnote{Except that the win condition allows both
-%false-positives and false-negatives, given the correctness requirement
-%in the syntax.} 
-%\jnote{True. But if false negatives cannot occur at all (by design of
-%the set-representation, not by definition of the primitive), then the attacker cannot hope to win
-%by finding a false negative.} 
-It captures the fp-bb-pub notion in the random-oracle model.
-
-Note that the security we can hope for is somewhat limited, since there
-is always a trivial attack in which
-the attacker tries random queries $q_1, q_2, \ldots$ until it finds~$t$ queries for which the
-set-representation returns an incorrect answer.\footnote{This assumes the attacker
-knows the true set~$S$, which need not be the case.} Roughly speaking,
-if the set-representation is $\epsilon$-correct then the attacker expects to find a query on which
-an incorrect result is returned every $1/\epsilon$ tries; thus, an
-attacker making $O(t/\epsilon)$ queries succeeds with constant probability (almost always).
-
-\def\bin{{\sf Bin}}
-
-Actually, it seems worthwhile to formalize this. Let $X_i$ be a random variable indicating
-whether the $i$th query of the attacker gives an incorrect result. Then an attacker making $T$
-queries can succeed
-if $N \stackrel{{\rm def}}{=} \sum_{i=1}^T X_i \geq t$. If we treat the $X_i$ as independent Bernoulli trials with
-probability~$\epsilon$, then $N$ follows the well-studied binomial distribution.
-Let $\bin(T, \epsilon; t)$ denote the probability that $N \geq t$. \tsnote{Viewed another way, we could let~$T$ be a negative binomial RV, and ask how many queries are needed (w.h.p) for $N \geq t$.} 
-So the best security we can hope for
-is that if the set-representation is $\epsilon$-correct then for any desired bound $T$
-the set-representation is $(t, \bin(T,\epsilon; t))$-FP-secure against any attacker making
-at most $T$~queries. \jnote{Need to find different terms to use for a query $q \in \mathcal{Q}$
-and a query that the attacker makes to its oracle.}
-
-\jnote{One option is to define the adversary's \emph{advantage} as the difference between
-its success probability and the success probability of the above,
-trivial attack. Just a thought.}
-\tsnote{Or, perhaps by recasting security
-  as distinguishing between $\Qry(M,\aux,\cdot)$ and an oracle that
-  returns 0,1 according to Bernoulli with paramter~$\epsilon$.}
-
-\heading{Comparison to Naor-Yogev definition.}
-The style of the Naor-Yogev (NY) definition is slightly different. \jnote{Even if we ignore
-all the other issues, chief among them the inconsistent way it treats the hash functions.}
-Lifting their definition to our setting, the experiment is similar but the attacker
-succeeds only if it outputs a single query $q$ for which $\Qry(\aux, M, q) \neq q(S)$ \emph{subject
-to the restriction that it did not query $q$ to its $\Qry$ oracle}.
-It will be interesting to understand formally the relation between our definition and theirs.
-Here are some observations:
-\begin{enumerate}
-\item Say a scheme is $\epsilon_{NY}$-secure under the NY definition.
-Then we claim it is $(t, T\epsilon_{NY}/t)$-secure against an attacker making $T$ queries. To see
-this, assume not. Then there is an attacker $A$ that, with probability $\epsilon'=T\epsilon_{NY}/t$,
-issues $T$ queries of which at least $t$ among those give incorrect answers.
-If we simply run $A$ and
-then choose a random query to output, we succeed with probability at least $\epsilon' \cdot t/T$.
-It is unclear whether this is tight.
-
-\item There is a contrived scheme that is $(2, 0)$-FP-secure but not NY-secure at all; the basic idea is
-to have a set-representation that always has \emph{exactly one} false positive that is easy to find
-given the public information.
-
-\item If a scheme is $(1,\epsilon_{FP})$-FP-secure for an attacker making $T$ queries
-then it is also $\epsilon_{FP}$-secure under the NY definition,
-at least for attackers making at most $T-1$
-queries.
-This is immediate.
-\end{enumerate}
-
-\subsection{Privacy}
-One can also consider the orthogonal notion of privacy for a set-representation.
-\jnote{Actually, I am now unsure what the right way to define it is. It seems natural
-to give the attacker $\aux$. But if we give them $\aux$ and $M$ then they have everything.
-If $S$ has high min-entropy (element-wise), then it might still be
-possible to have security here.}\tsnote{I think we will always bump up
-against the (element-wise) min-entropy of the distribution over~$S$,
-at least in the ``one-wayness'' style definition that I had been imagining. }
-There are several possible definitions:
-\begin{enumerate}
-\item A ``one-wayness'' definition where $S$ has high min-entropy (element-wise), and we
-give the attacker $\aux$ and either $M$ or oracle access to $\Qry$. The attacker
-succeeds if it can output an element in~$S$.
-
-\item An ``indistinguishability'' definition where either $S_0$ or $S_1$ is used, and the attacker
-must determine which. Here the attacker is given $\aux$ but only oracle access to $\Qry$, and
-it is disallowed from asking any query $q$ for which $q(S_0) \neq
-q(S_1)$. \tsnote{How will the adversary know that a query satisfies
-  this in (say) the case of the classical BF?  We can, of course,
-enforce it in the experiment, but then our resource accounting risks
-overcounting the number of queries.} \jnote{I was assuming the attacker knows $S_0, S_1$.}
-\tsnote{Also, we need that, in general, $\aux$ itself
-does not leak information about~$S_0$ vs.\ $S_1$. } \jnote{Sure, this would be implied
-by the definition in this case.}
-\end{enumerate}

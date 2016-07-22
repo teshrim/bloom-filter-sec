@@ -1,1 +1,113 @@
 \section{Introduction}
+\label{sec:intro}
+\tsnote{Skeleton text from old intro.  (Full version of old intro now
+  in an appendix.}
+We revisit the formalization of Bloom filters~\cite{xxx} and closely
+related data structures as primitives with explicit security goals.
+Recently, Naor and Yogev~\cite{xxx} (hereafter NY) gave such a
+formalization, providing syntax for a generalized abstraction of
+Bloom filters, as well as casting the classical Bloom filter
+soundness condition as a security experiment admiting adaptive
+adversaries.  To briefly summarize, a Bloom filter is a data
+structure for compactly representing a set~$\mathcal{S}$ in a way
+that supports constant-time responses to set-membership queries. The
+representation of~$\mathcal{S}$ is a bit-array~$M$ of length~$m$,
+all initially set to~0.  To insert $x \in \mathcal{S}$ into~$M$, one
+computes indices $h_1(x),h_2(x),\ldots,h_k(x)$ where each $h_i
+\colon \mathcal{U} \to \{0,1,\ldots m-1\}$ maps from a
+universe~$\mathcal{U}$ (which contains $\mathcal{S}$) to indices
+of~$M$.  The bits at positions $h_1(x),h_2(x),\ldots,h_k(x)$ are set
+to 1; if a bit is already 1, due to inserting some previous element
+of~$\mathcal{S}$, then it is left alone.  After all elements
+of~$\mathcal{S}$ have been inserted, the resulting bit-array~$M$ is
+taken as the representation.  To test if $y \in \mathcal{S}$, one
+checks if \[(M[h_1(y)]=1 \wedge M[h_2(y)]=1 \wedge \cdots \wedge
+M[h_k(y)]=1),\] returning ``yes'' if so, and ``no'' otherwise. Bloom
+filters are correct, in the sense that if $y \in \mathcal{S}$, the
+set-membership test always returns ``yes''.  The classical soundness
+condition asserts that for all $\mathcal{S}$ and any $y
+\notin\mathcal{S}$, we have $\Prob{h_1,h_2,\ldots,h_k \getsr
+\mathrm{Func}(\mathcal{U},[m])\colon M[h_1(y)]=1 \wedge \cdots
+\wedge M[h_k(y)]=1} \leq \epsilon$ where $\epsilon$, the
+false-positive error, is a parameter of the Bloom filter.  (The
+values of~$\epsilon,m,k$, and $|\mathcal{S}|$ are related in a
+well-known way.) NY recast this soundness condition as a game in
+which an adversary~$A$ is given~$\mathcal{S}$ and an oracle for
+set-membership queries, and it attempts to find one or more false
+positives. The fact that~$A$ can \emph{adapt} its queries and its
+output based on what it learns from the set-membership oracle (but,
+as we will see, not upon the hash functions) is the key definitional
+contribution of~NY.
+
+Bloom filters have a broad range of practical applications, for
+example, in content-distribution networks, large database query
+processing, routing algorithms for peer-to-peer networks, protocols
+for establishing linkages between medical-record databases, fair
+routing of TCP packets, Bitcoin wallet synchonization. \tsnote{need
+  citations}
+
+\heading{Our contributions. }
+Given these shortcomings and the prevalent use of Bloom filters in practice, we revisit the matter of formalizing them as primitives with explicit security goals, these goals being abstracted from the attack surface they expose in practice.   We begin by giving a new syntax for hash-based filters, which more clearly captures Bloom filters...
+
+We generalize this syntax to hash-based filters that are mutable,
+%\jnote{I find ``mutable'' a slightly awkward term, maybe because it makes me think of mutability in the context of programming languages. In much data structures literature, this is called the ``dynamic'' case, in contrast to the ``static'' case.}
+%
+%\tsnote{I adopted this term after reading it in some bloom filter paper(s). Ironically, I liked it for the same reason you think it is awkward :) My PL association to the term is that an immutable object is one whose state cannot be modified after it is created, and a mutable object is the opposite.  But I don't really care too much.}
+in the sense
+that they allow for updating of the representation. This allows us
+to capture counting Bloom filters, spectral Bloom filters, stable
+Bloom filters, count-min sketches, and other compact set
+representation data structures...
+
+We provide various security notions for these primitives... FP with private, public representation coins; set privacy with private, public representation coins; FP/set privacy in the multi-representation setting (outsider attack, think CDNs); FP/set privacy in the multi-representation setting with corruptions (insider attack, think P2P networks) \tsnote{Those are just the ones that come to mind now.  Could also consider authenicity of representations, think CDN or P2P settings.}
+
+
+We show that...
+
+\heading{Related work: attacks}
+\begin{itemize}
+\item Niedermayer et al., ``Cryptanalysis of Basic Bloom Filters Used for Privacy-Preserving Record Linkage'', breaking privacy of secret-hash-function Bloom filters. \tsnote{Journal of Privacy and Confidentiality, 2014}
+\item Gerbet, Kumar and Lauradoux, ``The power of evil choices in bloom filters''.  \tsnote{DSN'15: Looks like a real goldmine of related work!}
+\item Crosby and Wallach, ``Denial of Service via Algorithmic Complexity Attacks'' \tsnote{Gives attacks on Squid}
+\item Gao et al., ``Internet Cache Pollution Attacks and Countermeasures''
+\end{itemize}
+
+\heading{Related work: definitions(?)}
+\begin{itemize}
+\item Nojima and Kadobayashi, ``Cryptographically Secure Bloom Filters''. \tsnote{Gives some security definitions for privacy. Quick scan, not super clear what they achieve. The definition of client-privacy (Definition 1) for example, makes no sense to me.  Actually, likewise for server-privacy (Definition 2).  Both seem vague and thoroughly underspecified.}
+\item Naor and Yogev
+\item Eujin Goh, ``Secure Indexes'' \tsnote{A secure index can
+    be used for set membership.  Builds a secret-key data
+    structure (an Index) that allows searching for keyword~$w$
+    if one holds the trapdoor $T_w$ for~$w$, where the trapdoor
+    depends on the secret key.  Main construction uses
+    traditional Bloom filters and a PRF.  Construction appears
+    quite inefficient, needing a very long secret key, turning a
+    keyword~$w$ into a bunch of PRF outputs, and then storing
+    each of these PRF outputs in the BF.  Havent read the full
+    analysis; don't know if this was ever published. }
+    \jnote{Never published. I think this work uses Bloom filters
+    for encrypted search; I don't remember the paper having much
+    to say about Bloom filters themselves.}
+\end{itemize}
+
+\heading{Related work: constructions}
+\begin{itemize}
+\item Bellovin and Cheswick, ``Privacy-Enhanced Searches Using
+    Encrypted Bloom Filters''.
+\item Kerschbaum , ``Public-Key Encrypted Bloom Filters with Applications to Supply Chain Integrity''.
+\item S\"{a}rell\"{a} et al., ``BloomCasting: Security in Bloom Filter Based Multicast''.
+\item Dong, Chen, Wen, ``When Private Set Intersection Meets Big Data: An Efficient and Scaleable Protocol'' \tsnote{``garbled bloom filters'', which actually store the set element by storing~$k$ xor-shares, one at each of the~$k$ hash indices (with care for reusing shares if hash collisions occur); also and``oblivious bloom intersection''}\tsnote{If the filter and the hash functions are public, there is a naive attack that works for some interesting parameters.  Pick~$k$ positions $i_1,i_2,\ldots,i_k$, xor strings at these positions to get a candidate~$x$.  If $h_{1}(x)=i_1 \wedge h_2(x)=i_2 \wedge \cdots \wedge h_k(x) = i_k$ then either $x \in S$ or~$x$ is a false-positive. (You don't have to do all~$k$ hashes, you can stop as soon as one fails to match the index.) Say you have a 1000-position filter ($m=1000$) and a 100-element set ($n=100$), and you are willing to tolerate a 1\% FP rate.  Then you'd set $k=4$ (a la Squid).  There are roughly $2^{35}$ subsets of 4 indices to consider, which is reasonable on a laptop these days.  (Also, since $n=100$ the expected number of trials is roughly $2^{28}$.) With the FP rate of 1\%, if you find a winner then almost certainly it is in the set.  Granted, this attack is naive, but notice that you \emph{cannot} mount it against a standard Bloom filter. Also notice that this attack might be significantly more efficient than brute force guessing over the universe of inputs (imagine that $U=\bits^{64}$), even if you know that the distribution deviates significantly from uniform. }
+\item Tarkoma, Rothenberg, Lagerspetz ``Theory and Practice of Bloom Filters in Distributed Systems'' \tsnote{Great high-level coverage.  Only found preprint version though.}
+\item Durham, Kantarcioglu, Xue, Kuzu, Malin ``Composite Bloom Filters for Secure Record Linkage'' \tsnote{Per-field BFs, sampled and composed into single BF that is then permuted by a secret random permtation.  No clear statement of the problem that is being solved.  Should pull full version and get details.}
+\end{itemize}
+
+\heading{Related work: tangential}
+\begin{itemize}
+\item Chang and Mitzenmacher ``Privacy Preserving Keyword Searches on Remote Encrypted Data''.
+\item Mitzenmacher and Vadhan. ``Why Simple Hash Functions Work: Exploiting the Entropy in a Data Stream''.
+\item Dodis et al. ``Fuzzy Extractors: How to Generate Strong Keys from Biometrics and Other Noisy Data'' \tsnote{Introduces ``secure sketches'', which is a representation of a single-element set that is information theoretically private (up to some function of the min-entropy of the element); only tangentially related to ``sketches'' as defined in the Bloom filter literature.}
+\end{itemize}
+
+
+

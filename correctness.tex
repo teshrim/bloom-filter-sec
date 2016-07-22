@@ -1,0 +1,420 @@
+\section{Correctness Against Adaptive Adversaries}
+As highlighted by Naor and Yogev,
+Equation~(\ref{eqn:correctness}) is a non-adaptive version of correctness;
+we are interested in defining an adaptive (i.e., adversarial) notion
+of correctness. 
+
+The general style of the definition is as follows:
+first, a set~$S$ is chosen according to some distribution over~$\mathcal{S}$ and then
+$\Rep(S)$ is run to generate $(M,\aux)$. (Unless stated otherwise, we assume
+security holds for all distributions and thus for all sets $S$.)
+The attacker $A$ is given $\aux$ and (possibly)~$S$;
+in addition, $A$ is given \emph{oracle access} to~$\Qry(M,\aux,\cdot)$.
+If $(\Rep, \Qry)$ is defined in the random-oracle model, then~$A$ is given access to the random oracle as well.
+The adversary \emph{succeeds} if it outputs~$t$ distinct queries $q_1, \ldots, q_t \in \mathcal{Q}$ for which
+$\Qry(\aux, M, q_i) \neq q_i(S)$ for all~$i \in [t]$
+\todo{Typeset versions of this notion into experiments.}
+
+Roughly, we say that a set-representation is $(t,\epsilon')$-FP-secure if the probability that
+any polynomial-time attacker succeeds is at most~$\epsilon'$. \tsnote{$t$ might be a bad choice, since it looks like ``time''.}
+A full definition would also bound the number of queries to $\Qry$ (and the random oracle) made
+be the attacker; it is useful to make the convention that if~$A$ outputs
+$q_1, \ldots, q_t$ then it must have made those queries to its oracle previously.
+
+The notion of security defined above captures the fp-prv notion for Bloom filters
+if we put the hash functions in~$M$ (and thus increase the size of the set-representation); it also captures the fp-pub
+notion if we put the hash function in~$\aux$. 
+%\tsnote{Except that the win condition allows both
+%false-positives and false-negatives, given the correctness requirement
+%in the syntax.} 
+%\jnote{True. But if false negatives cannot occur at all (by design of
+%the set-representation, not by definition of the primitive), then the attacker cannot hope to win
+%by finding a false negative.} 
+It captures the fp-bb-pub notion in the random-oracle model.
+
+Note that the security we can hope for is somewhat limited, since there
+is always a trivial attack in which
+the attacker tries random queries $q_1, q_2, \ldots$ until it finds~$t$ queries for which the
+set-representation returns an incorrect answer.\footnote{This assumes the attacker
+knows the true set~$S$, which need not be the case.} Roughly speaking,
+if the set-representation is $\epsilon$-correct then the attacker expects to find a query on which
+an incorrect result is returned every $1/\epsilon$ tries; thus, an
+attacker making $O(t/\epsilon)$ queries succeeds with constant probability (almost always).
+
+\def\bin{{\sf Bin}}
+
+Actually, it seems worthwhile to formalize this. Let $X_i$ be a random variable indicating
+whether the $i$th query of the attacker gives an incorrect result. Then an attacker making $T$
+queries can succeed
+if $N \stackrel{{\rm def}}{=} \sum_{i=1}^T X_i \geq t$. If we treat the $X_i$ as independent Bernoulli trials with
+probability~$\epsilon$, then $N$ follows the well-studied binomial distribution.
+Let $\bin(T, \epsilon; t)$ denote the probability that $N \geq t$. \tsnote{Viewed another way, we could let~$T$ be a negative binomial RV, and ask how many queries are needed (w.h.p) for $N \geq t$.} 
+So the best security we can hope for
+is that if the set-representation is $\epsilon$-correct then for any desired bound $T$
+the set-representation is $(t, \bin(T,\epsilon; t))$-FP-secure against any attacker making
+at most $T$~queries. \jnote{Need to find different terms to use for a query $q \in \mathcal{Q}$
+and a query that the attacker makes to its oracle.}
+
+\jnote{One option is to define the adversary's \emph{advantage} as the difference between
+its success probability and the success probability of the above,
+trivial attack. Just a thought.}
+\tsnote{Or, perhaps by recasting security
+  as distinguishing between $\Qry(M,\aux,\cdot)$ and an oracle that
+  returns 0,1 according to Bernoulli with paramter~$\epsilon$.}
+
+\heading{Comparison to Naor-Yogev definition.}
+The style of the Naor-Yogev (NY) definition is slightly different. \jnote{Even if we ignore
+all the other issues, chief among them the inconsistent way it treats the hash functions.}
+Lifting their definition to our setting, the experiment is similar but the attacker
+succeeds only if it outputs a single query $q$ for which $\Qry(\aux, M, q) \neq q(S)$ \emph{subject
+to the restriction that it did not query $q$ to its $\Qry$ oracle}.
+It will be interesting to understand formally the relation between our definition and theirs.
+Here are some observations:
+\begin{enumerate}
+\item Say a scheme is $\epsilon_{NY}$-secure under the NY definition.
+Then we claim it is $(t, T\epsilon_{NY}/t)$-secure against an attacker making $T$ queries. To see
+this, assume not. Then there is an attacker $A$ that, with probability $\epsilon'=T\epsilon_{NY}/t$,
+issues $T$ queries of which at least $t$ among those give incorrect answers.
+If we simply run $A$ and
+then choose a random query to output, we succeed with probability at least $\epsilon' \cdot t/T$.
+It is unclear whether this is tight.
+
+\item There is a contrived scheme that is $(2, 0)$-FP-secure but not NY-secure at all; the basic idea is
+to have a set-representation that always has \emph{exactly one} false positive that is easy to find
+given the public information.
+
+\item If a scheme is $(1,\epsilon_{FP})$-FP-secure for an attacker making $T$ queries
+then it is also $\epsilon_{FP}$-secure under the NY definition,
+at least for attackers making at most $T-1$
+queries.
+This is immediate.
+\end{enumerate}
+
+
+
+\if{0}
+\heading{FP-security of hash-based filters.}
+%\tsnote{NY give it in the private hash setting (sort of); but, intuitively, it should be hard to find false-positives even if you know that MD5 or SHA-x are the hash functions.  Not totally sure how to capture this intuition nicely.}
+%
+%\jnote{Not sure I agree. First of all, if $\epsilon$ is not negligible then a random element is a false positive with noticeable probability. Beyond that, I think that intuitively it makes sense that if you want false positives to be hard to find then you need to make the hash functions secret.}
+%
+%\tsnote{I don't think it makes sense to talk about asymptotics or negligibility, for exactly the reason you state. I think the key point here is: what is ``hard''? The designer decides what FP rate is acceptable for a given application, a given set of efficiency constraints, the side-effects of a FP, etc.  For a fixed FP target, she optimizes the filter size and/or the number of hash functions for her setting. Whether the target FP rate is 0.01 or $2^{-80}$, we should be able to say (in the ROM, at least) that it will take this-many hash computations, and this many on-line set-membership queries, to find the first FP.  In the standard model, with public hash functions, it is clearly more difficult to make formal claims.  Even so, in practice I expect it would be quite expensive to find a string~$x$ such that $(h_1(x),h_2(x),\ldots,h_k(x))$ falls in a given set of tuples when $h_i(x)=\mathrm{truncate}(\mathrm{SHA256}(\langle i \rangle \concat x), m)$, say. (Even more so if my setting admits relatively expensive hash computations, e.g. SCRYPT.) BTW, your suggestion to have a FP notion with secret~$\mathcal{S}$ is interesting here. }
+%
+The traditional notion of soundness for a Bloom filter captures the difficulty of finding false positives when the attacker is non-adaptive. Following NY, we consider soundness against adaptive adversaries. But we further generalize to allow for settings in which the attacker may have some a priori knowledge about the contents of~$\calS$. (The Niedermaier et al.~\cite{xxx} attacks, for example, exploit knowledge about the distribution of German last names.) In particular, our notions take as input an explicit distribution $\distr{U}{n}$ over~$[U]^n$.
+
+%\jknote{We also want to capture the fact that finding the first false positive should not make it any easier to find subsequent false positives. This is not really captured by the Naor paper, either (at least not directly, though it may end up being implied by their definition).}
+%
+%\tsnote{See my comment in the intro.}
+
+In Figure~\ref{fig:fp-filter} we give three distinct notions, characterized by what access the adversary has to the underlying hash functions used by the filter.  In the top notion, the hash functions are secret.  This is the setting addressed by NY, and it captures applications in which the hash functions are (say) secretly keyed PRFs, and in which no explicit, external interface to these is surfaced.
+%
+The bottom notion considers the case that the full code of the hash functions is known to the attacker.  This is the case, for example, when attacking the Bloom filters used in the Squid proxy~\cite{xxx}.
+%
+The middle notion is a compromise: it makes the hash functions
+public, but assumes that the adversary only accesses them in a
+black-box manner.  That is, the adversary does not exploit
+structural features of the hash functions in its attack.  This
+notion makes it easy to track the query complexity of an attack, and
+also allows us to capture constructions in the random-oracle model.
+\tsnote{This is the setting for the Neidermayer et al.\  attacks.
+It's also the setting for ROM attacks.} \jnote{I don't think the
+middle notion is interesting. I disagree regarding the attacks of
+Neidermayer et al.: there, the hash functions are secret (though
+they are based on public ``random oracles'' $g$ and $h$). The ROM
+can be handled separately by giving all algorithms access to
+the~RO.}\tsnote{You're correct; I misread some of the text.  It is
+only the setup for the attack that needs access to the hash functions,
+and this is just modeling what is likely to appear in the real
+``encrypted'' BFs.}
+
+For each experiment, we define an associated advantage
+notion.  Namely, given an $(n,k,m)$-filter~$B=(\Hash,\Rep,\Qry)$,
+distribution~$\distr{U}{n}$ and adversary~$A$, we define:
+\begin{align*}
+\AdvFPSecHash{B,t}{\distr{U}{n},A} &= \Prob{\ExpFPSecHash{B,t}{\distr{U}{n},A}=1} \\
+\AdvFPPubHashBB{B,t}{\distr{U}{n},A} &= \Prob{\ExpFPPubHashBB{B,t}{\distr{U}{n},A}=1} \\
+\AdvFPSecHash{B,t}{\distr{U}{n},A} &= \Prob{\ExpFPPubHash{B,t}{\distr{U}{n},A}=1}
+\end{align*}
+The probabilities are over the coins of the indicated experiment,
+and the coins of the adversary.   In all experiments, we track the
+time-complexity~$t$ of~$A$, as well as the number of set-membership
+($\QryOracle$ oracle) queries~$q_{\mathrm{sm}}$ that it makes.   In
+the second, we also track the number of hash-queries
+$q_{\mathrm{h}}$ that the adversary makes.
+
+We note that the distribution~$\distr{U}{n}$ must be independent of
+the hash functions $h_1,h_2,\ldots,h_k$ that are used to create~$M$.
+Otherwise, when (say) $\Sigma=\bits$, the distribution may only
+assign positive probability to sets~$\calS$ that cause an abnormally
+large number of bits in~$M$ to be set to 1.  Our security notions
+enforce this independence.
+
+\jnote{How do we want to define a ``secure'' Bloom filter (even informally)? Do we want to say that the probability of finding a false positive is negligible? Or that if we set the FP rate to $\epsilon$ then the best an attacker can do with $q$ hash queries is $1-(1-\epsilon)^q$ plus negligible?}
+%
+\tsnote{Formally, I don't think we can (and still be rooted in
+reality).  Even informally it's hard, since the fact is that the
+designer decides what is ``secure'' for her setting.  I think we
+just say something like ``A bloom filter is
+$(t,q_h,q_m,\epsilon)$-secure if no attacker running in time at
+most~$t$, asking at most~$q_h$ hash queries and $q_m$ set-membership
+queries, has probability more than~$\epsilon$ of finding a FP.''
+Perhaps informally we say that a bloom filter is secure if, for
+``reasonable'' $t,q_h,q_m$, the value of~$\epsilon$ is not
+``significantly larger'' than the designer's target.  I guess that's
+not far off from one of your suggestions.}
+
+%\jnote{One thing that is nice about the NY notion is that you get a ``clean'' definition of security: no matter how many FPs the attacker has found so far, the probability that it can output a fresh FP is still $\epsilon$.}
+
+
+\begin{figure}
+\centering
+\fpage{.6}{
+\hpagess{.6}{.35}
+{
+\experimentv{$\ExpFPSecHash{B,t}{\distr{U}{n},A}$}\\
+$\calS \getsr \distr{U}{n}$\\
+$h_1,\ldots,h_k \getsr \Hash$\\
+$(M,\tau) \getsr \Rep^{\HashOracle}(\calS)$\\
+$\calX \getsr A^{\QryOracle}(\calS)$\\
+if $|\calX| < t$ or $\calX \cap \calS \neq \emptyset$ then \\
+\nudge Ret 0\\
+If $\exists x \in \calX$ s.t. $\Qry^{\HashOracle}(M,\tau,x)=0$ then\\
+\nudge Ret 0\\
+Ret 1
+}
+%
+{
+\oracle{$\QryOracle(x)$}\\
+Ret $\Qry^{\HashOracle}(M,\tau,x)$\\
+
+\medskip
+\oracle{$\HashOracle(x)$}\\
+Ret $\left(h_1(x),\ldots,h_k(x)\right)$\\
+}
+}
+%%%%%%%
+\fpage{.6}{
+\hpagess{.6}{.35}
+{
+\experimentv{$\ExpFPPubHashBB{B,t}{\distr{U}{n}, A}$}\\
+$\calS \getsr \distr{U}{n}$\\
+$h_1,\ldots,h_k \getsr \Hash$\\
+$(M,\tau) \getsr \Rep^{\HashOracle}(\calS)$\\
+$\calX \getsr A^{\QryOracle,\HashOracle}(\calS)$\\
+if $|\calX| < t$ or $\calX \cap \calS \neq \emptyset$ then \\
+\nudge Ret 0\\
+If $\exists x \in \calX$ s.t. $\Qry^{\HashOracle}(M,\tau,x)=0$ then\\
+\nudge Ret 0\\
+Ret 1
+}
+%
+{
+\oracle{$\QryOracle(x)$}\\
+Ret $\Qry^{\HashOracle}(M,\tau,x)$\\
+
+\medskip
+\oracle{$\HashOracle(x)$}\\
+Ret $\left(h_1(x),\ldots,h_k(x)\right)$\\
+}
+}
+%%%%%%%
+\fpage{.6}{
+\hpagess{.6}{.35}
+{
+\experimentv{$\ExpFPPubHash{B,t}{\distr{U}{n}, A}$}\\
+$\calS \getsr \distr{U}{n}$\\
+$h_1,\ldots,h_k \getsr \Hash$\\
+$(M,\tau) \gets \Rep^{\HashOracle}(\calS)$\\
+$\calX \getsr A^{\QryOracle}(S,\{h_1,h_2,\ldots,h_k\})$\\
+if $|\calX| < t$ or $\calX \cap \calS \neq \emptyset$ then \\
+\nudge Ret 0\\
+If $\exists x \in \calX$ s.t. $\Qry^{\HashOracle}(M,\tau,x)=0$ then\\
+\nudge Ret 0\\
+Ret 1
+}
+%
+{
+\oracle{$\QryOracle(x)$}\\
+Ret $\Qry^{\HashOracle}(M,\tau,x)$\\
+
+\medskip
+\oracle{$\HashOracle(x)$}\\
+Ret $\left(h_1(x),\ldots,h_k(x)\right)$\\
+} } \caption{False-positive security (soundness) for an
+$(n,k,m)$-filter~$B$ with private hash functions (top), black-box
+queriable hash functions (middle), and public hash functions
+(bottom). \jnote{Could also consider not giving $\calS$ to the
+adversary.} } \label{fig:fp-filter}
+\end{figure}
+
+
+%%%%
+% \if{0}
+% \begin{figure}
+% \centering
+% \fpage{.6}{
+% \hpagess{.6}{.35}
+% {
+% \experimentv{$\ExpFPSecHash{S,B}{A}$}\\
+% $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
+% $M \gets \Rep^{\HashOracle}(S)$\\
+% $x \getsr A^{\QryOracle}(S)$\\
+% if $x \not\in S \wedge \Qry^{\HashOracle}(M,x)=1$ then\\
+% \nudge Ret 1\\
+% Ret 0
+% }
+% %
+% {
+% \oracle{$\QryOracle(x)$}\\
+% Ret $\Qry^{\HashOracle}(M,x)$\\
+
+% \medskip
+% \oracle{$\HashOracle(i,x)$}\\
+% Ret $h_i(x)$\\
+% }
+% }
+% %%%%%%%
+% \fpage{.6}{
+% \hpagess{.6}{.35}
+% {
+% \experimentv{$\ExpFPPubHashBB{S,B}{A}$}\\
+% $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
+% $M \gets \Rep^{\HashOracle}(S)$\\
+% $x \getsr A^{\QryOracle,\HashOracle}(S)$\\
+% if $x \not\in S \wedge \Qry^{\HashOracle}(M,x)=1$ then\\
+% \nudge Ret 1\\
+% Ret 0
+% }
+% %
+% {
+% \oracle{$\QryOracle(x)$}\\
+% Ret $\Qry^{\HashOracle}(M,x)$\\
+
+% \medskip
+% \oracle{$\HashOracle(i,x)$}\\
+% Ret $h_i(x)$\\
+% }
+% }
+% %%%%%%%
+% \fpage{.6}{
+% \hpagess{.6}{.35}
+% {
+% \experimentv{$\ExpFPPubHash{S,B}{A}$}\\
+% $ \{h_1,h_2,\ldots,h_k\} \getsr \Hash$\\
+% $M \gets \Rep^{\HashOracle}(S)$\\
+% $x \getsr A^{\QryOracle}(S,\{h_1,h_2,\ldots,h_k\})$\\
+% if $x \not\in S \wedge \Qry^{\HashOracle}(M,x)=1$ then\\
+% \nudge Ret 1\\
+% Ret 0
+% }
+% %
+% {
+% \oracle{$\QryOracle(x)$}\\
+% Ret $\Qry^{\HashOracle}(M,x)$\\
+
+% \medskip
+% \oracle{$\HashOracle(i,x)$}\\
+% Ret $h_i(x)$\\
+% }
+% }
+% \caption{False-positive security (soundness) for an $(n,k,m)$-filter~$B$ with private hash functions (top), black-box queriable hash functions (middle), and public hash functions (bottom). }
+% \label{fig:fp-filter}
+% \end{figure}
+%\fi
+%%%%%
+
+
+
+\heading{Privacy of hash-based filters.} We now define privacy notions for $(n,k,m)$-filters.  Informally, the adversary is given the representation~$M$ of a secret set~$\calS$, and its goal is to guess one of the elements of~$\calS$.  Of course, if the distribution~$\distr{U}{n}$ has low min-entropy with respect to any particular element $x \in U$, then it will be relatively easy to guess~$x$.  To capture this min-entropy, let $p_{\mathrm{max}} = \max_{x \in U} \Prob{\calS \getsr \distr{U}{n}:\, x \in \calS}$ and define $\mu = -\log_2 p_{\mathrm{max}}$ to be the (element-wise) min-entropy of distribution $\distr{U}{n}$.
+
+\tsnote{Explain need for $\MemOracle$, as a way to disambiguate true positives from false positives.}
+
+We note that~$\calS$ must be independent of the hash functions~$h_1,h_2,\ldots,h_k$ used to create the representation of~$\calS$.  \tsnote{I thought this would be needed, but now I'm not sure it is. }
+
+A weaker notion of privacy would not give~$M$ to the adversary.  However, this would not capture attacks such as those mounted by Neidermayer et al.\cite{XXX}, and would not speak to settings in which (say) an honest-but-curious third party is given the representation~$M$ in order to carry out some task on behalf of the holder of~$\calS$.
+
+\begin{figure}
+\centering
+\fpage{.6}{
+\hpagess{.6}{.35}
+{
+\experimentv{$\ExpPrivSecHash{B}{\distr{U}{n}, A}$}\\
+$\calS \getsr \distr{U}{n}$\\
+$h_1,\ldots,h_k \getsr \Hash$\\
+$(M,\tau) \getsr \Rep^{\HashOracle}(\calS)$\\
+$x \getsr A^{\MemOracle,\QryOracle}(M)$\\
+if $x\in \calS$ then Ret 1\\
+Ret 0
+}
+%
+{
+\oracle{$\MemOracle(x)$}\\
+Ret $[x \in \calS]$\\
+
+\medskip
+\oracle{$\QryOracle(x)$}\\
+Ret $\Qry^{\HashOracle}(M,\tau,x)$\\
+
+\medskip
+\oracle{$\HashOracle(x)$}\\
+Ret $\left(h_1(x),\ldots,h_k(x)\right)$\\
+}
+}
+%%%%%%%%%%
+\fpage{.6}{
+\hpagess{.6}{.35}
+{
+\experimentv{$\ExpPrivPubHashBB{B}{\distr{U}{n}, A}$}\\
+$ \calS \getsr \distr{U}{n}$\\
+$h_1,\ldots,h_k \getsr \Hash$\\
+$(M,\tau) \getsr \Rep^{\HashOracle}(\calS)$\\
+$x \getsr A^{\MemOracle,\QryOracle,\HashOracle}(M)$\\
+if $x\in \calS$ then Ret 1\\
+Ret 0\\
+}
+%
+{
+\oracle{$\MemOracle(x)$}\\
+Ret $[x \in \calS]$\\
+
+\medskip
+\oracle{$\QryOracle(x)$}\\
+Ret $\Qry^{\HashOracle}(M,\tau,x)$\\
+
+\medskip
+\oracle{$\HashOracle(x)$}\\
+Ret $\left(h_1(x),\ldots,h_k(x)\right)$\\
+}
+}
+%%%%%%%
+\fpage{.6}{
+\hpagess{.6}{.35}
+{
+\experimentv{$\ExpPrivPubHash{B}{\distr{U}{n}, A}$}\\
+$ \calS \getsr \distr{U}{n}$\\
+$h_1,\ldots,h_k \getsr \Hash$\\
+$(M,\tau) \getsr \Rep^{\HashOracle}(\calS)$\\
+$x \getsr A^{\MemOracle,\QryOracle}(M,\{h_1,h_2,\ldots,h_k\})$\\
+if $x\in \calS$ then Ret 1\\
+Ret 0\\
+}
+%
+{
+\oracle{$\MemOracle(x)$}\\
+Ret $[x \in \calS]$\\
+
+\medskip
+\oracle{$\QryOracle(x)$}\\
+Ret $\Qry^{\HashOracle}(M,\tau,x)$\\
+
+\medskip
+\oracle{$\HashOracle(x)$}\\
+Ret $\left(h_1(x),\ldots,h_k(x)\right)$\\
+}
+}
+\caption{Set-privacy for an $(n,k,m)$-filter~$B$ for private (top), black-box queriable (middle),  and public (bottom) hash functions. \textcolor{cyan}{Revisit when the FP notion settles out.}}
+\label{fig:fp-filter}
+\end{figure}
+
+
+\fi
