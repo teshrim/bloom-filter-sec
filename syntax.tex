@@ -5,9 +5,9 @@
 \heading{Preliminaries. }
 When~$\univ$ is a set and $n>0$ is an integer, we let $[\univ]^n$ denote the set of all size-$n$ subsets of~$\univ$. We write $x \getsr \univ$ to denote sampling an element from~$\univ$ and assigning this to~$x$, and we extend this notation to randomized algorithms.  When~$X$ is a string over some alphabet~$\Sigma$, we write $|X|$ for the bitlength of~$X$, relative to some fixed encoding.  When~$X$ is a multiset, we overload the notation so that~$|X|$ is the number of elements in~$X$ (with mutiplicity).
 
-heading{{Static (Multi)set-representations. }
+\heading{Static (Multi)set-representations. }
 \begin{definition} 
-Fix a universe~$U$ and an alphabet~$\Sigma$.  A \emph{static (multi)set-representation primitive} is a pair of algorithms $(\Rep, \Qry)$
+Fix a universe~$U$ and an alphabet~$\Sigma$.  A \emph{static (multi)set-representation primitive} is a pair of algorithms $\setprim=(\Rep, \Qry)$
 parameterized by a collection $\mathcal{S}$ of multisets, each consisting of elements from~$U$ and a collection
 of supported queries $\mathcal{Q}=\{q \colon \mathcal{S} \to \mathbb{R}\}$, where:
 \begin{itemize}

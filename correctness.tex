@@ -91,6 +91,35 @@ This is immediate.
 \end{enumerate}
 
 
+\begin{figure}
+\centering
+\fpage{.6}{
+\hpagess{.6}{.35}
+{
+\experimentv{$\ExpCorrect{\setprim,t}{\distr{U}{n},A}$}\\
+$\calS \getsr \distr{U}{n}$\\
+$(M,\pub) \getsr \Rep^{\HashOracle}(\calS)$\\
+$\calX \getsr A^{\QryOracle}(\calS,\pub)$\\
+if $|\calX| < t$ or $\calX \cap \calS \neq \emptyset$ then \\
+\nudge Ret 0\\
+If $\exists x \in \calX$ s.t. $\Qry(M,\pub,x)=0$ then\\
+\nudge Ret 0\\
+Ret 1
+}
+%
+{
+\oracle{$\QryOracle(x)$}\\
+Ret $\Qry(M,\pub,x)$\\
+}
+}
+\caption{} 
+\label{fig:fp-filter}
+\label{fig:correctness}
+\end{figure}
+
+
+
+
 
 \if{0}
 \heading{FP-security of hash-based filters.}

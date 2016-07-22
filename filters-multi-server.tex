@@ -53,36 +53,6 @@ $\mathcal{C} \gets \mathcal{C} \cup \{i\}$\\
 Ret $M_i,\mathcal{H}_i$\\
 }
 }
-%%%%%%%%%%
-\fpage{.6}{
-\hpagess{.6}{.35}
-{
-\experimentv{$\ExpFPPubHashBB{B_1,B_2,\ldots, B_\ell}{\distr{U}{n}, A}$}\\
-$\mathcal{C} \gets \emptyset$\\
-for $i=1$ to $\ell$\\
-\nudge $S_i \getsr \distr{U}{n}$\\
-\nudge $ \{h^i_1,h^i_2,\ldots,h^i_k\} \getsr \Hash_i$\\
-\nudge $M_i \getsr \Rep_i^{\HashOracle(i,\cdot,\cdot)}(S_i)$\\
-$(i,x) \getsr A^{\QryOracle,\HashOracle,\CorruptOracle}(\{S_i\}_{i=1}^{\ell})$\\
-if $i \not\in \mathcal{C} \wedge \Qry_i^{\HashOracle(i,\cdot,\cdot)}(M_i,x)=1$ then \\
-\nudge Ret 1\\
-Ret 0
-}
-%
-{
-\oracle{$\QryOracle(i,x)$}\\
-Ret $\Qry_i^{\HashOracle}(M_i,x)$\\
-
-\medskip
-\oracle{$\HashOracle(i,j,x)$}\\
-Ret $h^i_j(x)$\\
-
-\medskip
-\oracle{$\CorruptOracle(i,x)$}\\
-$\mathcal{C} \gets \mathcal{C} \cup \{i\}$\\
-Ret $M_i$\\
-}
-}
 %%%%%%%
 \fpage{.6}{
 \hpagess{.6}{.35}

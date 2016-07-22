@@ -16,10 +16,10 @@
 \newcommand{\Test}{\mathsc{Test}}
 \newcommand{\multiset}[2]{\mathbb{M}_{#1}^{#2}}
 
-\newcommand{\ExpCorrectSecHash}[2]{\mathrm{\Exp}^{\mathrm{cor\mbox{-}prv}}_{#1}(#2)}
-\newcommand{\ExpCorrectPubHashBB}[2]{\mathrm{\Exp}^{\mathrm{cor\mbox{-}bb\mbox{-}pub}}_{#1}(#2)}
-\newcommand{\ExpCorrectPubHash}[2]{\mathrm{\Exp}^{\mathrm{cor\mbox{-}pub}}_{#1}(#2)}
-\newcommand{\ExpCorrect}[2]{\mathrm{\Exp}^{\mathrm{cor}}_{#1}(#2)}
+\newcommand{\ExpCorrectSecHash}[2]{\mathrm{\Exp}^{\mathrm{correct\mbox{-}prv}}_{#1}(#2)}
+\newcommand{\ExpCorrectPubHashBB}[2]{\mathrm{\Exp}^{\mathrm{correct\mbox{-}bb\mbox{-}pub}}_{#1}(#2)}
+\newcommand{\ExpCorrectPubHash}[2]{\mathrm{\Exp}^{\mathrm{correct\mbox{-}pub}}_{#1}(#2)}
+\newcommand{\ExpCorrect}[2]{\mathrm{\Exp}^{\mathrm{correct}}_{#1}(#2)}
 \newcommand{\QryOracle}{\mathsf{Query}}
 \newcommand{\MemOracle}{\mathsf{Member}}
 \newcommand{\UpdateOracle}{\mathsf{Update}}
@@ -27,7 +27,6 @@
 \newcommand{\CorruptOracle}{\mathsf{Corrupt}}
 
 \newcommand{\ExpFPSecHash}[2]{\mathrm{\Exp}^{\mathrm{fp\mbox{-}prv}}_{#1}(#2)}
-\newcommand{\ExpFPPubHashBB}[2]{\mathrm{\Exp}^{\mathrm{fp\mbox{-}bb\mbox{-}pub}}_{#1}(#2)}
 \newcommand{\ExpFPPubHash}[2]{\mathrm{\Exp}^{\mathrm{fp\mbox{-}pub}}_{#1}(#2)}
 \newcommand{\ExpFP}[2]{\mathrm{\Exp}^{\mathrm{fp}}_{#1}(#2)}
 \newcommand{\AdvFPSecHash}[2]{\mathrm{\Adv}^{\mathrm{fp\mbox{-}prv}}_{#1}(#2)}
@@ -48,6 +47,8 @@
 \newcommand{\Func}[1]{\mathrm{Func}(#1)}
 \newcommand{\win}{\mathrm{win}}
 
+\newcommand{\setprim}{\Pi}
+
 
 %%%%%%%%%%%%%%%%%%%% TITLE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \title{On the Security of Set-Representation Primitives}
@@ -64,7 +65,7 @@
 \end{abstract}
 
 \input{intro}
-\input{generic}
+\input{syntax}
 %\input{filters-syntax}
 %\input{filters-notions}
 \input{correctness}
