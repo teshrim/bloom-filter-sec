@@ -3,22 +3,25 @@ As highlighted by Naor and Yogev, Equation~(\ref{eqn:correctness}) is a non-adap
 we are interested in defining an adaptive (i.e., adversarial) notion
 of correctness.   Figure~\ref{fig:correctness} describes a security
 experiment that captures such a notion.
+
 First, a set~$S$ is chosen according to some
 distribution~$\distr{\calS}{}$ over the collection of multisets
 $\mathcal{S}$ associated to~$\Pi=(\Rep,\Qry)$, and then
 $\Rep(S)$ is run to generate $(M,\aux)$.
 %(Unless stated otherwise, we assume security holds for all distributions and thus for all sets $S$.)
-Adversary~$A$ is given~$\aux$ and (possibly) $\calS$~as input; it is
+Adversary~$A$ is given~$\calS$ and $\aux$~as input; it is
 provided an oracle~$\TestOracle$ that, on input a query~$q \in \calQ$,
 computes (and returns) the result of $\Qry(M,\aux,q)$, and increments
 a counter if this result is in error.  The adversary wins if it
 manages to cause at least~$r>0$ such errors among its queries.
 
-The adversary \emph{succeeds} if it outputs~$r$ distinct queries $q_1, \ldots, q_r \in \mathcal{Q}$ for which
-$\Qry(\aux, M, q_i) \neq q_i(S)$ for all~$i \in [r]$
-\todo{Typeset versions of this notion into experiments.}
+The notion is lifted to the random-oracle model by providing
+$\Rep,\Qry$ and the adversary~$A$ with oracle access to the
+random-oracle(s).
 
-\begin{figure}
+
+
+\begin{figure}[htp]
 \centering
 \fpage{.6}{
 \hpagess{.6}{.35}
@@ -40,40 +43,37 @@ if $a \neq q(S)$ then \\
 Return~$a$
 }
 }
-\caption{} 
-\label{fig:fp-filter}
+\caption{Correctness of~$\Pi$ against (adaptive) adversary~$A$, when
+  the target multiset~$S$ is sampled from~$\calS$ according to distribution~$\distr{\calS}{}$.} 
 \label{fig:correctness}
 \end{figure}
 
-If $(\Rep, \Qry)$ is defined in the random-oracle model, then~$A$ is given access to the random oracle as well.
+In this experiment we track the time-complexity (relative to some
+implied model of computation) and query-complexity (i.e., number of
+queries) of the adversary~$A$.  Roughly, we say that a
+set-representation~$\Pi$ is $(t,q,r,\epsilon')$-correct if the
+probability that any adversary with time-complexity~$t$ and
+query-complexity~$q$ causes~$r$ errors with probability at
+most~$\epsilon'$.  \tsnote{Maybe not... revisit.}
 
-Roughly, we say that a set-representation~$\Pi$ is $(r,\epsilon',t)$-FP-secure if the probability that
-any $t$-time attacker succeeds is at most~$\epsilon'$. 
-(A full definition would also bound the number of queries to $\Qry$ (and the random oracle) made
-be the attacker.)
-
-Note that the security we can hope for is somewhat limited, since there
-is always a trivial attack in which
-the attacker tries random queries $q_1, q_2, \ldots$ until it finds~$t$ queries for which the
-set-representation returns an incorrect answer.\footnote{This assumes the attacker
-knows the true set~$S$, which need not be the case.} Roughly speaking,
-if the set-representation is $\epsilon$-correct then the attacker expects to find a query on which
-an incorrect result is returned every $1/\epsilon$ tries; thus, an
-attacker making $O(t/\epsilon)$ queries succeeds with constant probability (almost always).
 
 \def\bin{{\sf Bin}}
-
-Actually, it seems worthwhile to formalize this. Let $X_i$ be a random variable indicating
-whether the $i$th query of the attacker gives an incorrect result. Then an attacker making $T$
-queries can succeed
-if $N \stackrel{{\rm def}}{=} \sum_{i=1}^T X_i \geq t$. If we treat the $X_i$ as independent Bernoulli trials with
-probability~$\epsilon$, then $N$ follows the well-studied binomial distribution.
-Let $\bin(T, \epsilon; t)$ denote the probability that $N \geq t$. \tsnote{Viewed another way, we could let~$T$ be a negative binomial RV, and ask how many queries are needed (w.h.p) for $N \geq t$.} 
-So the best security we can hope for
-is that if the set-representation is $\epsilon$-correct then for any desired bound $T$
-the set-representation is $(t, \bin(T,\epsilon; t))$-FP-secure against any attacker making
-at most $T$~queries. \jnote{Need to find different terms to use for a query $q \in \mathcal{Q}$
-and a query that the attacker makes to its oracle.}
+\heading{Defining adversarial advantage. } 
+For any scheme~$\Pi$ there is a trivial,
+\emph{non-adaptive} attack against this that wins a noticible fraction of the time.  In
+particular, let $q_1,q_2,\ldots,q_T$ be uniform samples from~$\calQ$.
+%The expected number of random queries needed to
+%find a error is $1/\epsilon$ tries; thus, an attacker making $O(t/\epsilon)$ queries succeeds with constant probability (almost always).
+%Actually, it seems worthwhile to formalize this. 
+Let $X_i$ be a random variable indicating the event $Qry(M,\aux,q_i)\neq q_i(S)$.  
+If~$\Pi$ is $\epsilon$-correct, then the probability that $X_i=1$ is at most~$\epsilon$.
+And if the experiment requires the adversary to induce~$r$ errors, the attack wins iff
+$N \stackrel{{\rm def}}{=} \sum_{i=1}^T X_i \geq r$.  Modelling the $X_i$ as independent Bernoulli trials with
+probability~$\epsilon$ gives $N$ a binomial distribution.  \fixme{Something feels wrong with this...}  
+Writing $\bin(T, \epsilon; r)$ for the probability that $N \geq r$,
+we conclude that the \emph{best} correctness we can hope for against adversaries making~$T$ queries is  $\bin(T,\epsilon; t))$. %\jnote{Need to find different terms to use for a query $q \in \mathcal{Q}$
+%and a query that the attacker makes to its oracle.}
+\tsnote{Viewed another way, we could let~$T$ be a negative binomial RV, and ask how many queries are needed (w.h.p) for $N \geq t$.} 
 
 \jnote{One option is to define the adversary's \emph{advantage} as the difference between
 its success probability and the success probability of the above,
@@ -86,57 +86,26 @@ trivial attack. Just a thought.}
 The style of the Naor-Yogev (NY) definition is slightly different. \jnote{Even if we ignore
 all the other issues, chief among them the inconsistent way it treats the hash functions.}
 Lifting their definition to our setting, the experiment is similar but the attacker
-succeeds only if it outputs a single query $q$ for which $\Qry(\aux, M, q) \neq q(S)$ \emph{subject
-to the restriction that it did not query $q$ to its $\Qry$ oracle}.
+succeeds only if it outputs a single query $q$ for which $\Qry( M,
+\aux, q) \neq q(S)$  \emph{subject to the restriction that it did not query $q$ to its $\Qry$ oracle}.
 It will be interesting to understand formally the relation between our definition and theirs.
 Here are some observations:
 \begin{enumerate}
 \item Say a scheme is $\epsilon_{NY}$-secure under the NY definition.
-Then we claim it is $(t, T\epsilon_{NY}/t)$-secure against an attacker making $T$ queries. To see
-this, assume not. Then there is an attacker $A$ that, with probability $\epsilon'=T\epsilon_{NY}/t$,
-issues $T$ queries of which at least $t$ among those give incorrect answers.
-If we simply run $A$ and
-then choose a random query to output, we succeed with probability at least $\epsilon' \cdot t/T$.
-It is unclear whether this is tight.
+Then we claim it is $(t,q, r, q\epsilon_{NY}/r)$-correct. To see
+this, assume not. Then there is a $t$-time attacker~$A$ that, with
+probability at least $\epsilon'=q\epsilon_{NY}/r$,
+issues~$q$ Test-queries of which at least~$r$ cause errors. If we simply run~$A$ and then choose a random Test-query to
+output, we succeed with probability at least $\epsilon' \cdot r/q$. It is unclear whether this is tight.
 
-\item There is a contrived scheme that is $(2, 0)$-FP-secure but not NY-secure at all; the basic idea is
+\item There is a contrived scheme that is $(t, q, 2, 0)$-correct but not NY-secure at all; the basic idea is
 to have a set-representation that always has \emph{exactly one} false positive that is easy to find
 given the public information.
 
-\item If a scheme is $(1,\epsilon_{FP})$-FP-secure for an attacker making $T$ queries
-then it is also $\epsilon_{FP}$-secure under the NY definition,
-at least for attackers making at most $T-1$
-queries.
+\item If a scheme is $(t,q,1,\epsilon)$-correct, then it is also $\epsilon$-secure under the NY definition,
+at least for attackers making at most $q-1$ queries.
 This is immediate.
 \end{enumerate}
-
-
-\begin{figure}
-\centering
-\fpage{.6}{
-\hpagess{.6}{.35}
-{
-\experimentv{$\ExpCorrect{\setprim,t}{\distr{\calS}{},A}$}\\
-$\calS \getsr \distr{U}{n}$\\
-$(M,\aux) \getsr \Rep^{\HashOracle}(\calS)$\\
-$\calX \getsr A^{\QryOracle}(\calS,\aux)$\\
-if $|\calX| < t$ or $\calX \cap \calS \neq \emptyset$ then \\
-\nudge Ret 0\\
-If $\exists x \in \calX$ s.t. $\Qry(M,\aux,x)=0$ then\\
-\nudge Ret 0\\
-Ret 1
-}
-%
-{
-\oracle{$\QryOracle(x)$}\\
-Ret $\Qry(M,\aux,x)$\\
-}
-}
-\caption{} 
-\label{fig:fp-filter}
-\label{fig:correctness}
-\end{figure}
-
 
 
 
