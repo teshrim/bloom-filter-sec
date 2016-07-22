@@ -1,14 +1,14 @@
-\section{Achieving FP-Security and Privacy}
-\heading{FP-security. }  Here we give security proofs and attacks with respect the the FP-security notions just described.
+\section{Achieving Security Notions}
+\heading{Correctness. }  Here we give security proofs and attacks with respect to the correctness notions.
 \begin{itemize}
-\item \jnote{Would be good to show that RO-based Bloom filter is FP-secure.}
-\item FP-security/attacks on bigram/PRF-based double-hashing construction ($h_j(x) = F_{K1}(x) + j\cdot F_{K2}(x) \bmod m$ where the~$x$ are bigrams of names, etc.) \tsnote{Animesh is doing this now}
+\item Show Bloom Filter is correct in the ROM %\jnote{Would be good to show that RO-based Bloom filter is FP-secure.}
+\item FP-security/attacks on bigram/PRF-based double-hashing construction ($h_j(x) = F_{K1}(x) + j\cdot F_{K2}(x) \bmod m$ where the~$x$ are bigrams of names, etc.) 
 \item FP-security/attacks on bigram/domain-separated PRF construction ($h_j(x)=F_K(\langle j,x \rangle) \bmod m$, or just assume range of~$F$ is $[m]$.)
 \item FP-security/attacks Dong, Chen, Wen ``garbled Bloom filter'' construction
 \item ...
 \end{itemize}
 
-\heading{Privacy. } Here we give security proofs and attacks with respect the the FP-security notions just described.
+\heading{Privacy. } Here we give security proofs and attacks with respect to the privacy notions we have defined.
 \tsnote{Under our current notions, you can never hope to prove privacy bounds that beat the min-entropy of $\distr{U}{n}$.}
 \begin{itemize}
 \item Prove that the basic BF, in the ROM, is private.  \tsnote{Not at all surprising, but it is the first result one would want in this area.}
