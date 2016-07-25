@@ -66,7 +66,8 @@ Ret 1\\\\
 Ret $\Qry^{\HashOracle}(M,x)$\\\\
 %
 \oracle{$\HashOracle(x)$}\\
-$h_i(x) = F_{K_1}(x)+i \cdot F_{K_2}(x) \bmod m$, for $i\in[1,k]$\\
+for $i = 1$ to $k$\\
+\nudge $h_i(x) = F_{K_1}(x)+i \cdot F_{K_2}(x) \bmod m$\\
 Ret $\left(h_1(x),\ldots,h_k(x)\right)$
 }
 {
@@ -108,7 +109,8 @@ Ret 1\\\\
 Ret $\Qry^{\HashOracle}(M,x)$\\\\
 %
 \oracle{$\HashOracle(x)$}\\
-$h_i(x) = \rho_1(x)+i \cdot \rho_2(x) \bmod m$, for $i\in[1,k]$\\
+for $i=1$ to $k$\\
+\nudge $h_i(x) = \rho_1(x)+i \cdot \rho_2(x) \bmod m$\\
 Ret $\left(h_1(x),\ldots,h_k(x)\right)$
 }
 {
@@ -148,7 +150,8 @@ Ret~$v$\\\\
 %
 \oracle{$\HashOracle(x)$}\\
 $a,b \getsr [m]$\\
-for $i = 1$ to~$k$, $v_i = a+i \cdot b \bmod m$\\
+for $i = 1$ to~$k$\\
+\nudge $v_i = a+i \cdot b \bmod m$\\
 Ret $\left(v_1,\ldots,v_k\right)$
 }
 }
