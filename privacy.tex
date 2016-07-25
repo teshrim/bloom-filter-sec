@@ -20,7 +20,7 @@ q(S_1)$. \tsnote{I'm not convinced this is the right restriction.
   true of both sets.  So a scheme with $M=S$ will be trivially secure
   against set membership queries.  } \tsnote{Do you mean to
   assume that the attacker does not ask~$q$ such that $q(S_0)=q(S_1)$
-  because these are pointless?}
+  because these are pointless?  Otherwise, I don't see a need for restrictions.}
 %\tsnote{How will the adversary know that a query satisfies
 %  this in (say) the case of the classical BF?  We can, of course,
 %enforce it in the experiment, but then our resource accounting risks
@@ -71,6 +71,8 @@ Return 0
 {
 \oracle{$\RepOracle(S_0,S_1)$}\\
 if $\mathrm{used}=\true$ then \\
+\nudge Ret $\bot$\\
+if $|S_0|\neq|S_1|$ then \\
 \nudge Ret $\bot$\\
 $\mathrm{used}=\true$\\
 $(M,\aux) \getsr \Rep(S_b)$\\
