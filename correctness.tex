@@ -53,7 +53,7 @@ implied model of computation) and query-complexity (i.e., number of
 queries) of the adversary~$A$.  
 We define the advantage of adversary~$A$ in the correctness experiment as 
 \[
-\AdvCorrect{\Pi,\distr{\calS}{},r}{A} = \Prob{\ExpCorrect{\Pi,\distr{\calS}{}, r,}{A}}.
+\AdvCorrect{\Pi,\distr{\calS}{},r}{A} = \Prob{\ExpCorrect{\Pi,\distr{\calS}{}, r,}{A}=1}.
 \]
 and, overloading notation, we write $\AdvCorrect{\Pi,\distr{\calS}{},r}{t,q}$ for the maximum over all~$t$-time adversaries that ask at most~$q$ queries. Roughly, we say that a
 set-representation~$\Pi$ is $(t,q,r,\epsilon')$-correct if $\AdvCorrect{\Pi,\distr{\calS}{},r}{t,q} \leq \epsilon'$.  
