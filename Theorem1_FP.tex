@@ -87,7 +87,8 @@ Ret 1\\\\
 Ret $\Qry^{\HashOracle}(M,x)$\\\\
 %
 \oracle{$\HashOracle(x)$}\\
-$h_i(x) = F_{K_1}(x)+i \cdot \rho(x) \bmod m$, for $i\in[1,k]$\\
+for $i=1$ to $k$\\
+\nudge $h_i(x) = F_{K_1}(x)+i \cdot \rho(x) \bmod m$\\
 Ret $\left(h_1(x),\ldots,h_k(x)\right)$
 }
 }
