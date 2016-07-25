@@ -15,13 +15,19 @@ succeeds if it can output an element in~$S$.
 \item An ``indistinguishability'' definition where either $S_0$ or $S_1$ is used, and the attacker
 must determine which. Here the attacker is given $\aux$ but only oracle access to $\Qry$, and
 it is disallowed from asking any query $q$ for which $q(S_0) \neq
-q(S_1)$. \tsnote{How will the adversary know that a query satisfies
-  this in (say) the case of the classical BF?  We can, of course,
-enforce it in the experiment, but then our resource accounting risks
-overcounting the number of queries.} \jnote{I was assuming the attacker knows $S_0, S_1$.}
-\tsnote{Also, we need that, in general, $\aux$ itself
-does not leak information about~$S_0$ vs.\ $S_1$. } \jnote{Sure, this would be implied
-by the definition in this case.}
+q(S_1)$. \tsnote{I'm not convinced this is the right restriction.
+  This says that security is required \emph{only} for properties that are
+  true of both sets.  So a scheme with $M=S$ will be trivially secure
+  against set membership queries.  } \tsnote{Do you mean to
+  assume that the attacker does not ask~$q$ such that $q(S_0)=q(S_1)$
+  because these are pointless?}
+%\tsnote{How will the adversary know that a query satisfies
+%  this in (say) the case of the classical BF?  We can, of course,
+%enforce it in the experiment, but then our resource accounting risks
+%overcounting the number of queries.} \jnote{I was assuming the attacker knows $S_0, S_1$.}
+%\tsnote{Also, we need that, in general, $\aux$ itself
+%does not leak information about~$S_0$ vs.\ $S_1$. } \jnote{Sure, this would be implied
+%by the definition in this case.}
 \end{enumerate}
 
 \begin{figure}[htp]
@@ -57,7 +63,7 @@ Return~$a$
 {
 \experimentv{$\ExpPriv{\setprim}{A}$}\\
 $b \getsr \bits$\\
-$z \getsr A^{\RepOracle,\TestOracle}(\aux)$\\
+$z \getsr A^{\RepOracle,\TestOracle}()$\\
 if $z = b$ then Return 1\\
 Return 0
 }
