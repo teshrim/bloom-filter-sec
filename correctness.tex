@@ -26,7 +26,7 @@ random-oracle(s).
 \fpage{.6}{
 \hpagess{.6}{.35}
 {
-\experimentv{$\ExpCorrect{\setprim,r}{\distr{\calS}{},A}$}\\
+\experimentv{$\ExpCorrect{\setprim,\distr{\calS}{},r}{A}$}\\
 $S \getsr \distr{\calS}{}$\\
 $\mathrm{err}\gets 0$\\
 $(M,\aux) \getsr \Rep(S)$\\
@@ -50,38 +50,45 @@ Return~$a$
 
 In this experiment we track the time-complexity (relative to some
 implied model of computation) and query-complexity (i.e., number of
-queries) of the adversary~$A$.  Roughly, we say that a
-set-representation~$\Pi$ is $(t,q,r,\epsilon')$-correct if the
-probability that any adversary with time-complexity~$t$ and
-query-complexity~$q$ causes~$r$ errors with probability at
-most~$\epsilon'$.  \tsnote{Maybe not... revisit.}
-
+queries) of the adversary~$A$.  
+We define the advantage of adversary~$A$ in the correctness experiment as 
+\[
+\AdvCorrect{\Pi,\distr{\calS}{},r}{A} = \Prob{\ExpCorrect{\Pi,\distr{\calS}{}, r,}{A}}.
+\]
+and, overloading notation, we write $\AdvCorrect{\Pi,\distr{\calS}{},r}{t,q}$ for the maximum over all~$t$-time adversaries that ask at most~$q$ queries. Roughly, we say that a
+set-representation~$\Pi$ is $(t,q,r,\epsilon')$-correct if $\AdvCorrect{\Pi,\distr{\calS}{},r}{t,q} \leq \epsilon'$.  
 
 \def\bin{{\sf Bin}}
-\heading{Defining adversarial advantage. } 
-For any scheme~$\Pi$ there is a trivial,
-\emph{non-adaptive} attack against this that wins a noticible fraction of the time.  In
-particular, let $q_1,q_2,\ldots,q_T$ be uniform samples from~$\calQ$.
+\heading{Observations on trivial attacks. } 
+Let~$\Pi$ be a scheme that is $\epsilon$-correct, and consider an attack that 
+asks random queries $q_1,q_2,\ldots,q_T$, i.e., uniform samples from~$\calQ$.
 %The expected number of random queries needed to
 %find a error is $1/\epsilon$ tries; thus, an attacker making $O(t/\epsilon)$ queries succeeds with constant probability (almost always).
 %Actually, it seems worthwhile to formalize this. 
-Let $X_i$ be a random variable indicating the event $Qry(M,\aux,q_i)\neq q_i(S)$.  
-If~$\Pi$ is $\epsilon$-correct, then the probability that $X_i=1$ is at most~$\epsilon$.
-And if the experiment requires the adversary to induce~$r$ errors, the attack wins iff
-$N \stackrel{{\rm def}}{=} \sum_{i=1}^T X_i \geq r$.  Modelling the $X_i$ as independent Bernoulli trials with
-probability~$\epsilon$ gives $N$ a binomial distribution.  \fixme{Something feels wrong with this...}  
-Writing $\bin(T, \epsilon; r)$ for the probability that $N \geq r$,
-we conclude that the \emph{best} correctness we can hope for against adversaries making~$T$ queries is  $\bin(T,\epsilon; t))$. %\jnote{Need to find different terms to use for a query $q \in \mathcal{Q}$
-%and a query that the attacker makes to its oracle.}
-\tsnote{Viewed another way, we could let~$T$ be a negative binomial RV, and ask how many queries are needed (w.h.p) for $N \geq t$.} 
+Let $X_i$ be a random variable indicating the event $\Qry(M,\aux,q_i)\neq q_i(S)$.  
+The $\epsilon$-correctness of~$\Pi$ guarantees that the probability that $X_i=1$ is at most~$\epsilon$, 
+and it is tempting to model the~$X_i$ as i.i.d. Bernoulli trials with success probability~$\epsilon$.
+However, a moment's reflection shows that this is not the case.  Consider the following scheme.  Fix $|S|=n$ for all $S \in \calS$, where $n \ll |\univ|$.  For the queries, let $\calQ = \{q_x\colon \calS \to \bits \,|\, \forall x \in \univ\}$ where $\forall S \in \calS$ the predicate $q_x(S)=1 \Leftrightarrow x \in S$.  Let $\Rep(S)$ pick a random element~$s \in S$, and return $M = S \setminus \{s\}$ and $\aux = \emptystring$.  To respond to queries, let~$\Qry(M,\aux,q_x)=1$ iff $x \in M$.  It is easy to see that this scheme is $1/n$-correct; for any fixed~$S$, there are exactly~$n$ queries~$q_x$ that have probability~$1/n$  (over the coins of~$\Rep$) of causing a correctness error.  Moreover, once the coins of~$\Rep$ are fixed, there is exactly \emph{one} query that will cause an error.  Thus $\Prob{X_i=1}=1/|\univ| \ll 1/n = \epsilon$.
 
-\jnote{One option is to define the adversary's \emph{advantage} as the difference between
-its success probability and the success probability of the above,
-trivial attack. Just a thought.}
-\tsnote{Or, perhaps by recasting security
-  as distinguishing between $\Qry(M,\aux,\cdot)$ and an oracle that
-  returns 0,1 according to Bernoulli with paramter~$\epsilon$.}
-\fixme{Not clear this attack is generically applicable enough to serve as a reference/baseline.  (See email discusssion 7/23.)  Might be worth pointing out that this intuition, between non-adaptive error-probability and the expected number of queries to find an error, can be quite misleading.}
+This example is contrived, but the point is that $\epsilon$-correctness is measured over the coins of~$\Rep$, for a fixed~$S$ and query~$q$; once the coins of~$\Rep$ are fixed, it is not straightforward how to connect~$\epsilon$ to events that depend on other sources of randomness. \tsnote{Not sure if there's more to say in this section, or if what's here is already too much.}
+
+
+%
+%And if the experiment requires the adversary to induce~$r$ errors, the attack wins iff
+%$N \stackrel{{\rm def}}{=} \sum_{i=1}^T X_i \geq r$.  Modelling the $X_i$ as independent Bernoulli trials with
+%probability~$\epsilon$ gives $N$ a binomial distribution.  \fixme{Something feels wrong with this...}  
+%Writing $\bin(T, \epsilon; r)$ for the probability that $N \geq r$,
+%we conclude that the \emph{best} correctness we can hope for against adversaries making~$T$ queries is  $\bin(T,\epsilon; t))$. %\jnote{Need to find different terms to use for a query $q \in \mathcal{Q}$
+%and a query that the attacker makes to its oracle.}
+%\tsnote{Viewed another way, we could let~$T$ be a negative binomial RV, and ask how many queries are needed (w.h.p) for $N \geq t$.} 
+%
+%\jnote{One option is to define the adversary's \emph{advantage} as the difference between
+%its success probability and the success probability of the above,
+%trivial attack. Just a thought.}
+%\tsnote{Or, perhaps by recasting security
+%  as distinguishing between $\Qry(M,\aux,\cdot)$ and an oracle that
+%  returns 0,1 according to Bernoulli with paramter~$\epsilon$.}
+%\fixme{Not clear this attack is generically applicable enough to serve as a reference/baseline.  (See email discusssion 7/23.)  Might be worth pointing out that this intuition, between non-adaptive error-probability and the expected number of queries to find an error, can be quite misleading.}
 
 \heading{Comparison to Naor-Yogev definition.}
 The style of the Naor-Yogev (NY) definition is slightly different. \jnote{Even if we ignore
