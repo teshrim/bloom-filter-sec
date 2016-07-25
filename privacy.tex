@@ -57,7 +57,7 @@ Return~$a$
 {
 \experimentv{$\ExpPriv{\setprim}{A}$}\\
 $b \getsr \bits$\\
-$z \getsr A^{\RepOracle\TestOracle}(\aux)$\\
+$z \getsr A^{\RepOracle,\TestOracle}(\aux)$\\
 if $z = b$ then Return 1\\
 Return 0
 }
