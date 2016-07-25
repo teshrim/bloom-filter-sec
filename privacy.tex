@@ -48,7 +48,7 @@ $S \getsr \distr{\calS}{}$\\
 $(M,\aux) \getsr \Rep(S)$\\
 $z \getsr A(M,\aux)$\\
 if $z \in S$ then Return 1\\
-Return 0
+Return 0\\
 }
 %
 {
@@ -65,7 +65,7 @@ Return~$a$
 $b \getsr \bits$\\
 $z \getsr A^{\RepOracle,\TestOracle}()$\\
 if $z = b$ then Return 1\\
-Return 0
+Return 0\\
 }
 %
 {
@@ -81,9 +81,12 @@ Return $\aux$\\
 \medskip
 \oracle{$\TestOracle(q)$}\\
 $a \gets \Qry(M,\aux,q)$\\
-Return~$a$
+Return~$a$\\
 }
 }
-\caption{Privacy notions. (Still playing...)} 
+\caption{Privacy notions. {\bf Left:} ``One-wayness'' style
+  definitions. The top is a weaker notion, because the representation
+  is hidden from the adversary. {\bf Right:} An
+  ``indistinguishability'' style notion. (Still playing...)} 
 \label{fig:privacy}
 \end{figure}
