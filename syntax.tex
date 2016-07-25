@@ -52,7 +52,7 @@ All of the constructions of set-representations that we will consider have the p
 It is not hard to see Bloom filters are one possible instantiation a set-representation primitive.
 Fix an $n \geq 0$, let $\mathcal{S}=[\univ]^n$, and fix $\Sigma=\bits$.  
 Next, let $\calQ$ be a set of predicates $q_x$, one for each $x \in \univ$,
-such that $q_x(S)=1$ iff $x \in S$.  Define algorithm~$\Rep$, with integers $k, m > 0$ and a description of a hash function family~$\mathcal{H}=\{h \colon \univ \to \{1,2,\ldots,m\}\}$ hardwared into it, to sample hash functions $h_1, \ldots, h_k$ from~$\mathcal{H}$ and then computes an $m$-bit array in the standard way. It sets $\aux = (h_1, \ldots, h_k)$ and $M$ to be the bit array, and returns these.  The algorithm~$\Qry$ is defined so that, on input $(M,\aux,q_x)$, it returns 1 iff $M[h_1(x)]=1 \wedge M[h_2(x)]=1 \wedge \cdots \wedge M[h_k(x)]=1$ holds.
+such that $q_x(S)=1$ iff $x \in S$.  Define algorithm~$\Rep$, with functions $k=k(|S|), m=m(|S|)$ and a description of a hash function family~$\mathcal{H}=\{h \colon \univ \to \{1,2,\ldots,m\}\}$ hardwired into it, to sample hash functions $h_1, \ldots, h_k$ from~$\mathcal{H}$ and then computes an $m$-bit array in the standard way. It sets $\aux = (h_1, \ldots, h_k)$ and $M$ to be the bit array, and returns these.  The algorithm~$\Qry$ is defined so that, on input $(M,\aux,q_x)$, it returns 1 iff $M[h_1(x)]=1 \wedge M[h_2(x)]=1 \wedge \cdots \wedge M[h_k(x)]=1$ holds.
   %\tsnote{If $\mathcal{Q}=U$ and we use the
 %  semantics you suggest, then isn't Equation~\ref{eqn:correctness}
 %  both correctness and soundness?  If so, I don't see how this
