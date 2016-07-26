@@ -157,7 +157,7 @@ q(S_1)$. \tsnote{I'm not convinced this is the right restriction.
 
 \begin{figure}[htbp]
 \centering
-\hfpages{.475}{
+\hfpages{.495}{
 \hpagess{.5}{.45}
 {
 \experimentv{$\ExpWPriv{\setprim,\distr{\calS}{}}{A}$}\\
@@ -184,7 +184,7 @@ Return~$a$
 }
 %
 {
-\hpagess{.5}{.475}
+\hpagess{.485}{.5}
 {
 \experimentv{$\ExpPrivInd{\setprim,\distr{\calS}{}}{A}$}\\
 $b \getsr \bits$\\
@@ -202,7 +202,7 @@ Return~$a$\\
 
 \medskip
 \oracle{$\RepOracle(S_0,S_1)$}\\
-if $\mathrm{used}=\true$ then Ret $\bot$\\
+if $\mathrm{used}=\true$ then Return $\bot$\\
 %if $|S_0|\neq|S_1|$ then \\
 %\nudge Ret $\bot$\\
 $S_0,S_1 \getsr \distr{\calS}{}$\\
