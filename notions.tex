@@ -184,7 +184,7 @@ Return~$a$
 }
 %
 {
-\hpagess{.5}{.45}
+\hpagess{.5}{.475}
 {
 \experimentv{$\ExpPrivInd{\setprim}{A}$}\\
 $b \getsr \bits$\\
@@ -196,10 +196,9 @@ Return 0\\
 {
 %\oracle{$\RepOracle(S_0,S_1)$}\\
 \oracle{$\RepOracle()$}\\
-if $\mathrm{used}=\true$ then \\
-\nudge Ret $\bot$\\
-if $|S_0|\neq|S_1|$ then \\
-\nudge Ret $\bot$\\
+if $\mathrm{used}=\true$ then Ret $\bot$\\
+%if $|S_0|\neq|S_1|$ then \\
+%\nudge Ret $\bot$\\
 $S_0,S_1 \getsr \distr{\calS}{}$\\
 $\mathrm{used}=\true$\\
 $(M,\aux) \getsr \Rep(S_b)$\\
