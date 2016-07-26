@@ -155,9 +155,9 @@ q(S_1)$. \tsnote{I'm not convinced this is the right restriction.
 %by the definition in this case.}
 \end{enumerate}
 
-\begin{figure}[htp]
+\begin{figure}[htbp]
 \centering
-\hfpages{.45}{
+\hfpages{.475}{
 \hpagess{.5}{.45}
 {
 \experimentv{$\ExpWPriv{\setprim,\distr{\calS}{}}{A}$}\\
@@ -188,14 +188,20 @@ Return~$a$
 {
 \experimentv{$\ExpPrivInd{\setprim,\distr{\calS}{}}{A}$}\\
 $b \getsr \bits$\\
-$z \getsr A^{\RepOracle,\TestOracle}$\\
-if $z = b$ then Return 1\\
+$S_0,S_1 \getsr \distr{\calS}{}$\\
+$(M,\aux) \getsr \Rep(S_b)$\\
+$b' \getsr A^{\TestOracle}(S_0,S_1,\aux)$\\
+if $b' = b$ then Return 1\\
 Return 0\\
 }
 %
 {
-%\oracle{$\RepOracle(S_0,S_1)$}\\
-\oracle{$\RepOracle()$}\\
+\oracle{$\TestOracle(q)$}\\
+$a \gets \Qry(M,\aux,q)$\\
+Return~$a$\\
+
+\medskip
+\oracle{$\RepOracle(S_0,S_1)$}\\
 if $\mathrm{used}=\true$ then Ret $\bot$\\
 %if $|S_0|\neq|S_1|$ then \\
 %\nudge Ret $\bot$\\
@@ -204,16 +210,12 @@ $\mathrm{used}=\true$\\
 $(M,\aux) \getsr \Rep(S_b)$\\
 Return $(S_0,S_1,\aux)$\\
 
-\medskip
-\oracle{$\TestOracle(q)$}\\
-$a \gets \Qry(M,\aux,q)$\\
-Return~$a$\\
 }
 }
 \caption{Privacy notions. {\bf Left:} ``One-wayness'' style
   definitions. The top is a weaker notion, because the representation
   is hidden from the adversary. {\bf Right:} An
-  ``indistinguishability'' style notion. (Still playing...)} 
+  ``indistinguishability'' style notion. (Still playing... ignore unused oracles)} 
 \label{fig:privacy}
 \end{figure}
 
