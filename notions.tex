@@ -1,0 +1,214 @@
+\section{Security Notions}
+\tsnote{intro text}
+
+\subsection{Correctness Against Adaptive Adversaries}
+As highlighted by Naor and Yogev, Equation~(\ref{eqn:correctness}) is a non-adaptive version of correctness;
+we are interested in defining an adaptive (i.e., adversarial) notion
+of correctness.   Figure~\ref{fig:correctness} describes a security
+experiment that captures such a notion.
+
+First, a set~$S$ is chosen according to some
+distribution~$\distr{\calS}{}$ over the collection of multisets
+$\mathcal{S}$ associated to~$\Pi=(\Rep,\Qry)$, and then
+$\Rep(S)$ is run to generate $(M,\aux)$.
+%(Unless stated otherwise, we assume security holds for all distributions and thus for all sets $S$.)
+Adversary~$A$ is given~$\calS$ and $\aux$~as input; it is
+provided an oracle~$\TestOracle$ that, on input a query~$q \in \calQ$,
+computes (and returns) the result of $\Qry(M,\aux,q)$, and increments
+a counter if this result is in error.  The adversary wins if it
+manages to cause at least~$r>0$ such errors among its queries.
+
+The notion is lifted to the random-oracle model by providing
+$\Rep,\Qry$ and the adversary~$A$ with oracle access to the
+random-oracle(s).
+
+
+
+\begin{figure}[htp]
+\centering
+\fpage{.6}{
+\hpagess{.6}{.35}
+{
+\experimentv{$\ExpCorrect{\setprim,\distr{\calS}{},r}{A}$}\\
+$S \getsr \distr{\calS}{}$\\
+$\mathrm{err}\gets 0$\\
+$(M,\aux) \getsr \Rep(S)$\\
+$z \getsr A^{\TestOracle}(S,\aux)$\\
+if $\mathrm{err} < r$ then Return 0\\
+Return 1
+}
+%
+{
+\oracle{$\TestOracle(q)$}\\
+$a \gets \Qry(M,\aux,q)$\\
+if $a \neq q(S)$ then \\
+\nudge $\mathrm{err}\gets\mathrm{err}+1$\\
+Return~$a$
+}
+}
+\caption{Correctness of~$\Pi$ against (adaptive) adversary~$A$, when
+  the target multiset~$S$ is sampled from~$\calS$ according to distribution~$\distr{\calS}{}$.} 
+\label{fig:correctness}
+\end{figure}
+
+In this experiment we track the time-complexity (relative to some
+implied model of computation) and query-complexity (i.e., number of
+queries) of the adversary~$A$.  
+We define the advantage of adversary~$A$ in the correctness experiment as 
+$\AdvCorrect{\Pi,\distr{\calS}{},r}{A} = \Prob{\ExpCorrect{\Pi,\distr{\calS}{}, r,}{A}=1}$.
+Overloading notation, we write $\AdvCorrect{\Pi,\distr{\calS}{},r}{t,q}$ for the maximum over all~$t$-time adversaries that ask at most~$q$ queries. Roughly, we say that a
+set-representation~$\Pi$ is $(t,q,r,\epsilon')$-correct if $\AdvCorrect{\Pi,\distr{\calS}{},r}{t,q} \leq \epsilon'$.  
+
+\def\bin{{\sf Bin}}
+\heading{Observations on trivial attacks. } 
+Let~$\Pi$ be a scheme that is $\epsilon$-correct, and consider an attack that 
+asks random queries $q_1,q_2,\ldots,q_T$, i.e., uniform samples from~$\calQ$.
+%The expected number of random queries needed to
+%find a error is $1/\epsilon$ tries; thus, an attacker making $O(t/\epsilon)$ queries succeeds with constant probability (almost always).
+%Actually, it seems worthwhile to formalize this. 
+Let $X_i$ be a random variable indicating the event $\Qry(M,\aux,q_i)\neq q_i(S)$.  
+The $\epsilon$-correctness of~$\Pi$ guarantees that the probability that $X_i=1$ is at most~$\epsilon$, 
+and it is tempting to model the~$X_i$ as i.i.d. Bernoulli trials with success probability~$\epsilon$.
+However, a moment's reflection shows that this is not the case.  Concretely, consider the following scheme.  Fix $|S|=n$ for all $S \in \calS$, where $n \ll |\univ|$.  For the queries, let $\calQ = \{q_x\colon \calS \to \bits \,|\, \forall x \in \univ\}$ where $\forall S \in \calS$ the predicate $q_x(S)=1 \Leftrightarrow x \in S$.  Let $\Rep(S)$ pick a random element~$s \in S$, and return $M = S \setminus \{s\}$ and $\aux = \emptystring$.  To respond to queries, let~$\Qry(M,\aux,q_x)=1$ iff $x \in M$.  It is easy to see that this scheme is $1/n$-correct; for any fixed~$S$, there are exactly~$n$ queries~$q_x$ that have probability~$1/n$  (over the coins of~$\Rep$) of causing a correctness error, and the remaining $|\univ|-n$ queries have probability zero of causing an error.  Moreover, once the coins of~$\Rep$ are fixed, there is exactly \emph{one} query that will cause an error.  Thus for random queries from~$Q$, for all~$i\in[T]$ we have $\Prob{X_i=1}=1/|\univ| \ll 1/n = \epsilon$.
+
+This example is contrived, but the point is that $\epsilon$-correctness is measured over the coins of~$\Rep$, for a fixed~$S$ and query~$q$; once the coins of~$\Rep$ are fixed, it is not straightforward how to connect~$\epsilon$ to events that depend on other sources of randomness. \tsnote{Not sure if there's more to say in this section, or if what's here is already too much.}
+
+
+%
+%And if the experiment requires the adversary to induce~$r$ errors, the attack wins iff
+%$N \stackrel{{\rm def}}{=} \sum_{i=1}^T X_i \geq r$.  Modelling the $X_i$ as independent Bernoulli trials with
+%probability~$\epsilon$ gives $N$ a binomial distribution.  \fixme{Something feels wrong with this...}  
+%Writing $\bin(T, \epsilon; r)$ for the probability that $N \geq r$,
+%we conclude that the \emph{best} correctness we can hope for against adversaries making~$T$ queries is  $\bin(T,\epsilon; t))$. %\jnote{Need to find different terms to use for a query $q \in \mathcal{Q}$
+%and a query that the attacker makes to its oracle.}
+%\tsnote{Viewed another way, we could let~$T$ be a negative binomial RV, and ask how many queries are needed (w.h.p) for $N \geq t$.} 
+%
+%\jnote{One option is to define the adversary's \emph{advantage} as the difference between
+%its success probability and the success probability of the above,
+%trivial attack. Just a thought.}
+%\tsnote{Or, perhaps by recasting security
+%  as distinguishing between $\Qry(M,\aux,\cdot)$ and an oracle that
+%  returns 0,1 according to Bernoulli with paramter~$\epsilon$.}
+%\fixme{Not clear this attack is generically applicable enough to serve as a reference/baseline.  (See email discusssion 7/23.)  Might be worth pointing out that this intuition, between non-adaptive error-probability and the expected number of queries to find an error, can be quite misleading.}
+
+\heading{Comparison to Naor-Yogev definition.}
+The style of the Naor-Yogev (NY) definition is slightly different. \jnote{Even if we ignore
+all the other issues, chief among them the inconsistent way it treats the hash functions.}
+Lifting their definition to our setting, the experiment is similar but the attacker
+succeeds only if it outputs a single query $q$ for which $\Qry( M,
+\aux, q) \neq q(S)$  \emph{subject to the restriction that it did not query $q$ to its $\Qry$ oracle}.
+It will be interesting to understand formally the relation between our definition and theirs.
+Here are some observations:
+\begin{enumerate}
+\item Say a scheme is $\epsilon_{NY}$-secure under the NY definition.
+Then we claim it is $(t,q, r, q\epsilon_{NY}/r)$-correct. To see
+this, assume not. Then there is a $t$-time attacker~$A$ that, with
+probability at least $\epsilon'=q\epsilon_{NY}/r$,
+issues~$q$ Test-queries of which at least~$r$ cause errors. If we simply run~$A$ and then choose a random Test-query to
+output, we succeed with probability at least $\epsilon' \cdot r/q$. It is unclear whether this is tight.
+
+\item There is a contrived scheme that is $(t, q, 2, 0)$-correct but not NY-secure at all; the basic idea is
+to have a set-representation that always has \emph{exactly one} false positive that is easy to find
+given the public information.
+
+\item If a scheme is $(t,q,1,\epsilon)$-correct, then it is also $\epsilon$-secure under the NY definition,
+at least for attackers making at most $q-1$ queries.
+This is immediate.
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Notions of Privacy}
+One can also consider the orthogonal notion of privacy for a set-representation.
+\jnote{Actually, I am now unsure what the right way to define it is. It seems natural
+to give the attacker $\aux$. But if we give them $\aux$ and $M$ then they have everything.
+If $S$ has high min-entropy (element-wise), then it might still be
+possible to have security here.}\tsnote{I think we will always bump up
+against the (element-wise) min-entropy of the distribution over~$S$,
+at least in the ``one-wayness'' style definition that I had been imagining. }
+There are several possible definitions:
+\begin{enumerate}
+\item A ``one-wayness'' definition where $S$ has high min-entropy (element-wise), and we
+give the attacker $\aux$ and either $M$ or oracle access to $\Qry$. The attacker
+succeeds if it can output an element in~$S$.
+
+\item An ``indistinguishability'' definition where either $S_0$ or $S_1$ is used, and the attacker
+must determine which. Here the attacker is given $\aux$ but only oracle access to $\Qry$, and
+it is disallowed from asking any query $q$ for which $q(S_0) \neq
+q(S_1)$. \tsnote{I'm not convinced this is the right restriction.
+  This says that security is required \emph{only} for properties that are
+  true of both sets.  So a scheme with $M=S$ will be trivially secure
+  against set membership queries.  } \tsnote{Do you mean to
+  assume that the attacker does not ask~$q$ such that $q(S_0)=q(S_1)$
+  because these are pointless?  Otherwise, I don't see a need for restrictions.}
+%\tsnote{How will the adversary know that a query satisfies
+%  this in (say) the case of the classical BF?  We can, of course,
+%enforce it in the experiment, but then our resource accounting risks
+%overcounting the number of queries.} \jnote{I was assuming the attacker knows $S_0, S_1$.}
+%\tsnote{Also, we need that, in general, $\aux$ itself
+%does not leak information about~$S_0$ vs.\ $S_1$. } \jnote{Sure, this would be implied
+%by the definition in this case.}
+\end{enumerate}
+
+\begin{figure}[htp]
+\centering
+\hfpages{.45}{
+\hpagess{.5}{.45}
+{
+\experimentv{$\ExpWPriv{\setprim,\distr{\calS}{}}{A}$}\\
+$S \getsr \distr{\calS}{}$\\
+$(M,\aux) \getsr \Rep(S)$\\
+$z \getsr A^{\TestOracle}(\aux)$\\
+if $z \in S$ then Return 1\\
+Return 0
+
+\medskip
+\experimentv{$\ExpPriv{\setprim,\distr{\calS}{}}{A}$}\\
+$S \getsr \distr{\calS}{}$\\
+$(M,\aux) \getsr \Rep(S)$\\
+$z \getsr A(M,\aux)$\\
+if $z \in S$ then Return 1\\
+Return 0\\
+}
+%
+{
+\oracle{$\TestOracle(q)$}\\
+$a \gets \Qry(M,\aux,q)$\\
+Return~$a$
+}
+}
+%
+{
+\hpagess{.5}{.45}
+{
+\experimentv{$\ExpPrivInd{\setprim}{A}$}\\
+$b \getsr \bits$\\
+$z \getsr A^{\RepOracle,\TestOracle}()$\\
+if $z = b$ then Return 1\\
+Return 0\\
+}
+%
+{
+\oracle{$\RepOracle(S_0,S_1)$}\\
+if $\mathrm{used}=\true$ then \\
+\nudge Ret $\bot$\\
+if $|S_0|\neq|S_1|$ then \\
+\nudge Ret $\bot$\\
+$\mathrm{used}=\true$\\
+$(M,\aux) \getsr \Rep(S_b)$\\
+Return $\aux$\\
+
+\medskip
+\oracle{$\TestOracle(q)$}\\
+$a \gets \Qry(M,\aux,q)$\\
+Return~$a$\\
+}
+}
+\caption{Privacy notions. {\bf Left:} ``One-wayness'' style
+  definitions. The top is a weaker notion, because the representation
+  is hidden from the adversary. {\bf Right:} An
+  ``indistinguishability'' style notion. (Still playing...)} 
+\label{fig:privacy}
+\end{figure}
