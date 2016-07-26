@@ -217,7 +217,7 @@ Return~$a$\\
 \end{figure}
 
 \heading{Relationships among notions.}
-\tsnote{Seems that correctness and privacy are orthogonal?  Not sure about relationship between different notions of privacy.}
+\tsnote{Seems that correctness and privacy are orthogonal, right?  Even if we restrict to ``compressing'' Rep algorithms (for some appropriate definition of ``compressing'')?  Not sure about relationship between different notions of privacy.}
 \tsnote{Not even clear how to reduce correctness to the stronger version of one-wayness.  In the correctness experiment, you get~$(S,\aux)$ but not~$M$; whereas in the stronger version of one-wayness, the adversary expects~$(M,\aux)$ as input.}
 \tsnote{Reducing correctness to the weaker version is syntactically possible, but not clear how to connect the success events.  In the one-wayness game, you win by outputing an element of~$S$; but how does this lead to finding an error-inducing query?  Maybe the one-wayness attacker makes no queries, and just outputs a point~$z$.  Then the correctness attacker does what?  Ask some query~$q_z$ related to~$z$ (remember, queries are not syntactically restricted to set membership!) and see if the oracle returns the true value $q_z(S)$?  This is pretty complicated... Note that any query~$q$ the one-wayness adversary asks can be checked locally against the true value~$q(S)$ by the correctness adversary.  But still, it's not clear how to do a quality reduction.  }
 \tsnote{Likewise the other way: the one-wayness adversary does not get~$S$, and yet needs to provide this to the correctness adversary.}
