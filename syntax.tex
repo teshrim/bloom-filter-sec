@@ -20,10 +20,14 @@ is a tuple $\setprim=(\Sigma,\Gamma,\calS,\calQ,\Rep, \Qry)$ where:
 \item $\Qry\colon \Sigma^* \times \bits^* \times \calQ \to \Gamma$ is a deterministic \emph{query-evaluation} algorithm, taking as input $M, \aux, q$, and returns \emph{answer} $a \in \Gamma$.
 \end{itemize}
 Let $\mathrm{Err}(S,q,M,\aux)$ be a predicate that is true iff $\Qry(M, \aux, q) \neq q(S)$.  Then a data structure
-has \emph{error-probability} $\epsilon$, if
-$\max_{S,q}\Pr[(M,\aux) \getsr \Rep(S) : \mathrm{Err}(S,q,M,\aux)=1 ] \leq \epsilon$,
+has \emph{error-probability} $\epsilon$ if
+\[
+\max_{S,q}\Pr[(M,\aux) \getsr \Rep(S) : \mathrm{Err}(S,q,M,\aux)=1 ] \leq \epsilon
+\]
 where the maximum is over $S \in \mathcal{S}$ and $q \in \mathcal{Q}$.  Relatedly, it has \emph{error-rate} $\tilde{\epsilon}$ if
-$\max_{S}\Pr[(M,\aux) \getsr \Rep(S);\, q \getsr \calQ : \mathrm{Err}(S,q,M,\aux)=1] \leq \tilde{\epsilon}$.
+\[
+\max_{S}\Pr[(M,\aux) \getsr \Rep(S);\, q \getsr \calQ : \mathrm{Err}(S,q,M,\aux)=1] \leq \tilde{\epsilon}.
+\]
 \end{definition}
 
 \noindent
