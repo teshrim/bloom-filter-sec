@@ -2,10 +2,9 @@
 \label{sec:security-notions}
 \tsnote{intro text}
 Following NY, we are interested in defining an adaptive (i.e.,
-adversarial) notion of correctness.   Figure~\ref{fig:correctness} describes a security experiment 
-that captures such a notion.
-
-In addition to correctness, we establish notions of privacy for set-representations.  We explore two notions.  The first has the flavor of a one-wayness game, in which the adversary is given the auxiliary information~$\aux$ and, either the representation~$M$ or the abillity to call an oracle that evaluates $\Qry(M,\aux,q)$ on queries~$q$ of its choosing.  At the end of this game, the adversary must output some point in the set represented by~$M$.  In the second privacy notion, the adversary presents two sets~$S_0$ and $S_1$ (of equal size) and a representation~$M$ is created for one of these two. Then the adversary is given $\aux$ and oracle access to $\Qry(M,\aux,q)$, and it must decide which set~$M$ represents.
+adversarial) notion of correctness.   
+In addition to correctness, we establish three notions of privacy for
+set-representations. The first two have the flavor of a one-wayness game, in which the adversary is given the auxiliary information~$\aux$ and, either the representation~$M$ or the abillity to call an oracle that evaluates $\Qry(M,\aux,q)$ on queries~$q$ of its choosing.  At the end of this game, the adversary must output some point in the set represented by~$M$.  In the second privacy notion, the adversary presents two sets~$S_0$ and $S_1$ (of equal size) and a representation~$M$ is created for one of these two. Then the adversary is given $\aux$ and oracle access to $\Qry(M,\aux,q)$, and it must decide which set~$M$ represents.
 
 \subsection{Correctness Against Adaptive Adversaries}
 
