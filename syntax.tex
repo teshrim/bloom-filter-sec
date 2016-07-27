@@ -1,4 +1,4 @@
-\section{Secure Multiset Representation}
+\section{Secure Data Structures}
 \def\pub{{\sf pub}}
 \def\aux{{\sf aux}}
 
@@ -7,24 +7,27 @@ When~$\univ$ is a set and $n>0$ is an integer, we let $[\univ]^n$ denote the set
 
 Algorithms may be provided black-box access to one or more oracles, which we write as superscripts, e.g., $F^{O_1,O_2,\ldots}$.  An \emph{adversary} is a randomized algorithm
 
-\heading{Static (Multi)set-representations. }  We being by defining a general primitive that produces a representation of a given multiset, and provides a mechanism to answer a specified collection of questions about that multiset.  Informally, the representation should serve as a good approximation of the multiset, at least with respect to the allowed questions.
+\heading{(Set-multiplicity) Data Structures.}  We being by defining a general primitive that produces a representation of a given multiset, and provides a mechanism to answer a specified collection of questions about that multiset.  Informally, the representation should serve as a good approximation of the multiset, at least with respect to the allowed questions.
 \begin{definition} 
-Fix a universe~$\univ$ and an alphabet~$\Sigma$.  A \emph{static (multi)set-representation primitive} (or just set-representation) is a pair of algorithms $\setprim=(\Rep, \Qry)$
-parameterized by a collection $\mathcal{S}$ of multisets, each consisting of elements from~$U$ and a collection
-of supported queries $\mathcal{Q}=\{q \colon \mathcal{S} \to \mathbb{R}\}$, where:
+Fix a non-empty set~$\univ$. A \emph{static data structure} (over universe~$\univ$)
+is a tuple $\setprim=(\Sigma,\Gamma,\calS,\calQ,\Rep, \Qry)$ where:
 \begin{itemize}
-\item $\Rep$ is a randomized algorithm taking as input $S \in \mathcal{S}$,
-and outputting a pair of strings $(M,\aux)$, the \emph{representation} $M \in \Sigma^*$ (of~$S$) 
-and the \emph{auxilliary information} $\aux \in \bits^*$ (of~$M$).
-\item $\Qry$ is a deterministic algorithm that takes as input $M, \aux$,
-and a query $q\in \mathcal{Q}$, and returns value~$a$.
+\item $\Sigma$ is the \emph{representation alphabet}
+\item $\Gamma$ is the set of possible \emph{query answers}
+\item $\calS$ is a set  of multisets over universe~$\univ$
+\item $\mathcal{Q}=\{q \colon \mathcal{S} \to \Gamma\}$ is a set of supported \emph{queries}
+\item $\Rep \colon \mathcal{S} \to \Sigma^* \times \bits^*$ is a randomized \emph{representation algorithm}, taking as input $S \in \mathcal{S}$, and outputting a \emph{representation} $M \in \Sigma^*$ and some \emph{auxilliary information} $\aux \in \bits^*$
+\item $\Qry\colon \Sigma^* \times \bits^* \times \calQ \to \Gamma$ is a deterministic \emph{query-evaluation} algorithm, taking as input $M, \aux, q$, and returns \emph{answer} $a \in \Gamma$.
 \end{itemize}
-A set-representation is \emph{$\epsilon$-correct} if, for all $S \in \mathcal{S}$ and
-all $q \in \mathcal{Q}$, it holds that
-\begin{eqnarray}
-\Pr[(M,\aux) \getsr \Rep(S) : \Qry(M, \aux, q) \neq q(S)] \leq \epsilon, \label{eqn:correctness}
-\end{eqnarray}
-%where $q(S)$ denotes the correct answer to the query $q$ on the set~$S$.
+Let $\mathrm{Err}(S,q,M,\aux)$ be a predicate that is true iff $\Qry(M, \aux, q) \neq q(S)$.  Then a data structure
+\emph{$\epsilon$-correct}, or has (worst-case) error probability $\epsilon$, if
+\[
+\max_{S,q}\Pr[(M,\aux) \getsr \Rep(S) : \mathrm{Err}(S,q,M,\aux)=1 ] \leq \epsilon, \label{eqn:correctness}
+\]
+where the maximum is over $S \in \mathcal{S}$ and $q \in \mathcal{Q}$.  Relatedly, it has \emph{error rate} $\tilde{\epsilon}$ if
+\[
+\max_{S}\Pr[(M,\aux) \getsr \Rep(S);\, q \getsr \calQ : \mathrm{Err}(S,q,M,\aux)=1] \leq \tilde{\epsilon} \label{eqn:error_rate}
+\]
 \end{definition}
 
 \noindent
@@ -32,7 +35,11 @@ The definition can be lifted to the random-oracle model
 by giving $\Rep, \Qry$ access to a random oracle. In that case,
 the probability in Equation~(\ref{eqn:correctness}) is also taken over choice of the random oracle.
 
-All of the constructions of set-representations that we will consider have the property that~$|M|$ does not depend on the coins of~$\Rep$. Thus we assume that~$|M|$ depends only on~$|S|$.  In general this need not be true, but the assumption does not restrict our syntax from capturing natural constructions (e.g., those seen in practice), and it makes it easier to state our security notions.
+All of the data structures that we will consider have the property that~$|M|$ does not depend on the coins of~$\Rep$. Thus we assume that~$|M|$ depends only on~$|S|$.  In general this need not be true, but the assumption does not restrict our syntax from capturing natural constructions (e.g., those seen in practice), and it makes it easier to state our security notions.
+
+Our particular focus will be on data structures that support multiplicity queries, of which set-membership queries are a special case.  
+\begin{definition} A \emph{set-multipicity data structure} is a data structure with $D=\mathbb{N}$ and where $\calQ=\{q_x \,|\, x \in \univ\}$ where $q_x(S)$ is defined to be the multiplicity of~$x$ in the multiset~$S$.
+\end{definition}
 %
 %\todo{Readdress issue of representation size.  A general statement might be something like `` The \emph{size} of a set-representation is the maximum (bit)length of any~$M$ that can be output by $\Rep$.''  But all of the natural constructions will have representation whose size will not depend on the coins of $\Rep$, i.e. they depend on $|S|$, number of hash functions, desired error rate. }
 
@@ -49,9 +56,9 @@ All of the constructions of set-representations that we will consider have the p
 % you need to allocate to represent this set \emph{securely}.''}
 
 \heading{Examples.}
-It is not hard to see Bloom filters are one possible instantiation a set-representation primitive.
-Fix an $n \geq 0$, let $\mathcal{S}=[\univ]^n$, and fix $\Sigma=\bits$.  
-Next, let $\calQ$ be a set of predicates $q_x$, one for each $x \in \univ$,
+It is not hard to see Bloom filters are one possible instantiation a set-multiplicity data structure.
+Fix an $n \geq 0$, let $\mathcal{S}=[\univ]^n$, and let $\Sigma=\Gamma\bits$.  
+Let $\calQ$ be a set of predicates $q_x$, one for each $x \in \univ$,
 such that $q_x(S)=1$ iff $x \in S$.  Define algorithm~$\Rep$, with functions $k=k(|S|), m=m(|S|)$ and a description of a hash function family~$\mathcal{H}=\{h \colon \univ \to \{1,2,\ldots,m\}\}$ hardwired into it, to sample hash functions $h_1, \ldots, h_k$ from~$\mathcal{H}$ and then computes an $m$-bit array in the standard way. It sets $\aux = (h_1, \ldots, h_k)$ and $M$ to be the bit array, and returns these.  The algorithm~$\Qry$ is defined so that, on input $(M,\aux,q_x)$, it returns 1 iff $M[h_1(x)]=1 \wedge M[h_2(x)]=1 \wedge \cdots \wedge M[h_k(x)]=1$ holds.
   %\tsnote{If $\mathcal{Q}=U$ and we use the
 %  semantics you suggest, then isn't Equation~\ref{eqn:correctness}
