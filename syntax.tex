@@ -28,6 +28,7 @@ where the maximum is over $S \in \mathcal{S}$ and $q \in \mathcal{Q}$.  Relatedl
 \[
 \max_{S}\Pr[(M,\aux) \getsr \Rep(S);\, q \getsr \calQ : \mathrm{Err}(S,q,M,\aux)=1] \leq \tilde{\epsilon}.
 \]
+\hfill\dqed
 \end{definition}
 
 \noindent
@@ -44,6 +45,7 @@ We will sometimes say that a data structure is $(1-\epsilon)$-correct, meaning i
 \heading{Set-multiplicity Data Structures. }
 Our particular focus will be on data structures that support multiplicity queries, of which set-membership queries are a special case.  
 \begin{definition} A \emph{set-multipicity data structure} is a data structure with $D=\mathbb{N}$ and where $\calQ=\{q_x \,|\, x \in \univ\}$ where $q_x(S)$ is defined to be the multiplicity of~$x$ in the multiset~$S$.
+\hfill\dqed
 \end{definition}
 %
 %\todo{Readdress issue of representation size.  A general statement might be something like `` The \emph{size} of a set-representation is the maximum (bit)length of any~$M$ that can be output by $\Rep$.''  But all of the natural constructions will have representation whose size will not depend on the coins of $\Rep$, i.e. they depend on $|S|$, number of hash functions, desired error rate. }

@@ -1,9 +1,8 @@
 \section{Security Notions}
 \label{sec:security-notions}
 \tsnote{intro text}
-As highlighted by Naor and Yogev, Equation~(\ref{eqn:correctness}) is a non-adaptive version of correctness;
-we are interested in defining an adaptive (i.e., adversarial) notion
-of correctness.   Figure~\ref{fig:correctness} describes a security experiment 
+Following NY, we are interested in defining an adaptive (i.e.,
+adversarial) notion of correctness.   Figure~\ref{fig:correctness} describes a security experiment 
 that captures such a notion.
 
 In addition to correctness, we establish notions of privacy for set-representations.  We explore two notions.  The first has the flavor of a one-wayness game, in which the adversary is given the auxiliary information~$\aux$ and, either the representation~$M$ or the abillity to call an oracle that evaluates $\Qry(M,\aux,q)$ on queries~$q$ of its choosing.  At the end of this game, the adversary must output some point in the set represented by~$M$.  In the second privacy notion, the adversary presents two sets~$S_0$ and $S_1$ (of equal size) and a representation~$M$ is created for one of these two. Then the adversary is given $\aux$ and oracle access to $\Qry(M,\aux,q)$, and it must decide which set~$M$ represents.
@@ -12,7 +11,7 @@ In addition to correctness, we establish notions of privacy for set-representati
 
 First, a set~$S$ is chosen according to some
 distribution~$\distr{\calS}{}$ over the collection of multisets
-$\mathcal{S}$ associated to~$\Pi=(\Rep,\Qry)$, and then
+$\mathcal{S}$ associated to~$\Pi$, and then
 $\Rep(S)$ is run to generate $(M,\aux)$.
 %(Unless stated otherwise, we assume security holds for all distributions and thus for all sets $S$.)
 Adversary~$A$ is given~$\calS$ and $\aux$~as input; it is
@@ -64,17 +63,23 @@ set-representation~$\Pi$ is $(t,q,r,\epsilon')$-correct if $\AdvCorrect{\Pi,\dis
 
 \def\bin{{\sf Bin}}
 \heading{Observations on trivial attacks. } 
-Let~$\Pi$ be a scheme that is $\epsilon$-correct, and consider an attack that 
+Let~$\Pi$ be a scheme that is $(1-\epsilon)$-correct, and consider an attack that 
 asks random queries $q_1,q_2,\ldots,q_T$, i.e., uniform samples from~$\calQ$.
 %The expected number of random queries needed to
 %find a error is $1/\epsilon$ tries; thus, an attacker making $O(t/\epsilon)$ queries succeeds with constant probability (almost always).
 %Actually, it seems worthwhile to formalize this. 
-Let $X_i$ be a random variable indicating the event $\Qry(M,\aux,q_i)\neq q_i(S)$.  
-The $\epsilon$-correctness of~$\Pi$ guarantees that the probability that $X_i=1$ is at most~$\epsilon$, 
-and it is tempting to model the~$X_i$ as i.i.d. Bernoulli trials with success probability~$\epsilon$.
-However, a moment's reflection shows that this is not the case.  Concretely, consider the following scheme.  Fix $|S|=n$ for all $S \in \calS$, where $n \ll |\univ|$.  For the queries, let $\calQ = \{q_x\colon \calS \to \bits \,|\, \forall x \in \univ\}$ where $\forall S \in \calS$ the predicate $q_x(S)=1 \Leftrightarrow x \in S$.  Let $\Rep(S)$ pick a random element~$s \in S$, and return $M = S \setminus \{s\}$ and $\aux = \emptystring$.  To respond to queries, let~$\Qry(M,\aux,q_x)=1$ iff $x \in M$.  It is easy to see that this scheme is $1/n$-correct; for any fixed~$S$, there are exactly~$n$ queries~$q_x$ that have probability~$1/n$  (over the coins of~$\Rep$) of causing a correctness error, and the remaining $|\univ|-n$ queries have probability zero of causing an error.  Moreover, once the coins of~$\Rep$ are fixed, there is exactly \emph{one} query that will cause an error.  Thus for random queries from~$Q$, for all~$i\in[T]$ we have $\Prob{X_i=1}=1/|\univ| \ll 1/n = \epsilon$.
+Let $\mathrm{Err}_i$ be a random variable indicating the event $\Qry(M,\aux,q_i)\neq q_i(S)$.  
+The $(1-\epsilon)$-correctness of~$\Pi$ guarantees that the probability that $\mathrm{Err}_i=1$ is at most~$\epsilon$, 
+and it is tempting to model the~$\mathrm{Err}_i$ as i.i.d. Bernoulli trials with success probability~$\epsilon$.
+However, a moment's reflection shows that this is not the case.  Concretely, consider the following scheme.  Fix $|S|=n$ for all $S \in \calS$, where $n \ll |\univ|$.  For the queries, let $\calQ = \{q_x\colon \calS \to \bits \,|\, \forall x \in \univ\}$ where $\forall S \in \calS$ the predicate $q_x(S)=1 \Leftrightarrow x \in S$.  Let $\Rep(S)$ pick a random element~$s \in S$, and return $M = S \setminus \{s\}$ and $\aux = \emptystring$.  To respond to queries, let~$\Qry(M,\aux,q_x)=1$ iff $x \in M$.  It is easy to see that this scheme is $1/n$-correct; for any fixed~$S$, there are exactly~$n$ queries~$q_x$ that have probability~$1/n$  (over the coins of~$\Rep$) of causing a correctness error, and the remaining $|\univ|-n$ queries have probability zero of causing an error.  Moreover, once the coins of~$\Rep$ are fixed, there is exactly \emph{one} query that will cause an error.  Thus for random queries from~$Q$, for all~$i\in[T]$ we have $\Prob{\mathrm{Err}_i=1}=1/|\univ| \ll 1/n = \epsilon$.
 
-This example is contrived, but the point is that $\epsilon$-correctness is measured over the coins of~$\Rep$, for a fixed~$S$ and query~$q$; once the coins of~$\Rep$ are fixed, it is not straightforward how to connect~$\epsilon$ to events that depend on other sources of randomness. \tsnote{Not sure if there's more to say in this section, or if what's here is already too much.}
+This example is contrived, but it highlights the important difference
+between error-probability and error-rate.  In particular, the
+error-probability~$\epsilon$ is measured only over the coins
+of~$\Rep$, for a fixed~$S$ and query~$q$.
+Once the coins of~$\Rep$ are fixed, it is not straightforward how to
+connect~$\epsilon$ to events that depend on other sources of
+randomness. \tsnote{Not sure if there's more to say in this section, or if what's here is already too much.}
 
 
 %
