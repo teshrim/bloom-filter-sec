@@ -8,7 +8,7 @@ When~$\univ$ is a set and $n>0$ is an integer, we let $[\univ]^n$ denote the set
 Algorithms may be provided black-box access to one or more oracles, which we write as superscripts, e.g., $F^{O_1,O_2,\ldots}$.  An \emph{adversary} is a randomized algorithm
 
 \heading{Data Structures.}  We being by defining a general primitive that produces a representation of a given multiset, and provides a mechanism to answer a specified collection of questions about that multiset.  Informally, the representation should serve as a good approximation of the multiset, at least with respect to the allowed questions.
-\begin{definition} \rm
+\begin{definition}[Data Structure] \rm
 Fix a non-empty set~$\univ$. A \emph{static data structure} (over universe~$\univ$)
 is a tuple $\setprim=(\Sigma,\Gamma,\calS,\calQ,\Rep, \Qry)$ where:
 \begin{itemize}
@@ -19,15 +19,20 @@ is a tuple $\setprim=(\Sigma,\Gamma,\calS,\calQ,\Rep, \Qry)$ where:
 \item $\Rep \colon \mathcal{S} \to \Sigma^* \times \bits^*$ is a randomized \emph{representation algorithm}, taking as input $S \in \mathcal{S}$, and outputting a \emph{representation} $M \in \Sigma^*$ and some \emph{auxilliary information} $\aux \in \bits^*$
 \item $\Qry\colon \Sigma^* \times \bits^* \times \calQ \to \Gamma$ is a deterministic \emph{query-evaluation} algorithm, taking as input $M, \aux, q$, and returns \emph{answer} $a \in \Gamma$.
 \end{itemize}
+\hfill\dqed
+\end{definition}
+
+All of the data structures that we will consider have the property that~$|M|$ does not depend on the coins of~$\Rep$. Thus we assume that~$|M|$ depends only on~$|S|$.  In general this need not be true, but the assumption does not restrict our syntax from capturing natural constructions (e.g., those seen in practice), and it makes it easier to state our security notions.
+
+\begin{definition}[Error probability and rate] \rm
+Fix a data structure $\setprim=(\Sigma,\Gamma,\calS,\calQ,\Rep, \Qry)$.
 Let $\mathrm{Err}(S,q,M,\aux)$ be a predicate that is true iff $\Qry(M, \aux, q) \neq q(S)$.  Then a data structure
 has \emph{error-probability} $\epsilon$ if
-\[
-\max_{S,q}\Pr[(M,\aux) \getsr \Rep(S) : \mathrm{Err}(S,q,M,\aux)=1 ] \leq \epsilon
-\]
-where the maximum is over $S \in \mathcal{S}$ and $q \in \mathcal{Q}$.  Relatedly, it has \emph{error-rate} $\tilde{\epsilon}$ if
-\[
-\max_{S}\Pr[(M,\aux) \getsr \Rep(S);\, q \getsr \calQ : \mathrm{Err}(S,q,M,\aux)=1] \leq \tilde{\epsilon}.
-\]
+$\max_{S,q}\Pr[(M,\aux) \getsr \Rep(S) : \mathrm{Err}(S,q,M,\aux)=1 ] \leq \epsilon$
+where the maximum is over $S \in \mathcal{S}$ and $q \in \mathcal{Q}$.  
+
+Relatedly, it has \emph{error-rate} $\tilde{\epsilon}$ if
+$\max_{S}\Pr[(M,\aux) \getsr \Rep(S);\, q \getsr \calQ : \mathrm{Err}(S,q,M,\aux)=1] \leq \tilde{\epsilon}$.
 \hfill\dqed
 \end{definition}
 
@@ -35,8 +40,6 @@ where the maximum is over $S \in \mathcal{S}$ and $q \in \mathcal{Q}$.  Relatedl
 The definition can be lifted to the random-oracle model
 by giving $\Rep, \Qry$ access to a random oracle. In that case,
 the probabilities defining the error-probability and error-rate are also taken over choice of the random oracle.
-
-All of the data structures that we will consider have the property that~$|M|$ does not depend on the coins of~$\Rep$. Thus we assume that~$|M|$ depends only on~$|S|$.  In general this need not be true, but the assumption does not restrict our syntax from capturing natural constructions (e.g., those seen in practice), and it makes it easier to state our security notions.
 
 We will sometimes say that a data structure is $(1-\epsilon)$-correct, meaning it has error-probability~$\epsilon$.  Note that $1-\epsilon$ is a worst-case lower bound on the correctness of the data structure.
 
