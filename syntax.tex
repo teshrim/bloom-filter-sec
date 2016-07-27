@@ -7,8 +7,8 @@ When~$\univ$ is a set and $n>0$ is an integer, we let $[\univ]^n$ denote the set
 
 Algorithms may be provided black-box access to one or more oracles, which we write as superscripts, e.g., $F^{O_1,O_2,\ldots}$.  An \emph{adversary} is a randomized algorithm
 
-\heading{(Set-multiplicity) Data Structures.}  We being by defining a general primitive that produces a representation of a given multiset, and provides a mechanism to answer a specified collection of questions about that multiset.  Informally, the representation should serve as a good approximation of the multiset, at least with respect to the allowed questions.
-\begin{definition} 
+\heading{Data Structures.}  We being by defining a general primitive that produces a representation of a given multiset, and provides a mechanism to answer a specified collection of questions about that multiset.  Informally, the representation should serve as a good approximation of the multiset, at least with respect to the allowed questions.
+\begin{definition} \rm
 Fix a non-empty set~$\univ$. A \emph{static data structure} (over universe~$\univ$)
 is a tuple $\setprim=(\Sigma,\Gamma,\calS,\calQ,\Rep, \Qry)$ where:
 \begin{itemize}
@@ -20,23 +20,22 @@ is a tuple $\setprim=(\Sigma,\Gamma,\calS,\calQ,\Rep, \Qry)$ where:
 \item $\Qry\colon \Sigma^* \times \bits^* \times \calQ \to \Gamma$ is a deterministic \emph{query-evaluation} algorithm, taking as input $M, \aux, q$, and returns \emph{answer} $a \in \Gamma$.
 \end{itemize}
 Let $\mathrm{Err}(S,q,M,\aux)$ be a predicate that is true iff $\Qry(M, \aux, q) \neq q(S)$.  Then a data structure
-\emph{$\epsilon$-correct}, or has (worst-case) error probability $\epsilon$, if
-\[
-\max_{S,q}\Pr[(M,\aux) \getsr \Rep(S) : \mathrm{Err}(S,q,M,\aux)=1 ] \leq \epsilon, \label{eqn:correctness}
-\]
-where the maximum is over $S \in \mathcal{S}$ and $q \in \mathcal{Q}$.  Relatedly, it has \emph{error rate} $\tilde{\epsilon}$ if
-\[
-\max_{S}\Pr[(M,\aux) \getsr \Rep(S);\, q \getsr \calQ : \mathrm{Err}(S,q,M,\aux)=1] \leq \tilde{\epsilon} \label{eqn:error_rate}
-\]
+has \emph{error-probability} $\epsilon$, if
+$\max_{S,q}\Pr[(M,\aux) \getsr \Rep(S) : \mathrm{Err}(S,q,M,\aux)=1 ] \leq \epsilon$,
+where the maximum is over $S \in \mathcal{S}$ and $q \in \mathcal{Q}$.  Relatedly, it has \emph{error-rate} $\tilde{\epsilon}$ if
+$\max_{S}\Pr[(M,\aux) \getsr \Rep(S);\, q \getsr \calQ : \mathrm{Err}(S,q,M,\aux)=1] \leq \tilde{\epsilon}$.
 \end{definition}
 
 \noindent
 The definition can be lifted to the random-oracle model
 by giving $\Rep, \Qry$ access to a random oracle. In that case,
-the probability in Equation~(\ref{eqn:correctness}) is also taken over choice of the random oracle.
+the probabilities defining the error-probability and error-rate are also taken over choice of the random oracle.
 
 All of the data structures that we will consider have the property that~$|M|$ does not depend on the coins of~$\Rep$. Thus we assume that~$|M|$ depends only on~$|S|$.  In general this need not be true, but the assumption does not restrict our syntax from capturing natural constructions (e.g., those seen in practice), and it makes it easier to state our security notions.
 
+We will sometimes say that a data structure is $(1-\epsilon)$-correct, meaning it has error-probability~$\epsilon$.  Note that $1-\epsilon$ is a worst-case lower bound on the correctness of the data structure.
+
+\heading{Set-multiplicity Data Structures. }
 Our particular focus will be on data structures that support multiplicity queries, of which set-membership queries are a special case.  
 \begin{definition} A \emph{set-multipicity data structure} is a data structure with $D=\mathbb{N}$ and where $\calQ=\{q_x \,|\, x \in \univ\}$ where $q_x(S)$ is defined to be the multiplicity of~$x$ in the multiset~$S$.
 \end{definition}
@@ -60,21 +59,8 @@ It is not hard to see Bloom filters are one possible instantiation a set-multipl
 Fix an $n \geq 0$, let $\mathcal{S}=[\univ]^n$, and let $\Sigma=\Gamma\bits$.  
 Let $\calQ$ be a set of predicates $q_x$, one for each $x \in \univ$,
 such that $q_x(S)=1$ iff $x \in S$.  Define algorithm~$\Rep$, with functions $k=k(|S|), m=m(|S|)$ and a description of a hash function family~$\mathcal{H}=\{h \colon \univ \to \{1,2,\ldots,m\}\}$ hardwired into it, to sample hash functions $h_1, \ldots, h_k$ from~$\mathcal{H}$ and then computes an $m$-bit array in the standard way. It sets $\aux = (h_1, \ldots, h_k)$ and $M$ to be the bit array, and returns these.  The algorithm~$\Qry$ is defined so that, on input $(M,\aux,q_x)$, it returns 1 iff $M[h_1(x)]=1 \wedge M[h_2(x)]=1 \wedge \cdots \wedge M[h_k(x)]=1$ holds.
-  %\tsnote{If $\mathcal{Q}=U$ and we use the
-%  semantics you suggest, then isn't Equation~\ref{eqn:correctness}
-%  both correctness and soundness?  If so, I don't see how this
-%  captures the classical BF, which requires $\epsilon=0$ for one kind
-%  of error, but allows $\epsilon>0$ for the other. } 
-%\jnote{The definition does not distinguish
-%  between elements in the set (for which $q(S)=1$) or outside the set (for which
-%  $q(S)=0$). But a Bloom filter does satisfy Equation~\ref{eqn:correctness} in either case.}
-%  \jnote{In that sense, I am using ``soundness'' and ``correctness'' interchangeably here.}
-%  \jnote{I'm not tied to allowing false negatives when we specialize the definition to the case
-%  of set-membership queries. But in the abstract definition it seems unclear why one would choose
-%  some queries on which error is ok and other queries where error is not allowed. Though if one
-%  wanted to be general, one could simply have two (disjoint) sets of queries $\mathcal{Q}_1, \mathcal{Q}_2$
-%  where error is allowed on the former but not on the latter.}
-We note that while our correctness condition does not distinguish among types of errors, it also does not preclude instantiations (like the classical Bloom filter) that admit only one type of error, e.g. false-positives.  
+ 
+We note that, while our measure of error~$\epsilon$ does not distinguish among ``types'' of errors, it also does not preclude instantiations (like the classical Bloom filter) that admit only one type of error, e.g. false-positives.  
 
 A Bloom filter with secret hash functions is captured by appending to~$M$ appropriate encodings of $h_1,h_2,\ldots,h_k$, and setting $\aux=\emptystring$.  Related constructions that use a secret key~$K$, but not for hashing are captured in analogous ways.
 
