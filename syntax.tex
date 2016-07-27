@@ -56,7 +56,7 @@ Our particular focus will be on data structures that support multiplicity querie
 % IMO), but it does seem fair to say ``this is how many bits of memory
 % you need to allocate to represent this set \emph{securely}.''}
 
-\heading{Bloom Filters and Related Data Structures. }
+%\heading{Bloom Filters and Related Data Structures. }
 It is not hard to see Bloom filters are one possible instantiation a set-multiplicity data structure.
 Fix an $n \geq 0$, let $\mathcal{S}=[\univ]^n$, and let $\Sigma=\Gamma=\bits$.  
 Define the queries so that $q_x(S)=1$ if $x \in S$, and 0 otherwise.  Define algorithm~$\Rep$, with functions $k=k(|S|), m=m(|S|)$ and a description of a hash function family~$\mathcal{H}=\{h \colon \univ \to \{1,2,\ldots,m\}\}$ hardwired into it, to sample hash functions $h_1, \ldots, h_k$ from~$\mathcal{H}$ and then compute an $m$-bit array in the standard way.  It sets $\aux = (h_1, \ldots, h_k)$ and $M$ to be the bit array, and returns these.  The algorithm~$\Qry$ is defined so that, on input $(M,\aux,q_x)$, it returns the minimum of the values (either 0 or 1) held at $M[h_1(x)],\ldots,M[h_k(x)]$.  We note that, while our error-probability and error-rate do not distinguish among ``types'' of errors, they also do not preclude instantiations (like the classical Bloom filter) that admit only one type of error, e.g. false-positives.  
