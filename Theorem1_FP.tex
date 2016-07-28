@@ -1,16 +1,16 @@
 \heading{Linear-PRF construction. }
 Here we consider a hash-based filter that was attacked by Neidermayer et al. in~\cite{xxx}.  Let $B_{\mathrm{lin}}=(\Hash,\Rep,\Qry)$ be defined as follows.  Fix non-empty set ~$\univ$ and integers $k,m,n>0$.  Let $F\colon\mathcal{K} \times \univ \to [m]$ be a function family.  The $\Hash$ algorithm samples two keys $K_0,K_1 \getsr \mathcal{K}$ and defines $h_j(x) = F_{K_0}(x) + j\cdot F_{K_1}(x) \bmod m$ for $j \in [k]$.  The $\Rep$ and $\Qry$ algorithms are the standard (determinisitic) BF ones. The following result shows, informally, that if~$F$ is a good PRF and the (non-adaptive) FP rate is sufficiently small, then $B_\mathrm{lin}$ is secure against adaptive FP-finding adversaries.
 
-\fixme{Note: the following theorem is incorrect for $r>1$.  Or, at least, the proof does not cover $t>1$.}\acnote{Modified.}
+\fixme{Note: the following theorem is incorrect for $r>1$.  Or, at least, the proof does not cover $r>1$.}\acnote{Modified.}
 \begin{theorem}\label{thm1}
 Fix $k,m,n>0$, and let $B_\mathrm{lin}=(\Hash,\Rep,\Qry)$ be the hash-based filter just described. 
-Let~$A$ be an adversary, compatible with $\ExpFPSecHash{B_\mathrm{lin},r}{\cdot}$, that asks at most~$q$ queries to its $\QryOracle$ oracle.  Then 
+Let~$A$ be an adversary, compatible with $\ExpFPSecHash{B_\mathrm{lin},r}{\cdot}$, that asks at most~$q$ queries in time $t$ to its $\QryOracle$ oracle.  Then 
 \[
 \AdvFPSecHash{B_{\mathrm{lin}},r}{A} \leq  \AdvPRF{F}{B_1} +
 \AdvPRF{F}{B_2}  +{\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r
 \]
 for PRF-adversaries~$B_1$ and $B_2$ given explicitly in the proof of
-this theorem.  \tsnote{Statement about resources of these reductions.}
+this theorem. Here, $B_1$ and $B_2$, each ask $q$ oracle queries in time O(t). \tsnote{Statement about resources of these reductions.}
 \end{theorem}
 Before giving the proof, we note that Kirsch and Mitzenmacher~\cite{xxx} show
 that the ($r=1$, non-adaptive) FP-probability for~$B_\mathrm{lin}$ is
@@ -19,26 +19,58 @@ rate of convergence is faster than~$1/n$.  The factor of $\dbinom{q}{r}$ arises 
 of removing adaptivity.  Finally, $\dbinom{q}{r} \leq q^r$ (with
 reasonable tightness when~$t$ is small) in which case the final term in the bound behaves as 
 $(q (1-e^{-kn/m})^k + O(q/n) )^r$; loosely, the bound one expects for
-trying to find a single FP in each of~$t$ independent``rounds'', each round
+trying to find a single FP in each of~$r$ independent``rounds'', each round
 consisting of~$q$ attempts.
 %Before giving the proof, we note that  $(1-e^{-kn/m})^k \rightarrow 0$ as the ratio between the bit-length of the representation~$M$ and the size of the represented set~$S$, i.e.,$m/n$ tends to $\infty$.
 %
 \begin{proof}[\Cref{thm1}]
 The proof of the theorem will use a game playing argument as shown in \Cref{fig:Game}. $\game{0}(A)$ exactly simulates $\ExpFPSecHash{B_\mathrm{lin},r}{A}$ with hash functions $h_j(x) =  F_{K_0}(x) + j\cdot F_{K_1}(x) \bmod m$. So,
+
 \begin{equation}
 \AdvFPSecHash{B_{\mathrm{lin}},r}{A} = \Prob{\game{0}(A)=1}\label{eq:0}
 \end{equation}
- $\game{1}(A)$ and $\game{2}(A)$ attack 2 different filters with hash functions 
+
+$\game{1}(A)$ and $\game{2}(A)$ attack 2 different filters with hash functions 
 $h_j(x) = ( F_{K_0}(x) + j\cdot \rho_2(x)) \bmod m$ and $h_j(x) = ( \rho_1(x) + j \cdot \rho_2(x)) \bmod m$, respectively.
 Here, $\rho_1$ and $\rho_2$ are random functions sampled from $\Func{\univ,[m]}$. \\
 
+In $\game{3}(A)$, $r$ random integers are chosen and the $\QryOracle$ oracle sets a $\bad$ flag if query response for any of the $r$ queries is false or any of the $q-r$ queries return true. Also, the hash functions are linear combinations of two random points in $[m]$, similar to $\game{2}(A)$. So, both have equal probability of returning 1. 
+
+\begin{equation}
+\Prob{\game{2}(A)=1} = \Prob{\game{3}(A)=1}\label{eq:3}
+\end{equation}
+
+The probability of winning  $\game{3}(A)$ is same as $\game{4}(A)$, except $\game{4}(A)$ outputs 0 if $\bad$ flag is set. In short, $\game{3}(A)$ and $\game{4}(A)$ are identical untill $\bad =true$.  On the  other hand, $\game{5}(A)$ simulates the non-adaptive counterpart of $\game{4}(A)$. 
+ \tsnote{I have rewritten game $\game{3}(A)$ and added
+  $\game{4}(A)$.  It should be that
+  $\Prob{\game{2}(A)}=\Prob{\game{3}(A)=1}$. Moreover
+  $\Prob{\game{4}(A)=1} = \Prob{\game{3}(A)=1 \wedge \neg\bad} =
+  \Prob{\game{3}(A)=1}\Prob{\game{3}{A}:\,\neg\bad} =
+  \Prob{\game{3}(A)=1}\frac{1}{\dbinom{q}{r}}$. Finally the event
+  $\game{4}(A)=1$ happens iff $\bad \neq \true$.  That means there is
+  a non-adaptive adversary that runs~$A$, simulates $\QryOracle$ by
+  simply returning 1 iff $c \in \mathcal{I}$, and uses the queries
+  with indices in $\mathcal{I}$ as its non-adaptive FPs.  To be
+  totally clear, you might want to add a $\game{5}(A)$ that has this
+  $\QryOracle$ behavior, and then give the non-adaptive FP-adversary~$A'$ that
+simulates~$\game{5}(A)$, and so on. }\fixme{Clean up everything after this.}
+
+\begin{align}
+\nonumber \Prob{\game{4}(A)=1} &= \Prob{\game{3}(A)=1 \wedge \neg\bad}\\ 
+\nonumber & = \Prob{\game{3}(A)=1}\Prob{\game{3}(A):\,\neg\bad}\\
+& = \Prob{\game{3}(A)=1}\frac{1}{\dbinom{q}{r}}\label{eq:3a}\\
+\Prob{\game{5}(A)=1} &= \Prob{\game{4}(A)=1}\label{eq:3b}
+\end{align}
+
+From  \Cref{eq:3,eq:3a,eq:3b}:
+\begin{equation}
+\Prob{\game{5}(A)=1} = \Prob{\game{2}(A)=1}\frac{1}{\dbinom{q}{r}}\label{eq:3c}
+\end{equation}
+
 \tsnote{The PRF experiment has not be defined yet, so strictly
   speaking these claims make no sense. }
-Let adversaries $B_1, B_2$ be as shown in Figures~\ref{xxx}.  By
-construction, these simulate $\game{1}(A)$ and $\game{2}(A)$,
-respectively. When $b=0$, $B_1$ wins if $\game{1}(A)$ outputs 0; $B_2$
-wins if $\game{2}(A)$ returns 0. When $b=1$, $B_1$ and $B_2$ exactly
-simulate $\game{0}(A)$ and $\game{1}(A)$.  \tsnote{What is~$b$?} Thus, we have
+The PRF game of $F$ is shown in \Cref{fig:prf}. Let prf-adversaries $B_1, B_2$ be as shown in \Cref{fig:BGame1}.  By
+construction, these simulate $\game{1}(A)$ and $\game{2}(A)$, respectively. When $b=0$, $B_1$ wins if $\game{1}(A)$ outputs 0; $B_2$ wins if $\game{2}(A)$ returns 0. When $b=1$, $B_1$ and $B_2$ exactly simulate $\game{0}(A)$ and $\game{1}(A)$. So, 
 \begin{align}
 \Prob{\ExpPRF{F}{B_1} = 1\,|\,b=1} &= \Prob{\game{0}(A)=1}\label{eq:m1}\\
 \Prob{\ExpPRF{F}{B_2} = 1\,|\,b=1} &= \Prob{\game{1}(A)=1}\label{eq:m2}\\
@@ -118,6 +150,7 @@ Ret $\left(h_1(x),\ldots,h_k(x)\right)$
 \underline{{$\game{3}(A)$},\fbox{$\game{4}(A)$}}\\
 $c \gets 0$\\
 $\mathcal{I}\getsr [\{1,2,\ldots,q\}]^r$\\
+$\bad \gets \false$\\
 %$\calY \gets \emptyset $\\
 %$\rho_1,\rho_2 \getsr \Func{\univ,[m]}$\\
 $S \getsr \distr{\univ}{n}$\\
@@ -159,6 +192,66 @@ Ret $\left(v_1,\ldots,v_k\right)$
 \caption{\Cref{thm1}:Game playing argument}\label{fig:Game}
 \end{figure}
 
+%\caption{$\Cref{thm1}:\game{5}(A)$ in game playing argument}\label{fig:game5}
+\begin{figure}
+\centering
+\fpage{0.8}
+{
+\hpagess{0.5}{0.4}{
+\underline{$\game{5}(A)$}\\
+$c \gets 0$\\
+$\mathcal{I}\getsr [\{1,2,\ldots,q\}]^r$\\
+$\calY \gets \emptyset$\\
+$S \getsr \distr{\univ}{n}$\\
+$M \getsr \Rep^{\HashOracle}(\calS)$\\
+$\calZ \getsr A^{\QryOracle}(\calS)$\\
+if $|\calY| < r$ or $\calY \cap \calS \neq \emptyset$ then\\
+\nudge Ret 0\\
+if $\forall y \in \calY,\,\Qry^{\HashOracle}(M,y)=1$ then \\
+\nudge Ret 1\\
+Ret 0
+}
+%
+{
+\oracle{$\QryOracle(x)$}\\
+$c \gets c+1$\\
+if $c \in \mathcal{I}$ then\\
+\nudge $\calY \gets \calY \cup {x}$\\
+\nudge Ret~$1$\\\\
+%
+\oracle{$\HashOracle(x)$}\\
+$a,b \getsr [m]$\\
+for $i = 1$ to~$k$\\
+\nudge $v_i = a+i \cdot b \bmod m$\\
+Ret $\left(v_1,\ldots,v_k\right)$
+}
+}
+\caption{$\Cref{thm1}:\game{5}(A)$ in game playing argument}\label{fig:game5}
+\end{figure}
+
+%\caption{PRF game}\label{fig:prf}
+\begin{figure}
+\centering
+\fpage{0.45}{
+\hpagess{0.4}{0.35}
+{
+$\experimentv{\ExpPRF{F}{B}}$\\
+$K \getsr \calK $\\
+$\rho \getsr Func(\univ,[m])$\\
+$b \getsr \bits$\\
+$b' \getsr B^\calO$\\
+Ret $[b = b']$\\
+}
+{
+$\oracle{\calO \smallskip(x)}$\\
+if $ b = 1$ then\\
+\nudge Ret $F_K(x)$\\
+Ret $\rho(x)$\\
+}
+}
+\caption{PRF game}\label{fig:prf}
+\end{figure}
+
 %\caption{Adversary $B_1, B_2$ simulating $\game{1}(A)$ and $\game{2}(A)$ respectively}\label{fig:BGame1}
 \begin{figure}
 \centering
@@ -172,7 +265,7 @@ $M \getsr \Rep^{\HashOracle}(\calS)$\\
 When $A$ asks $\QryOracle(x)$:\\
 $\nudge$ Ret $\Qry^{\HashOracle}(M,x)$\\
 When $A$ halts with output $\calZ'$: \\
-\nudge if $|\calZ'| < t$ or $\calZ' \cap \calS \neq \emptyset$ then \\
+\nudge if $|\calZ'| < r$ or $\calZ' \cap \calS \neq \emptyset$ then \\
 \nudge \nudge Ret 0\\
 \nudge if $\exists z \in \calZ'$ s.t. $\Qry^{\HashOracle}(M,z)=0$ then\\
 \nudge \nudge Ret 0\\
@@ -189,7 +282,7 @@ $M \getsr \Rep^{\HashOracle}(\calS)$\\
 When $A$ asks $\QryOracle(x)$:\\
 $\nudge$ Ret $\Qry^{\HashOracle}(M,x)$\\
 When $A$ halts with output $\calZ'$: \\
-\nudge if $|\calZ'| < t$ or $\calZ' \cap \calS \neq \emptyset$ then \\
+\nudge if $|\calZ'| < r$ or $\calZ' \cap \calS \neq \emptyset$ then \\
 \nudge \nudge Ret 0\\
 \nudge if $\exists z \in \calZ'$ s.t. $\Qry^{\HashOracle}(M,z)=0$ then\\
 \nudge \nudge Ret 0\\
@@ -201,6 +294,67 @@ $\mathrm{Ret} \nudge \calO(x) + i\cdot \rho_2(x)$, for $i\in[1,k]$
 }
 \caption{\Cref{thm1}:Adversary $B_1, B_2$ simulating $\game{1}(A)$ and $\game{2}(A)$ respectively}\label{fig:BGame1}
 \end{figure}
+
+%\caption{Non-adaptive adversaries simulating $\game{2}(A)$} \label{AGame3}
+\begin{figure}
+\centering
+\fpage{0.8}{
+\hpagessl{.5}{.4}
+{
+$\adversaryv{D^{\HashOracle}}$\\
+$c \gets 0$\\
+$\mathcal{I}\getsr [\{1,2,\ldots,q\}]^r$\\
+$\calY, \calZ \gets \emptyset $ \\
+When $A$ asks $\QryOracle(x)$:\\
+\nudge $c \gets c+1$\\
+\nudge if $c \in \mathcal{I}$ then\\
+\nudge \nudge $\calY \gets \calY \cup {x}$\\
+\nudge \nudge Ret~$1$\\
+\nudge else \\
+\nudge  \nudge Ret~$0$\\
+When $A$ halts with output $\calZ'$\\
+\nudge if $|\calZ'|<r \, \mbox{or} \, |\calY| < r$\\
+\nudge \nudge Ret $\emptyset$\\
+\nudge if $\forall y \in \calY,\,\Qry^{\HashOracle}(M,y)=1$ then \\
+\nudge \nudge Ret $\calY$\\
+\nudge Ret $\emptyset$\\\\
+%
+\oracle{$\HashOracle(x)$}\\
+$a,b \getsr [m]$\\
+for $i = 1$ to~$k$\\
+\nudge $v_i = a+i \cdot b \bmod m$\\
+Ret $\left(v_1,\ldots,v_k\right)$
+}
+{
+$\adversaryv{D'^{\HashOracle}}$\\
+$c \gets 0$\\
+$\ell \getsr [q]$\\
+%$\mathcal{I}\getsr [\{1,2,\ldots,q\}]^r$\\
+$\calY \gets \emptyset$\\
+When $A$ asks $\QryOracle(x)$:\\
+$\nudge c \gets c + 1$\\
+\nudge if $c == \ell$\\
+$\nudge$ $\nudge r \gets \Qry^{\HashOracle}(M,x)$\\
+$\nudge$ $\nudge \calY \gets \calY \cup {x}$\\
+\nudge else\\
+$\nudge$ $\nudge r \gets 0$\\
+\nudge Ret $r$\\
+When $A$ halts with output $\calZ'$\\
+\nudge $z \gets \calY$\\
+\nudge if $\Qry^{\HashOracle}(M,z)=1$ then\\
+\nudge \nudge Ret $z$\\
+\nudge else\\
+\nudge \nudge Ret Null\\\\
+%
+\oracle{$\HashOracle(x)$}\\
+$a,b \getsr [m]$\\
+for $i = 1$ to~$k$\\
+\nudge $v_i = a+i \cdot b \bmod m$\\
+Ret $\left(v_1,\ldots,v_k\right)$
+}
+}
+\caption{Non-adaptive adversaries simulating $\game{3}(A)$} \label{fig:AGame3}
+\end{figure}	
 
 %
 \noindent
@@ -223,113 +377,39 @@ Adding \Cref{eq:1,eq:2a}, we have
 \AdvPRF{F}{B_1} +\AdvPRF{F}{B_2} = \Prob{\game{0}(A)=1} - \Prob{\game{2}(A)=1}\label{eq:2}
 \end{equation}
 
+The classical FP requirement considers only non-adaptive (and information-theoretic) adversaries, and $D$ is one such adversary simulating $\game{5}(A)$ as closely as possible, whereas $D'$ mimics $D$ for $r=1$. $D'$ outputs a FP as in a classic Bloom filter and its FP-error is upperbounded by $[(1-e^{-kn/m})^k +O(1/n)]$ \cite{KirschMitzenmacher}.  %\acnote{changed}\tsnote{The classical FP requirement considers only non-adaptive (and information-theoretic) adversaries.  It suffices to say this.}
 \noindent
-In $\game{3}(A)$, $t$ elements are sampled from the $q$ adaptive
-queries and tested for false positives. This is equivalent to
-$\game{2}(A)$, as the hash functions of the $\HashOracle$ oracle are
-random and $A$ wins this  game only if it outputs atleast $t$
-FP's.\acnote{I was facing problems in connecting game2(adaptive) and
-  game3(non-adaptive). I felt that the probability of  winning both
-  games should be equal as the hash functions in the hash oracle are
-  random(not independent) and adversary in game 2 has no means to
-  output t elements which have higher chance of winning than those in
-  game 3.} \tsnote{I have rewritten game $\game{3}(A)$ and added
-  $\game{4}(A)$.  It should be that
-  $\Prob{\game{2}(A)}=\Prob{\game{3}(A)=1}$. Moreover
-  $\Prob{\game{4}(A)=1} = \Prob{\game{3}(A)=1 \wedge \neg\bad} =
-  \Prob{\game{3}(A)=1}\Prob{\game{3}{A}:\,\neg\bad} =
-  \Prob{\game{3}(A)=1}\frac{1}{\dbinom{q}{r}}$. Finally the event
-  $\game{4}(A)=1$ happens iff $\bad \neq \true$.  That means there is
-  a non-adaptive adversary that runs~$A$, simulates $\QryOracle$ by
-  simply returning 1 iff $c \in \mathcal{I}$, and uses the queries
-  with indices in $\mathcal{I}$ as its non-adaptive FPs.  To be
-  totally clear, you might want to add a $\game{5}(A)$ that has this
-  $\QryOracle$ behavior, and then give the non-adaptive FP-adversary~$A'$ that
-simulates~$\game{5}(A)$, and so on. }\fixme{Clean up everything after this.}
+From \Cref{fig:AGame3}, it is evident that
+\begin{align}
+\Prob{\game{5}(A)=1} &= \Prob{D \, \mbox{outputs $r$ FP} \,}\label{eq:4a}\\
+\nonumber \Prob{D \, \mbox{outputs r FP} \,} &=  \Big[\Prob{D' \, \mbox{outputs FP} \,}\Big]^r\\
+& \leq \Big[(1-e^{-kn/m})^k +O(1/n)\Big]^r \label{eq:4b}
+\end{align}
+\noindent
+From \Cref{eq:4a,eq:4b}
 \begin{equation}
-\Prob{\game{2}(A)=1} = \Prob{\game{3}(A)=1}\label{eq:3}
+\Prob{\game{5}(A)=1} \leq [(1-e^{-kn/m})^k +O(1/n)]^r \label{eq:4}
 \end{equation}
 
 \noindent
-The classical FP requirement considers only non-adaptive (and information-theoretic) adversaries, and $D$ is one such adversary simulating $\game{3}(A)$ as closely as possible, whereas $D'$ mimics $D$ for $t=1$. $D'$ outputs a FP as in a classic Bloom filter and its FP-error is upperbounded by $[(1-e^{-kn/m})^k +O(1/n)]$ \cite{KirschMitzenmacher}.  %\acnote{changed}\tsnote{The classical FP requirement considers only non-adaptive (and information-theoretic) adversaries.  It suffices to say this.}
-From \Cref{fig:AGame3}, it is evident that
+Using \ref{eq:4} in \ref{eq:3c}:
 \begin{align}
-\Prob{\game{3}(A)=1} &= \Prob{D \, \mbox{outputs $t$ FP} \,}\label{eq:4a}\\
-\nonumber \Prob{D \, \mbox{outputs t FP} \,} &= \dbinom{q}{r}\times \Big[\Prob{D' \, \mbox{outputs FP} \,}\Big]^r\\
-& \leq \dbinom{q}{r}\times \Big[(1-e^{-kn/m})^k +O(1/n)\Big]^r \label{eq:4b}
+\nonumber \Prob{\game{2}(A)=1}\frac{1}{\dbinom{q}{r}}  &\leq [(1-e^{-kn/m})^k +O(1/n)]^r\\
+ \Prob{\game{2}(A)=1}  & \leq \dbinom{q}{r}[(1-e^{-kn/m})^k +O(1/n)]^r\label{eq:5}
 \end{align}
-From \Cref{eq:4a,eq:4b}
-\begin{equation}
-\Prob{\game{3}(A)=1} \leq \dbinom{q}{r}\times [(1-e^{-kn/m})^k +O(1/n)]^r \label{eq:4}
-\end{equation}
-%\caption{Non-adaptive adversaries simulating $\game{2}(A)$} \label{AGame3}
-\begin{figure}
-\centering
-\fpage{0.8}{
-\hpagessl{.5}{.4}
-{
-$\adversaryv{D^{\HashOracle}}$\\
-$\calY, \calZ \gets \emptyset $ \\
-$\rho \getsr Func(U,[m])$\\
-$\calS \getsr \distr{U}{n}$\\
-$M \getsr \Rep^{\HashOracle}(\calS)$\\
-When $A$ asks $\QryOracle(x)$:\\
-$\nudge \calY \gets \calY \cup {x}$\\
-$\nudge r \gets \Qry^{\HashOracle}(M,x)$\\
-\nudge Ret $r$\\
-When $A$ halts with output $\calZ'$\\
-\nudge if $|\calZ'|<t \, \mbox{or} \, |\calY| < t$\\
-\nudge \nudge Ret $\emptyset$\\
-\nudge for $i=1$ to $t$ \\
-\nudge \nudge $z_i \getsr \calY $\\
-\nudge \nudge if $\Qry^{\HashOracle}(M,z_i)=0$ then\\
-\nudge \nudge Ret $\emptyset$\\
-\nudge \nudge $\calZ \gets \calZ \cup z_i$\\
-\nudge \nudge $\calY \gets \calY \setminus {z_i}$\\
-\nudge Ret $\calZ $\\\\
-%
-\oracle{$\HashOracle(x)$}\\
-$h_i(x) = \rho_1(x)+i \cdot \rho_2(x)$, for $i\in[1,k]$\\
-Ret $\left(h_1(x),\ldots,h_k(x)\right)$
-}
-{
-$\adversaryv{D'^{\HashOracle}}$\\
-$\calY \gets \emptyset $ \\
-$\ell \getsr [q]$\\
-$c = 0$\\
-$\rho \getsr Func(U,[m])$\\
-$\calS \getsr \distr{U}{n}$\\
-$M \getsr \Rep^{\HashOracle}(\calS)$\\
-When $A$ asks $\QryOracle(x)$:\\
-$\nudge c = c + 1$\\
-\nudge if $c == \ell$\\
-$\nudge$ $\nudge r \gets \Qry^{\HashOracle}(M,x)$\\
-$\nudge$ $\nudge \calY \gets \calY \cup {x}$\\
-\nudge else\\
-$\nudge$ $\nudge r = 0$\\
-\nudge Ret $r$\\
-When $A$ halts with output $\calZ'$\\
-\nudge $z \gets \calY$\\
-\nudge if $\Qry^{\HashOracle}(M,z)=1$ then\\
-\nudge \nudge Ret $z$\\\\
-%
-\oracle{$\HashOracle(x)$}\\
-$h_i(x) = \rho_1(x)+i \cdot \rho_2(x)$, for $i\in[1,k]$\\
-Ret $\left(h_1(x),\ldots,h_k(x)\right)$
-}
-}
-\caption{Non-adaptive adversaries simulating $\game{3}(A)$} \label{fig:AGame3}
-\end{figure}	
+
 \fixme{These adversaries are incorrect.  They are FP adversaries, so
   they get~$S$ as input.  They also do not sample random functions;
   use lazy sampling (a la game $\game{3}(A)$.  Please clean things up.)}
 \noindent
-From \Cref{eq:0,eq:2,eq:3,eq:4} \\
+
+From \Cref{eq:0,eq:2,eq:5} \\
 \begin{align}
-\nonumber \AdvFPSecHash{B_{\mathrm{lin}},t}{A} &- \Prob{\game{2}(A)=1} =  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}   \\
-\nonumber \AdvFPSecHash{B_{\mathrm{lin}},t}{A}  &=  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2} + \Prob{\game{2}(A)=1}  \\
-\AdvFPSecHash{B_{\mathrm{lin}},t}{A} &\leq  \AdvPRF{F}{B_1} +
-\AdvPRF{F}{B_2}  +{\dbinom{q}{t}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^t
+\nonumber \AdvFPSecHash{B_{\mathrm{lin}},r}{A} &- \Prob{\game{2}(A)=1} =  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}   \\
+\nonumber \AdvFPSecHash{B_{\mathrm{lin}},r}{A}  &=  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2} + \Prob{\game{2}(A)=1}  \\
+\AdvFPSecHash{B_{\mathrm{lin}},r}{A} &\leq  \AdvPRF{F}{B_1} +
+\AdvPRF{F}{B_2}  +{\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r
 \end{align}
+
 \end{proof}
 
