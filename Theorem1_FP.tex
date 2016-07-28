@@ -1,13 +1,12 @@
 \heading{Linear-PRF construction. }
-Here we consider a hash-based filter that was attacked by Neidermayer et al. in~\cite{xxx}.  Let $B_{\mathrm{lin}}=(\Hash,\Rep,\Qry)$ be defined as follows.  Fix non-empty set ~$\univ$ and integers $k,m,n>0$.  Let $F\colon\mathcal{K} \times \univ \to [m]$ be a function family.  The $\Hash$ algorithm samples two keys $K_0,K_1 \getsr \mathcal{K}$ and defines $h_j(x) = F_{K_0}(x) + j\cdot F_{K_1}(x) \bmod m$ for $j \in [k]$.  The $\Rep$ and $\Qry$ algorithms are the standard (determinisitic) BF ones. The following result shows, informally, that if~$F$ is a good PRF and the (non-adaptive) FP rate is sufficiently small, then $B_\mathrm{lin}$ is secure against adaptive FP-finding adversaries.
+Here we consider a hash-based filter that was attacked by Neidermayer et al. in~\cite{xxx}.  Let $B_{\mathrm{lin}}=(\Hash,\Rep,\Qry)$ be defined as follows.  Fix non-empty set ~$\univ$ and integers $k,m,n>0$.  Let $F\colon\mathcal{K} \times \univ \to [m]$ be a function family.  The $\Hash$ algorithm samples two keys $K_0,K_1 \getsr \mathcal{K}$ and defines $h_j(x) = F_{K_0}(x) + j\cdot F_{K_1}(x) \bmod m$ for $j \in [1,k]$.  The $\Rep$ and $\Qry$ algorithms are the standard (determinisitic) BF ones. The following result shows, informally, that if~$F$ is a good PRF and the (non-adaptive) FP rate is sufficiently small, then $B_\mathrm{lin}$ is secure against adaptive FP-finding adversaries.
 
 \fixme{Note: the following theorem is incorrect for $r>1$.  Or, at least, the proof does not cover $r>1$.}\acnote{Modified.}
 \begin{theorem}\label{thm1}
 Fix $k,m,n>0$, and let $B_\mathrm{lin}=(\Hash,\Rep,\Qry)$ be the hash-based filter just described. 
 Let~$A$ be an adversary, compatible with $\ExpFPSecHash{B_\mathrm{lin},r}{\cdot}$, that asks at most~$q$ queries in time $t$ to its $\QryOracle$ oracle.  Then 
 \[
-\AdvFPSecHash{B_{\mathrm{lin}},r}{A} \leq  \AdvPRF{F}{B_1} +
-\AdvPRF{F}{B_2}  +{\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r
+\AdvFPSecHash{B_{\mathrm{lin}},r}{A} \leq  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}  +{\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r
 \]
 for PRF-adversaries~$B_1$ and $B_2$ given explicitly in the proof of
 this theorem. Here, $B_1$ and $B_2$, each ask $q$ oracle queries in time O(t). \tsnote{Statement about resources of these reductions.}
@@ -17,7 +16,7 @@ that the ($r=1$, non-adaptive) FP-probability for~$B_\mathrm{lin}$ is
 always within $O(1/n)$ of $(1-e^{-kn/m})^k$, although the asymptotic
 rate of convergence is faster than~$1/n$.  The factor of $\dbinom{q}{r}$ arises as a result
 of removing adaptivity.  Finally, $\dbinom{q}{r} \leq q^r$ (with
-reasonable tightness when~$t$ is small) in which case the final term in the bound behaves as 
+reasonable tightness when~$r$ is small) in which case the final term in the bound behaves as 
 $(q (1-e^{-kn/m})^k + O(q/n) )^r$; loosely, the bound one expects for
 trying to find a single FP in each of~$r$ independent``rounds'', each round
 consisting of~$q$ attempts.
@@ -217,7 +216,9 @@ Ret 0
 $c \gets c+1$\\
 if $c \in \mathcal{I}$ then\\
 \nudge $\calY \gets \calY \cup {x}$\\
-\nudge Ret~$1$\\\\
+\nudge Ret 1\\
+else\\
+\nudge Ret 0 \\\\
 %
 \oracle{$\HashOracle(x)$}\\
 $a,b \getsr [m]$\\
@@ -226,7 +227,7 @@ for $i = 1$ to~$k$\\
 Ret $\left(v_1,\ldots,v_k\right)$
 }
 }
-\caption{$\Cref{thm1}:\game{5}(A)$ in game playing argument}\label{fig:game5}
+\caption{\Cref{thm1}:$\game{5}(A)$ in game playing argument}\label{fig:game5}
 \end{figure}
 
 %\caption{PRF game}\label{fig:prf}
@@ -344,7 +345,7 @@ When $A$ halts with output $\calZ'$\\
 \nudge if $\Qry^{\HashOracle}(M,z)=1$ then\\
 \nudge \nudge Ret $z$\\
 \nudge else\\
-\nudge \nudge Ret Null\\\\
+\nudge \nudge Ret $\lambda$\\\\
 %
 \oracle{$\HashOracle(x)$}\\
 $a,b \getsr [m]$\\
