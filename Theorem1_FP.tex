@@ -4,12 +4,12 @@ Here we consider a hash-based filter that was attacked by Neidermayer et al. in~
 \fixme{Note: the following theorem is incorrect for $r>1$.  Or, at least, the proof does not cover $r>1$.}\acnote{Modified.}
 \begin{theorem}\label{thm1}
 Fix $k,m,n>0$, and let $B_\mathrm{lin}=(\Hash,\Rep,\Qry)$ be the hash-based filter just described. 
-Let~$A$ be an adversary, compatible with $\ExpFPSecHash{B_\mathrm{lin},r}{\cdot}$, that asks at most~$q$ queries in time $t$ to its $\QryOracle$ oracle.  Then 
+Let~$A$ be an adversary, compatible with $\ExpFPSecHash{B_\mathrm{lin},r}{\cdot}$, that asks at most~$q \times r$ queries in time $t$ to its $\QryOracle$ oracle.  Then 
 \[
 \AdvFPSecHash{B_{\mathrm{lin}},r}{A} \leq  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}  +{\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r
 \]
 for PRF-adversaries~$B_1$ and $B_2$ given explicitly in the proof of
-this theorem. Here, $B_1$ and $B_2$, each ask $q$ oracle queries in time O(t). \tsnote{Statement about resources of these reductions.}
+this theorem. Here, $B_1$ and $B_2$, each ask $q \times r$ oracle queries in time O(t). \tsnote{Statement about resources of these reductions.}
 \end{theorem}
 Before giving the proof, we note that Kirsch and Mitzenmacher~\cite{xxx} show
 that the ($r=1$, non-adaptive) FP-probability for~$B_\mathrm{lin}$ is
@@ -389,7 +389,7 @@ From \Cref{fig:AGame3}, it is evident that
 \noindent
 From \Cref{eq:4a,eq:4b}
 \begin{equation}
-\Prob{\game{5}(A)=1} \leq [(1-e^{-kn/m})^k +O(1/n)]^r \label{eq:4}
+\Prob{\game{5}(A)=1} \leq [(1-e^{-kn/m})^k + O(1/n)]^r \label{eq:4}
 \end{equation}
 
 \noindent
