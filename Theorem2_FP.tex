@@ -1,36 +1,50 @@
 \newcommand{\FK}{F_K(\langle j,x \rangle)}
 \newcommand{\rhoK}{\rho(\langle j,x \rangle)}
-\fixme{Clean up to match style, language and typesetting (macros,
-  especially) of previous theorem.}\acnote{Modified.}
 
-Let $B_{\mathrm{lin}}=(\Hash,\Rep,\Qry)$ be the hash-based filter defined as earlier, except the private hash functions of the $\HashOracle'$s algorithm are $h_j(x) = \FK, \, j \in [1,k]$. Informally, if F is PRF secure and the filter has low FP-error in the non-adaptive setting, then $B_{\mathrm{lin}}$ is secure against adaptive FP-finding adversaries.
+\fixme{Clean up to match style, language and typesetting (macros,
+  especially) of previous theorem.}
+
+Let $B_{\mathrm{ds}}=(\Hash,\Rep,\Qry)$ be the hash-based filter defined as earlier, except the hash functions are defined as $h_j(x) = \FK, \, j \in [1,k]$. Informally, the following result shows, if F is PRF secure and the filter has low FP-error in the non-adaptive setting, then $B_{\mathrm{ds}}$ is secure against adaptive FP-finding adversaries.
+
 \begin{theorem}\label{thm2}
-Fix $k,m,n >0$. Let $B_{\mathrm{lin}}$ be the hash based filter just described. If there exists an adaptive adversary $A$ compatible with $\ExpFPPubHash{B_{\mathrm{lin},t}}{\cdot}$, then there exists an adversary $B$ attacking the PRF game such that
+Fix $k,m,n >0$. Let $B_{\mathrm{ds}}$ be the hash based filter described earlier. If there exists an adaptive adversary $A$ compatible with $\ExpFPPubHash{B_{\mathrm{ds},t}}{\cdot}$ asking $q \times r$ queries in $t$ time, then there exists an adversary $B$ attacking the PRF game in time $O(t)$ and asking same number of queries as $A$ such that 
 \begin{equation}
-\AdvFPSecHash{B_\mathrm{lin},t}{A}\leq  \AdvPRF{F}{B}  + \frac{q}{\dbinom{q}{t}} \times  (1-e^{-kn/m})^k
+\AdvFPSecHash{B_\mathrm{ds},t}{A}\leq  \AdvPRF{F}{B}  + {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r
 \end{equation}
-Before giving the proof, it should be noted that $\FK$ provides domain separation and hence mutual independence, unlike hash functions in \Cref{thm1}
 \end{theorem}
 
+\acnote{I think we should give a proof of the non-adaptive FP-error bound $(1-e^{-kn/m})^k + O(1/n) $. This bound which we picked from KM's theorem 6.2, is a particular case (double hashing scheme).  Theorem 6.1, on the other hand holds good for any hashing scheme that satisfies Lemma 4.1. \\
+ I tried to give the FP-bound as a Lemma. 
+\begin{lemma}\label{lemma1}
+Fix $k,m,n >0$. The FP-error of hash-based filter $B_{\mathrm{ds}}$ with hash functions $h_j(x) = \FK, \, j \in [k]$ is upperbounded by $(1-e^{-kn/m})^k + O(1/n)$.
+\end{lemma}
+}
+\acnote{As I had told you earlier, I was not able to understand the proofs of KM paper and now I am stuck in this proof. 
+\begin{proof}($Lemma$ \ref{lemma1})
+In \ref{KM}, $Theorem \,6.1$ gives the upperbound of FP error of any hashing scheme satisfying the 5 conditions enlisted in Lemma 4.1, and all these conditions are satisfied by $B_{\mathrm{ds}}$ as shown below.\\
+Since the hash functions of $B_{\mathrm{ds}}$ provide randomness with domain separation and the number of hash functions are controlled by parameter $j$, condition 1 and 2 are trivially satisfied. The last condition is also trivial, since size of $B_{\mathrm{ds}}$ will be some constant multiple of size of $S$, as in the classical bloom filter.\\
+The satisfiability of remaining 2 conditions is non-trivial ...
+\end{proof}}
+%
 \begin{proof}[\Cref{thm2}]
-We use a game playing argument similar to \Cref{thm1} to prove this theorem. In \game{0}(A), adversary attacks the FP game with private hash functions $h_j(x) = \FK $, and hence exactly simulates $\ExpFPSecHash{B_\mathrm{lin},t}{A}$.
+We use a game playing argument similar to \Cref{thm1} to prove this theorem. In \game{0}(A), adversary attacks the FP game with  hash functions $h_j(x) = \FK $, and hence exactly simulates $\ExpFPSecHash{B_\mathrm{ds},r}{A}$.
 \begin{equation}
-\AdvFPSecHash{B_\mathrm{lin},t}{A} = \Prob{\game{0}(A)=1}\label{eq:0T2}
+\AdvFPSecHash{B_\mathrm{ds},r}{A} = \Prob{\game{0}(A)=1}\label{eq:0T2}
 \end{equation}
 \noindent
-\game{1}(A) simulates $\ExpFPSecHash{B_\mathrm{lin},t}{A}$ with a random function $\rho \getsr Func(\univ,[m])$ used to generate uniformly random  hash-indices with domain separation, of elements $x \in \univ$. In $\game{2}(A)$, $t$ elements are sampled from the set of queries and tested for false positives.  The three games are shown in \Cref{fig:GameT2}.
+\game{1}(A), \game{2}(A), and \game{3}(A) are same as in the previous theorem, except the hash-functions are distinct random functions. The non-adaptive counterparts of $B_\mathrm{ds}$ as well as the prf adversary are  identical to those of $B_\mathrm{lin}$. As shown in \game{1}(A) and \game{2}(A), the $\HashOracle$ oracle returns distinct random values in these simulations. $B$, on the other hand uses its oracle to generate random values (for $b=0$) in the following way, $h_j(x) = \calO(\langle j,x \rangle)$. 
 
 %\caption{Game playing argument}\label{fig:Game}
 \begin{figure}
-\fpage{.99}{
-\hpagesssl{.34}{.34}{.31}
+\fpage{.9}{
+\hpagessl{.45}{.5}
 {
 \underline{\game{0}(A)}\\
 $K_1, K_2 \getsr \calK$\\
 $S \getsr \distr{\univ}{n}$\\
 $M \getsr \Rep^{\HashOracle}(\calS)$\\
 $\calZ \getsr A^{\QryOracle}(\calS)$\\
-if $|\calZ| < t$ or $\calZ \cap \calS \neq \emptyset$ then \\
+if $|\calZ| < r$ or $\calZ \cap \calS \neq \emptyset$ then \\
 \nudge Ret 0\\
 if $\exists z \in \calZ$ s.t. $\Qry^{\HashOracle}(M,z)=0$ then\\
 \nudge Ret 0\\
@@ -49,7 +63,7 @@ $\rho \getsr \Func{\univ,[m]}$\\
 $S \getsr \distr{\univ}{n}$\\
 $M \getsr \Rep^{\HashOracle}(\calS)$\\
 $\calZ \getsr A^{\QryOracle}(\calS)$\\
-if $|\calZ| < t$ or $\calZ \cap \calS \neq \emptyset$ then \\
+if $|\calZ| < r$ or $\calZ \cap \calS \neq \emptyset$ then \\
 \nudge Ret 0\\
 if $\exists z \in \calZ$ s.t. $\Qry^{\HashOracle}(M,z)=0$ then\\
 \nudge Ret 0\\
@@ -62,116 +76,87 @@ Ret $\Qry^{\HashOracle}(M,x)$\\\\
 $h_j(x) = \rhoK $\\
 Ret $\left(h_1(x),\ldots,h_k(x)\right)$
 }
+}
+\fpage{.9}{
+\hpagessl{.45}{.5}
 {
-\underline{\game{2}(A)}\\
-$\calY \gets \emptyset $\\
-$\rho \getsr \Func{\univ,[m]}$\\
+\underline{{$\game{2}(A)$},\fbox{$\game{3}(A)$}}\\
+$c \gets 0$\\
+$\mathcal{I}\getsr [\{1,2,\ldots,q\}]^r$\\
+$\bad \gets \false$\\
 $S \getsr \distr{\univ}{n}$\\
 $M \getsr \Rep^{\HashOracle}(\calS)$\\
 $\calZ \getsr A^{\QryOracle}(\calS)$\\
-$z_1,\cdots, z_t \getsr \calY $\\
-if $\exists i\in[1,t] \, \mbox{s.t.} \,\Qry^{\HashOracle}(M,z_i)=0$ then\\
-\nudge Ret 0\\
-Ret 1\\\\
+if $|\calZ| < r$ or $\calZ \cap \calS \neq \emptyset$ then Ret 0\\
+if $\forall z \in \calZ,\,\Qry^{\HashOracle}(M,z)=1$ then \\
+\nudge if $\bad=\true$ then \fbox{Ret 0}\\
+\nudge Ret 1\\
+Ret 0\\\\
 %
 \oracle{$\QryOracle(x)$}\\
-$\calY \gets \calY \cup x$\\
-Ret $\Qry^{\HashOracle}(M,x)$\\
+%$\calY \gets \calY \cup \{x\}$\\
+$c \gets c+1$\\
+$v \gets \Qry^{\HashOracle}(M,x)$\\
+if $c \in \mathcal{I}$ and $v\neq 1$ then\\
+\nudge $\bad \gets \true$ \\
+%\nudge \fbox{Ret 1} \\
+if $c \not\in \mathcal{I}$ and $v\neq 0$ then\\
+\nudge $\bad \gets \true$\\
+%\nudge \fbox{Ret 0}\\
+Ret~$v$\\\\
 %
 \oracle{$\HashOracle(x)$}\\
-$h_j(x) = \rhoK$\\
-Ret $\left(h_1(x),\ldots,h_k(x)\right)$
+for $i = 1$ to~$k$\\
+\nudge $v_i  \getsr [m]$\\
+Ret $\left(v_1,\ldots,v_k\right)$
 }
-}
-\caption{\Cref{thm2}:Game playing argument}\label{fig:GameT2}
-\end{figure}
-
-\noindent
-In \Cref{fig:BGame1T2}, adversary $B$ simulates $\game{0}(A)$ and $\game{1}(A)$ for $b=1$ and $b=0$ respectively .
-
-%\caption{Adversary $B$ and $A'$ simulating $\game{1}(A)$ and $\game{2}(A)$ respectively}
-\begin{figure}
-\centering
-\fpage{0.9}{
-\hpagessl{0.5}{0.5}
 {
-$\adversaryv{B^{\calO}}$\\
-$K_1 \getsr \calK $\\
+\underline{$\game{4}(A)$}\\
+$c \gets 0$\\
+$\mathcal{I}\getsr [\{1,2,\ldots,q\}]^r$\\
+$\calY \gets \emptyset$\\
 $S \getsr \distr{\univ}{n}$\\
 $M \getsr \Rep^{\HashOracle}(\calS)$\\
-When $A$ asks $\QryOracle(x)$:\\
-$\nudge$ Ret $\Qry^{\HashOracle}(M,x)$\\
-When $A$ halts with output $\calZ'$: \\
-if $|\calZ'| < t$ or $\calZ' \cap \calS \neq \emptyset$ then \\
+$\calZ \getsr A^{\QryOracle}(\calS)$\\
+if $|\calY| < r$ or $\calY \cap \calS \neq \emptyset$ then\\
 \nudge Ret 0\\
-if $\exists z \in \calZ'$ s.t. $\Qry^{\HashOracle}(M,z)=0$ then\\
-\nudge Ret 0\\
-Ret 1\\\\
-\oracle{$\HashOracle(x)$}\\
-$ \mathrm{Ret} \nudge \calO(\langle j,x \rangle)$, for $j\in[1,k]$\\
-}
-{
-$\adversaryv{A'^{\HashOracle}}$\\
-$\calY \gets \emptyset $ \\
-$\ell \getsr [q]$\\
-$c = 0$\\
-$\rho \getsr Func(U,[m])$\\
-$S \getsr \distr{U}{n}$\\
-$M \getsr \Rep^{\HashOracle}(\calS)$\\
-When $A$ asks $\QryOracle(x)$:\\
-$\nudge c = c + 1$\\
-\nudge if $c == \ell$\\
-$\nudge$ $\nudge r \gets \Qry^{\HashOracle}(M,x)$\\
-$\nudge$ $\nudge \calY \gets \calY \cup x$\\
-\nudge else\\
-$\nudge$ $\nudge r = 0$\\
-\nudge Ret $r$\\
-When $A$ halts with output $\calZ'$\\
-\nudge $z \gets \calY$\\
-\nudge if $\Qry^{\HashOracle}(M,z)=0$ then\\
-\nudge \nudge Ret 0\\
-\nudge Ret 1\\\\
+if $\forall y \in \calY,\,\Qry^{\HashOracle}(M,y)=1$ then \\
+\nudge Ret 1\\
+Ret 0\\\\
+%
+\oracle{$\QryOracle(x)$}\\
+$c \gets c+1$\\
+if $c \in \mathcal{I}$ then\\
+\nudge $\calY \gets \calY \cup {x}$\\
+\nudge Ret 1\\
+else\\
+\nudge Ret 0 \\\\
 %
 \oracle{$\HashOracle(x)$}\\
-$\mathrm{Ret} \nudge \rhoK$
+for $i = 1$ to~$k$\\
+\nudge $v_i  \getsr [m]$\\
+Ret $\left(v_1,\ldots,v_k\right)$
 }
 }
-\caption{\Cref{thm2}:Adversary $B$ and $A'$ simulating $\game{0}(A)$, $\game{1}(A)$ and $\game{2}(A)$ respectively }\label{fig:BGame1T2}
+\caption{\Cref{thm2}: Game playing argument}\label{fig:GameT2}
 \end{figure}
-
-\begin{align}
-\Prob{\ExpPRF{F}{B} = 1|b=1} &= \Prob{\game{0}(A)=1}\label{eq:m1T2}\\
-\Prob{\ExpPRF{F}{B} = 1|b=0} &= 1-\Prob{\game{1}(A)=1}\label{eq:m2T2}
+\noindent
+Using analysis of previous theorem and \Cref{lemma1}\acnote{change if lemma1 not required}, we have
+\begin{align}\label{eq:1T2}
+\AdvPRF{F}{B} &= \Prob{\game{0}(A)=1} - \Prob{\game{1}(A)=1} \\
+\Prob{\game{1}(A)=1} &= \Prob{\game{2}(A)=1}\\
+\Prob{\game{3}(A)=1} &= \frac{1}{\dbinom{q}{r}}\Prob{\game{2}(A)=1}\\
+\Prob{\game{4}(A)=1} &= \Prob{\game{3}(A)=1}\\
+\Prob{\game{4}(A)=1} & \leq \Big[(1-e^{-kn/m})^k +O(1/n)\Big]^r
 \end{align}
 
 \noindent
-From \Cref{eq:m1T2,eq:m2T2},
+From \Cref{eq:0T2,eq:1T2}
 \begin{align}
-\nonumber \Prob{\ExpPRF{F}{B} = 1} &= .5\Prob{\ExpPRF{F}{B_1}=1|b=0} + .5\Prob{\ExpPRF{F}{B_1} = 1|b=1}\\
-\nonumber 2\Prob{\ExpPRF{F}{B} = 1} &= 1-\Prob{\game{1}(A)=1} + \Prob{\game{0}(A)=1}\\
-\nonumber (2\Prob{\ExpPRF{F}{B} = 1} - 1)  &= \Prob{\game{0}(A)=1} - \Prob{\game{1}(A)=1}\\
- \AdvPRF{F}{B} &= \Prob{\game{0}(A)=1} - \Prob{\game{1}(A)=1} \label{eq:1T2}
+\nonumber \AdvPRF{F}{B} &= \AdvFPSecHash{B_\mathrm{ds},r}{A} - \frac{1}{\dbinom{q}{r}}\Prob{\game{2}(A)=1}\\
+\nonumber \AdvFPSecHash{B_\mathrm{ds},r}{A} &= \AdvPRF{F}{B} + \frac{1}{\dbinom{q}{r}}\Prob{\game{2}(A)=1}\\
+\nonumber \AdvFPSecHash{B_\mathrm{ds},r}{A} &= \AdvPRF{F}{B} +  \dbinom{q}{r}\Prob{\game{4}(A)=1}\\
+\AdvFPSecHash{B_\mathrm{ds},r}{A} &= \AdvPRF{F}{B} +  \dbinom{q}{r}\Big[(1-e^{-kn/m})^k +O(1/n)\Big]^r
 \end{align}
-
-\noindent
-Following a similar argument from \Cref{thm1}\fixme{For $t>1$, proof fails for $t>1$}\acnote{Modified.}
-\begin{equation}
-\Prob{\game{1}(A)=1} = \frac{1}{\dbinom{q}{t}}\times\Prob{\game{2}(A)=1}\label{eq:3T2}
-\end{equation}
-
-\begin{align}
-\nonumber \Prob{\game{2}(A)=1} &= q\Prob{A' \mbox{outputs FP}}\\
-& \leq q \times (1-e^{-kn/m})^k \label{eq:4T2}
-\end{align}
-
-
-\noindent
-From \Cref{eq:0T2,eq:1T2,eq:3T2,eq:4T2}: \\
-\begin{align}
-\nonumber \AdvFPSecHash{B_\mathrm{lin},t}{A} &- \Prob{\game{1}(A)=1} =  \AdvPRF{F}{B}   \\
-\nonumber \AdvFPSecHash{B_\mathrm{lin},t}{A}  &=  \AdvPRF{F}{B} + \Prob{\game{1}(A)=1}  \\
-\AdvFPSecHash{B_\mathrm{lin},t}{A} &\leq  \AdvPRF{F}{B}  + \frac{q}{\dbinom{q}{t}} \times  (1-e^{-kn/m})^k
-\end{align}
-
 
 \end{proof}
