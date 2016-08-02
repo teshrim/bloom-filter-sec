@@ -1,11 +1,10 @@
 \newcommand{\FK}{F_K(\langle j,x \rangle)}
 \newcommand{\rhoK}{\rho(\langle j,x \rangle)}
 
-\fixme{Clean up to match style, language and typesetting (macros,
-  especially) of previous theorem.}
+Let $B_{\mathrm{ds}}=(\Hash,\Rep,\Qry)$ be the hash-based filter defined as earlier, except the hash functions are defined as $h_j(x) = \FK, \, j \in [1,k]$. Informally, the following result shows, if~$F$ is PRF secure and the filter has low FP-error in the non-adaptive setting, then $B_{\mathrm{ds}}$ is secure against adaptive FP-finding adversaries.
 
-Let $B_{\mathrm{ds}}=(\Hash,\Rep,\Qry)$ be the hash-based filter defined as earlier, except the hash functions are defined as $h_j(x) = \FK, \, j \in [1,k]$. Informally, the following result shows, if F is PRF secure and the filter has low FP-error in the non-adaptive setting, then $B_{\mathrm{ds}}$ is secure against adaptive FP-finding adversaries.
 
+\tsnote{Clean up so it looks like the previous theorem.}
 \begin{theorem}\label{thm2}
 Fix $k,m,n >0$. Let $B_{\mathrm{ds}}$ be the hash based filter described earlier. If there exists an adaptive adversary $A$ compatible with $\ExpFPPubHash{B_{\mathrm{ds},t}}{\cdot}$ asking $q \times r$ queries in $t$ time, then there exists an adversary $B$ attacking the PRF game in time $O(t)$ and asking same number of queries as $A$ such that 
 \begin{equation}
@@ -13,6 +12,12 @@ Fix $k,m,n >0$. Let $B_{\mathrm{ds}}$ be the hash based filter described earlier
 \end{equation}
 \end{theorem}
 
+\tsnote{I don't see why this is necessary.  Doesn't it follow from the
+standard bounds on Bloom filters (go look them up and adjust the
+theorem accordingly) which assume that the hash functions are random
+functions?  Whatever argument you use in Theorem 1 to justify
+independence, i.e. turning one non-adaptive FP into~$r$ non-adaptive
+FPs, should apply here, too.}
 \acnote{I think we should give a proof of the non-adaptive FP-error bound $(1-e^{-kn/m})^k + O(1/n) $. This bound which we picked from KM's theorem 6.2, is a particular case (double hashing scheme).  Theorem 6.1, on the other hand holds good for any hashing scheme that satisfies Lemma 4.1. \\
  I tried to give the FP-bound as a Lemma. 
 \begin{lemma}\label{lemma1}
