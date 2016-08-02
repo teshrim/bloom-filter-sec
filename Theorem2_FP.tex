@@ -17,7 +17,16 @@ standard bounds on Bloom filters (go look them up and adjust the
 theorem accordingly) which assume that the hash functions are random
 functions?  Whatever argument you use in Theorem 1 to justify
 independence, i.e. turning one non-adaptive FP into~$r$ non-adaptive
-FPs, should apply here, too.}
+FPs, should apply here, too.  You don't need to understand the KM
+results deeply for this argument, by the way.  You just need to
+understand why you get independence, i.e. why it is that, after the
+set~$S$ has been hashed (hence the bits in~$M$ are set), then the
+probabilities that distinct $x_1,\ldots,x_r$ are each FPs are
+independent.  This really is pretty immediate from the fact that
+$\rho_1,\rho_2$ are random functions and the $x_i$ are distinct.}
+\tsnote{I guess if you want, you could give a 1-to-$r$ lemma for the hash
+  functions (with random functions $\rho1,\rho_2$ used in Theorem 1, prove it, and use that lemma in the
+  proof of Theorem 1.  Then do the parallel thing here, for Theorem 2.}
 \acnote{I think we should give a proof of the non-adaptive FP-error bound $(1-e^{-kn/m})^k + O(1/n) $. This bound which we picked from KM's theorem 6.2, is a particular case (double hashing scheme).  Theorem 6.1, on the other hand holds good for any hashing scheme that satisfies Lemma 4.1. \\
  I tried to give the FP-bound as a Lemma. 
 \begin{lemma}\label{lemma1}
