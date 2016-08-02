@@ -1,15 +1,15 @@
 \heading{Linear-PRF construction. }
 Here we consider a hash-based filter that was attacked by Neidermayer et al. in~\cite{xxx}.  Let $B_{\mathrm{lin}}=(\Hash,\Rep,\Qry)$ be defined as follows.  Fix non-empty set ~$\univ$ and integers $k,m,n>0$.  Let $F\colon\mathcal{K} \times \univ \to [m]$ be a function family.  The $\Hash$ algorithm samples two keys $K_0,K_1 \getsr \mathcal{K}$ and defines $h_j(x) = F_{K_0}(x) + j\cdot F_{K_1}(x) \bmod m$ for $j \in [1,k]$.  The $\Rep$ and $\Qry$ algorithms are the standard (determinisitic) BF ones. The following result shows, informally, that if~$F$ is a good PRF and the (non-adaptive) FP rate is sufficiently small, then $B_\mathrm{lin}$ is secure against adaptive FP-finding adversaries.
 
-\fixme{Note: the following theorem is incorrect for $r>1$.  Or, at least, the proof does not cover $r>1$.}\acnote{Modified.}
 \begin{theorem}\label{thm1}
-Fix $k,m,n>0$, and let $B_\mathrm{lin}=(\Hash,\Rep,\Qry)$ be the hash-based filter just described. 
-Let~$A$ be an adversary, compatible with $\ExpFPSecHash{B_\mathrm{lin},r}{\cdot}$, that asks at most~$q \times r$ queries in time $t$ to its $\QryOracle$ oracle.  Then 
+Fix $k,m,n,r>0$, and let $B_\mathrm{lin}=(\Hash,\Rep,\Qry)$ be the hash-based filter just described. 
+For any adversary~$A$ that makes a total of~$q$ queries to its oracle
+and has time-complexity~$t$,
+there exist adversaries~$B_1,B_2$ (explicitly constructed in the proof of this theorem) such that
 \[
-\AdvFPSecHash{B_{\mathrm{lin}},r}{A} \leq  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}  +{\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r
+\AdvFPSecHash{B_{\mathrm{lin}},r}{A} \leq  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}  +{\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
 \]
-for PRF-adversaries~$B_1$ and $B_2$ given explicitly in the proof of
-this theorem. Here, $B_1$ and $B_2$, each ask $q \times r$ oracle queries in time O(t). \tsnote{Statement about resources of these reductions.}
+Here, $B_1$ and $B_2$, each ask~$q$ oracle queries and have time complexity~$O(t+qm)$.
 \end{theorem}
 Before giving the proof, we note that Kirsch and Mitzenmacher~\cite{xxx} show
 that the ($r=1$, non-adaptive) FP-probability for~$B_\mathrm{lin}$ is
@@ -33,42 +33,101 @@ $\game{1}(A)$ and $\game{2}(A)$ attack 2 different filters with hash functions
 $h_j(x) = ( F_{K_0}(x) + j\cdot \rho_2(x)) \bmod m$ and $h_j(x) = ( \rho_1(x) + j \cdot \rho_2(x)) \bmod m$, respectively.
 Here, $\rho_1$ and $\rho_2$ are random functions sampled from $\Func{\univ,[m]}$. \\
 
-In $\game{3}(A)$, $r$ random integers are chosen and the $\QryOracle$ oracle sets a $\bad$ flag if query response for any of the $r$ queries is false or any of the $q-r$ queries return true. Also, the hash functions are linear combinations of two random points in $[m]$, similar to $\game{2}(A)$. So, both have equal probability of returning 1. 
+\tsnote{I'll need to rewrite all below here.  The current text is too hand-wavy and fast.}
+In $\game{3}(A)$, the hash functions are linear combinations of two random points
+in $[m]$, similar to $\game{2}(A)$. 
+\tsnote{`In transitioning from $\game{2}$ to $\game{3}$ we
+  replace the all-at-once sampling of random functions~$\rho_1,\rho_2$
+with lazying sampling in the $\HashOracle$, which is the only place
+these random functions are used.  This does not alter the input-output
+behavior of the $\HashOracle$.''  Why do we do this?}
+We also sample $r$~distinct random integers are chosen \tsnote{why?
+  What are we setting up?} and the $\QryOracle$ oracle sets a $\bad$
+flag if query response for any of the $r$ queries is false or any of
+the $q-r$ queries return true. \tsnote{We
+  set $\bad$ to $\true$ if the queries indexed by the
+  set~$\mathcal{I}$ fail to be false-positives, or if any of the
+  remaining queries \emph{are} false-positives.  Again, why are we
+  doing this?  }
 
+So, both have equal probability of returning 1.  \tsnote{``The value
+  of~$\bad$ does not affect the value returned by~$\game{3}$. Thus we
+  conclude that...'' }
 \begin{equation}
 \Prob{\game{2}(A)=1} = \Prob{\game{3}(A)=1}\label{eq:3}
 \end{equation}
 
-The probability of winning  $\game{3}(A)$ is same as $\game{4}(A)$, except $\game{4}(A)$ outputs 0 if $\bad$ flag is set. In short, $\game{3}(A)$ and $\game{4}(A)$ are identical untill $\bad =true$.  On the  other hand, $\game{5}(A)$ simulates the non-adaptive counterpart of $\game{4}(A)$. 
- \tsnote{I have rewritten game $\game{3}(A)$ and added
-  $\game{4}(A)$.  It should be that
-  $\Prob{\game{2}(A)}=\Prob{\game{3}(A)=1}$. Moreover
-  $\Prob{\game{4}(A)=1} = \Prob{\game{3}(A)=1 \wedge \neg\bad} =
-  \Prob{\game{3}(A)=1}\Prob{\game{3}{A}:\,\neg\bad} =
-  \Prob{\game{3}(A)=1}\frac{1}{\dbinom{q}{r}}$. Finally the event
-  $\game{4}(A)=1$ happens iff $\bad \neq \true$.  That means there is
-  a non-adaptive adversary that runs~$A$, simulates $\QryOracle$ by
-  simply returning 1 iff $c \in \mathcal{I}$, and uses the queries
-  with indices in $\mathcal{I}$ as its non-adaptive FPs.  To be
-  totally clear, you might want to add a $\game{5}(A)$ that has this
-  $\QryOracle$ behavior, and then give the non-adaptive FP-adversary~$A'$ that
-simulates~$\game{5}(A)$, and so on. }\fixme{Clean up everything after this.}
+The probability of winning  $\game{3}(A)$ is same as $\game{4}(A)$,
+except $\game{4}(A)$ outputs 0 if $\bad$ flag is
+set.\tsnote{I don't understand this sentence.  What you mean to say is
+  something like this: ``By construction, $\game{3}$ and $\game{4}$
+  are identical-until-bad.  In addition, $\game{4}$ returning 1
+  implies that $\bad$ is never set to~$\true$.  From these two
+  observations, we can conclude that $\Prob{\game{4}(A)=1} =
+  \Prob{\game{3}(A)=1 \wedge \neg\bad}$.'' }
+In short, $\game{3}(A)$ and $\game{4}(A)$ are identical untill $\bad
+=true$.  On the  other hand, $\game{5}(A)$ simulates the non-adaptive
+counterpart of $\game{4}(A)$.  \tsnote{This statement is unjustified.
+(See my comments below.) Actually it's meaningless, because games are
+not not adaptive or non-adaptive.  Adversaries are.}
 
+\tsnote{You need to just justify these next lines better. For example,
+why is the event $\neg \bad$ independent of the event $\game{3}(A)=1$?}
 \begin{align}
 \nonumber \Prob{\game{4}(A)=1} &= \Prob{\game{3}(A)=1 \wedge \neg\bad}\\ 
 \nonumber & = \Prob{\game{3}(A)=1}\Prob{\game{3}(A):\,\neg\bad}\\
 & = \Prob{\game{3}(A)=1}\frac{1}{\dbinom{q}{r}}\label{eq:3a}\\
 \Prob{\game{5}(A)=1} &= \Prob{\game{4}(A)=1}\label{eq:3b}
 \end{align}
+\tsnote{How does the last line follow from the games?  I mean, it
+  isn't obvious to me that your $\game{5}$ is equivalent to $\game{4}$.  The
+  latter looks at the adversary's output~$\mathcal{Z}$, but the former
+ignores this and looks at this new set~$\mathcal{Y}$.  Why are these
+equivalent with respect to the events $\game{4}(A)=1$ and
+$\game{5}(A)=1$?  Just looking at the $\QryOracle$ in the two games,
+it appears that they have pretty different behaviors. I mean, in
+$\game{4}$ the oracle still returns what it is supposed to, even if
+$\bad\gets\true$.  But in $\game{5}$ the oracle returns fixed values,
+no matter if the query is or is not a FP.  You have to explain why
+these changes are okay.  Also, why is this new set~$\mathcal{Y}$
+necessary?  }
+\tsnote{The point that needs to be made about the relationship between
+  $\game{4}$ and $\game{5}$ is this.  $\game{4}$ returns 1 only if
+  $\bad=\false$ at the end of the game.  In turn, this implies that
+  the game managed to ``guess'', prior to the execution of~$A$, which
+  of its queries would result in false-positives.  (By the way, we
+  need to state an assumption here: that~$A$ halts and
+  outputs~$\mathcal{Z}$ (of size~$r$) as soon as its queries
+  reveal~$r$ false positives.  This is without loss of generality; say
+why.  I guess you also need to assume that every point in
+the~$\mathcal{Z}$ output by~$A$ has already been queried
+to~$\QryOracle$.  Strictly speaking this is not without loss of
+generality, but would be easily enforced (in the original
+  security definitions) by counting as part of the number of
+  queries~$q$ the points in~$\mathcal{Z}$.  Without these assumptions,
+things don't quite work.)  Hence, if $\game{4}(A)=1$ there is a
+non-adaptive adversary~$D$ that finds~$r$ false positives against
+$\tilde{B}_{\mathrm{lin}}$, which is $B_{\mathrm{lin}}$ but
+with $F_{K_1}$ and $F_{K_2}$ replaced by random functions $\rho_1$ and $\rho_2$,
+respectively.  (Note, this is \emph{not} the adversary~$D$ that you
+give, because the one you give simulates things that it would be given
+in the FP game, e.g. the set~$S$.)  That is, $\Prob{\game{4}(A)=1} =
+\AdvFPSecHash{\tilde{B}_{\mathrm{lin}},r}{D}$.  (So I guess there's no
+need for $\game{5}$.)  Now argue that this advantage is upperbounded
+by what the theorem claims, i.e. the KM bound raised to~$r$.}
 
 From  \Cref{eq:3,eq:3a,eq:3b}:
 \begin{equation}
 \Prob{\game{5}(A)=1} = \Prob{\game{2}(A)=1}\frac{1}{\dbinom{q}{r}}\label{eq:3c}
 \end{equation}
 
-\tsnote{The PRF experiment has not be defined yet, so strictly
-  speaking these claims make no sense. }
-The PRF game of $F$ is shown in \Cref{fig:prf}. Let prf-adversaries $B_1, B_2$ be as shown in \Cref{fig:BGame1}.  By
+%\tsnote{The PRF experiment has not be defined yet, so strictly
+% speaking these claims make no sense. }
+The PRF game of $F$ is shown in \Cref{fig:prf}. Let prf-adversaries
+$B_1, B_2$ be as shown in \Cref{fig:BGame1}. \tsnote{Why is $B_2$
+  sampling a random function?  This ruins the tightness of security
+  bound w.r.t.\ resources.  Please have~$B_2$ carry out lazy sampling
+  of~$\rho_2$.  Also, please use the macro for Func.}  By
 construction, these simulate $\game{1}(A)$ and $\game{2}(A)$, respectively. When $b=0$, $B_1$ wins if $\game{1}(A)$ outputs 0; $B_2$ wins if $\game{2}(A)$ returns 0. When $b=1$, $B_1$ and $B_2$ exactly simulate $\game{0}(A)$ and $\game{1}(A)$. So, 
 \begin{align}
 \Prob{\ExpPRF{F}{B_1} = 1\,|\,b=1} &= \Prob{\game{0}(A)=1}\label{eq:m1}\\
@@ -250,7 +309,8 @@ if $ b = 1$ then\\
 Ret $\rho(x)$\\
 }
 }
-\caption{PRF game}\label{fig:prf}
+\caption{The PRF experiment for a function family $F \colon \calK
+  \times \calX \to [m]$. }\label{fig:prf}
 \end{figure}
 
 %\caption{Adversary $B_1, B_2$ simulating $\game{1}(A)$ and $\game{2}(A)$ respectively}\label{fig:BGame1}
@@ -378,14 +438,20 @@ Adding \Cref{eq:1,eq:2a}, we have
 \AdvPRF{F}{B_1} +\AdvPRF{F}{B_2} = \Prob{\game{0}(A)=1} - \Prob{\game{2}(A)=1}\label{eq:2}
 \end{equation}
 
-The classical FP requirement considers only non-adaptive (and information-theoretic) adversaries, and $D$ is one such adversary simulating $\game{5}(A)$ as closely as possible, whereas $D'$ mimics $D$ for $r=1$. $D'$ outputs a FP as in a classic Bloom filter and its FP-error is upperbounded by $[(1-e^{-kn/m})^k +O(1/n)]$ \cite{KirschMitzenmacher}.  %\acnote{changed}\tsnote{The classical FP requirement considers only non-adaptive (and information-theoretic) adversaries.  It suffices to say this.}
+\tsnote{This proof jumps around too much.  The games should be
+  addressed in order, as much as possible.}  
+The classical FP requirement considers only non-adaptive (and information-theoretic) adversaries, and~$D$ is one such adversary simulating $\game{5}(A)$ as closely as possible, whereas $D'$ mimics $D$ for $r=1$. $D'$ outputs a FP as in a classic Bloom filter and its FP-error is upperbounded by $[(1-e^{-kn/m})^k +O(1/n)]$ \cite{KirschMitzenmacher}.  %\acnote{changed}\tsnote{The classical FP requirement considers only non-adaptive (and information-theoretic) adversaries.  It suffices to say this.}
 \noindent
-From \Cref{fig:AGame3}, it is evident that
+From \Cref{fig:AGame3}, it is evident that \tsnote{Where is the
+  set~$S$ in $D$ and $D'$?  Make sure to give it to~$A$.  Why is this
+  extra set~$\mathcal{Y}$ needed?}
 \begin{align}
 \Prob{\game{5}(A)=1} &= \Prob{D \, \mbox{outputs $r$ FP} \,}\label{eq:4a}\\
 \nonumber \Prob{D \, \mbox{outputs r FP} \,} &=  \Big[\Prob{D' \, \mbox{outputs FP} \,}\Big]^r\\
 & \leq \Big[(1-e^{-kn/m})^k +O(1/n)\Big]^r \label{eq:4b}
 \end{align}
+\tsnote{How does the second line follow?  You're claiming independence
+  somehow, but you haven't justified it.}
 \noindent
 From \Cref{eq:4a,eq:4b}
 \begin{equation}
