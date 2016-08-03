@@ -179,6 +179,16 @@ $(M,\aux) \getsr \Rep(S_b)$\\
 $b' \getsr A^{\TestOracle}(S_0,S_1,\aux)$\\
 if $b' = b$ then Return 1\\
 Return 0\\
+
+\medskip
+\experimentv{$\ExpPrivSS{\setprim,\distr{\calS}{}}{A}$}\\
+$S \getsr \distr{\calS}{}$\\
+$(M,\aux) \getsr \Rep(S)$\\
+$f \getsr A(M,\aux)$\\
+$S' \getsr \distr{\calS}{}$\\
+if $f(S) \neq f(S')$ then\\
+\nudge Return 1\\
+Return 0\\
 }
 %
 {
@@ -201,12 +211,19 @@ Return~$a$\\
 \caption{Privacy notions. {\bf Left:} ``One-wayness'' style
   definitions. The top is a weaker notion, because the representation
   is hidden from the adversary. {\bf Right:} An
-  ``indistinguishability'' style notion. (Still playing...)} 
+  ``indistinguishability'' style notion and a semantic-security style notion. (Still playing...)} 
 \label{fig:privacy}
 \end{figure}
 
 \subsection{Relationships Among Notions}
-If we allow for trivial schemes, e.g. $M=S$, then correctness and the stronger version of one-wayness privacy (Priv) are clearly orthogonal.\tsnote{In general, it isn't clear how to reduce correctness to the Priv notion.  In the correctness experiment, you get~$(S,\aux)$ but not~$M$; whereas in the Priv-notion, the adversary expects~$(M,\aux)$ as input.  Unless the coins of Rep are effectively leaked in~$\aux$, you can't reliably produce~$M$ given~$(S,\aux)$.}
+If we allow for trivial schemes, e.g. $M=S$, then correctness and the stronger version of one-wayness privacy (Priv) are clearly orthogonal.
+\tsnote{My $M=S\setminus\{x\}$ for a random $x \in S$ construction is less trivial (it compresses), but also serves to separate correctness from Priv.}
+\tsnote{In general, it isn't clear how to reduce
+correctness to the Priv notion.  In the correctness experiment, you
+  get~$(S,\aux)$ but not~$M$; whereas in the Priv-notion, the
+  adversary expects~$(M,\aux)$ as input.  Unless the coins of Rep are
+  effectively leaked in~$\aux$, you can't reliably produce~$M$
+  given~$(S,\aux)$.} 
 Curiously, $M=S$ does seem to be both correct and private (up to the element-wise min-entropy of~$S$) in the weaker version of one-wayness privacy (wPriv).
 \tsnote{Reducing correctness to the weaker version, wPriv, is syntactically possible, but not clear how to connect the success events.  In the one-wayness game, you win by outputing an element of~$S$; but how does this lead to finding an error-inducing query?  Maybe the one-wayness attacker makes no queries, and just outputs a point~$z$.  Then the correctness attacker does what?  Ask some query~$q_z$ related to~$z$ ---remember, queries are not syntactically restricted to set membership!--- and see if the oracle returns the true value $q_z(S)$?  This is pretty complicated... and it's not clear how to do a quality reduction.   }
 
