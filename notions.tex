@@ -111,12 +111,12 @@ This is immediate.
 
 \subsection{Notions of Privacy}
 One can also consider the orthogonal notion of privacy for a set-representation.
-\jnote{Actually, I am now unsure what the right way to define it is. It seems natural
-to give the attacker $\aux$. But if we give them $\aux$ and $M$ then they have everything.
-If $S$ has high min-entropy (element-wise), then it might still be
-possible to have security here.}\tsnote{I think we will always bump up
-against the (element-wise) min-entropy of the distribution over~$S$,
-at least in the ``one-wayness'' style definition that I had been imagining. }
+%\jnote{Actually, I am now unsure what the right way to define it is. It seems natural
+%to give the attacker $\aux$. But if we give them $\aux$ and $M$ then they have everything.
+%If $S$ has high min-entropy (element-wise), then it might still be
+%possible to have security here.}\tsnote{I think we will always bump up
+%against the (element-wise) min-entropy of the distribution over~$S$,
+%at least in the ``one-wayness'' style definition that I had been imagining. }
 There are several possible definitions:
 \begin{enumerate}
 \item A ``one-wayness'' definition where $S$ has high min-entropy (element-wise), and we
@@ -186,22 +186,22 @@ Return 0\\
 $a \gets \Qry(M,\aux,q)$\\
 Return~$a$\\
 
-\medskip
-\oracle{$\RepOracle(S_0,S_1)$}\\
-if $\mathrm{used}=\true$ then Return $\bot$\\
-%if $|S_0|\neq|S_1|$ then \\
-%\nudge Ret $\bot$\\
-$S_0,S_1 \getsr \distr{\calS}{}$\\
-$\mathrm{used}=\true$\\
-$(M,\aux) \getsr \Rep(S_b)$\\
-Return $(S_0,S_1,\aux)$\\
+%\medskip
+%\oracle{$\RepOracle(S_0,S_1)$}\\
+%f $\mathrm{used}=\true$ then Return $\bot$\\
+%%if $|S_0|\neq|S_1|$ then \\
+%%\nudge Ret $\bot$\\
+%$S_0,S_1 \getsr \distr{\calS}{}$\\
+%$\mathrm{used}=\true$\\
+%$(M,\aux) \getsr \Rep(S_b)$\\
+%Return $(S_0,S_1,\aux)$\\
 
 }
 }
 \caption{Privacy notions. {\bf Left:} ``One-wayness'' style
   definitions. The top is a weaker notion, because the representation
   is hidden from the adversary. {\bf Right:} An
-  ``indistinguishability'' style notion. (Still playing... ignore unused oracles)} 
+  ``indistinguishability'' style notion. (Still playing...)} 
 \label{fig:privacy}
 \end{figure}
 
