@@ -110,13 +110,46 @@ This is immediate.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Notions of Privacy}
-One can also consider the orthogonal notion of privacy for a set-representation.
+One can also consider the orthogonal notion of privacy for a
+set-representation.   There are various ways to formalize privacy, and
+we give some of these in Figure~\ref{fig:privacy}.  
 %\jnote{Actually, I am now unsure what the right way to define it is. It seems natural
 %to give the attacker $\aux$. But if we give them $\aux$ and $M$ then they have everything.
 %If $S$ has high min-entropy (element-wise), then it might still be
 %possible to have security here.}\tsnote{I think we will always bump up
 %against the (element-wise) min-entropy of the distribution over~$S$,
 %at least in the ``one-wayness'' style definition that I had been imagining. }
+On the left side of this figure, we give two ``one-wayness''
+definitions, in which the adversary must output an element of the
+set~$S$ represented by~$M$.  The first version (priv) gives the
+adversary~$(M,\pubaux)$ as input; the second (wpriv) gives
+only~$\pubaux$.  The wpriv-notion captures leakage about the elements
+of~$S$ that results from observing the results of allowed queries.
+The stronger priv-notion captures what is jointly leaked, by the
+representation~$M$ and the allowed queries, about set elements.
+
+On the right side of the figure, we give two ``indistinguishability''
+notions of privacy.  The first version (ind-qry) captures more
+generally what~$M$ and the allowed queries leak about the set that is
+represented.  In particular, two sets~$S_0,S_1$ are sampled according
+to distribution~$\distr{\calS}{}$, one of these is picked at random to
+be represented.  The adversary is provided the resulting~$M,\pubaux$
+and allowed to make queries~$q \in \calQ$; it must determine which
+of~$S_0$ or~$S_1$ was actually represented.  We call this notion
+indistinguishabilty (of sets) under a (adaptively chosen) query
+attack.
+%
+The second version is inspired by the semantic security notion for
+encryption schemes, and we refer to it as semantic-security (of sets)
+with respect to the full representation (ss-rep).  In this experiment,
+a set~$\calS$ is sample according to distribution~$\distr{\calS}{}$,
+and the adversary is given the full ouput of running $\Rep(S)$,
+i.e. $(M,\pubaux,\privaux)$.  The adversary must output a
+function~$f\colon\calS \to \bits^*$ such that $f(S)$ differs from
+$f(S')$ for a set~$S'$ that is subsequently sampled according to~$\distr{\calS}{}$.
+
+
+\if{0}
 There are several possible definitions:
 \begin{enumerate}
 \item A ``one-wayness'' definition where $S$ has high min-entropy (element-wise), and we
@@ -150,6 +183,8 @@ q(S_1)$. \tsnote{I'm not convinced this is the right restriction.
 %does not leak information about~$S_0$ vs.\ $S_1$. } \jnote{Sure, this would be implied
 %by the definition in this case.}
 \end{enumerate}
+\fi
+
 
 \begin{figure}[htbp]
 \centering
