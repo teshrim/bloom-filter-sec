@@ -192,9 +192,9 @@ Return 0\\
 
 \medskip
 \experimentv{$\ExpPrivSS{\setprim,\distr{\calS}{}}{A}$}\\
-$S \getsr \distr{\calS}{}$\\
+$S\getsr \distr{\calS}{}$\\
 $(M,\pubaux,\privaux) \getsr \Rep(S)$\\
-$f \getsr A^{\TestOracle}(M,\pubaux)$\\
+$f \getsr A(M,\pubaux,\privaux)$\\
 $S' \getsr \distr{\calS}{}$\\
 if $f(S) \neq f(S')$ then\\
 \nudge Return 1\\
