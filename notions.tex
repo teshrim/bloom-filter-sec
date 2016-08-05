@@ -261,6 +261,24 @@ Return~$a$\\
 \end{figure}
 
 \subsection{Relationships Among Notions}
+
+\heading{Privacy notions. }
+Clearly we have priv $\Rightarrow$ wpriv, tightly and by a simple
+reduction.  We should be able to show
+\begin{itemize}
+\item ss-rep $\Rightarrow$ ind-qry
+\item ind-qry $\Rightarrow$ ss-rep \tsnote{Not sure about this separation...}
+\item ind-qry $\Rightarrow$ priv \emph{for set-multiplicity data
+    structures} \tsnote{but probably not in general}
+\item \{w\}priv $\not\Rightarrow$ ind-qry
+\item wpriv $\not\Rightarrow$ priv \tsnote{$M=S$, or my
+    $M=S\setminus \{x\}$ for a random $x\in S$, if you want something
+    a bit less trivial. I'm sure there are more natural schemes that
+    will separate, too.}
+\end{itemize}
+
+
+\heading{Correctness vs.\ Privacy. }
 If we allow for trivial schemes, e.g. $M=S$, then correctness and the stronger version of one-wayness privacy (Priv) are clearly orthogonal.
 \tsnote{My $M=S\setminus\{x\}$ for a random $x \in S$ construction is less trivial (it compresses), but also serves to separate correctness from Priv.}
 \tsnote{In general, it isn't clear how to reduce
@@ -274,3 +292,4 @@ Curiously, $M=S$ does seem to be both correct and private (up to the element-wis
 
 
 \tsnote{Likewise the other way: the one-wayness adversary does not get~$S$, and yet needs to provide this to the correctness adversary.}
+
