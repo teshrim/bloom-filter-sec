@@ -156,18 +156,18 @@ q(S_1)$. \tsnote{I'm not convinced this is the right restriction.
 \hfpages{.495}{
 \hpagess{.5}{.45}
 {
-\experimentv{$\ExpWPriv{\setprim,\distr{\calS}{}}{A}$}\\
-$S \getsr \distr{\calS}{}$\\
-$(M,\pubaux,\privaux) \getsr \Rep(S)$\\
-$z \getsr A^{\TestOracle}(\pubaux)$\\
-if $z \in S$ then Return 1\\
-Return 0\\
-
-\medskip
 \experimentv{$\ExpPriv{\setprim,\distr{\calS}{}}{A}$}\\
 $S \getsr \distr{\calS}{}$\\
 $(M,\pubaux,\privaux) \getsr \Rep(S)$\\
 $z \getsr A^{\TestOracle}(M,\pubaux)$\\
+if $z \in S$ then Return 1\\
+Return 0\\
+
+\medskip
+\experimentv{$\ExpWPriv{\setprim,\distr{\calS}{}}{A}$}\\
+$S \getsr \distr{\calS}{}$\\
+$(M,\pubaux,\privaux) \getsr \Rep(S)$\\
+$z \getsr A^{\TestOracle}(\pubaux)$\\
 if $z \in S$ then Return 1\\
 Return 0\\
 }
@@ -219,7 +219,7 @@ Return~$a$\\
 }
 }
 \caption{Privacy notions. {\bf Left:} ``One-wayness'' style
-  definitions. The top is a weaker notion, because the representation
+  definitions. The bottom is a weaker notion, because the representation
   is hidden from the adversary. {\bf Right:} An
   ``indistinguishability'' style notion and a semantic-security style notion. (Still playing...)} 
 \label{fig:privacy}
