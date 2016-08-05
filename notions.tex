@@ -167,7 +167,7 @@ Return 0\\
 \experimentv{$\ExpPriv{\setprim,\distr{\calS}{}}{A}$}\\
 $S \getsr \distr{\calS}{}$\\
 $(M,\pubaux,\privaux) \getsr \Rep(S)$\\
-$z \getsr A(M,\pubaux)$\\
+$z \getsr A^{\TestOracle}(M,\pubaux)$\\
 if $z \in S$ then Return 1\\
 Return 0\\
 }
@@ -186,7 +186,7 @@ Return~$a$
 $b \getsr \bits$\\
 $S_0,S_1 \getsr \distr{\calS}{}$\\
 $(M,\pubaux,\privaux) \getsr \Rep(S_b)$\\
-$b' \getsr A^{\TestOracle}(\pubaux)$\\
+$b' \getsr A^{\TestOracle}(M,\pubaux)$\\
 if $b' = b$ then Return 1\\
 Return 0\\
 
@@ -194,7 +194,7 @@ Return 0\\
 \experimentv{$\ExpPrivSS{\setprim,\distr{\calS}{}}{A}$}\\
 $S \getsr \distr{\calS}{}$\\
 $(M,\pubaux,\privaux) \getsr \Rep(S)$\\
-$f \getsr A(M,\pubaux)$\\
+$f \getsr A^{\TestOracle}(M,\pubaux)$\\
 $S' \getsr \distr{\calS}{}$\\
 if $f(S) \neq f(S')$ then\\
 \nudge Return 1\\
@@ -208,7 +208,7 @@ Return~$a$\\
 
 %\medskip
 %\oracle{$\RepOracle(S_0,S_1)$}\\
-%f $\mathrm{used}=\true$ then Return $\bot$\\
+%if $\mathrm{used}=\true$ then Return $\bot$\\
 %%if $|S_0|\neq|S_1|$ then \\
 %%\nudge Ret $\bot$\\
 %$S_0,S_1 \getsr \distr{\calS}{}$\\
