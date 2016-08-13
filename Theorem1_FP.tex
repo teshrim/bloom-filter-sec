@@ -30,33 +30,142 @@ The proof of the theorem will use a game playing argument as shown in \Cref{fig:
 \AdvFPSecHash{B_{\mathrm{lin}},r}{A} = \Prob{\game{0}(A)=1}\label{eq:0}
 \end{equation}
 
-$\game{1}(A)$ and $\game{2}(A)$ attack 2 different filters. In $\game{1}(A)$, $F_{K_1}$ is replaced by a random function, whereas in $\game{2}(A)$, both $F_{K_0}$ and $F_{K_1}$ are replaced by random functions as shown below. Here, $\rho_1$ and $\rho_2$ are random functions sampled from $\Func{\univ,[m]}$.
+ In $\game{1}(A)$, $F_{K_1}$ is replaced by a random function, whereas in $\game{2}(A)$, both $F_{K_0}$ and $F_{K_1}$ are replaced by random functions as shown below. Here, $\rho_1$ and $\rho_2$ are random functions sampled from $\Func{\univ,[m]}$.
+%\begin{align*}
+%\game{1}(A)\, : \, h_j(x) &= ( F_{K_0}(x) + j\cdot \rho_2(x)) \bmod m\\
+%\game{2}(A)\, : \, h_j(x) &= ( \rho_1(x) + j \cdot \rho_2(x)) \bmod m
+%\end{align*}
+
+
+\begin{figure}
+\centering
+\fpage{0.9}{
+\hpagessl{0.5}{0.5}
+{
+$\adversaryv{B_1^{\calO}}$\\
+$K_1 \getsr \calK $\\
+$\calS \getsr \distr{\univ}{n}$\\
+$M \getsr \Rep^{\HashOracle}(\calS)$\\
+When $A$ asks $\QryOracle(x)$:\\
+$\nudge$ Ret $\Qry^{\HashOracle}(M,x)$\\
+When $A$ halts with output $\calZ'$: \\
+\nudge if $|\calZ'| < r$ or $\calZ' \cap \calS \neq \emptyset$ then \\
+\nudge \nudge Ret 0\\
+\nudge if $\exists z \in \calZ'$ s.t. $\Qry^{\HashOracle}(M,z)=0$ then\\
+\nudge \nudge Ret 0\\
+\nudge Ret 1\\\\
+\oracle{$\HashOracle(x)$}\\
+$ \mathrm{Ret} \nudge F_{K_1}(x) + i\cdot \calO(x)$, for $i\in[1,k]$\\
+}
+{
+$\adversaryv{B_2^{\calO}}$\\
+%$d \getsr \bits $\\
+%$\rho_2 \getsr Func(\univ, [m])$ \\
+$S \getsr \distr{\univ}{n}$\\
+$M \getsr \Rep^{\HashOracle}(\calS)$\\
+When $A$ asks $\QryOracle(x)$:\\
+$\nudge$ Ret $\Qry^{\HashOracle}(M,x)$\\
+When $A$ halts with output $\calZ'$: \\
+\nudge if $|\calZ'| < r$ or $\calZ' \cap \calS \neq \emptyset$ then \\
+\nudge \nudge Ret 0\\
+\nudge if $\exists z \in \calZ'$ s.t. $\Qry^{\HashOracle}(M,z)=0$ then\\
+\nudge \nudge Ret 0\\
+\nudge Ret 1\\\\
+\oracle{$\HashOracle(x)$}\\
+%if $d=0$\\
+$a \getsr [m]$\\
+if $T[x] \neq \undefined$\\
+\nudge $a \gets T[x]$\\
+$T[x] \gets a$\\
+$\mathrm{Ret} \nudge \calO(x) + i\cdot a$, for $i\in[1,k]$
+}
+}
+\caption{\Cref{thm1}:Adversary $B_1, B_2$ simulating $\game{1}(A)$ and $\game{2}(A)$ respectively}\label{fig:BGame1}
+\end{figure}
+
+The PRF security notion is shown in \Cref{fig:prf}. Let
+prf-adversaries $B_1, B_2$ be as shown in \Cref{fig:BGame1}.
+Adversary~$B_1$ is constructed so that, if its challenge bit~$b=1$,
+then it exactly simulates $\game{0}$ for~$A$; if $b=0$, it
+simulates~$\game{1}$.  Similarly, adversary~$B_2$ simulates~$\game{1}$
+if its challenge bit~$b=1$, and $\game{2}$ otherwise.  We can conclude
+that 
 \begin{align*}
-\game{1}(A)\, : \, h_j(x) &= ( F_{K_0}(x) + j\cdot \rho_2(x)) \bmod m\\
-\game{2}(A)\, : \, h_j(x) &= ( \rho_1(x) + j \cdot \rho_2(x)) \bmod m
+\Prob{\ExpPRF{F}{B_1} = 1\,|\,b=1} &= \Prob{\game{0}(A)=1} \\%\label{eq:m1}\\
+\Prob{\ExpPRF{F}{B_1} = 1\,|\,b=0} &= 1-\Prob{\game{1}(A)=1} \\%\label{eq:m3}\\
+\Prob{\ExpPRF{F}{B_2} = 1\,|\,b=1} &= \Prob{\game{1}(A)=1} \\%\label{eq:m2}\\
+\Prob{\ExpPRF{F}{B_2} = 1\,|\,b=0} &= 1-\Prob{\game{2}(A)=1} \\%\label{eq:m4}
 \end{align*}
-In $\game{3}(A)$, we replace the hash functions of $\HashOracle$ (in $\game{2}(A)$) with lazy sampling of elements from $[m]$. This brings us close to the classic Bloom filter's soundness condition, as now the hash indices sampled during a query are random points in $[m]$, and are independent of the hash indices used by the $\Rep$. As mentioned in \acnote{ref :{sec:intro}}, the soundness condition of a classic bloom filter is given as  $\Prob{h_1,h_2,\ldots,h_k \getsr \mathrm{Func}(\univ,[m])\colon M[h_1(y)]=1 \wedge \cdots \wedge M[h_k(y)]=1} \leq \epsilon$. Also, the $\QryOracle$ now sets $\bad$ to $\true$ if the queries indexed by the set $\mathcal{I}$ fail to be false-positives, or if any of the remaining queries are false-positives. It can be observed that the $\bad$ flag has no impact on the output of the $\QryOracle$, nor does it affect  the value returned by~$\game{3}$. Rather it lays foundation for $\game{4}(A)$. From these observations, 
-\begin{align}
-\Prob{\game{3}(A)=1 \wedge \neg\bad} &= \Prob{\game{3}(A)=1} \Prob{\game{3}(A) : \neg\bad}\label{eq:1} \\
-\Prob{\game{2}(A)=1} &= \Prob{\game{3}(A)=1}\label{eq:2}
-\end{align}
-$\game{4}(A)$ is identical to $\game{3}(A)$ except it returns 0 if $\bad$ is set to true. So, by construction $\game{4}(A)$ and $\game{3}(A)$ are identical-untill-$\bad$. In addition, $\game{4}(A)$ returning 1 implies that bad is never set to true. Therefore,
-\begin{equation}
-\Prob{\game{4}(A)=1} = \Prob{\game{3}(A)=1 \wedge \neg\bad}\label{eq:3}
-\end{equation}
-From \Cref{eq:1,eq:2,eq:3}
-\begin{equation}
-\Prob{\game{4}(A)=1} =  \Prob{\game{2}(A)=1} \Prob{\game{3}(A) : \neg\bad} \label{eq:4}
-\end{equation}
-Since, probability of any set of $r$ queries indexed by set $\calI$ to be not false positives are equally likely to any other set sampled from $[\{1,2,\ldots,q\}]^r$, we have
-\begin{equation}
-\Prob{\game{3}(A) : \neg\bad} = \frac{1}{\dbinom{q}{r}}\label{eq:555}
-\end{equation}
-From \Cref{eq:4,eq:555}
-\begin{equation}
-\Prob{\game{4}(A)=1} = \Prob{\game{2}(A)=1}\frac{1}{\dbinom{q}{r}}\label{eq:6}
-\end{equation}
-In $\game{4}(A)$, $A$ wins $\ExpFPSecHash{B_{\mathrm{lin}},r}{A}$ after finding $r$ false positives indexed by $\calI$. Therefore, without loss of generality, it can be assumed that $A$ halts just after it finds the $r$ false positives, and outputs $\calZ$(of size $r$). Further, we can also assume that every point in $\calZ$ has already been queried to $\QryOracle$. This assumption can be  easily enforced (in the original security definitions) by counting as part of the number of queries~$q$, the points in $\mathcal{Z}$. Hence, if $\game{4}(A)=1$, there is a non-adaptive adversary~$D$ that finds~$r$ false positives against $\tilde{B}_{\mathrm{lin}}$, which is $B_{\mathrm{lin}}$ but with $F_{K_1}$ and $F_{K_2}$ replaced by random functions $\rho_1$ and $\rho_2$, respectively as shown in \Cref{fig:D}. So,
+%
+\noindent
+By a standard conditioning of the PRF advantage, we have 
+%From \Cref{eq:m1,eq:m2,eq:m3,eq:m4},
+%\begin{align}
+%\nonumber \Prob{\ExpPRF{F}{B_1} = 1} &= .5\Prob{\ExpPRF{F}{B_1}=1\,|\,b=0} + .5\Prob{\ExpPRF{F}{B_1} = 1\,|\,b=1}\\
+%\nonumber 2\Prob{\ExpPRF{F}{B_1} = 1} &= 1-\Prob{\game{1}(A)=1} + \Prob{\game{0}(A)=1}\\
+%\nonumber (2\Prob{\ExpPRF{F}{B_1} = 1} - 1)  &= \Prob{\game{0}(A)=1} - \Prob{\game{1}(A)=1}\\
+% \AdvPRF{F}{B_1} &= \Prob{\game{0}(A)=1} - \Prob{\game{1}(A)=1} \label{eq:11}\\
+%\nonumber& &\\
+%\nonumber \Prob{\ExpPRF{F}{B_2} = 1} &= .5\Prob{\ExpPRF{F}{B_2}=1\,|\,b=0} + .5\Prob{\ExpPRF{F}{B_2} = 1\,|\,b=1}\\
+%\nonumber 2\Prob{\ExpPRF{F}{B_2} = 1} &= 1-\Prob{\game{2}(A)=1} + \Prob{\game{1}(A)=1}\\
+%\nonumber (2\Prob{\ExpPRF{F}{B_2} = 1} - 1)  &= \Prob{\game{1}(A)=1} - \Prob{\game{2}(A)=1}\\
+% \AdvPRF{F}{B_2} &= \Prob{\game{1}(A)=1} - \Prob{\game{2}(A)=1} \label{eq:12}
+%\end{align}
+%\noindent
+%Adding \Cref{eq:11,eq:12}, we have
+\begin{equation*}
+\Prob{\game{0}(A)=1} = \AdvPRF{F}{B_1} +\AdvPRF{F}{B_2} + \Prob{\game{2}(A)=1}%\label{eq:13}
+\end{equation*}
+
+
+In $\game{3}(A)$, we replace the random functions used in
+$\HashOracle$ (in $\game{2}(A)$) with lazy sampling of elements from
+$[m]$.  This change does not alter the behavior of the oracle, as the
+random functions are (by the no-pointless-queries assumption on~$A$) always called on a new
+value of~$x$.
+%
+Also, the $\QryOracle$ oracle now sets $\bad$ to $\true$ if the
+queries indexed by the set $\mathcal{I}$ fail to be false-positives,
+or if any of the remaining queries are false-positives. It can be
+observed that the $\bad$ flag has no impact on the output of the
+$\QryOracle$, nor does it affect  the value returned
+by~$\game{3}$. Thus we have $\Prob{\game{2}(A)=1} =
+\Prob{\game{3}(A)=1}$ and
+\[
+\Prob{\game{3}(A)=1 \wedge \game{3}(A): \neg\bad} = \Prob{\game{3}(A)=1} \Prob{\game{3}(A) : \neg\bad}%\label{eq:1} \\
+\]
+
+We note that $\game{3}$ and $\game{4}$ are
+``identical-untill-$\bad$''~\cite{BeRo-gameplaying}.  In particular,
+in $\game{4}$ returns 0 when $\game{3}$ would have returned 1 (i.e.,
+the adversary outputs~$r$ false-positives) but $\bad=\true$.  
+Moreover,  $\game{4}(A)$ returning 1 implies that $\bad$ is never set to $\true$. Therefore,
+$\Prob{\game{4}(A)=1} = \Prob{\game{3}(A)=1 \wedge \neg\bad} =
+\Prob{\game{3}(A)=1} \Prob{\game{3}(A) : \neg\bad}$, by our previous observation.
+
+Before continuing the proof, a bit of intuition for the introduction
+of the $\bad$-flag in games~$\game{3},\game{4}$.   Intuitively, if the index
+set~$\mathcal{I}$ exactly predicts which of the $\QryOracle$ will be
+false-positives (and, conversely, which will not be), then a
+non-adaptive FP-finding adversary can ``guess'' which of~$A$'s queries require it
+to return 1 when simulating the $\QryOracle$, and which require it to
+return 0.  In this way, no queries ever actually need to be made.
+Moving to a non-adaptive setting will allow us to connect to classical
+results on the FP-rate of Bloom filters; more in a moment. 
+
+Now, consider $\Prob{\game{3}(A) : \neg\bad}$.  The indicated event
+happens iff the $r$-set~$\calI$ contains exactly the indices of
+$\QryOracle$-queries that are false-positives.  Since the value
+of~$\bad$ does not alter the responses of~$\QryOracle$, the
+set~$\mathcal{Z}$ output by~$A$ and the set~$\calI$ are independent.
+Thus $\bad$ remains $\false$ after~$A$ halts with probability
+$1/\dbinom{q}{r}$, and we have 
+\begin{equation*}
+\Prob{\game{3}(A)=1} = \frac{1}{\dbinom{q}{r}}\Prob{\game{4}(A)=1}
+\end{equation*}
+
+\fixme{Tom is here in rewriting the proof.}
+Moving on $\game{4}(A)$, $A$ wins $\ExpFPSecHash{B_{\mathrm{lin}},r}{A}$ after finding $r$ false positives indexed by $\calI$. Therefore, without loss of generality, it can be assumed that $A$ halts just after it finds the $r$ false positives, and outputs $\calZ$(of size $r$). Further, we can also assume that every point in $\calZ$ has already been queried to $\QryOracle$. This assumption can be  easily enforced (in the original security definitions) by counting as part of the number of queries~$q$, the points in $\mathcal{Z}$. Hence, if $\game{4}(A)=1$, there is a non-adaptive adversary~$D$ that finds~$r$ false positives against $\tilde{B}_{\mathrm{lin}}$, which is $B_{\mathrm{lin}}$ but with $F_{K_1}$ and $F_{K_2}$ replaced by random functions $\rho_1$ and $\rho_2$, respectively as shown in \Cref{fig:D}. So,
 \begin{align}
 \nonumber \Prob{\ExpFPSecHash{\tilde{B}_{\mathrm{lin}},r}{D} = 1} &= \Prob{\game{4}(A) = 1}\\
 \mathrm{or} \nudge \AdvFPSecHash{\tilde{B}_{\mathrm{lin}},r}{D} &= \Prob{\game{4}(A) = 1}\label{eq:7}
@@ -75,14 +184,6 @@ Using \Cref{eq:6} in \Cref{eq:9}
 \begin{align}
 \Prob{\game{2}(A)=1}\frac{1}{\dbinom{q}{r}} & \leq  \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\\
 \Prob{\game{2}(A)=1} &\leq \dbinom{q}{r}\left( (1-e^{-kn/m})^k + O(1/n) \right)^r\label{eq:10}
-\end{align}
-The PRF game of $F$ is shown in \Cref{fig:prf}. Let prf-adversaries $B_1, B_2$ be as shown in \Cref{fig:BGame1}.  By
-construction, these simulate $\game{1}(A)$ and $\game{2}(A)$, respectively. When $b=0$, $B_1$ wins if $\game{1}(A)$ outputs 0; $B_2$ wins if $\game{2}(A)$ returns 0. When $b=1$, $B_1$ and $B_2$ exactly simulate $\game{0}(A)$ and $\game{1}(A)$. So, 
-\begin{align}
-\Prob{\ExpPRF{F}{B_1} = 1\,|\,b=1} &= \Prob{\game{0}(A)=1}\label{eq:m1}\\
-\Prob{\ExpPRF{F}{B_2} = 1\,|\,b=1} &= \Prob{\game{1}(A)=1}\label{eq:m2}\\
-\Prob{\ExpPRF{F}{B_1} = 1\,|\,b=0} &= 1-\Prob{\game{1}(A)=1}\label{eq:m3}\\
-\Prob{\ExpPRF{F}{B_2} = 1\,|\,b=0} &= 1-\Prob{\game{2}(A)=1}\label{eq:m4}
 \end{align}
 
 %\caption{Game playing argument}\label{fig:Game}
@@ -155,11 +256,8 @@ Ret $\left(h_1(x),\ldots,h_k(x)\right)$
 }
 {
 \underline{{$\game{3}(A)$},\fbox{$\game{4}(A)$}}\\
-$c \gets 0$\\
+$c\gets 0$, $\bad\gets\false$\\
 $\mathcal{I}\getsr [\{1,2,\ldots,q\}]^r$\\
-$\bad \gets \false$\\
-%$\calY \gets \emptyset $\\
-%$\rho_1,\rho_2 \getsr \Func{\univ,[m]}$\\
 $S \getsr \distr{\univ}{n}$\\
 $M \getsr \Rep^{\HashOracle}(\calS)$\\
 $\calZ \getsr A^{\QryOracle}(\calS)$\\
@@ -168,25 +266,14 @@ if $\forall z \in \calZ,\,\Qry^{\HashOracle}(M,z)=1$ then \\
 \nudge if $\bad=\true$ then \fbox{Ret 0}\\
 \nudge Ret 1\\
 Ret 0\\\\
-%if $|\calY| < t$ then \\ 
-%\nudge Ret 0\\
-%for $i=1$ to $t$ \\
-%\nudge $z_i \getsr \calY $\\
-%\nudge $\calY \gets \calY \setminus \{z_i\}$\\
-%\nudge if $\Qry^{\HashOracle}(M,z_i)=0$ then\\
-%\nudge \nudge Ret 0\\
-%Ret 1\\\\
-%
+
 \oracle{$\QryOracle(x)$}\\
-%$\calY \gets \calY \cup \{x\}$\\
 $c \gets c+1$\\
 $v \gets \Qry^{\HashOracle}(M,x)$\\
 if $c \in \mathcal{I}$ and $v\neq 1$ then\\
 \nudge $\bad \gets \true$ \\
-%\nudge \fbox{Ret 1} \\
 if $c \not\in \mathcal{I}$ and $v\neq 0$ then\\
 \nudge $\bad \gets \true$\\
-%\nudge \fbox{Ret 0}\\
 Ret~$v$\\\\
 %
 \oracle{$\HashOracle(x)$}\\
@@ -263,51 +350,6 @@ Ret $\rho(x)$\\
 \end{figure}
 
 %\caption{Adversary $B_1, B_2$ simulating $\game{1}(A)$ and $\game{2}(A)$ respectively}\label{fig:BGame1}
-\begin{figure}
-\centering
-\fpage{0.9}{
-\hpagessl{0.5}{0.5}
-{
-$\adversaryv{B_1^{\calO}}$\\
-$K_1 \getsr \calK $\\
-$\calS \getsr \distr{\univ}{n}$\\
-$M \getsr \Rep^{\HashOracle}(\calS)$\\
-When $A$ asks $\QryOracle(x)$:\\
-$\nudge$ Ret $\Qry^{\HashOracle}(M,x)$\\
-When $A$ halts with output $\calZ'$: \\
-\nudge if $|\calZ'| < r$ or $\calZ' \cap \calS \neq \emptyset$ then \\
-\nudge \nudge Ret 0\\
-\nudge if $\exists z \in \calZ'$ s.t. $\Qry^{\HashOracle}(M,z)=0$ then\\
-\nudge \nudge Ret 0\\
-\nudge Ret 1\\\\
-\oracle{$\HashOracle(x)$}\\
-$ \mathrm{Ret} \nudge F_{K_1}(x) + i\cdot \calO(x)$, for $i\in[1,k]$\\
-}
-{
-$\adversaryv{B_2^{\calO}}$\\
-%$d \getsr \bits $\\
-%$\rho_2 \getsr Func(\univ, [m])$ \\
-$S \getsr \distr{\univ}{n}$\\
-$M \getsr \Rep^{\HashOracle}(\calS)$\\
-When $A$ asks $\QryOracle(x)$:\\
-$\nudge$ Ret $\Qry^{\HashOracle}(M,x)$\\
-When $A$ halts with output $\calZ'$: \\
-\nudge if $|\calZ'| < r$ or $\calZ' \cap \calS \neq \emptyset$ then \\
-\nudge \nudge Ret 0\\
-\nudge if $\exists z \in \calZ'$ s.t. $\Qry^{\HashOracle}(M,z)=0$ then\\
-\nudge \nudge Ret 0\\
-\nudge Ret 1\\\\
-\oracle{$\HashOracle(x)$}\\
-%if $d=0$\\
-$a \getsr [m]$\\
-if $T[x] \neq \undefined$\\
-\nudge $a \gets T[x]$\\
-$T[x] \gets a$\\
-$\mathrm{Ret} \nudge \calO(x) + i\cdot a$, for $i\in[1,k]$
-}
-}
-\caption{\Cref{thm1}:Adversary $B_1, B_2$ simulating $\game{1}(A)$ and $\game{2}(A)$ respectively}\label{fig:BGame1}
-\end{figure}
 
 %\caption{Non-adaptive adversary $D$ simulating $\game{4}(A)$} \label{fig:D}
 \begin{figure}
@@ -339,27 +381,6 @@ Ret $\left(v_1,\ldots,v_k\right)$
 }
 \caption{Non-adaptive adversary $D$ simulating $\game{4}(A)$} \label{fig:D}
 \end{figure}	
-
-%
-\noindent
-From \Cref{eq:m1,eq:m2,eq:m3,eq:m4},
-\begin{align}
-\nonumber \Prob{\ExpPRF{F}{B_1} = 1} &= .5\Prob{\ExpPRF{F}{B_1}=1\,|\,b=0} + .5\Prob{\ExpPRF{F}{B_1} = 1\,|\,b=1}\\
-\nonumber 2\Prob{\ExpPRF{F}{B_1} = 1} &= 1-\Prob{\game{1}(A)=1} + \Prob{\game{0}(A)=1}\\
-\nonumber (2\Prob{\ExpPRF{F}{B_1} = 1} - 1)  &= \Prob{\game{0}(A)=1} - \Prob{\game{1}(A)=1}\\
- \AdvPRF{F}{B_1} &= \Prob{\game{0}(A)=1} - \Prob{\game{1}(A)=1} \label{eq:11}\\
-\nonumber& &\\
-\nonumber \Prob{\ExpPRF{F}{B_2} = 1} &= .5\Prob{\ExpPRF{F}{B_2}=1\,|\,b=0} + .5\Prob{\ExpPRF{F}{B_2} = 1\,|\,b=1}\\
-\nonumber 2\Prob{\ExpPRF{F}{B_2} = 1} &= 1-\Prob{\game{2}(A)=1} + \Prob{\game{1}(A)=1}\\
-\nonumber (2\Prob{\ExpPRF{F}{B_2} = 1} - 1)  &= \Prob{\game{1}(A)=1} - \Prob{\game{2}(A)=1}\\
- \AdvPRF{F}{B_2} &= \Prob{\game{1}(A)=1} - \Prob{\game{2}(A)=1} \label{eq:12}
-\end{align}
-
-\noindent
-Adding \Cref{eq:11,eq:12}, we have
-\begin{equation}
-\AdvPRF{F}{B_1} +\AdvPRF{F}{B_2} = \Prob{\game{0}(A)=1} - \Prob{\game{2}(A)=1}\label{eq:13}
-\end{equation}
 
 From \Cref{eq:0,eq:10,eq:13} \\
 \begin{align}
