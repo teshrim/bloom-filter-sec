@@ -5,7 +5,7 @@ Here we consider a hash-based filter that was attacked by Neidermayer et al. in~
 \begin{theorem}\label{thm1}
 Fix $k,m,n,r>0$, and let $B_\mathrm{lin}=(\Hash,\Rep,\Qry)$ be the hash-based filter just described. 
 For any adversary~$A$ that makes a total of~$q$ queries to its oracle
-and has time-complexity~$t$,
+and has time-complexity~$O(t)$,
 there exist adversaries~$B_1,B_2$ (explicitly constructed in the proof of this theorem) such that
 \[
 \AdvFPSecHash{B_{\mathrm{lin}},r}{A} \leq  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}  +{\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
@@ -36,10 +36,10 @@ $\game{1}(A)$ and $\game{2}(A)$ attack 2 different filters. In $\game{1}(A)$, $F
 \game{2}(A)\, : \, h_j(x) &= ( \rho_1(x) + j \cdot \rho_2(x)) \bmod m
 \end{align*}
 In $\game{3}(A)$, we replace the hash functions of $\HashOracle$ (in $\game{2}(A)$) with lazy sampling of elements from $[m]$. This brings us close to the classic Bloom filter's soundness condition, as now the hash indices sampled during a query are random points in $[m]$, and are independent of the hash indices used by the $\Rep$. As mentioned in \acnote{ref :{sec:intro}}, the soundness condition of a classic bloom filter is given as  $\Prob{h_1,h_2,\ldots,h_k \getsr \mathrm{Func}(\univ,[m])\colon M[h_1(y)]=1 \wedge \cdots \wedge M[h_k(y)]=1} \leq \epsilon$. Also, the $\QryOracle$ now sets $\bad$ to $\true$ if the queries indexed by the set $\mathcal{I}$ fail to be false-positives, or if any of the remaining queries are false-positives. It can be observed that the $\bad$ flag has no impact on the output of the $\QryOracle$, nor does it affect  the value returned by~$\game{3}$. Rather it lays foundation for $\game{4}(A)$. From these observations, 
-\begin{align}
-\Prob{\game{3}(A)=1 \wedge \neg\bad} &= \Prob{\game{3}(A)=1} \Prob{\game{3}(A) : \neg\bad}\label{eq:1} \\
-\Prob{\game{2}(A)=1} &= \Prob{\game{3}(A)=1}\label{eq:2}
-\end{align}
+	\begin{align}
+	\Prob{\game{3}(A)=1 \wedge \neg\bad} &= \Prob{\game{3}(A)=1} \Prob{\game{3}(A) : \neg\bad}\label{eq:1} \\
+	\Prob{\game{2}(A)=1} &= \Prob{\game{3}(A)=1}\label{eq:2}
+	\end{align}
 $\game{4}(A)$ is identical to $\game{3}(A)$ except it returns 0 if $\bad$ is set to true. So, by construction $\game{4}(A)$ and $\game{3}(A)$ are identical-untill-$\bad$. In addition, $\game{4}(A)$ returning 1 implies that bad is never set to true. Therefore,
 \begin{equation}
 \Prob{\game{4}(A)=1} = \Prob{\game{3}(A)=1 \wedge \neg\bad}\label{eq:3}
@@ -66,7 +66,7 @@ Let $\calF$ be the event of getting a false positive in a classic Bloom filter. 
 \nonumber \AdvFPSecHash{\tilde{B}_{\mathrm{lin}},r}{D} &= [\Prob{\calF}]^r\\
 &\leq \left( (1-e^{-kn/m})^k + O(1/n) \right)^r \label{eq:8}
 \end{align}
-Here, $\left( (1-e^{-kn/m})^k + O(1/n) \right)$ is the upper bound of $\calF$, as given by Kirsch et. al.\ref{KM}.
+Here, $\left( (1-e^{-kn/m})^k + O(1/n) \right)$ is the upper bound of $\calF$, as given by Kirsch et. al.\ref{KM}.\\
 From \Cref{eq:7,eq:8},
 \begin{equation}
 \Prob{\game{4}(A)=1} \leq  \left( (1-e^{-kn/m})^k + O(1/n) \right)^r \label{eq:9}
