@@ -44,8 +44,9 @@ The proof of the theorem will use a game playing argument as shown in \Cref{fig:
 {
 $\adversaryv{B_1^{\calO}}$\\
 $K_1 \getsr \calK $\\
-$\calS \getsr \distr{\univ}{n}$\\
-$M \getsr \Rep^{\HashOracle}(\calS)$\\
+$S \getsr \distr{\univ}{n}$\\
+$M \getsr \Rep^{\HashOracle}(S)$\\
+Run~$A(S)$\\
 When $A$ asks $\QryOracle(x)$:\\
 $\nudge$ Ret $\Qry^{\HashOracle}(M,x)$\\
 When $A$ halts with output $\calZ'$: \\
@@ -63,6 +64,7 @@ $\adversaryv{B_2^{\calO}}$\\
 %$\rho_2 \getsr Func(\univ, [m])$ \\
 $S \getsr \distr{\univ}{n}$\\
 $M \getsr \Rep^{\HashOracle}(\calS)$\\
+Run $A(S)$\\
 When $A$ asks $\QryOracle(x)$:\\
 $\nudge$ Ret $\Qry^{\HashOracle}(M,x)$\\
 When $A$ halts with output $\calZ'$: \\
@@ -164,27 +166,21 @@ $1/\dbinom{q}{r}$, and we have
 \Prob{\game{3}(A)=1} = \frac{1}{\dbinom{q}{r}}\Prob{\game{4}(A)=1}
 \end{equation*}
 
-\fixme{Tom is here in rewriting the proof.}
-Moving on $\game{4}(A)$, $A$ wins $\ExpFPSecHash{B_{\mathrm{lin}},r}{A}$ after finding $r$ false positives indexed by $\calI$. Therefore, without loss of generality, it can be assumed that $A$ halts just after it finds the $r$ false positives, and outputs $\calZ$(of size $r$). Further, we can also assume that every point in $\calZ$ has already been queried to $\QryOracle$. This assumption can be  easily enforced (in the original security definitions) by counting as part of the number of queries~$q$, the points in $\mathcal{Z}$. Hence, if $\game{4}(A)=1$, there is a non-adaptive adversary~$D$ that finds~$r$ false positives against $\tilde{B}_{\mathrm{lin}}$, which is $B_{\mathrm{lin}}$ but with $F_{K_1}$ and $F_{K_2}$ replaced by random functions $\rho_1$ and $\rho_2$, respectively as shown in \Cref{fig:D}. So,
-\begin{align}
-\nonumber \Prob{\ExpFPSecHash{\tilde{B}_{\mathrm{lin}},r}{D} = 1} &= \Prob{\game{4}(A) = 1}\\
-\mathrm{or} \nudge \AdvFPSecHash{\tilde{B}_{\mathrm{lin}},r}{D} &= \Prob{\game{4}(A) = 1}\label{eq:7}
-\end{align}
-Let $\calF$ be the event of getting a false positive in a classic Bloom filter. Since, $D$ is a non-adaptive adversary, for $r=1$, it exactly simulates the classic Bloom filter game. Also, as the elements of $\calI$ are randomly sampled from $[\{1,2,\ldots,q\}]^r$, the event of any query indexed by $\calI$ being a false positive is mutually independent of any other query indexed by the same set. Hence,
-\begin{align}
-\nonumber \AdvFPSecHash{\tilde{B}_{\mathrm{lin}},r}{D} &= [\Prob{\calF}]^r\\
-&\leq \left( (1-e^{-kn/m})^k + O(1/n) \right)^r \label{eq:8}
-\end{align}
-Here, $\left( (1-e^{-kn/m})^k + O(1/n) \right)$ is the upper bound of $\calF$, as given by Kirsch et. al.\ref{KM}.\\
-From \Cref{eq:7,eq:8},
-\begin{equation}
-\Prob{\game{4}(A)=1} \leq  \left( (1-e^{-kn/m})^k + O(1/n) \right)^r \label{eq:9}
-\end{equation}
-Using \Cref{eq:6} in \Cref{eq:9}
-\begin{align}
-\Prob{\game{2}(A)=1}\frac{1}{\dbinom{q}{r}} & \leq  \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\\
-\Prob{\game{2}(A)=1} &\leq \dbinom{q}{r}\left( (1-e^{-kn/m})^k + O(1/n) \right)^r\label{eq:10}
-\end{align}
+Recall that adversary~$A$ wins $\ExpFPSecHash{B_{\mathrm{lin}},r}{}$ by finding~$r$ false positives. We can assume, without loss of generality,  that~$A$ halts immediately upon finding its $r$-th false positive.  We can also assume that every point in $\calZ$ has already been queried to $\QryOracle$.  This latter assumption is not without loss, but can be  easily enforced (in the original security definitions) by counting as part of the number of queries~$q$, the points in $\mathcal{Z}$. 
+%
+Under these assumptions, if $\game{4}(A)=1$, then there is a non-adaptive adversary~$D$ that finds~$r$ false positives against $\tilde{B}_{\mathrm{lin}}$, which is $B_{\mathrm{lin}}$ but with $F_{K_1}$ and $F_{K_2}$ replaced by random functions $\rho_1$ and $\rho_2$, respectively.  We give this~$D$ in \Cref{fig:D}. Intuitively, adversary~$D$ guesses which~$r$ of~$A$'s queries will be the false positives; it simulates the~$\QryOracle$ by returning 1 on the guessed queries, and 0 otherwise; and it halts by outputting the set of guessed queries.  Thus we have
+$\Prob{\game{4}(A)=1} =\Prob{\ExpFPSecHash{\tilde{B}_{\mathrm{lin}},r}{D} = 1}$.
+
+Note that $\tilde{B}_{\mathrm{lin}}$ is the scheme that is analyzed in the classical Bloom filter literature ---the hash functions are modeled as independent random functions, and the parameters $k,m,n$  are set to achieve a target maximum false-positive probability (or rate).  Kirsch and Mitzenmacher~\cite{KM} show that the upperbound on false-positive probability for a non-adaptive adversary and $r=1$ is $\left( (1-e^{-kn/m})^k + O(1/n) \right)$.  For $r>1$, we observe that~$A$'s queries are distinct and not elements of the original set~$S$, since we assume no pointless queries. Hence, so are the points $x_1,x_2,\ldots,x_r$ returned by~$D$.  Let $\calF_i$ be the event that~$x_i$ is a false positive.  Since $\game{4}$ (equivalently $\tilde{B}_{\mathrm{lin}}$) use independent random functions, the events $\calF_1,\calF_2,\ldots,\calF_r$ are independent. 
+\[
+\Prob{\ExpFPSecHash{\tilde{B}_{\mathrm{lin}},r}{D} = 1}\leq \left( (1-e^{-kn/m})^k + O(1/n) \right)^r 
+\]
+
+To summarize, we have 
+\[
+\AdvFPSecHash{B_{\mathrm{lin}},r}{A}  \leq  \AdvPRF{F}{B_1} +\AdvPRF{F}{B_2} +\dbinom{q}{r}\left( (1-e^{-kn/m})^k + O(1/n) \right)^r
+\]
+which is the bound claimed in the theorem statement. \hfill \qed
 
 %\caption{Game playing argument}\label{fig:Game}
 \begin{figure}
@@ -333,7 +329,7 @@ Ret $\left(v_1,\ldots,v_k\right)$
 {
 $\experimentv{\ExpPRF{F}{B}}$\\
 $K \getsr \calK $\\
-$\rho \getsr Func(\univ,[m])$\\
+$\rho \getsr \Func(\univ,[m])$\\
 $b \getsr \bits$\\
 $b' \getsr B^\calO$\\
 Ret $[b = b']$\\
@@ -354,41 +350,25 @@ Ret $\rho(x)$\\
 %\caption{Non-adaptive adversary $D$ simulating $\game{4}(A)$} \label{fig:D}
 \begin{figure}
 \centering
-\fpage{0.7}{
-\hpagess{0.55}{0.4}
+\fpage{0.35}
 {
-$\adversaryv{D^{\QryOracle, \calS}}$\\
-$c \gets 0$\\
+$\adversaryv{D(S)}$\\[4pt]
+$c \gets 0$, $\calX \gets \emptyset$\\
 $\mathcal{I}\getsr [\{1,2,\ldots,q\}]^r$\\
+Run $A(S)$\\
 When $A$ asks $\QryOracle(x)$:\\
 \nudge $c \gets c+1$\\
 \nudge $r \gets 0$\\
 \nudge if $c \in \mathcal{I}$\\
-\nudge \nudge $r \gets \QryOracle(x)$\\
+\nudge \nudge $\calX \gets \calX \cup \{x\}$\\
+\nudge \nudge $r \gets 1$\\
 \nudge Ret $r$\\
-When $A$ halts with output $\calZ$\\
-\nudge Ret $\calZ$
-}
-{
-\oracle{$\QryOracle(x)$}\\
- Ret $\Qry^{\HashOracle}(M,x)$\\\\
-%
-\oracle{$\HashOracle(x)$}\\
-for $i = 1$ to~$k$\\
-\nudge $v_i = \rho_1(x)+i \cdot \rho_2(x) \bmod m$\\
-Ret $\left(v_1,\ldots,v_k\right)$
-}
+When $A$ halts:\\
+\nudge Ret $\calX$
 }
 \caption{Non-adaptive adversary $D$ simulating $\game{4}(A)$} \label{fig:D}
 \end{figure}	
 
-From \Cref{eq:0,eq:10,eq:13} \\
-\begin{align}
-\nonumber \AdvFPSecHash{B_{\mathrm{lin}},r}{A} &- \Prob{\game{2}(A)=1} =  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}   \\
-\nonumber \AdvFPSecHash{B_{\mathrm{lin}},r}{A}  &=  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2} + \Prob{\game{2}(A)=1}  \\
-\AdvFPSecHash{B_{\mathrm{lin}},r}{A} &\leq  \AdvPRF{F}{B_1} +
-\AdvPRF{F}{B_2}  +{\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r
-\end{align}
 
 \iffalse
 %Comments
