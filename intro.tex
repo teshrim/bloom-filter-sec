@@ -1,13 +1,14 @@
 \section{Introduction}
 \label{sec:intro}
 \tsnote{Skeleton text from old intro.  (Full version of old intro now
-  in an appendix.}
+  in an appendix.} \jnote{Too focused on Bloom filters for my
+  taste.}
 We revisit the formalization of Bloom filters~\cite{xxx} and closely
 related data structures as primitives with explicit security goals.
 Recently, Naor and Yogev~\cite{xxx} (hereafter NY) gave such a
 formalization, providing syntax for a generalized abstraction of
 Bloom filters, as well as casting the classical Bloom filter
-soundness condition as a security experiment admiting adaptive
+soundness condition as a security experiment admitting adaptive
 adversaries.  To briefly summarize, a Bloom filter is a data
 structure for compactly representing a set~$\mathcal{S}$ in a way
 that supports constant-time responses to set-membership queries. The
@@ -21,10 +22,10 @@ to 1; if a bit is already 1, due to inserting some previous element
 of~$\mathcal{S}$, then it is left alone.  After all elements
 of~$\mathcal{S}$ have been inserted, the resulting bit-array~$M$ is
 taken as the representation.  To test if $y \in \mathcal{S}$, one
-checks if 
+checks if
 \[
 (M[h_1(y)]=1 \wedge M[h_2(y)]=1 \wedge \cdots \wedge M[h_k(y)]=1),
-\] 
+\]
 returning ``yes'' if so, and ``no'' otherwise. Bloom
 filters are correct, in the sense that if $y \in \mathcal{S}$, the
 set-membership test always returns ``yes''.  The classical soundness
@@ -111,6 +112,3 @@ We show that...
 \item Mitzenmacher and Vadhan. ``Why Simple Hash Functions Work: Exploiting the Entropy in a Data Stream''.
 \item Dodis et al. ``Fuzzy Extractors: How to Generate Strong Keys from Biometrics and Other Noisy Data'' \tsnote{Introduces ``secure sketches'', which is a representation of a single-element set that is information theoretically private (up to some function of the min-entropy of the element); only tangentially related to ``sketches'' as defined in the Bloom filter literature.}
 \end{itemize}
-
-
-
