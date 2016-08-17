@@ -8,7 +8,7 @@ Let $B_{\mathrm{ds}}=(\Hash,\Rep,\Qry)$ be a hash-based filter defined as follow
 \begin{theorem}\label{thm2}
 Fix $k,m,n,r >0$. Let $B_{\mathrm{ds}}$ be the hash based filter just described. If there exists an adaptive adversary, $A$ compatible with $\ExpFPSecHash{B_{\mathrm{ds},r}}{\cdot}$ asking $q$ queries, and has time complexity O(t), then there exists an adversary $B$ (explicitly constructed in the proof of this theorem), such that 
 \[
-\AdvFPSecHash{B_\mathrm{ds},t}{A} =  \AdvPRF{F}{B}  + {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k  \right)^r
+\AdvFPSecHash{B_\mathrm{ds},r}{A} \leq  \AdvPRF{F}{B}  + {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
 \]
 Here, $B$ asks $q$ queries, and has time complexity $O(t+qm)$.
 \end{theorem}
@@ -18,49 +18,39 @@ We use a game playing argument similar to \Cref{thm1} to prove this theorem. In 
 \begin{equation}
 \AdvFPSecHash{B_\mathrm{ds},r}{A} = \Prob{\game{0}(A)=1}\label{eq:2T0}
 \end{equation}
-\noindent
-In $\game{1}(A)$, $A$ attacks a different filter $\tilde{B}_\mathrm{ds}$, in which $F_K$ is replaced by a random function $\rho$ sampled from $\Func{\univ,[m]}$. $\game{2}(A)$ and $\game{3}(A)$ on the other hand use lazy sampling in $\Hash$ to select random values from $[m]$. This makes $\game{2}(A)$ and $\game{3}(A)$ identical to $\game{3}(A)$ and $\game{4}(A)$ of previous theorem, and hence the analysis and results of \Cref{thm1} apply to this theorem as well. Therefore,
-\begin{align}
-\Prob{\game{2}(A)=1 \wedge \neg\bad} &= \Prob{\game{2}(A)=1}\Prob{\game{2}(A) : \neg\bad}\label{eq:2T1} \\
-\Prob{\game{1}(A)=1} &= \Prob{\game{2}(A)=1}\label{eq:2T2}
-\end{align}
-From \Cref{eq:2T1,eq:2T2}
-\begin{equation}
-\Prob{\game{2}(A)=1 \wedge \neg\bad} = \Prob{\game{1}(A)=1}\Prob{\game{2}(A) : \neg\bad}\label{eq:2T3}
-\end{equation}
-\noindent
-Also,
-\begin{equation}
-\Prob{\game{3}(A)=1} = \Prob{\game{2}(A)=1 \wedge \neg\bad}\label{eq:2T4}
-\end{equation}
-\noindent
-Using \Cref{eq:2T3} in \Cref{eq:2T4}
-\begin{equation}
-\Prob{\game{3}(A)=1} = \Prob{\game{1}(A)=1}\Prob{\game{2}(A) : \neg\bad}\label{eq:2T5}
-\end{equation}
-\begin{equation}
-\Prob{\game{2}(A) : \neg\bad} = \frac{1}{\dbinom{q}{r}}\label{eq:2T6}
-\end{equation}
-\noindent
-From \Cref{eq:2T5,eq:2T6}
-\begin{align}
-\nonumber \Prob{\game{3}(A)=1} &= \Prob{\game{1}(A)=1}\frac{1}{\dbinom{q}{r}}\\
-\Prob{\game{1}(A)=1} &= \dbinom{q}{r} \times \Prob{\game{3}(A)=1} \label{eq:2T7}
-\end{align}
 
-Let $D$ be a non-adaptive adversary (shown in \Cref{fig:2TD}) that finds ~$r$ false positives against $\tilde{B}_{\mathrm{ds}}$. As discussed in the previous theorem, if $A$ wins $\game{3}(\cdot)$, then $D$ wins $\ExpFPSecHash{\tilde{B}_{\mathrm{ds}},r}{\cdot}$ game. So, 
-\begin{equation}
+Let $B$ be a prf-adversary as shown in \Cref{fig:2TD}. Based on its challenge bit $b$, it exactly simulates $\game{0}$ or $\game{1}$. So,
+\begin{align*}
+\Prob{\ExpPRF{F}{B} = 1\,|\,b=1} &= \Prob{\game{0}(A)=1} \\%\label{eq:m1}\\
+\Prob{\ExpPRF{F}{B} = 1\,|\,b=0} &= 1-\Prob{\game{1}(A)=1}
+\end{align*}
+
+By a standard conditioning of PRF advantage, we have
+
+\begin{equation*}
+\Prob{\game{0}(A)=1} = \AdvPRF{F}{B} + \Prob{\game{1}(A)=1}%\label{eq:13}
+\end{equation*}
+
+In $\game{1}$, $A$ attacks a different filter $\tilde{B}_\mathrm{ds}$, in which $F_K$ is replaced by a random function. $\game{2}$ and $\game{3}$ on the other hand use lazy sampling in $\Hash$ to select random values from $[m]$. This makes $\game{2}$ and $\game{3}$ identical to $\game{3}$ and $\game{4}$ of previous theorem, and hence the analysis and results of \Cref{thm1} apply to this theorem as well. Therefore,
+\begin{align*}
+\Prob{\game{1}(A)=1} = \Prob{\game{2}(A)=1}\\
+\Prob{\game{3}(A)=1} = \frac{1}{\dbinom{q}{r}}\Prob{\game{2}(A)=1}
+\end{align*}
+
+Let $D$ be a non-adaptive adversary (shown in \Cref{fig:2TD}) that finds ~$r$ false positives against $\tilde{B}_{\mathrm{ds}}$. As discussed in the previous theorem, if $A$ wins $\game{3}$, then $D$ wins $\ExpFPSecHash{\tilde{B}_{\mathrm{ds}},r}{\cdot}$ game. So, 
+\begin{equation*}
 \AdvFPSecHash{\tilde{B}_{\mathrm{ds}},r}{D} = \Prob{\game{3}(A) = 1}\label{eq:2T8}
-\end{equation}
-Since, $D's$ $\HashOracle$ returns $k$ random values which are mutually independent of each other, for $r=1$, $\AdvFPSecHash{\tilde{B}_{\mathrm{ds}},1}{D}$ is same as the false positive probability ($(1-e^{-kn/m})^k$) of a classic Bloom filter. Also, as discussed in the previous theorem, for $r \neq 1$, the event of getting a false positive is independent of the index of the query for a non-adaptive adversary. So,
-\begin{equation}
-\AdvFPSecHash{\tilde{B}_{\mathrm{ds}},r}{D} =   \left( (1-e^{-kn/m})^k  \right)^r \label{eq:2T8a}
-\end{equation}
+\end{equation*}
+Note that like $\tilde{B}_{\mathrm{lin}}$, $\tilde{B}_{\mathrm{ds}}$ is the scheme that is analyzed in the classical Bloom filter literature. So, for a non-adaptive adversary $D$ and $r=1$, the upper bound on false-positive probability of a classical Bloom filter applies to $\tilde{B}_{\mathrm{ds}}$ as well. For $r > 1$, based on the assumption that $A$ makes no pointless queries, the queries made by $A$ as well as the elements returned by $D$ are distinct and not elements of the original set $S$. Also, since $\game{3}$ uses independent random functions, the event of getting a false positive is independent of the index of the query. So,
+\begin{equation*}
+\AdvFPSecHash{\tilde{B}_{\mathrm{ds}},r}{D} =   {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r
+\end{equation*}
 \noindent
-From \Cref{eq:2T7,eq:2T8,eq:2T8a}
-\begin{equation}
-\Prob{\game{1}(A)=1} = \dbinom{q}{r} \times \left( (1-e^{-kn/m})^k  \right)^r \label{eq:2T8b}
-\end{equation}
+To summarize, we have
+\[
+\AdvFPSecHash{B_\mathrm{ds},r}{A} \leq  \AdvPRF{F}{B}  + {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r
+\]
+which is the bound claimed in the theorem statement. \hfill \qed
 
 %\caption{Game playing argument}\label{fig:Game}
 \begin{figure}
@@ -144,7 +134,7 @@ for $j = 1$ to~$k$\\
 Ret $\left(v_1,\ldots,v_k\right)$
 }
 }
-\caption{\Cref{thm2}:Game playing argument}\label{fig:Game}
+\caption{\Cref{thm2}: Game playing argument}\label{fig:Game}
 \end{figure}
 
 %\caption{PRF adversary $B$ simulating $\game{1}(A)$ and $\game{2}(A)$, and non-adaptive adversary $D$ simulating $\game{4}(A)$} 
@@ -170,77 +160,30 @@ When $A$ halts with output $\calZ'$: \\
 {
 $\adversaryv{D^{\QryOracle, \calS}}$\\
 $c \gets 0$\\
+$\calX \gets \emptyset$\\
 $\mathcal{I}\getsr [\{1,2,\ldots,q\}]^r$\\
+Run $A(S)$\\
 When $A$ asks $\QryOracle(x)$:\\
 \nudge $c \gets c+1$\\
 \nudge $r \gets 0$\\
 \nudge if $c \in \mathcal{I}$\\
-\nudge \nudge $r \gets \QryOracle(x)$\\
+\nudge \nudge $\calX \gets \calX \cup \{x\}$\\
+\nudge \nudge $r \gets 1$\\
 \nudge Ret $r$\\
-When $A$ halts with output $\calZ$\\
-\nudge Ret $\calZ$\\\\
+When $A$ halts:\\
+\nudge Ret $\calX$\\\\
 %
-\oracle{$\QryOracle(x)$}\\
- Ret $\Qry^{\HashOracle}(M,x)$\\\\
+%\oracle{$\QryOracle(x)$}\\
+% Ret $\Qry^{\HashOracle}(M,x)$\\\\
 %
-\oracle{$\HashOracle(x)$}\\
-for $j = 1$ to~$k$\\
-\nudge $v_j = \rhoK $\\
-Ret $\left(v_1,\ldots,v_k\right)$
+%\oracle{$\HashOracle(x)$}\\
+%for $j = 1$ to~$k$\\
+%\nudge $v_j = \rhoK $\\
+%Ret $\left(v_1,\ldots,v_k\right)$
 }
 }
-\caption{PRF adversary $B$ simulating $\game{1}(A)$ and $\game{2}(A)$, and non-adaptive adversary $D$ simulating $\game{4}(A)$} \label{fig:2TD}
+\caption{\Cref{thm2}: \emph{Left}:PRF adversary $B$ simulating $\game{1}(A)$ and $\game{2}(A)$.\emph{Right}: Non-adaptive adversary $D$ simulating $\game{4}(A)$} \label{fig:2TD}
 \end{figure}	
 
-Let adversary $B$ be as  shown in \Cref{fig:2TD}. It can be observed that, by construction $B$ simulates $\game{0}(A)$ and $\game{1}(A)$ respectively. For $b=1$, $B$ wins, if $A$ wins $\game{0}(\cdot)$. While for $b = 0$, if $A$ wins $\game{1}(\cdot)$, $B$ wins by returning 0. Therefore,
-\begin{align}
-\Prob{\ExpPRF{F}{B} = 1\,|\,b=1} &= \Prob{\game{0}(A)=1}\label{eq:2T9}\\
-\Prob{\ExpPRF{F}{B} = 1\,|\,b=0} &= 1-\Prob{\game{1}(A)=1}\label{eq:2T10}
-\end{align}
-\noindent
-From \Cref{eq:2T9,eq:2T10}
-\begin{align}
-\nonumber \Prob{\ExpPRF{F}{B} = 1} &= .5\Prob{\ExpPRF{F}{B}=1\,|\,b=0} + .5\Prob{\ExpPRF{F}{B} = 1\,|\,b=1}\\
-\nonumber 2\Prob{\ExpPRF{F}{B} = 1} &= 1-\Prob{\game{1}(A)=1} + \Prob{\game{0}(A)=1}\\
-\nonumber (2\Prob{\ExpPRF{F}{B} = 1} - 1)  &= \Prob{\game{0}(A)=1} - \Prob{\game{1}(A)=1}\\
- \AdvPRF{F}{B} &= \Prob{\game{0}(A)=1} - \Prob{\game{1}(A)=1} \label{eq:2T11}
-\end{align}
-\noindent
-Using \Cref{eq:2T0,eq:2T8b} in \Cref{eq:2T11}
-\begin{align}
- \nonumber \AdvPRF{F}{B} &= \AdvFPSecHash{B_\mathrm{ds},r}{A} - \dbinom{q}{r} \times \left( (1-e^{-kn/m})^k  \right)^r \\
-\AdvFPSecHash{B_\mathrm{ds},r}{A} &= \AdvPRF{F}{B} + \dbinom{q}{r} \times \left( (1-e^{-kn/m})^k  \right)^r\label{eq:2T12}
-\end{align}
-\end{proof}
 
-\iffalse
-\acnote{I think we should give a proof of the non-adaptive FP-error bound $(1-e^{-kn/m})^k + O(1/n) $. This bound which we picked from KM's theorem 6.2, is a particular case (double hashing scheme).  Theorem 6.1, on the other hand holds good for any hashing scheme that satisfies Lemma 4.1. \\
- I tried to give the FP-bound as a Lemma. 
-\begin{lemma}\label{lemma1}
-Fix $k,m,n >0$. The FP-error of hash-based filter $B_{\mathrm{ds}}$ with hash functions $h_j(x) = \FK, \, j \in [k]$ is upperbounded by $(1-e^{-kn/m})^k + O(1/n)$.
-\end{lemma}
-}
-\acnote{As I had told you earlier, I was not able to understand the proofs of KM paper and now I am stuck in this proof. 
-\begin{proof}($Lemma$ \ref{lemma1})
-In \ref{KM}, $Theorem \,6.1$ gives the upperbound of FP error of any hashing scheme satisfying the 5 conditions enlisted in Lemma 4.1, and all these conditions are satisfied by $B_{\mathrm{ds}}$ as shown below.\\
-Since the hash functions of $B_{\mathrm{ds}}$ provide randomness with domain separation and the number of hash functions are controlled by parameter $j$, condition 1 and 2 are trivially satisfied. The last condition is also trivial, since size of $B_{\mathrm{ds}}$ will be some constant multiple of size of $S$, as in the classical bloom filter.\\
-The satisfiability of remaining 2 conditions is non-trivial ...
-\end{proof}}
-%
-\tsnote{Clean up so it looks like the previous theorem.}
-\tsnote{I don't see why this is necessary.  Doesn't it follow from the
-standard bounds on Bloom filters (go look them up and adjust the
-theorem accordingly) which assume that the hash functions are random
-functions?  Whatever argument you use in Theorem 1 to justify
-independence, i.e. turning one non-adaptive FP into~$r$ non-adaptive
-FPs, should apply here, too.  You don't need to understand the KM
-results deeply for this argument, by the way.  You just need to
-understand why you get independence, i.e. why it is that, after the
-set~$S$ has been hashed (hence the bits in~$M$ are set), then the
-probabilities that distinct $x_1,\ldots,x_r$ are each FPs are
-independent.  This really is pretty immediate from the fact that
-$\rho_1,\rho_2$ are random functions and the $x_i$ are distinct.}
-\tsnote{I guess if you want, you could give a 1-to-$r$ lemma for the hash
-  functions (with random functions $\rho1,\rho_2$ used in Theorem 1, prove it, and use that lemma in the
-  proof of Theorem 1.  Then do the parallel thing here, for Theorem 2.}
-\fi
+\end{proof}

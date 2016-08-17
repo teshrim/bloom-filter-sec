@@ -21,8 +21,7 @@ reasonable tightness when~$r$ is small) in which case the final term in the boun
 $(q (1-e^{-kn/m})^k + O(q/n) )^r$; loosely, the bound one expects for
 trying to find a single FP in each of~$r$ independent``rounds'', each round
 consisting of~$q$ attempts.
-%Before giving the proof, we note that  $(1-e^{-kn/m})^k \rightarrow 0$ as the ratio between the bit-length of the representation~$M$ and the size of the represented set~$S$, i.e.,$m/n$ tends to $\infty$.
-%
+
 \begin{proof}[\Cref{thm1}]
 The proof of the theorem will use a game playing argument as shown in \Cref{fig:Game}. $\game{0}(A)$ exactly simulates $\ExpFPSecHash{B_\mathrm{lin},r}{A}$ with hash functions $h_j(x) =  F_{K_0}(x) + j\cdot F_{K_1}(x) \bmod m$. So,
 
@@ -30,12 +29,7 @@ The proof of the theorem will use a game playing argument as shown in \Cref{fig:
 \AdvFPSecHash{B_{\mathrm{lin}},r}{A} = \Prob{\game{0}(A)=1}\label{eq:0}
 \end{equation}
 
- In $\game{1}(A)$, $F_{K_1}$ is replaced by a random function, whereas in $\game{2}(A)$, both $F_{K_0}$ and $F_{K_1}$ are replaced by random functions as shown below. Here, $\rho_1$ and $\rho_2$ are random functions sampled from $\Func{\univ,[m]}$.
-%\begin{align*}
-%\game{1}(A)\, : \, h_j(x) &= ( F_{K_0}(x) + j\cdot \rho_2(x)) \bmod m\\
-%\game{2}(A)\, : \, h_j(x) &= ( \rho_1(x) + j \cdot \rho_2(x)) \bmod m
-%\end{align*}
-
+ In $\game{1}(A)$, $F_{K_1}$ is replaced by a random function, whereas in $\game{2}(A)$, both $F_{K_0}$ and $F_{K_1}$ are replaced by random functions.
 
 \begin{figure}
 \centering
@@ -43,43 +37,42 @@ The proof of the theorem will use a game playing argument as shown in \Cref{fig:
 \hpagessl{0.5}{0.5}
 {
 $\adversaryv{B_1^{\calO}}$\\
-$K_1 \getsr \calK $\\
-$S \getsr \distr{\univ}{n}$\\
-$M \getsr \Rep^{\HashOracle}(S)$\\
-Run~$A(S)$\\
-When $A$ asks $\QryOracle(x)$:\\
-$\nudge$ Ret $\Qry^{\HashOracle}(M,x)$\\
-When $A$ halts with output $\calZ'$: \\
-\nudge if $|\calZ'| < r$ or $\calZ' \cap \calS \neq \emptyset$ then \\
-\nudge \nudge Ret 0\\
-\nudge if $\exists z \in \calZ'$ s.t. $\Qry^{\HashOracle}(M,z)=0$ then\\
-\nudge \nudge Ret 0\\
-\nudge Ret 1\\\\
+$S \getsr \distr{\calS}{}$\\
+$\err \gets 0$\\
+$(M,\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+Run~$A(S, \pubaux)$\\
+When $A$ asks $\TestOracle(q)$:\\
+\nudge $a \gets \Qry^{\HashOracle}(M,\privaux,q)$\\
+\nudge if $a \neq q(S)$ then \\
+\nudge \nudge $\err \gets \err +1$\\
+Return~$(a,\err )$
+When $A$ halts: \\
+if $\err  < r$ then Return 0\\
+Return 1\\\\
+%
 \oracle{$\HashOracle(x)$}\\
 $ \mathrm{Ret} \nudge F_{K_1}(x) + i\cdot \calO(x)$, for $i\in[1,k]$\\
 }
 {
 $\adversaryv{B_2^{\calO}}$\\
-%$d \getsr \bits $\\
-%$\rho_2 \getsr Func(\univ, [m])$ \\
-$S \getsr \distr{\univ}{n}$\\
-$M \getsr \Rep^{\HashOracle}(\calS)$\\
-Run $A(S)$\\
-When $A$ asks $\QryOracle(x)$:\\
-$\nudge$ Ret $\Qry^{\HashOracle}(M,x)$\\
-When $A$ halts with output $\calZ'$: \\
-\nudge if $|\calZ'| < r$ or $\calZ' \cap \calS \neq \emptyset$ then \\
-\nudge \nudge Ret 0\\
-\nudge if $\exists z \in \calZ'$ s.t. $\Qry^{\HashOracle}(M,z)=0$ then\\
-\nudge \nudge Ret 0\\
-\nudge Ret 1\\\\
+$S \getsr \distr{\calS}{}$\\
+$\err \gets 0$\\
+$(M,\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+Run~$A(S, \pubaux)$\\
+When $A$ asks $\TestOracle(q)$:\\
+\nudge $a \gets \Qry^{\HashOracle}(M,\privaux,q)$\\
+\nudge if $a \neq q(S)$ then \\
+\nudge \nudge $\err \gets\err +1$\\
+Return~$(a,\err )$
+When $A$ halts: \\
+if $\err  < r$ then Return 0\\
+Return 1\\\\
 \oracle{$\HashOracle(x)$}\\
-%if $d=0$\\
 $a \getsr [m]$\\
 if $T[x] \neq \undefined$\\
 \nudge $a \gets T[x]$\\
 $T[x] \gets a$\\
-$\mathrm{Ret} \nudge \calO(x) + i\cdot a$, for $i\in[1,k]$
+Ret  $\calO(x) + i\cdot a$, for $i\in[1,k]$
 }
 }
 \caption{\Cref{thm1}:Adversary $B_1, B_2$ simulating $\game{1}(A)$ and $\game{2}(A)$ respectively}\label{fig:BGame1}
@@ -101,20 +94,6 @@ that
 %
 \noindent
 By a standard conditioning of the PRF advantage, we have 
-%From \Cref{eq:m1,eq:m2,eq:m3,eq:m4},
-%\begin{align}
-%\nonumber \Prob{\ExpPRF{F}{B_1} = 1} &= .5\Prob{\ExpPRF{F}{B_1}=1\,|\,b=0} + .5\Prob{\ExpPRF{F}{B_1} = 1\,|\,b=1}\\
-%\nonumber 2\Prob{\ExpPRF{F}{B_1} = 1} &= 1-\Prob{\game{1}(A)=1} + \Prob{\game{0}(A)=1}\\
-%\nonumber (2\Prob{\ExpPRF{F}{B_1} = 1} - 1)  &= \Prob{\game{0}(A)=1} - \Prob{\game{1}(A)=1}\\
-% \AdvPRF{F}{B_1} &= \Prob{\game{0}(A)=1} - \Prob{\game{1}(A)=1} \label{eq:11}\\
-%\nonumber& &\\
-%\nonumber \Prob{\ExpPRF{F}{B_2} = 1} &= .5\Prob{\ExpPRF{F}{B_2}=1\,|\,b=0} + .5\Prob{\ExpPRF{F}{B_2} = 1\,|\,b=1}\\
-%\nonumber 2\Prob{\ExpPRF{F}{B_2} = 1} &= 1-\Prob{\game{2}(A)=1} + \Prob{\game{1}(A)=1}\\
-%\nonumber (2\Prob{\ExpPRF{F}{B_2} = 1} - 1)  &= \Prob{\game{1}(A)=1} - \Prob{\game{2}(A)=1}\\
-% \AdvPRF{F}{B_2} &= \Prob{\game{1}(A)=1} - \Prob{\game{2}(A)=1} \label{eq:12}
-%\end{align}
-%\noindent
-%Adding \Cref{eq:11,eq:12}, we have
 \begin{equation*}
 \Prob{\game{0}(A)=1} = \AdvPRF{F}{B_1} +\AdvPRF{F}{B_2} + \Prob{\game{2}(A)=1}%\label{eq:13}
 \end{equation*}
@@ -139,8 +118,8 @@ by~$\game{3}$. Thus we have $\Prob{\game{2}(A)=1} =
 
 We note that $\game{3}$ and $\game{4}$ are
 ``identical-untill-$\bad$''~\cite{BeRo-gameplaying}.  In particular,
-in $\game{4}$ returns 0 when $\game{3}$ would have returned 1 (i.e.,
-the adversary outputs~$r$ false-positives) but $\bad=\true$.  
+in $\game{4}$, $A$ returns 0 when $\game{3}$ would have returned 1 (i.e.,
+the adversary outputs~$r$ false-positives, but $\bad=\true$).  
 Moreover,  $\game{4}(A)$ returning 1 implies that $\bad$ is never set to $\true$. Therefore,
 $\Prob{\game{4}(A)=1} = \Prob{\game{3}(A)=1 \wedge \neg\bad} =
 \Prob{\game{3}(A)=1} \Prob{\game{3}(A) : \neg\bad}$, by our previous observation.
@@ -163,7 +142,7 @@ set~$\mathcal{Z}$ output by~$A$ and the set~$\calI$ are independent.
 Thus $\bad$ remains $\false$ after~$A$ halts with probability
 $1/\dbinom{q}{r}$, and we have 
 \begin{equation*}
-\Prob{\game{3}(A)=1} = \frac{1}{\dbinom{q}{r}}\Prob{\game{4}(A)=1}
+\Prob{\game{4}(A)=1} = \frac{1}{\dbinom{q}{r}}\Prob{\game{3}(A)=1}
 \end{equation*}
 
 Recall that adversary~$A$ wins $\ExpFPSecHash{B_{\mathrm{lin}},r}{}$ by finding~$r$ false positives. We can assume, without loss of generality,  that~$A$ halts immediately upon finding its $r$-th false positive.  We can also assume that every point in $\calZ$ has already been queried to $\QryOracle$.  This latter assumption is not without loss, but can be  easily enforced (in the original security definitions) by counting as part of the number of queries~$q$, the points in $\mathcal{Z}$. 
@@ -188,18 +167,18 @@ which is the bound claimed in the theorem statement. \hfill \qed
 \hpagessl{.45}{.5}
 {
 \underline{\game{0}(A)}\\
-$K_1, K_2 \getsr \calK$\\
-$S \getsr \distr{\univ}{n}$\\
-$M \getsr \Rep^{\HashOracle}(\calS)$\\
-$\calZ \getsr A^{\QryOracle}(\calS)$\\
-if $|\calZ| < r$ or $\calZ \cap \calS \neq \emptyset$ then \\
-\nudge Ret 0\\
-if $\exists z \in \calZ$ s.t. $\Qry^{\HashOracle}(M,z)=0$ then\\
-\nudge Ret 0\\
-Ret 1\\\\
+$S \getsr \distr{\calS}{}$\\
+$\err \gets 0$\\
+$(M,\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+$z \getsr A^{\TestOracle}(S,\pubaux)$\\
+if $\err  < r$ then Return 0\\
+Return 1\\\\
 %
-\oracle{$\QryOracle(x)$}\\
-Ret $\Qry^{\HashOracle}(M,x)$\\\\
+\oracle{$\TestOracle(q)$}\\
+$a \gets \Qry^{\HashOracle}(M,\privaux,q)$\\
+if $a \neq q(S)$ then \\
+\nudge $\err \gets\err +1$\\
+Return~$(a,\err )$
 %
 \oracle{$\HashOracle(x)$}\\
 for $i = 1$ to $k$\\
@@ -208,19 +187,19 @@ Ret $\left(h_1(x),\ldots,h_k(x)\right)$
 }
 {
 \underline{\game{1}(A)}\\
-$K_1 \getsr \calK$\\
 $\rho \getsr \Func{\univ,[m]}$\\
-$S \getsr \distr{\univ}{n}$\\
-$M \getsr \Rep^{\HashOracle}(\calS)$\\
-$\calZ \getsr A^{\QryOracle}(\calS)$\\
-if $|\calZ| < r$ or $\calZ \cap \calS \neq \emptyset$ then \\
-\nudge Ret 0\\
-if $\exists z \in \calZ$ s.t. $\Qry^{\HashOracle}(M,z)=0$ then\\
-\nudge Ret 0\\
-Ret 1\\\\
+$S \getsr \distr{\calS}{}$\\
+$\err \gets 0$\\
+$(M,\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+$z \getsr A^{\TestOracle}(S,\pubaux)$\\
+if $\err  < r$ then Return 0\\
+Return 1\\\\
 %
-\oracle{$\QryOracle(x)$}\\
-Ret $\Qry^{\HashOracle}(M,x)$\\\\
+\oracle{$\TestOracle(q)$}\\
+$a \gets \Qry^{\HashOracle}(M,\privaux,q)$\\
+if $a \neq q(S)$ then \\
+\nudge $\err \gets\err +1$\\
+Return~$(a,\err )$
 %
 \oracle{$\HashOracle(x)$}\\
 for $i=1$ to $k$\\
@@ -233,17 +212,18 @@ Ret $\left(h_1(x),\ldots,h_k(x)\right)$
 {
 \underline{\game{2}(A)}\\
 $\rho_1,\rho_2 \getsr \Func{\univ,[m]}$\\
-$S \getsr \distr{\univ}{n}$\\
-$M \getsr \Rep^{\HashOracle}(\calS)$\\
-$\calZ \getsr A^{\QryOracle}(\calS)$\\
-if $|\calZ| < r$ or $\calZ \cap \calS \neq \emptyset$ then \\
-\nudge Ret 0\\
-if $\exists z \in \calZ$ s.t. $\Qry^{\HashOracle}(M,z)=0$ then\\
-\nudge Ret 0\\
-Ret 1\\\\
+$S \getsr \distr{\calS}{}$\\
+$\err \gets 0$\\
+$(M,\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+$z \getsr A^{\TestOracle}(S,\pubaux)$\\
+if $\err  < r$ then Return 0\\
+Return 1\\\\
 %
-\oracle{$\QryOracle(x)$}\\
-Ret $\Qry^{\HashOracle}(M,x)$\\\\
+\oracle{$\TestOracle(q)$}\\
+$a \gets \Qry^{\HashOracle}(M,\privaux,q)$\\
+if $a \neq q(S)$ then \\
+\nudge $\err \gets\err +1$\\
+Return~$(a,\err )$
 %
 \oracle{$\HashOracle(x)$}\\
 for $i=1$ to $k$\\
@@ -252,25 +232,24 @@ Ret $\left(h_1(x),\ldots,h_k(x)\right)$
 }
 {
 \underline{{$\game{3}(A)$},\fbox{$\game{4}(A)$}}\\
-$c\gets 0$, $\bad\gets\false$\\
+$c\gets 0$, $\bad \gets \false$\\
 $\mathcal{I}\getsr [\{1,2,\ldots,q\}]^r$\\
-$S \getsr \distr{\univ}{n}$\\
-$M \getsr \Rep^{\HashOracle}(\calS)$\\
-$\calZ \getsr A^{\QryOracle}(\calS)$\\
-if $|\calZ| < r$ or $\calZ \cap \calS \neq \emptyset$ then Ret 0\\
-if $\forall z \in \calZ,\,\Qry^{\HashOracle}(M,z)=1$ then \\
-\nudge if $\bad=\true$ then \fbox{Ret 0}\\
-\nudge Ret 1\\
-Ret 0\\\\
-
-\oracle{$\QryOracle(x)$}\\
+$S \getsr \distr{\calS}{}$\\
+$\err \gets 0$\\
+$(M,\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+$z \getsr A^{\TestOracle}(S,\pubaux)$\\
+if $\err  < r$ then Return 0\\
+Return 1\\\\
+%
+\oracle{$\TestOracle(q)$}\\
 $c \gets c+1$\\
-$v \gets \Qry^{\HashOracle}(M,x)$\\
-if $c \in \mathcal{I}$ and $v\neq 1$ then\\
+$v \gets \Qry^{\HashOracle}(M,\privaux,q)$\\
+if $c \in \mathcal{I}$ and $a \neq q(S)$ then \\
 \nudge $\bad \gets \true$ \\
-if $c \not\in \mathcal{I}$ and $v\neq 0$ then\\
+if $c \not\in \mathcal{I}$ and $a \neq q(S)$ then \\
 \nudge $\bad \gets \true$\\
-Ret~$v$\\\\
+\nudge $\err \gets\err +1$\\
+Return~$(v,\err )$
 %
 \oracle{$\HashOracle(x)$}\\
 $a,b \getsr [m]$\\
@@ -282,44 +261,6 @@ Ret $\left(v_1,\ldots,v_k\right)$
 \caption{\Cref{thm1}:Game playing argument}\label{fig:Game}
 \end{figure}
 
-%\caption{$\Cref{thm1}:\game{5}(A)$ in game playing argument}\label{fig:game5}
-%\begin{figure}
-%\centering
-%\fpage{0.8}
-%{
-%\hpagess{0.5}{0.4}{
-%\underline{$\game{5}(A)$}\\
-%$c \gets 0$\\
-%$\mathcal{I}\getsr [\{1,2,\ldots,q\}]^r$\\
-%$\calY \gets \emptyset$\\
-%$S \getsr \distr{\univ}{n}$\\
-%$M \getsr \Rep^{\HashOracle}(\calS)$\\
-%$\calZ \getsr A^{\QryOracle}(\calS)$\\
-%if $|\calY| < r$ or $\calY \cap \calS \neq \emptyset$ then\\
-%\nudge Ret 0\\
-%if $\forall y \in \calY,\,\Qry^{\HashOracle}(M,y)=1$ then \\
-%\nudge Ret 1\\
-%Ret 0
-%}
-%
-%{
-%\oracle{$\QryOracle(x)$}\\
-%$c \gets c+1$\\
-%if $c \in \mathcal{I}$ then\\
-%\nudge $\calY \gets \calY \cup {x}$\\
-%\nudge Ret 1\\
-%else\\
-%\nudge Ret 0 \\\\
-%
-%\oracle{$\HashOracle(x)$}\\
-%$a,b \getsr [m]$\\
-%for $i = 1$ to~$k$\\
-%\nudge $v_i = a+i \cdot b \bmod m$\\
-%Ret $\left(v_1,\ldots,v_k\right)$
-%}
-%}
-%\caption{\Cref{thm1}:$\game{5}(A)$ in game playing argument}\label{fig:game5}
-%\end{figure}
 
 %\caption{PRF game}\label{fig:prf}
 \begin{figure}
@@ -329,7 +270,7 @@ Ret $\left(v_1,\ldots,v_k\right)$
 {
 $\experimentv{\ExpPRF{F}{B}}$\\
 $K \getsr \calK $\\
-$\rho \getsr \Func(\univ,[m])$\\
+$\rho \getsr \Func{\univ,[m]}$\\
 $b \getsr \bits$\\
 $b' \getsr B^\calO$\\
 Ret $[b = b']$\\
@@ -341,8 +282,7 @@ if $ b = 1$ then\\
 Ret $\rho(x)$\\
 }
 }
-\caption{The PRF experiment for a function family $F \colon \calK
-  \times \calX \to [m]$. }\label{fig:prf}
+\caption{PRF security notion}\label{fig:prf}
 \end{figure}
 
 %\caption{Adversary $B_1, B_2$ simulating $\game{1}(A)$ and $\game{2}(A)$ respectively}\label{fig:BGame1}
@@ -354,6 +294,7 @@ Ret $\rho(x)$\\
 {
 $\adversaryv{D(S)}$\\[4pt]
 $c \gets 0$, $\calX \gets \emptyset$\\
+$\err \gets 0$\\
 $\mathcal{I}\getsr [\{1,2,\ldots,q\}]^r$\\
 Run $A(S)$\\
 When $A$ asks $\QryOracle(x)$:\\
@@ -362,7 +303,8 @@ When $A$ asks $\QryOracle(x)$:\\
 \nudge if $c \in \mathcal{I}$\\
 \nudge \nudge $\calX \gets \calX \cup \{x\}$\\
 \nudge \nudge $r \gets 1$\\
-\nudge Ret $r$\\
+\nudge \nudge $\err \gets \err + 1$\\
+\nudge Ret $(r,\err )$\\
 When $A$ halts:\\
 \nudge Ret $\calX$
 }
@@ -493,6 +435,65 @@ Using \ref{eq:4} in \ref{eq:3c}:
   they get~$S$ as input.  They also do not sample random functions;
   use lazy sampling (a la game $\game{3}(A)$.  Please clean things up.)}
 \noindent
+%\caption{$\Cref{thm1}:\game{5}(A)$ in game playing argument}\label{fig:game5}
+%\begin{figure}
+%\centering
+%\fpage{0.8}
+%{
+%\hpagess{0.5}{0.4}{
+%\underline{$\game{5}(A)$}\\
+%$c \gets 0$\\
+%$\mathcal{I}\getsr [\{1,2,\ldots,q\}]^r$\\
+%$\calY \gets \emptyset$\\
+%$S \getsr \distr{\univ}{n}$\\
+%$M \getsr \Rep^{\HashOracle}(\calS)$\\
+%$\calZ \getsr A^{\QryOracle}(\calS)$\\
+%if $|\calY| < r$ or $\calY \cap \calS \neq \emptyset$ then\\
+%\nudge Ret 0\\
+%if $\forall y \in \calY,\,\Qry^{\HashOracle}(M,y)=1$ then \\
+%\nudge Ret 1\\
+%Ret 0
+%}
+%
+%{
+%\oracle{$\QryOracle(x)$}\\
+%$c \gets c+1$\\
+%if $c \in \mathcal{I}$ then\\
+%\nudge $\calY \gets \calY \cup {x}$\\
+%\nudge Ret 1\\
+%else\\
+%\nudge Ret 0 \\\\
+%
+%\oracle{$\HashOracle(x)$}\\
+%$a,b \getsr [m]$\\
+%for $i = 1$ to~$k$\\
+%\nudge $v_i = a+i \cdot b \bmod m$\\
+%Ret $\left(v_1,\ldots,v_k\right)$
+%}
+%}
+%\caption{\Cref{thm1}:$\game{5}(A)$ in game playing argument}\label{fig:game5}
+%\end{figure}
+
+%From \Cref{eq:m1,eq:m2,eq:m3,eq:m4},
+%\begin{align}
+%\nonumber \Prob{\ExpPRF{F}{B_1} = 1} &= .5\Prob{\ExpPRF{F}{B_1}=1\,|\,b=0} + .5\Prob{\ExpPRF{F}{B_1} = 1\,|\,b=1}\\
+%\nonumber 2\Prob{\ExpPRF{F}{B_1} = 1} &= 1-\Prob{\game{1}(A)=1} + \Prob{\game{0}(A)=1}\\
+%\nonumber (2\Prob{\ExpPRF{F}{B_1} = 1} - 1)  &= \Prob{\game{0}(A)=1} - \Prob{\game{1}(A)=1}\\
+% \AdvPRF{F}{B_1} &= \Prob{\game{0}(A)=1} - \Prob{\game{1}(A)=1} \label{eq:11}\\
+%\nonumber& &\\
+%\nonumber \Prob{\ExpPRF{F}{B_2} = 1} &= .5\Prob{\ExpPRF{F}{B_2}=1\,|\,b=0} + .5\Prob{\ExpPRF{F}{B_2} = 1\,|\,b=1}\\
+%\nonumber 2\Prob{\ExpPRF{F}{B_2} = 1} &= 1-\Prob{\game{2}(A)=1} + \Prob{\game{1}(A)=1}\\
+%\nonumber (2\Prob{\ExpPRF{F}{B_2} = 1} - 1)  &= \Prob{\game{1}(A)=1} - \Prob{\game{2}(A)=1}\\
+% \AdvPRF{F}{B_2} &= \Prob{\game{1}(A)=1} - \Prob{\game{2}(A)=1} \label{eq:12}
+%\end{align}
+%\noindent
+%Adding \Cref{eq:11,eq:12}, we have
+%Before giving the proof, we note that  $(1-e^{-kn/m})^k \rightarrow 0$ as the ratio between the bit-length of the representation~$M$ and the size of the represented set~$S$, i.e.,$m/n$ tends to $\infty$.
+%
+%\begin{align*}
+%\game{1}(A)\, : \, h_j(x) &= ( F_{K_0}(x) + j\cdot \rho_2(x)) \bmod m\\
+%\game{2}(A)\, : \, h_j(x) &= ( \rho_1(x) + j \cdot \rho_2(x)) \bmod m
+%\end{align*}
 
 \fi
 \end{proof}
