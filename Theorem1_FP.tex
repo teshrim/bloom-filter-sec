@@ -1,6 +1,6 @@
 %\acnote{I am moving comments to end of the proof in tex file and commenting them as the labels are getting mangled}
 \heading{Linear-PRF construction. }
-Here we consider a hash-based filter that was attacked by Neidermayer et al. in~\cite{xxx}.  Let $B_{\mathrm{lin}}=(\Hash,\Rep,\Qry)$ be defined as follows.  Fix non-empty sets ~$\univ$, $\calK$ and integers $k,m,n>0$.  Let $F\colon\mathcal{K} \times \univ \to [m]$ be a function family.  The $\Hash$ algorithm samples two keys $K_0,K_1 \getsr \mathcal{K}$ and defines $h_j(x) = F_{K_0}(x) + j\cdot F_{K_1}(x) \bmod m$ for $j \in [1,k]$.  The $\Rep$ and $\Qry$ algorithms are the standard (determinisitic) BF ones. The following result shows, informally, that if~$F$ is a good PRF and the (non-adaptive) FP rate is sufficiently small, then $B_\mathrm{lin}$ is secure against adaptive FP-finding adversaries.
+Here we consider a hash-based filter that was attacked by Neidermayer et al. in~\cite{xxx}.  Let $B_{\mathrm{lin}}=(\Hash,\Rep,\Qry)$ be defined as follows.  Fix non-empty sets ~$\calK$, $\univ$ and integers $k,m,n>0$.  Let $F\colon\mathcal{K} \times \univ \to [m]$ be a function family.  The $\Hash$ algorithm samples two keys $K_0,K_1 \getsr \mathcal{K}$ and defines $h_j(x) = F_{K_0}(x) + j\cdot F_{K_1}(x) \bmod m$ for $j \in [1,k]$.  The $\Rep$ and $\Qry$ algorithms are the standard (determinisitic) BF ones. $B_{\mathrm{lin}}$ is in fact one instantiation of a set-multiplicity data structure. It must be noted that $B_{\mathrm{lin}}$ admits errors in form of false-positives only. So, error rate of $B_{\mathrm{lin}}$ is same as the (non-adaptive) FP rate. The following result shows, informally, that if~$F$ is a good PRF and the error rate is sufficiently small, then $B_\mathrm{lin}$ is correct against adaptive error-finding adversaries. Henceforth, we refer errors and error-rate in $B_{\mathrm{lin}}$ as false-positives and false-positive(FP) rate, respectively.
 
 \begin{theorem}\label{thm1}
 Fix $k,m,n,r>0$, and let $B_\mathrm{lin}=(\Hash,\Rep,\Qry)$ be the hash-based filter just described. 
@@ -8,7 +8,7 @@ For any adversary~$A$ that makes a total of~$q$ queries to its oracle
 and has time-complexity~$O(t)$,
 there exist adversaries~$B_1,B_2$ (explicitly constructed in the proof of this theorem) such that
 \[
-\AdvFPSecHash{B_{\mathrm{lin}},r}{A} \leq  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}  +{\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
+\AdvCorrect{B_{\mathrm{lin}},\distr{\calS}{},r}{A} \leq  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}  +{\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
 \]
 Here, $B_1$ and $B_2$, each ask~$q$ oracle queries and have time complexity~$O(t+qm)$.
 \end{theorem}
@@ -23,10 +23,10 @@ trying to find a single FP in each of~$r$ independent``rounds'', each round
 consisting of~$q$ attempts.
 
 \begin{proof}[\Cref{thm1}]
-The proof of the theorem will use a game playing argument as shown in \Cref{fig:Game}. $\game{0}(A)$ exactly simulates $\ExpFPSecHash{B_\mathrm{lin},r}{A}$ with hash functions $h_j(x) =  F_{K_0}(x) + j\cdot F_{K_1}(x) \bmod m$. So,
+The proof of the theorem will use a game playing argument as shown in \Cref{fig:Game}. $\game{0}(A)$ exactly simulates $\ExpCorrect{B_\mathrm{lin},\distr{\calS}{},r}{A}$ with hash functions $h_j(x) =  F_{K_0}(x) + j\cdot F_{K_1}(x) \bmod m$. So,
 
 \begin{equation}
-\AdvFPSecHash{B_{\mathrm{lin}},r}{A} = \Prob{\game{0}(A)=1}\label{eq:0}
+\AdvCorrect{B_{\mathrm{lin}},\distr{\calS}{},r}{A} = \Prob{\game{0}(A)=1}\label{eq:0}
 \end{equation}
 
  In $\game{1}(A)$, $F_{K_1}$ is replaced by a random function, whereas in $\game{2}(A)$, both $F_{K_0}$ and $F_{K_1}$ are replaced by random functions.
@@ -45,10 +45,10 @@ When $A$ asks $\TestOracle(q)$:\\
 \nudge $a \gets \Qry^{\HashOracle}(M,\privaux,q)$\\
 \nudge if $a \neq q(S)$ then \\
 \nudge \nudge $\err \gets \err +1$\\
-Return~$(a,\err )$
+Return~$(a,\err )$\\
 When $A$ halts: \\
-if $\err  < r$ then Return 0\\
-Return 1\\\\
+\nudge if $\err  < r$ then Return 0\\
+\nudge Return 1\\\\
 %
 \oracle{$\HashOracle(x)$}\\
 $ \mathrm{Ret} \nudge F_{K_1}(x) + i\cdot \calO(x)$, for $i\in[1,k]$\\
@@ -63,10 +63,10 @@ When $A$ asks $\TestOracle(q)$:\\
 \nudge $a \gets \Qry^{\HashOracle}(M,\privaux,q)$\\
 \nudge if $a \neq q(S)$ then \\
 \nudge \nudge $\err \gets\err +1$\\
-Return~$(a,\err )$
+Return~$(a,\err )$\\
 When $A$ halts: \\
-if $\err  < r$ then Return 0\\
-Return 1\\\\
+\nudge if $\err  < r$ then Return 0\\
+\nudge Return 1\\\\
 \oracle{$\HashOracle(x)$}\\
 $a \getsr [m]$\\
 if $T[x] \neq \undefined$\\
@@ -145,19 +145,19 @@ $1/\dbinom{q}{r}$, and we have
 \Prob{\game{4}(A)=1} = \frac{1}{\dbinom{q}{r}}\Prob{\game{3}(A)=1}
 \end{equation*}
 
-Recall that adversary~$A$ wins $\ExpFPSecHash{B_{\mathrm{lin}},r}{}$ by finding~$r$ false positives. We can assume, without loss of generality,  that~$A$ halts immediately upon finding its $r$-th false positive.  We can also assume that every point in $\calZ$ has already been queried to $\QryOracle$.  This latter assumption is not without loss, but can be  easily enforced (in the original security definitions) by counting as part of the number of queries~$q$, the points in $\mathcal{Z}$. 
+Recall that adversary~$A$ wins $\ExpCorrect{B_{\mathrm{lin}},\distr{\calS}{},r}{}$ by finding~$r$ false positives. We can assume, without loss of generality,  that~$A$ halts immediately upon finding its $r$-th false positive.  We can also assume that every point in $\calZ$ has already been queried to $\QryOracle$.  This latter assumption is not without loss, but can be  easily enforced (in the original security definitions) by counting as part of the number of queries~$q$, the points in $\mathcal{Z}$. 
 %
 Under these assumptions, if $\game{4}(A)=1$, then there is a non-adaptive adversary~$D$ that finds~$r$ false positives against $\tilde{B}_{\mathrm{lin}}$, which is $B_{\mathrm{lin}}$ but with $F_{K_1}$ and $F_{K_2}$ replaced by random functions $\rho_1$ and $\rho_2$, respectively.  We give this~$D$ in \Cref{fig:D}. Intuitively, adversary~$D$ guesses which~$r$ of~$A$'s queries will be the false positives; it simulates the~$\QryOracle$ by returning 1 on the guessed queries, and 0 otherwise; and it halts by outputting the set of guessed queries.  Thus we have
-$\Prob{\game{4}(A)=1} =\Prob{\ExpFPSecHash{\tilde{B}_{\mathrm{lin}},r}{D} = 1}$.
+$\Prob{\game{4}(A)=1} =\Prob{\ExpCorrect{\tilde{B}_{\mathrm{lin}},\distr{\calS}{},r}{D} = 1}$.
 
 Note that $\tilde{B}_{\mathrm{lin}}$ is the scheme that is analyzed in the classical Bloom filter literature ---the hash functions are modeled as independent random functions, and the parameters $k,m,n$  are set to achieve a target maximum false-positive probability (or rate).  Kirsch and Mitzenmacher~\cite{KM} show that the upperbound on false-positive probability for a non-adaptive adversary and $r=1$ is $\left( (1-e^{-kn/m})^k + O(1/n) \right)$.  For $r>1$, we observe that~$A$'s queries are distinct and not elements of the original set~$S$, since we assume no pointless queries. Hence, so are the points $x_1,x_2,\ldots,x_r$ returned by~$D$.  Let $\calF_i$ be the event that~$x_i$ is a false positive.  Since $\game{4}$ (equivalently $\tilde{B}_{\mathrm{lin}}$) use independent random functions, the events $\calF_1,\calF_2,\ldots,\calF_r$ are independent. 
 \[
-\Prob{\ExpFPSecHash{\tilde{B}_{\mathrm{lin}},r}{D} = 1}\leq \left( (1-e^{-kn/m})^k + O(1/n) \right)^r 
+\Prob{\ExpCorrect{\tilde{B}_{\mathrm{lin}},\distr{\calS}{},r}{D} = 1}\leq \left( (1-e^{-kn/m})^k + O(1/n) \right)^r 
 \]
 
 To summarize, we have 
 \[
-\AdvFPSecHash{B_{\mathrm{lin}},r}{A}  \leq  \AdvPRF{F}{B_1} +\AdvPRF{F}{B_2} +\dbinom{q}{r}\left( (1-e^{-kn/m})^k + O(1/n) \right)^r
+\AdvCorrect{B_{\mathrm{lin}},\distr{\calS}{},r}{A}  \leq  \AdvPRF{F}{B_1} +\AdvPRF{F}{B_2} +\dbinom{q}{r}\left( (1-e^{-kn/m})^k + O(1/n) \right)^r
 \]
 which is the bound claimed in the theorem statement. \hfill \qed
 
@@ -178,7 +178,7 @@ Return 1\\\\
 $a \gets \Qry^{\HashOracle}(M,\privaux,q)$\\
 if $a \neq q(S)$ then \\
 \nudge $\err \gets\err +1$\\
-Return~$(a,\err )$
+Return~$(a,\err )$\\\\
 %
 \oracle{$\HashOracle(x)$}\\
 for $i = 1$ to $k$\\
@@ -199,7 +199,7 @@ Return 1\\\\
 $a \gets \Qry^{\HashOracle}(M,\privaux,q)$\\
 if $a \neq q(S)$ then \\
 \nudge $\err \gets\err +1$\\
-Return~$(a,\err )$
+Return~$(a,\err )$\\\\
 %
 \oracle{$\HashOracle(x)$}\\
 for $i=1$ to $k$\\
@@ -223,7 +223,7 @@ Return 1\\\\
 $a \gets \Qry^{\HashOracle}(M,\privaux,q)$\\
 if $a \neq q(S)$ then \\
 \nudge $\err \gets\err +1$\\
-Return~$(a,\err )$
+Return~$(a,\err )$\\\\
 %
 \oracle{$\HashOracle(x)$}\\
 for $i=1$ to $k$\\
@@ -249,7 +249,7 @@ if $c \in \mathcal{I}$ and $a \neq q(S)$ then \\
 if $c \not\in \mathcal{I}$ and $a \neq q(S)$ then \\
 \nudge $\bad \gets \true$\\
 \nudge $\err \gets\err +1$\\
-Return~$(v,\err )$
+Return~$(v,\err )$\\\\
 %
 \oracle{$\HashOracle(x)$}\\
 $a,b \getsr [m]$\\
@@ -308,193 +308,8 @@ When $A$ asks $\QryOracle(x)$:\\
 When $A$ halts:\\
 \nudge Ret $\calX$
 }
-\caption{Non-adaptive adversary $D$ simulating $\game{4}(A)$} \label{fig:D}
+\caption{\Cref{thm1}: Non-adaptive adversary $D$ simulating $\game{4}(A)$} \label{fig:D}
 \end{figure}	
 
-
-\iffalse
-%Comments
-\tsnote{I'll need to rewrite all below here.  The current text is too hand-wavy and fast.}
-\tsnote{`In transitioning from $\game{2}$ to $\game{3}$ we
-  replace the all-at-once sampling of random functions~$\rho_1,\rho_2$
-with lazying sampling in the $\HashOracle$, which is the only place
-these random functions are used.  This does not alter the input-output
-behavior of the $\HashOracle$.''  Why do we do this?}
-We also sample $r$~distinct random integers are chosen \tsnote{why?
-  What are we setting up?} and the $\QryOracle$ oracle sets a $\bad$
-flag if query response for any of the $r$ queries is false or any of
-the $q-r$ queries return true. \tsnote{We
-  set $\bad$ to $\true$ if the queries indexed by the
-  set~$\mathcal{I}$ fail to be false-positives, or if any of the
-  remaining queries \emph{are} false-positives.  Again, why are we
-  doing this?  }
-\tsnote{How does the last line follow from the games?  I mean, it
-  isn't obvious to me that your $\game{5}$ is equivalent to $\game{4}$.  The
-  latter looks at the adversary's output~$\mathcal{Z}$, but the former
-ignores this and looks at this new set~$\mathcal{Y}$.  Why are these
-equivalent with respect to the events $\game{4}(A)=1$ and
-$\game{5}(A)=1$?  Just looking at the $\QryOracle$ in the two games,
-it appears that they have pretty different behaviors. I mean, in
-$\game{4}$ the oracle still returns what it is supposed to, even if
-$\bad\gets\true$.  But in $\game{5}$ the oracle returns fixed values,
-no matter if the query is or is not a FP.  You have to explain why
-these changes are okay.  Also, why is this new set~$\mathcal{Y}$
-necessary?  }
-\tsnote{The point that needs to be made about the relationship between
-  $\game{4}$ and $\game{5}$ is this.  $\game{4}$ returns 1 only if
-  $\bad=\false$ at the end of the game.  In turn, this implies that
-  the game managed to ``guess'', prior to the execution of~$A$, which
-  of its queries would result in false-positives.  (By the way, we
-  need to state an assumption here: that~$A$ halts and
-  outputs~$\mathcal{Z}$ (of size~$r$) as soon as its queries
-  reveal~$r$ false positives.  This is without loss of generality; say
-why.  I guess you also need to assume that every point in
-the~$\mathcal{Z}$ output by~$A$ has already been queried
-to~$\QryOracle$.  Strictly speaking this is not without loss of
-generality, but would be easily enforced (in the original
-  security definitions) by counting as part of the number of
-  queries~$q$ the points in~$\mathcal{Z}$.  Without these assumptions,
-things don't quite work.)  Hence, if $\game{4}(A)=1$ there is a
-non-adaptive adversary~$D$ that finds~$r$ false positives against
-$\tilde{B}_{\mathrm{lin}}$, which is $B_{\mathrm{lin}}$ but
-with $F_{K_1}$ and $F_{K_2}$ replaced by random functions $\rho_1$ and $\rho_2$,
-respectively.  (Note, this is \emph{not} the adversary~$D$ that you
-give, because the one you give simulates things that it would be given
-in the FP game, e.g. the set~$S$.)  That is, $\Prob{\game{4}(A)=1} =
-\AdvFPSecHash{\tilde{B}_{\mathrm{lin}},r}{D}$.  (So I guess there's no
-need for $\game{5}$.)  Now argue that this advantage is upperbounded
-	by what the theorem claims, i.e. the KM bound raised to~$r$.}
-
-In $\game{3}(A)$, the hash functions are linear combinations of two random points
-in $[m]$, similar to $\game{2}(A)$. 
-
-So, both have equal probability of returning 1.  \tsnote{``The value
-  of~$\bad$ does not affect the value returned by~$\game{3}$. Thus we
-  conclude that...'' }
-\begin{equation}
-\Prob{\game{2}(A)=1} = \Prob{\game{3}(A)=1}\label{eq:3}
-\end{equation}
- 
-
-The probability of winning  $\game{3}(A)$ is same as $\game{4}(A)$,
-except $\game{4}(A)$ outputs 0 if $\bad$ flag is
-set.\tsnote{I don't understand this sentence.  What you mean to say is
-  something like this: ``By construction, $\game{3}$ and $\game{4}$
-  are identical-until-bad.  In addition, $\game{4}$ returning 1
-  implies that $\bad$ is never set to~$\true$.  From these two
-  observations, we can conclude that $\Prob{\game{4}(A)=1} =
-  \Prob{\game{3}(A)=1 \wedge \neg\bad}$.'' }
-In short, $\game{3}(A)$ and $\game{4}(A)$ are identical untill $\bad
-=true$.  On the  other hand, $\game{5}(A)$ simulates the non-adaptive
-counterpart of $\game{4}(A)$.  \tsnote{This statement is unjustified.
-(See my comments below.) Actually it's meaningless, because games are
-not not adaptive or non-adaptive.  Adversaries are.}
-
-\tsnote{You need to just justify these next lines better. For example,
-why is the event $\neg \bad$ independent of the event $\game{3}(A)=1$?}
-\begin{align}
-\nonumber \Prob{\game{4}(A)=1} &= \Prob{\game{3}(A)=1 \wedge \neg\bad}\\ 
-\nonumber & = \Prob{\game{3}(A)=1}\Prob{\game{3}(A):\,\neg\bad}\\
-& = \Prob{\game{3}(A)=1}\frac{1}{\dbinom{q}{r}}\label{eq:3a}\\
-\Prob{\game{5}(A)=1} &= \Prob{\game{4}(A)=1}\label{eq:3b}
-\end{align}
-
-\tsnote{Why is $B_2$
-  sampling a random function?  This ruins the tightness of security
-  bound w.r.t.\ resources.  Please have~$B_2$ carry out lazy sampling
-  of~$\rho_2$.  Also, please use the macro for Func.} 
-
-\tsnote{This proof jumps around too much.  The games should be
-  addressed in order, as much as possible.}  
-The classical FP requirement considers only non-adaptive (and information-theoretic) adversaries, and~$D$ is one such adversary simulating $\game{5}(A)$ as closely as possible, whereas $D'$ mimics $D$ for $r=1$. $D'$ outputs a FP as in a classic Bloom filter and its FP-error is upperbounded by $[(1-e^{-kn/m})^k +O(1/n)]$ \cite{KirschMitzenmacher}.  %\acnote{changed}\tsnote{The classical FP requirement considers only non-adaptive (and information-theoretic) adversaries.  It suffices to say this.}
-\noindent
-From \Cref{fig:AGame3}, it is evident that \tsnote{Where is the
-  set~$S$ in $D$ and $D'$?  Make sure to give it to~$A$.  Why is this
-  extra set~$\mathcal{Y}$ needed?  What is the point of~$D'$? }
-\begin{align}
-\Prob{\game{5}(A)=1} &= \Prob{D \, \mbox{outputs $r$ FP} \,}\label{eq:4a}\\
-\nonumber \Prob{D \, \mbox{outputs r FP} \,} &=  \Big[\Prob{D' \, \mbox{outputs FP} \,}\Big]^r\\
-& \leq \Big[(1-e^{-kn/m})^k +O(1/n)\Big]^r \label{eq:4b}
-\end{align}
-\tsnote{How does the second line follow?  You're claiming independence
-  somehow, but you haven't justified it.}
-\noindent
-From \Cref{eq:4a,eq:4b}
-\begin{equation}
-\Prob{\game{5}(A)=1} \leq [(1-e^{-kn/m})^k + O(1/n)]^r \label{eq:4}
-\end{equation}
-
-\noindent
-Using \ref{eq:4} in \ref{eq:3c}:
-\begin{align}
-\nonumber \Prob{\game{2}(A)=1}\frac{1}{\dbinom{q}{r}}  &\leq [(1-e^{-kn/m})^k +O(1/n)]^r\\
- \Prob{\game{2}(A)=1}  & \leq \dbinom{q}{r}[(1-e^{-kn/m})^k +O(1/n)]^r\label{eq:5}
-\end{align}
-
-\fixme{These adversaries are incorrect.  They are FP adversaries, so
-  they get~$S$ as input.  They also do not sample random functions;
-  use lazy sampling (a la game $\game{3}(A)$.  Please clean things up.)}
-\noindent
-%\caption{$\Cref{thm1}:\game{5}(A)$ in game playing argument}\label{fig:game5}
-%\begin{figure}
-%\centering
-%\fpage{0.8}
-%{
-%\hpagess{0.5}{0.4}{
-%\underline{$\game{5}(A)$}\\
-%$c \gets 0$\\
-%$\mathcal{I}\getsr [\{1,2,\ldots,q\}]^r$\\
-%$\calY \gets \emptyset$\\
-%$S \getsr \distr{\univ}{n}$\\
-%$M \getsr \Rep^{\HashOracle}(\calS)$\\
-%$\calZ \getsr A^{\QryOracle}(\calS)$\\
-%if $|\calY| < r$ or $\calY \cap \calS \neq \emptyset$ then\\
-%\nudge Ret 0\\
-%if $\forall y \in \calY,\,\Qry^{\HashOracle}(M,y)=1$ then \\
-%\nudge Ret 1\\
-%Ret 0
-%}
-%
-%{
-%\oracle{$\QryOracle(x)$}\\
-%$c \gets c+1$\\
-%if $c \in \mathcal{I}$ then\\
-%\nudge $\calY \gets \calY \cup {x}$\\
-%\nudge Ret 1\\
-%else\\
-%\nudge Ret 0 \\\\
-%
-%\oracle{$\HashOracle(x)$}\\
-%$a,b \getsr [m]$\\
-%for $i = 1$ to~$k$\\
-%\nudge $v_i = a+i \cdot b \bmod m$\\
-%Ret $\left(v_1,\ldots,v_k\right)$
-%}
-%}
-%\caption{\Cref{thm1}:$\game{5}(A)$ in game playing argument}\label{fig:game5}
-%\end{figure}
-
-%From \Cref{eq:m1,eq:m2,eq:m3,eq:m4},
-%\begin{align}
-%\nonumber \Prob{\ExpPRF{F}{B_1} = 1} &= .5\Prob{\ExpPRF{F}{B_1}=1\,|\,b=0} + .5\Prob{\ExpPRF{F}{B_1} = 1\,|\,b=1}\\
-%\nonumber 2\Prob{\ExpPRF{F}{B_1} = 1} &= 1-\Prob{\game{1}(A)=1} + \Prob{\game{0}(A)=1}\\
-%\nonumber (2\Prob{\ExpPRF{F}{B_1} = 1} - 1)  &= \Prob{\game{0}(A)=1} - \Prob{\game{1}(A)=1}\\
-% \AdvPRF{F}{B_1} &= \Prob{\game{0}(A)=1} - \Prob{\game{1}(A)=1} \label{eq:11}\\
-%\nonumber& &\\
-%\nonumber \Prob{\ExpPRF{F}{B_2} = 1} &= .5\Prob{\ExpPRF{F}{B_2}=1\,|\,b=0} + .5\Prob{\ExpPRF{F}{B_2} = 1\,|\,b=1}\\
-%\nonumber 2\Prob{\ExpPRF{F}{B_2} = 1} &= 1-\Prob{\game{2}(A)=1} + \Prob{\game{1}(A)=1}\\
-%\nonumber (2\Prob{\ExpPRF{F}{B_2} = 1} - 1)  &= \Prob{\game{1}(A)=1} - \Prob{\game{2}(A)=1}\\
-% \AdvPRF{F}{B_2} &= \Prob{\game{1}(A)=1} - \Prob{\game{2}(A)=1} \label{eq:12}
-%\end{align}
-%\noindent
-%Adding \Cref{eq:11,eq:12}, we have
-%Before giving the proof, we note that  $(1-e^{-kn/m})^k \rightarrow 0$ as the ratio between the bit-length of the representation~$M$ and the size of the represented set~$S$, i.e.,$m/n$ tends to $\infty$.
-%
-%\begin{align*}
-%\game{1}(A)\, : \, h_j(x) &= ( F_{K_0}(x) + j\cdot \rho_2(x)) \bmod m\\
-%\game{2}(A)\, : \, h_j(x) &= ( \rho_1(x) + j \cdot \rho_2(x)) \bmod m
-%\end{align*}
-
-\fi
 \end{proof}
 
