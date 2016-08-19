@@ -14,7 +14,7 @@ Here, $B$ asks $q$ queries, and has time complexity $O(t+qm)$.
 \end{theorem}
 
 \begin{proof}[\Cref{thm2}]
-We use a game playing argument similar to \Cref{thm1} to prove this theorem. In \game{0}(A), adversary attacks the FP game with  hash functions $h_j(x) = \FK $, and hence exactly simulates $\ExpCorrect{B_{\mathrm{ds}},\distr{\calS}{},r}{A}$.
+We use a game playing argument (shown in \Cref{fig:2TGame}) similar to \Cref{thm1} to prove this theorem. In \game{0}(A), adversary attacks the FP game with  hash functions $h_j(x) = \FK $, and hence exactly simulates $\ExpCorrect{B_{\mathrm{ds}},\distr{\calS}{},r}{A}$.
 \begin{equation}
 \AdvCorrect{B_{\mathrm{ds}},\distr{\calS}{},r}{A} = \Prob{\game{0}(A)=1}\label{eq:2T0}
 \end{equation}
@@ -41,7 +41,7 @@ Let $D$ be a non-adaptive adversary (shown in \Cref{fig:2TD}) that finds ~$r$ fa
 \begin{equation*}
 \AdvCorrect{\tilde{B}_{\mathrm{ds}},\distr{\calS}{},r}{D} = \Prob{\game{3}(A) = 1}\label{eq:2T8}
 \end{equation*}
-Note that like $\tilde{B}_{\mathrm{lin}}$, $\tilde{B}_{\mathrm{ds}}$ is the scheme that is analyzed in the classical Bloom filter literature. So, for a non-adaptive adversary $D$ and $r=1$, the upper bound on false-positive probability of a classical Bloom filter applies to $\tilde{B}_{\mathrm{ds}}$ as well. For $r > 1$, based on the assumption that $A$ makes no pointless queries, the queries made by $A$ as well as the elements returned by $D$ are distinct and not elements of the original set $S$. Also, since $\game{3}$ uses independent random functions, the event of getting a false positive is independent of the index of the query. So,
+Note that like $\tilde{B}_{\mathrm{lin}}$, $\tilde{B}_{\mathrm{ds}}$ is the scheme that is analyzed in the classical Bloom filter literature. So, for a non-adaptive adversary $D$ and $r=1$, the upper bound on false-positive probability of a classical Bloom filter applies to $\tilde{B}_{\mathrm{ds}}$ as well. For $r > 1$, based on the assumption that $A$ makes no pointless queries, the queries made by $A$ are distinct and not elements of the original set $S$. Also, since $\game{3}$ uses independent random functions, the event of getting a false positive is independent of the index of the query. So,
 \begin{equation*}
 \AdvCorrect{\tilde{B}_{\mathrm{ds}},\distr{\calS}{},r}{D} =   {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r
 \end{equation*}
@@ -116,10 +116,11 @@ Return 1
 \oracle{$\TestOracle(q)$}\\
 $c \gets c+1$\\
 $v \gets \Qry^{\HashOracle}(M,\privaux,q)$\\
-if $c \in \mathcal{I}$ and $a \neq q(S)$ then \\
+if $c \in \mathcal{I}$ and $v = q(S)$ then \\
 \nudge $\bad \gets \true$ \\
-if $c \not\in \mathcal{I}$ and $a \neq q(S)$ then \\
+if $c \not\in \mathcal{I}$ and $v \neq q(S)$ then \\
 \nudge $\bad \gets \true$\\
+if $v \neq q(S)$\\
 \nudge $\err \gets\err +1$\\
 Return~$(v,\err )$\\\\
 %
@@ -130,7 +131,7 @@ for $j = 1$ to~$k$\\
 Ret $\left(v_1,\ldots,v_k\right)$
 }
 }
-\caption{\Cref{thm2}: Game playing argument}\label{fig:Game}
+\caption{\Cref{thm2}: Game playing argument}\label{fig:2TGame}
 \end{figure}
 
 %\caption{PRF adversary $B$ simulating $\game{1}(A)$ and $\game{2}(A)$, and non-adaptive adversary $D$ simulating $\game{4}(A)$} 
@@ -158,24 +159,24 @@ When $A$ halts: \\
 \nudge Ret $\OK$, for $j\in[1,k]$\\
 }
 {
-$\adversaryv{D^{\QryOracle, \calS}}$\\
-$c \gets 0$, $\calX \gets \emptyset$\\
+$\adversaryv{D^{\TestOracle, \calS}}$\\
+$c \gets 0$\\%, $\calX \gets \emptyset$\\
 $\err \gets 0$\\
 $\mathcal{I}\getsr [\{1,2,\ldots,q\}]^r$\\
 Run $A(S)$\\
-When $A$ asks $\QryOracle(x)$:\\
+When $A$ asks $\TestOracle(x)$:\\
 \nudge $c \gets c+1$\\
 \nudge $r \gets 0$\\
 \nudge if $c \in \mathcal{I}$\\
-\nudge \nudge $\calX \gets \calX \cup \{x\}$\\
+%\nudge \nudge $\calX \gets \calX \cup \{x\}$\\
 \nudge \nudge $r \gets 1$\\
 \nudge \nudge $\err \gets \err + 1$\\
 \nudge Ret $(r,\err )$\\
 When $A$ halts:\\
-\nudge Ret $\calX $
+\nudge Ret 1
 }
 %
-%\oracle{$\QryOracle(x)$}\\
+%\oracle{$\TestOracle(x)$}\\
 % Ret $\Qry^{\HashOracle}(M,x)$\\\\
 %
 %\oracle{$\HashOracle(x)$}\\
