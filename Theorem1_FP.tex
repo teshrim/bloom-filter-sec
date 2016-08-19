@@ -1,6 +1,6 @@
 %\acnote{I am moving comments to end of the proof in tex file and commenting them as the labels are getting mangled}
 \heading{Linear-PRF construction. }
-Here we consider a hash-based filter that was attacked by Neidermayer et al. in~\cite{xxx}.  Let $B_{\mathrm{lin}}=(\Hash,\Rep,\Qry)$ be defined as follows.  Fix non-empty sets ~$\calK$, $\univ$ and integers $k,m,n>0$.  Let $F\colon\mathcal{K} \times \univ \to [m]$ be a function family.  The $\Hash$ algorithm samples two keys $K_0,K_1 \getsr \mathcal{K}$ and defines $h_j(x) = F_{K_0}(x) + j\cdot F_{K_1}(x) \bmod m$ for $j \in [1,k]$.  The $\Rep$ and $\Qry$ algorithms are the standard (determinisitic) BF ones. $B_{\mathrm{lin}}$ is in fact one instantiation of a set-multiplicity data structure. It must be noted that $B_{\mathrm{lin}}$ admits errors in form of false-positives only. So, error rate of $B_{\mathrm{lin}}$ is same as the (non-adaptive) FP rate. The following result shows, informally, that if~$F$ is a good PRF and the error rate is sufficiently small, then $B_\mathrm{lin}$ is correct against adaptive error-finding adversaries. Henceforth, we refer errors and error-rate in $B_{\mathrm{lin}}$ as false-positives and false-positive(FP) rate, respectively.
+Here we consider a hash-based filter that was attacked by Neidermayer et al. in~\cite{xxx}.  Let $B_{\mathrm{lin}}=(\Hash,\Rep,\Qry)$ be defined as follows.  Fix non-empty sets ~$\calK$, $\univ$ and integers $k,m,n>0$.  Let $F\colon\mathcal{K} \times \univ \to [m]$ be a function family.  The $\Hash$ algorithm samples two keys $K_0,K_1 \getsr \mathcal{K}$ and defines $h_j(x) = F_{K_0}(x) + j\cdot F_{K_1}(x) \bmod m$ for $j \in [1,k]$.  The $\Rep$ and $\Qry$ algorithms are the standard (determinisitic) BF ones. $B_{\mathrm{lin}}$ is in fact one instantiation of a set-multiplicity data structure. It must be noted that $B_{\mathrm{lin}}$ admits errors in form of false-positives(FP) only. So, error rate of $B_{\mathrm{lin}}$ is same as the (non-adaptive) FP rate. The following result shows, informally, that if~$F$ is a good PRF and the error rate is sufficiently small, then $B_\mathrm{lin}$ is correct against adaptive error-finding adversaries. Henceforth, we refer errors and error-rate in $B_{\mathrm{lin}}$ as FP's and FP rate, respectively.
 
 \begin{theorem}\label{thm1}
 Fix $k,m,n,r>0$, and let $B_\mathrm{lin}=(\Hash,\Rep,\Qry)$ be the hash-based filter just described. 
@@ -45,7 +45,7 @@ When $A$ asks $\TestOracle(q)$:\\
 \nudge $a \gets \Qry^{\HashOracle}(M,\privaux,q)$\\
 \nudge if $a \neq q(S)$ then \\
 \nudge \nudge $\err \gets \err +1$\\
-Return~$(a,\err )$\\
+\nudge Return~$(a,\err )$\\
 When $A$ halts: \\
 \nudge if $\err  < r$ then Return 0\\
 \nudge Return 1\\\\
@@ -63,7 +63,7 @@ When $A$ asks $\TestOracle(q)$:\\
 \nudge $a \gets \Qry^{\HashOracle}(M,\privaux,q)$\\
 \nudge if $a \neq q(S)$ then \\
 \nudge \nudge $\err \gets\err +1$\\
-Return~$(a,\err )$\\
+\nudge Return~$(a,\err )$\\
 When $A$ halts: \\
 \nudge if $\err  < r$ then Return 0\\
 \nudge Return 1\\\\

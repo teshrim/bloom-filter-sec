@@ -3,20 +3,20 @@
 \newcommand{\OK}{\calO(\langle j,x \rangle)}
 
 \heading{Construction of PRF with domain separation.}
-Let $B_{\mathrm{ds}}=(\Hash,\Rep,\Qry)$ be a hash-based filter defined as follows. Fix non-empty sets ~$\univ$, $\calK$ and integers $k,m,n>0$.  Let $F\colon\mathcal{K} \times \univ \to [m]$ be a function family.  The $\Hash$ algorithm provides randomness with domain separation, as it samples key $K \getsr \mathcal{K}$ and defines $h_j(x) = \FK $ for $j \in [1,k]$.  The $\Rep$ and $\Qry$ algorithms are the standard (determinisitic) BF ones. Informally, the following result shows, if~$F$ is PRF secure and the filter has low FP-error in the non-adaptive setting, then $B_{\mathrm{ds}}$ is secure against adaptive FP-finding adversaries.
+Let $B_{\mathrm{ds}}=(\Hash,\Rep,\Qry)$ be a hash-based filter defined as follows. Fix non-empty sets ~$\univ$, $\calK$ and integers $k,m,n>0$.  Let $F\colon\mathcal{K} \times \univ \to [m]$ be a function family.  The $\Hash$ algorithm provides randomness with domain separation, as it samples key $K \getsr \mathcal{K}$ and defines $h_j(x) = \FK $ for $j \in [1,k]$.  The $\Rep$ and $\Qry$ algorithms are the standard (determinisitic) BF ones. $B_{\mathrm{ds}}$ is another instantiation of the set-multiplicity data structure. Like $B_{\mathrm{lin}}$, $B_{\mathrm{ds}}$ admits errors in form of false positives only. Informally, the following result shows, if~$F$ is PRF secure and the filter has low error rate in the non-adaptive setting, then $B_{\mathrm{ds}}$ is correct against adaptive error finding adversaries. Hereafter, we refer errors and error-rate in $B_{\mathrm{ds}}$ as false-positives and false-positive rate, respectively.
 
 \begin{theorem}\label{thm2}
-Fix $k,m,n,r >0$. Let $B_{\mathrm{ds}}$ be the hash based filter just described. If there exists an adaptive adversary, $A$ compatible with $\ExpFPSecHash{B_{\mathrm{ds},r}}{\cdot}$ asking $q$ queries, and has time complexity O(t), then there exists an adversary $B$ (explicitly constructed in the proof of this theorem), such that 
+Fix $k,m,n,r >0$. Let $B_{\mathrm{ds}}$ be the hash based filter just described. If there exists an adaptive adversary, $A$ compatible with $\ExpCorrect{B_{\mathrm{ds}},\distr{\calS}{},r}{\cdot}$ asking $q$ queries, and has time complexity O(t), then there exists an adversary $B$ (explicitly constructed in the proof of this theorem), such that 
 \[
-\AdvFPSecHash{B_\mathrm{ds},r}{A} \leq  \AdvPRF{F}{B}  + {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
+\AdvCorrect{B_{\mathrm{ds}},\distr{\calS}{},r}{A} \leq  \AdvPRF{F}{B}  + {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
 \]
 Here, $B$ asks $q$ queries, and has time complexity $O(t+qm)$.
 \end{theorem}
 
 \begin{proof}[\Cref{thm2}]
-We use a game playing argument similar to \Cref{thm1} to prove this theorem. In \game{0}(A), adversary attacks the FP game with  hash functions $h_j(x) = \FK $, and hence exactly simulates $\ExpFPSecHash{B_\mathrm{ds},r}{A}$.
+We use a game playing argument similar to \Cref{thm1} to prove this theorem. In \game{0}(A), adversary attacks the FP game with  hash functions $h_j(x) = \FK $, and hence exactly simulates $\ExpCorrect{B_{\mathrm{ds}},\distr{\calS}{},r}{A}$.
 \begin{equation}
-\AdvFPSecHash{B_\mathrm{ds},r}{A} = \Prob{\game{0}(A)=1}\label{eq:2T0}
+\AdvCorrect{B_{\mathrm{ds}},\distr{\calS}{},r}{A} = \Prob{\game{0}(A)=1}\label{eq:2T0}
 \end{equation}
 
 Let $B$ be a prf-adversary as shown in \Cref{fig:2TD}. Based on its challenge bit $b$, it exactly simulates $\game{0}$ or $\game{1}$. So,
@@ -31,24 +31,24 @@ By a standard conditioning of PRF advantage, we have
 \Prob{\game{0}(A)=1} = \AdvPRF{F}{B} + \Prob{\game{1}(A)=1}%\label{eq:13}
 \end{equation*}
 
-In $\game{1}$, $A$ attacks a different filter $\tilde{B}_\mathrm{ds}$, in which $F_K$ is replaced by a random function. $\game{2}$ and $\game{3}$ on the other hand use lazy sampling in $\Hash$ to select random values from $[m]$. This makes $\game{2}$ and $\game{3}$ identical to $\game{3}$ and $\game{4}$ of previous theorem, and hence the analysis and results of \Cref{thm1} apply to this theorem as well. Therefore,
+In $\game{1}$, $A$ attacks a different filter $\tilde{B}_\mathrm{ds}$, in which $F_K$ is replaced by a random function. $\game{2}$ and $\game{3}$ on the other hand use lazy sampling in $\Hash$ to select random values from $[m]$. It can be observed that, except  $\Hash$, $\game{2}$ and $\game{3}$ are identical to $\game{3}$ and $\game{4}$ of previous theorem. Since, $\Hash$ in all of these games returns random values, the analysis and results of \Cref{thm1} apply to this theorem as well. Therefore,
 \begin{align*}
 \Prob{\game{1}(A)=1} = \Prob{\game{2}(A)=1}\\
 \Prob{\game{3}(A)=1} = \frac{1}{\dbinom{q}{r}}\Prob{\game{2}(A)=1}
 \end{align*}
 
-Let $D$ be a non-adaptive adversary (shown in \Cref{fig:2TD}) that finds ~$r$ false positives against $\tilde{B}_{\mathrm{ds}}$. As discussed in the previous theorem, if $A$ wins $\game{3}$, then $D$ wins $\ExpFPSecHash{\tilde{B}_{\mathrm{ds}},r}{\cdot}$ game. So, 
+Let $D$ be a non-adaptive adversary (shown in \Cref{fig:2TD}) that finds ~$r$ false positives against $\tilde{B}_{\mathrm{ds}}$. As discussed in the previous theorem, if $A$ wins $\game{3}$, then $D$ wins $\ExpCorrect{\tilde{B}_{\mathrm{ds}},\distr{\calS}{},r}{\cdot}$ game. So, 
 \begin{equation*}
-\AdvFPSecHash{\tilde{B}_{\mathrm{ds}},r}{D} = \Prob{\game{3}(A) = 1}\label{eq:2T8}
+\AdvCorrect{\tilde{B}_{\mathrm{ds}},\distr{\calS}{},r}{D} = \Prob{\game{3}(A) = 1}\label{eq:2T8}
 \end{equation*}
 Note that like $\tilde{B}_{\mathrm{lin}}$, $\tilde{B}_{\mathrm{ds}}$ is the scheme that is analyzed in the classical Bloom filter literature. So, for a non-adaptive adversary $D$ and $r=1$, the upper bound on false-positive probability of a classical Bloom filter applies to $\tilde{B}_{\mathrm{ds}}$ as well. For $r > 1$, based on the assumption that $A$ makes no pointless queries, the queries made by $A$ as well as the elements returned by $D$ are distinct and not elements of the original set $S$. Also, since $\game{3}$ uses independent random functions, the event of getting a false positive is independent of the index of the query. So,
 \begin{equation*}
-\AdvFPSecHash{\tilde{B}_{\mathrm{ds}},r}{D} =   {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r
+\AdvCorrect{\tilde{B}_{\mathrm{ds}},\distr{\calS}{},r}{D} =   {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r
 \end{equation*}
 \noindent
 To summarize, we have
 \[
-\AdvFPSecHash{B_\mathrm{ds},r}{A} \leq  \AdvPRF{F}{B}  + {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r
+\AdvCorrect{B_{\mathrm{ds}},\distr{\calS}{},r}{A} \leq  \AdvPRF{F}{B}  + {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r
 \]
 which is the bound claimed in the theorem statement. \hfill \qed
 
@@ -58,18 +58,18 @@ which is the bound claimed in the theorem statement. \hfill \qed
 \hpagessl{.45}{.5}
 {
 \underline{\game{0}(A)}\\
-$K \getsr \calK$\\
-$S \getsr \distr{\univ}{n}$\\
-$M \getsr \Rep^{\HashOracle}(\calS)$\\
-$\calZ \getsr A^{\QryOracle}(\calS)$\\
-if $|\calZ| < r$ or $\calZ \cap \calS \neq \emptyset$ then \\
-\nudge Ret 0\\
-if $\exists z \in \calZ$ s.t. $\Qry^{\HashOracle}(M,z)=0$ then\\
-\nudge Ret 0\\
-Ret 1\\\\
+$S \getsr \distr{\calS}{}$\\
+$\err \gets 0$\\
+$(M,\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+$z \getsr A^{\TestOracle}(S,\pubaux)$\\
+if $\err  < r$ then Return 0\\
+Return 1\\\\
 %
-\oracle{$\QryOracle(x)$}\\
-Ret $\Qry^{\HashOracle}(M,x)$\\\\
+\oracle{$\TestOracle(q)$}\\
+$a \gets \Qry^{\HashOracle}(M,\privaux,q)$\\
+if $a \neq q(S)$ then \\
+\nudge $\err \gets\err +1$\\
+Return~$(a,\err )$\\\\
 %
 \oracle{$\HashOracle(x)$}\\
 for $j = 1$ to $k$\\
@@ -79,17 +79,18 @@ Ret $\left(h_1(x),\ldots,h_k(x)\right)$
 {
 \underline{\game{1}(A)}\\
 $\rho \getsr \Func{\univ,[m]}$\\
-$S \getsr \distr{\univ}{n}$\\
-$M \getsr \Rep^{\HashOracle}(\calS)$\\
-$\calZ \getsr A^{\QryOracle}(\calS)$\\
-if $|\calZ| < r$ or $\calZ \cap \calS \neq \emptyset$ then \\
-\nudge Ret 0\\
-if $\exists z \in \calZ$ s.t. $\Qry^{\HashOracle}(M,z)=0$ then\\
-\nudge Ret 0\\
-Ret 1\\\\
+$S \getsr \distr{\calS}{}$\\
+$\err \gets 0$\\
+$(M,\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+$z \getsr A^{\TestOracle}(S,\pubaux)$\\
+if $\err  < r$ then Return 0\\
+Return 1\\\\
 %
-\oracle{$\QryOracle(x)$}\\
-Ret $\Qry^{\HashOracle}(M,x)$\\\\
+\oracle{$\TestOracle(q)$}\\
+$a \gets \Qry^{\HashOracle}(M,\privaux,q)$\\
+if $a \neq q(S)$ then \\
+\nudge $\err \gets\err +1$\\
+Return~$(a,\err )$\\\\
 %
 \oracle{$\HashOracle(x)$}\\
 for $j=1$ to $k$\\
@@ -101,31 +102,26 @@ Ret $\left(h_1(x),\ldots,h_k(x)\right)$
 \hpagessl{.55}{.3}
 {
 \underline{{$\game{2}(A)$},\fbox{$\game{3}(A)$}}\\
-$c \gets 0$\\
+$c\gets 0$, $\bad \gets \false$\\
 $\mathcal{I}\getsr [\{1,2,\ldots,q\}]^r$\\
-$\bad \gets \false$\\
-$S \getsr \distr{\univ}{n}$\\
-$M \getsr \Rep^{\HashOracle}(\calS)$\\
-$\calZ \getsr A^{\QryOracle}(\calS)$\\
-if $|\calZ| < r$ or $\calZ \cap \calS \neq \emptyset$ then\\
-\nudge Ret 0\\
-if $\forall z \in \calZ,\,\Qry^{\HashOracle}(M,z)=1$ then \\
-\nudge if $\bad=\true$ then \fbox{Ret 0}\\
-\nudge Ret 1\\
-Ret 0
+$S \getsr \distr{\calS}{}$\\
+$\err \gets 0$\\
+$(M,\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+$z \getsr A^{\TestOracle}(S,\pubaux)$\\
+if $\err  < r$ then Return 0\\
+Return 1
 }
+%
 {
-\oracle{$\QryOracle(x)$}\\
-%$\calY \gets \calY \cup \{x\}$\\
+\oracle{$\TestOracle(q)$}\\
 $c \gets c+1$\\
-$v \gets \Qry^{\HashOracle}(M,x)$\\
-if $c \in \mathcal{I}$ and $v\neq 1$ then\\
+$v \gets \Qry^{\HashOracle}(M,\privaux,q)$\\
+if $c \in \mathcal{I}$ and $a \neq q(S)$ then \\
 \nudge $\bad \gets \true$ \\
-%\nudge \fbox{Ret 1} \\
-if $c \not\in \mathcal{I}$ and $v\neq 0$ then\\
+if $c \not\in \mathcal{I}$ and $a \neq q(S)$ then \\
 \nudge $\bad \gets \true$\\
-%\nudge \fbox{Ret 0}\\
-Ret~$v$\\\\
+\nudge $\err \gets\err +1$\\
+Return~$(v,\err )$\\\\
 %
 \oracle{$\HashOracle(x)$}\\
 $a \getsr [m]$\\
@@ -144,23 +140,27 @@ Ret $\left(v_1,\ldots,v_k\right)$
 \hpagessl{0.5}{0.5}
 {
 $\adversaryv{B^{\calO}}$\\
-$\calS \getsr \distr{\univ}{n}$\\
-$M \getsr \Rep^{\HashOracle}(\calS)$\\
-When $A$ asks $\QryOracle(x)$:\\
-$\nudge$ Ret $\Qry^{\HashOracle}(M,x)$\\
-When $A$ halts with output $\calZ'$: \\
-\nudge if $|\calZ'| < r$ or $\calZ' \cap \calS \neq \emptyset$ then \\
-\nudge \nudge Ret 0\\
-\nudge if $\exists z \in \calZ'$ s.t. $\Qry^{\HashOracle}(M,z)=0$ then\\
-\nudge \nudge Ret 0\\
-\nudge Ret 1\\\\
+$S \getsr \distr{\calS}{}$\\
+$\err \gets 0$\\
+$(M,\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+Run~$A(S, \pubaux)$\\
+When $A$ asks $\TestOracle(q)$:\\
+\nudge $a \gets \Qry^{\HashOracle}(M,\privaux,q)$\\
+\nudge if $a \neq q(S)$ then \\
+\nudge \nudge $\err \gets \err +1$\\
+\nudge Return~$(a,\err )$\\
+When $A$ halts: \\
+\nudge if $\err  < r$ then Return 0\\
+\nudge Return 1\\\\
+%
+%
 \oracle{$\HashOracle(x)$}\\
 \nudge Ret $\OK$, for $j\in[1,k]$\\
 }
 {
 $\adversaryv{D^{\QryOracle, \calS}}$\\
-$c \gets 0$\\
-$\calX \gets \emptyset$\\
+$c \gets 0$, $\calX \gets \emptyset$\\
+$\err \gets 0$\\
 $\mathcal{I}\getsr [\{1,2,\ldots,q\}]^r$\\
 Run $A(S)$\\
 When $A$ asks $\QryOracle(x)$:\\
@@ -169,9 +169,11 @@ When $A$ asks $\QryOracle(x)$:\\
 \nudge if $c \in \mathcal{I}$\\
 \nudge \nudge $\calX \gets \calX \cup \{x\}$\\
 \nudge \nudge $r \gets 1$\\
-\nudge Ret $r$\\
+\nudge \nudge $\err \gets \err + 1$\\
+\nudge Ret $(r,\err )$\\
 When $A$ halts:\\
-\nudge Ret $\calX$\\\\
+\nudge Ret $\calX $
+}
 %
 %\oracle{$\QryOracle(x)$}\\
 % Ret $\Qry^{\HashOracle}(M,x)$\\\\
@@ -181,8 +183,7 @@ When $A$ halts:\\
 %\nudge $v_j = \rhoK $\\
 %Ret $\left(v_1,\ldots,v_k\right)$
 }
-}
-\caption{\Cref{thm2}: \emph{Left}:PRF adversary $B$ simulating $\game{1}(A)$ and $\game{2}(A)$.\emph{Right}: Non-adaptive adversary $D$ simulating $\game{4}(A)$} \label{fig:2TD}
+\caption{\Cref{thm2}: \bf{Left}:PRF adversary $B$ simulating $\game{1}(A)$ and $\game{2}(A)$.\bf{Right}: Non-adaptive adversary $D$ simulating $\game{4}(A)$} \label{fig:2TD}
 \end{figure}	
 
 
