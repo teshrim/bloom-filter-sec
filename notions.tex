@@ -143,10 +143,10 @@ In Figure~\ref{fig:privacy-ss} we give a definition capturing semantic-security 
 with respect to the full representation (ss-rep).  In the ``real''
 setting (ss-rep-1), a set~$S$ is sampled according to distribution~$\distr{\calS}{}$,
 and the adversary is given the~$M,\pubaux$ that result from running
-$\Rep(S)$.  It is also provided oracle access to $\QryOracle$.
+$\Rep(S)$.  It is also provided oracle access to $\TestOracle$.
 The adversary must output a function~$f\colon\calS \to \bits^*$ and a
 string~$v$ such that $f(S)=v$.  In the ``fake'' setting (ss-rep-0) a
-predictor~$P$ is given $\pubaux$ only, and no $\QryOracle$ access.  It
+predictor~$P$ is given $\pubaux$ only, and no $\TestOracle$ access.  It
 also outputs an $f,v$ pair such that $f(S)=v$.  The advantage of~$A$ (over~$P$)
 is $\AdvPrivSS{\Pi,\distr{\calS}{}}{A,P} =
 \Prob{\ExpPrivSSreal{\Pi,\distr{\calS}{}}{A}=1} -
