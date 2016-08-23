@@ -61,15 +61,15 @@ practice), and it makes it easier to state our security notions.
 
 \begin{definition}[Error probability and rate] \rm
 Fix a data structure $\setprim=(\Sigma,\Gamma,\calS,\calQ,\Rep,
-\Qry)$. Let $\mathrm{Err}(S,q,M,\privaux)$ be a predicate that is
-true iff $\Qry(M, \privaux, q) \neq q(S)$.  Then a data structure
+\Qry)$. Let $\mathrm{Err}(S,q,M,\pubaux,\privaux)$ be a predicate that is
+true iff $\Qry(M, \pubaux,\privaux, q) \neq q(S)$.  Then a data structure
 has \emph{error probability} $\epsilon$ if
 $\max_{S,q}\Pr[(M,\pubaux,\privaux) \getsr \Rep(S) :
-\mathrm{Err}(S,q,M,\privaux)=1 ] \leq \epsilon$.
+\mathrm{Err}(S,q,M,\pubaux,\privaux)=1 ] \leq \epsilon$.
 %
 It has \emph{error rate} $\tilde{\epsilon}$ if
 $\max_{S}\Pr[(M,\pubaux,\privaux) \getsr \Rep(S);\, q \getsr \calQ :
-\mathrm{Err}(S,q,M,\privaux)=1] \leq \tilde{\epsilon}$. \hfill\dqed
+\mathrm{Err}(S,q,M,\pubaux,\privaux)=1] \leq \tilde{\epsilon}$. \hfill\dqed
 \end{definition}
 
 \noindent The definition can be lifted to the random-oracle model by
@@ -85,17 +85,17 @@ correctness of the data structure.
 \todo{Add discussion of just how broad the syntax is, in general.}
 
 \def\bin{{\sf Bin}}
-\heading{Trivial attacks, and error probability vs.\ error rate. }
+\heading{``Trivial'' attacks, and error probability vs.\ error rate. }
 Let~$\Pi$ be a scheme that is $(1-\epsilon)$-correct, and consider
 an attack that asks random queries $q_1,q_2,\ldots,q_T$, i.e.,
 uniform samples from~$\calQ$.
 %The expected number of random queries needed to
 %find a error is $1/\epsilon$ tries; thus, an attacker making $O(t/\epsilon)$ queries succeeds with constant probability (almost always).
 %Actually, it seems worthwhile to formalize this.
-Let $\mathrm{Err}_i$ be a random variable indicating the event $\Qry(M,\privaux,q_i)\neq q_i(S)$.
+Let $\mathrm{Err}_i$ be a random variable indicating the event $\Qry(M,\pubaux,\privaux,q_i)\neq q_i(S)$.
 The $(1-\epsilon)$-correctness of~$\Pi$ guarantees that the probability that $\mathrm{Err}_i=1$ is at most~$\epsilon$,
 and it is tempting to model the~$\mathrm{Err}_i$ as i.i.d. Bernoulli trials with success probability~$\epsilon$.
-However, a moment's reflection shows that this is not the case.  Concretely, consider the following scheme.  Fix $|S|=n$ for all $S \in \calS$, where $n \ll |\univ|$.  For the queries, let $\calQ = \{q_x\colon \calS \to \bits \,|\, \forall x \in \univ\}$ where $\forall S \in \calS$ the predicate $q_x(S)=1 \Leftrightarrow x \in S$.  Let $\Rep(S)$ pick a random element~$s \in S$, and return $M = S \setminus \{s\}$ and $\privaux = \emptystring$.  To respond to queries, let~$\Qry(M,\privaux,q_x)=1$ iff $x \in M$.  It is easy to see that this scheme is $1/n$-correct; for any fixed~$S$, there are exactly~$n$ queries~$q_x$ that have probability~$1/n$  (over the coins of~$\Rep$) of causing a correctness error, and the remaining $|\univ|-n$ queries have probability zero of causing an error.  Moreover, once the coins of~$\Rep$ are fixed, there is exactly \emph{one} query that will cause an error.  Thus for random queries from~$Q$, for all~$i\in[T]$ we have $\Prob{\mathrm{Err}_i=1}=1/|\univ| \ll 1/n = \epsilon$.
+However, a moment's reflection shows that this is not the case.  Concretely, consider the following scheme.  Fix $|S|=n$ for all $S \in \calS$, where $n \ll |\univ|$.  For the queries, let $\calQ = \{q_x\colon \calS \to \bits \,|\, \forall x \in \univ\}$ where $\forall S \in \calS$ the predicate $q_x(S)=1 \Leftrightarrow x \in S$.  Let $\Rep(S)$ pick a random element~$s \in S$, and return $M = S \setminus \{s\}$ and $\privaux = \emptystring$.  To respond to queries, let~$\Qry(M,\pubaux,\privaux,q_x)=1$ iff $x \in M$.  It is easy to see that this scheme is $1/n$-correct; for any fixed~$S$, there are exactly~$n$ queries~$q_x$ that have probability~$1/n$  (over the coins of~$\Rep$) of causing a correctness error, and the remaining $|\univ|-n$ queries have probability zero of causing an error.  Moreover, once the coins of~$\Rep$ are fixed, there is exactly \emph{one} query that will cause an error.  Thus for random queries from~$Q$, for all~$i\in[T]$ we have $\Prob{\mathrm{Err}_i=1}=1/|\univ| \ll 1/n = \epsilon$.
 
 This example is contrived, but it highlights the important
 difference between error probability and error rate.  In particular,
@@ -103,8 +103,7 @@ the error probability~$\epsilon$ is measured only over the coins
 of~$\Rep$, for a fixed~$S$ and query~$q$. Once the coins of~$\Rep$
 are fixed, it is not straightforward how to connect~$\epsilon$ to
 events that depend on other sources of randomness. \tsnote{Not sure
-if there's more to say in this section, or if what's here is already
-too much.}
+if there's more to say in this section.}
 
 
 \heading{Set-multiplicity Data Structures. } Our particular focus
@@ -137,11 +136,13 @@ algorithm~$\Rep$, with functions $k=k(|S|), m=m(|S|)$ and a
 description of a hash function family~$\mathcal{H}=\{h \colon \univ
 \to \{1,2,\ldots,m\}\}$ hardwired into it, to sample hash functions
 $h_1, \ldots, h_k$ from~$\mathcal{H}$ and then compute an $m$-bit
-array in the standard way.  It sets $\privaux=\pubaux = (h_1,
-\ldots, h_k)$ and~$M$ to be the bit array, and returns these.  The
-algorithm~$\Qry$ is defined so that, on input $(M,\privaux,q_x)$, it
-returns the AND of the values (either 0 or 1) held at
-$M[h_1(x)],\ldots,M[h_k(x)]$.  We note that, while our error
+array~$M$ (intialized to 0 everywhere) by setting $M[h_i(x)]=1$ for
+all $i\in [k]$ and $x \in S$.  Finally, $\Rep$ returns
+$\privaux=\emptystring$, $\pubaux = (h_1,\ldots, h_k)$, and~$M$ as the
+representation.  
+%
+The algorithm~$\Qry$ is defined so that, on input $(M,\pubaux,\privaux,q_x)$, it
+returns the minimum of the values $M[h_1(x)],\ldots,M[h_k(x)]$.  We note that, while our error
 probability and error rate do not distinguish among ``types'' of
 errors, they also do not preclude instantiations (like the classical
 Bloom filter) that admit only one type of error, e.g.
