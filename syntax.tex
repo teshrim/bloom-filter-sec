@@ -146,7 +146,13 @@ etc., in a later section.\tsnote{If we ultimately do!}
 
 A Bloom filter with secret hash functions is captured by setting
 $\privaux=(h_1,h_2,\ldots,h_k)$, and setting $\pubaux=\emptystring$.
-Related constructions that use a secret key~$K$, but not for hashing (e.g. the PRP-based
+Related constructions that use a secret key~$K$, but not for hashing (e.g.\ the PRP-based
 construction from NY), are captured setting $\privaux=K, \pubaux=(h_1, \ldots, h_k)$.
 
-The so-called ``garbled Bloom filter'' due to Dong, Chen and Wen~\cite{xxx}, which stores xor-shares of bitstring~$x \in S$ at positions $h_1(x),h_2(x),\ldots,h_k(x)$ in an array, falls within our syntax by letting~$\Sigma=\bits^L$ for a specified integer~$L>0$.  Similarly the cuckoo-hashing construction from NY, which (loosely speaking) stores a hash $g(x)$ at positions determined by $h_1(x),h_2(x),\ldots,h_k(x)$. \tsnote{Check the correctness of this claim.}
+By setting $\Sigma=\bits^L$ for a specified $L>0$, we capture he
+so-called ``garbled Bloom filter'' due to Dong, Chen and
+Wen~\cite{xxx}.  This stores xor-shares of bitstring~$x \in S$ at
+positions $h_1(x),h_2(x),\ldots,h_k(x)$ in an array.  Similarly, the
+cuckoo-hashing construction from NY, which (loosely speaking) stores a
+hash $g(x)$ at positions determined by $h_1(x),h_2(x),\ldots,h_k(x)$,
+is captured when $L=|g(x)|$. \tsnote{Check the correctness of this claim.}
