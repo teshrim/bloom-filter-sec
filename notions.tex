@@ -128,19 +128,20 @@ of~$S$ that results from observing the results of allowed queries.
 The stronger priv-notion captures what is jointly leaked, by the
 representation~$M$ and the allowed queries, about set elements.
 
-On the right side of the figure, we give two ``indistinguishability''
-notions of privacy.  The first version (ind-qry) captures more
-generally what~$M$ and the allowed queries leak about the set that is
-represented.  In particular, two sets~$S_0,S_1$ are sampled according
-to distribution~$\distr{\calS}{}$, one of these is picked at random to
-be represented.  The adversary is provided the resulting~$M,\pubaux$
-and allowed to make queries~$q \in \calQ$; it must determine which
-of~$S_0$ or~$S_1$ was actually represented.  We call this notion
-indistinguishabilty (of sets) under a (adaptively chosen) query
-attack.
+%On the right side of the figure, we give two ``indistinguishability''
+%notions of privacy.  The first version (ind-qry) captures more
+%generally what~$M$ and the allowed queries leak about the set that is
+%represented.  In particular, two sets~$S_0,S_1$ are sampled according
+%to distribution~$\distr{\calS}{}$, one of these is picked at random to
+%be represented.  The adversary is provided the resulting~$M,\pubaux$
+%and allowed to make queries~$q \in \calQ$; it must determine which
+%of~$S_0$ or~$S_1$ was actually represented.  We call this notion
+%indistinguishabilty (of sets) under a (adaptively chosen) query
+%attack.
 %
-The second version is inspired by the semantic security notion for
-encryption schemes, and we refer to it as semantic-security (of sets)
+On the right side of the figure, we give a definition
+inspired by the semantic security notion for
+encryption schemes.  We refer to it as semantic-security (of sets)
 with respect to the full representation (ss-rep).  In this experiment,
 a set~$\calS$ is sample according to distribution~$\distr{\calS}{}$,
 and the adversary is given the full ouput of running $\Rep(S)$,
@@ -209,7 +210,7 @@ Return 0\\
 %
 {
 \oracle{$\TestOracle(q)$}\\
-$a \gets \Qry(M,\privaux,q)$\\
+$a \gets \Qry(M,\pubaux,\privaux,q)$\\
 Return~$a$
 }
 }
@@ -217,15 +218,15 @@ Return~$a$
 {
 \hpagess{.485}{.5}
 {
-\experimentv{$\ExpPrivInd{\setprim,\distr{\calS}{}}{A}$}\\
-$b \getsr \bits$\\
-$S_0,S_1 \getsr \distr{\calS}{}$\\
-$(M,\pubaux,\privaux) \getsr \Rep(S_b)$\\
-$b' \getsr A^{\TestOracle}(M,\pubaux)$\\
-if $b' = b$ then Return 1\\
-Return 0\\
-
-\medskip
+%\experimentv{$\ExpPrivInd{\setprim,\distr{\calS}{}}{A}$}\\
+%$b \getsr \bits$\\
+%$S_0,S_1 \getsr \distr{\calS}{}$\\
+%$(M,\pubaux,\privaux) \getsr \Rep(S_b)$\\
+%$b' \getsr A^{\TestOracle}(M,\pubaux)$\\
+%if $b' = b$ then Return 1\\
+%Return 0\\
+%
+%\medskip
 \experimentv{$\ExpPrivSS{\setprim,\distr{\calS}{}}{A}$}\\
 $S\getsr \distr{\calS}{}$\\
 $(M,\pubaux,\privaux) \getsr \Rep(S)$\\
@@ -238,7 +239,7 @@ Return 0\\
 %
 {
 \oracle{$\TestOracle(q)$}\\
-$a \gets \Qry(M,\privaux,q)$\\
+$a \gets \Qry(M,\pubaux,\privaux,q)$\\
 Return~$a$\\
 
 %\medskip
@@ -266,11 +267,11 @@ Return~$a$\\
 Clearly we have priv $\Rightarrow$ wpriv, tightly and by a simple
 reduction.  We should be able to show
 \begin{itemize}
-\item ss-rep $\Rightarrow$ ind-qry
-\item ind-qry $\Rightarrow$ ss-rep \tsnote{Not sure about this separation...}
-\item ind-qry $\Rightarrow$ priv \emph{for set-multiplicity data
+%\item ss-rep $\Rightarrow$ ind-qry
+%\item ind-qry $\Rightarrow$ ss-rep \tsnote{Not sure about this separation...}
+\item ss-rep $\Rightarrow$ priv \emph{for set-multiplicity data
     structures} \tsnote{but probably not in general}
-\item \{w\}priv $\not\Rightarrow$ ind-qry
+\item \{w\}priv $\not\Rightarrow$ ss-rep
 \item wpriv $\not\Rightarrow$ priv \tsnote{$M=S$, or my
     $M=S\setminus \{x\}$ for a random $x\in S$, if you want something
     a bit less trivial. I'm sure there are more natural schemes that
