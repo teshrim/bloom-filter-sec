@@ -4,22 +4,22 @@
 \heading{Correctness. }  Here we give security proofs and attacks with respect to the correctness notions.
 \begin{itemize}
 \item Show Bloom Filter is correct in the ROM %\jnote{Would be good to show that RO-based Bloom filter is FP-secure.}
-\item FP-security/attacks on bigram/PRF-based double-hashing construction ($h_j(x) = F_{K1}(x) + j\cdot F_{K2}(x) \bmod m$ where the~$x$ are bigrams of names, etc.) 
-\item FP-security/attacks on bigram/domain-separated PRF construction ($h_j(x)=F_K(\langle j,x \rangle) \bmod m$, or just assume range of~$F$ is $[m]$.)
-\item FP-security/attacks Dong, Chen, Wen ``garbled Bloom filter'' construction
+\item correctness security/attacks on bigram/PRF-based double-hashing construction ($h_j(x) = F_{K1}(x) + j\cdot F_{K2}(x) \bmod m$ where the~$x$ are bigrams of names, etc.) 
+\item correctness-security/attacks on bigram/domain-separated PRF construction ($h_j(x)=F_K(\langle j,x \rangle) \bmod m$, or just assume range of~$F$ is $[m]$.)
+\item correctness-security/attacks Dong, Chen, Wen ``garbled Bloom filter'' construction
 \item ...
 \end{itemize}
 
 \heading{Privacy. } Here we give security proofs and attacks with respect to the privacy notions we have defined.
-\tsnote{Under our current notions, you can never hope to prove privacy bounds that beat the min-entropy of $\distr{U}{n}$.}
+\tsnote{Under our current notions, you can never hope to prove privacy bounds that beat the element wise min-entropy of $\distr{}{}$.}
 \begin{itemize}
-\item Prove that the basic BF, in the ROM, is private.  \tsnote{Not at all surprising, but it is the first result one would want in this area.}
+\item Prove that the basic BF, in the ROM, is private.  \tsnote{Relative the strongest notion for which this is true.  If it isn't true for all, then give the attack(s).}
 
-\item As a simple corrolary, show that the basic BF with $h_j(x)=F_K(\langle j,x \rangle)$ is private.  \tsnote{I believe this also shows that the bigram/PRF approach examined by Neidermayer et al.\ is secure when the hash functions are the $h_j(x)$ just described. }
+\item As a simple corrolary, show that the basic BF with $h_j(x)=F_K(\langle j,x \rangle)$ is private.  \tsnote{I believe this also shows that the bigram/PRF approach examined by Neidermayer et al.\ is secure when the hash functions are the $h_j(x)$ just described.  This was, in fact, one of the countermeasures they proposed. }
 
 \item Prove privacy bounds for the constructions from NY
 
-\item Cast Neidermayer et al.\ attacks on the bigram/PRF-based double-hashing construction (see their paper) into our formalism.  \tsnote{Note that their attack would allow one to recover \emph{every} name, not just one.} \tsnote{Note that Neidermayer et al.\ suggest ditching the double-hashing construction in favor of independent PRFs, so the previous item basically explores their suggestion.}
+\item Cast Neidermayer et al.\ attacks on the bigram/PRF-based double-hashing construction (see their paper) into our formalism.  \tsnote{Note that their attack would allow one to recover \emph{every} name, not just one.} 
 
 \item Prove a privacy bound for the bigram/PRF-based double-hashing construction that Neidermayer et al.\ attacks. I'm pretty sure the attack is in the public-BB setting, and the provable security bound is considerably worse than the min-entropy because of the way the representation is made.  (Essentially, the Hamming weight of the representation is a good estimate of the length of the longest surname in filter.)
 
@@ -27,7 +27,7 @@
 
 \item Prove privacy bounds of other suggestions, such as the record-level BF from Durham et al.?  This would be a nice pairing with the Neidermayer et al.\ results
 
-\item Show implications and/or separations between FP and privacy notions.
+\item Show implications and/or separations between FP and privacy notions. \tsnote{Belongs in previous section.}
 
 \item \tsnote{...}
 \end{itemize}

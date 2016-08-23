@@ -1,6 +1,5 @@
 \section{Security Notions}
 \label{sec:security-notions}
-\tsnote{intro text}
 Following NY, we are interested in defining an adaptive (i.e.,
 adversarial) notion of correctness.   
 In addition to correctness, we establish three notions of privacy for
@@ -48,7 +47,7 @@ Return~$(a,\mathrm{err})$
 }
 }
 \caption{Correctness of~$\Pi$ against (adaptive) adversary~$A$, when
-  the target multiset~$S$ is sampled from~$\calS$ according to distribution~$\distr{}{}$.} 
+  the represented multiset~$S$ is sampled according to distribution~$\distr{}{}$.} 
 \label{fig:correctness}
 \end{figure}
 
@@ -60,25 +59,6 @@ $\AdvCorrect{\Pi,\distr{}{},r}{A} = \Prob{\ExpCorrect{\Pi,\distr{}{}, r,}{A}=1}$
 Overloading notation, we write $\AdvCorrect{\Pi,\distr{}{},r}{t,q}$ for the maximum over all~$t$-time adversaries that ask at most~$q$ queries. Roughly, we say that a
 set-representation~$\Pi$ is $(t,q,r,\epsilon')$-correct if $\AdvCorrect{\Pi,\distr{}{},r}{t,q} \leq \epsilon'$.  
 
-
-
-
-%
-%And if the experiment requires the adversary to induce~$r$ errors, the attack wins iff
-%$N \stackrel{{\rm def}}{=} \sum_{i=1}^T X_i \geq r$.  Modelling the $X_i$ as independent Bernoulli trials with
-%probability~$\epsilon$ gives $N$ a binomial distribution.  \fixme{Something feels wrong with this...}  
-%Writing $\bin(T, \epsilon; r)$ for the probability that $N \geq r$,
-%we conclude that the \emph{best} correctness we can hope for against adversaries making~$T$ queries is  $\bin(T,\epsilon; t))$. %\jnote{Need to find different terms to use for a query $q \in \mathcal{Q}$
-%and a query that the attacker makes to its oracle.}
-%\tsnote{Viewed another way, we could let~$T$ be a negative binomial RV, and ask how many queries are needed (w.h.p) for $N \geq t$.} 
-%
-%\jnote{One option is to define the adversary's \emph{advantage} as the difference between
-%its success probability and the success probability of the above,
-%trivial attack. Just a thought.}
-%\tsnote{Or, perhaps by recasting security
-%  as distinguishing between $\Qry(M,\aux,\cdot)$ and an oracle that
-%  returns 0,1 according to Bernoulli with paramter~$\epsilon$.}
-%\fixme{Not clear this attack is generically applicable enough to serve as a reference/baseline.  (See email discusssion 7/23.)  Might be worth pointing out that this intuition, between non-adaptive error-probability and the expected number of queries to find an error, can be quite misleading.}
 
 \heading{Comparison to Naor-Yogev definition.}
 The style of the Naor-Yogev (NY) definition is slightly different. \jnote{Even if we ignore
@@ -138,7 +118,7 @@ define advantage measures $\AdvPriv{\Pi,\distr{}{}}{A} =
 \Prob{\ExpWPriv{\Pi,\distr{}{}}{A}=1}$; in both we track the
 time-complexity~$t$ and number of oracle queries~$q$ made by the adversary.
 
-\tsnote{Still messing about here, and in the figure.}
+\tsnote{Wet paint...}
 In Figure~\ref{fig:privacy-ss} we give a definition capturing semantic-security (of sets)
 with respect to the full representation (ss-rep).  In the ``real''
 setting (ss-rep-1), a set~$S$ is sampled according to distribution~$\distr{}{}$,
@@ -152,7 +132,8 @@ is $\AdvPrivSS{\Pi,\distr{}{}}{A,P} =
 \Prob{\ExpPrivSSreal{\Pi,\distr{}{}}{A}=1} -
 \Prob{\ExpPrivSSsim{\Pi,\distr{}{}}{P}=1}$.  To prevent trivial wins
 for~$A$, e.g. $f(S)=M$, we forbid~$A$ from outputting~$f$
-such that $f(S)=f(S')$ for all $S,S'$ in the support of $\distr{}{}$.
+such that $f(S)=f(S')$ for all $S,S'$ in the support of the
+distribution $\distr{}{}$.
 
 
 \begin{figure}[htbp]
@@ -260,36 +241,27 @@ Return~$a$\\
     } 
 \label{fig:privacy-ss}
 \end{figure}
-\subsection{Relationships Among Notions}
 
-\heading{Privacy notions. }
-Clearly we have priv $\Rightarrow$ wpriv, tightly and by a simple
-reduction.  We should be able to show
+\subsection{Relationships Among Notions}\todo{Decide which of these
+  statements should have formal theorems and proofs.}
+Clearly we have priv $\Rightarrow$ wpriv, tightly and by an obvious
+reduction.  The converse is not true, however: consider the previous
+construction in which $M = S \setminus \{x\}$ for a random $x \in S$,
+and $\pubaux=\privaux=\emptystring$.  We note that this construction
+also serves to separate the priv notion from our notion of
+correctness.  (It is $1-(1/|S|)$ correct, but has no priv-security.)  
+
+Curiously, the trivial scheme that sets $M=S$, $\pubaux=\privaux=\emptystring$ does seem to be both correct and wpriv-secure (up to the element-wise min-entropy of~$S$).
+\tsnote{In general, reducing correctness to wPriv is syntactically possible, but not clear how to connect the success events.  In the one-wayness game, you win by outputing an element of~$S$; but how does this lead to finding an error-inducing query?  Maybe the one-wayness attacker makes no queries, and just outputs a point~$z$.  Then the correctness attacker does what?  Ask some query~$q_z$ related to~$z$ ---remember, queries are not syntactically restricted to set membership!--- and see if the oracle returns the true value $q_z(S)$?  This is pretty complicated... and it's not clear how to do a quality reduction.   }
+\tsnote{Likewise the other way: the one-wayness adversary does not get~$S$, and yet needs to provide this to the correctness adversary.}
+
+
+We should be able to show
 \begin{itemize}
-%\item ss-rep $\Rightarrow$ ind-qry
-%\item ind-qry $\Rightarrow$ ss-rep \tsnote{Not sure about this separation...}
 \item ss-rep $\Rightarrow$ priv \emph{for set-multiplicity data
     structures} \tsnote{but probably not in general}
 \item \{w\}priv $\not\Rightarrow$ ss-rep
-\item wpriv $\not\Rightarrow$ priv \tsnote{$M=S$, or my
-    $M=S\setminus \{x\}$ for a random $x\in S$, if you want something
-    a bit less trivial. I'm sure there are more natural schemes that
-    will separate, too.}
 \end{itemize}
 
 
-\heading{Correctness vs.\ Privacy. }
-If we allow for trivial schemes, e.g. $M=S$, then correctness and the stronger version of one-wayness privacy (Priv) are clearly orthogonal.
-\tsnote{My $M=S\setminus\{x\}$ for a random $x \in S$ construction is less trivial (it compresses), but also serves to separate correctness from Priv.}
-\tsnote{In general, it isn't clear how to reduce
-correctness to the Priv notion.  In the correctness experiment, you
-  get~$(S,\aux)$ but not~$M$; whereas in the Priv-notion, the
-  adversary expects~$(M,\aux)$ as input.  Unless the coins of Rep are
-  effectively leaked in~$\aux$, you can't reliably produce~$M$
-  given~$(S,\aux)$.} 
-Curiously, $M=S$ does seem to be both correct and private (up to the element-wise min-entropy of~$S$) in the weaker version of one-wayness privacy (wPriv).
-\tsnote{Reducing correctness to the weaker version, wPriv, is syntactically possible, but not clear how to connect the success events.  In the one-wayness game, you win by outputing an element of~$S$; but how does this lead to finding an error-inducing query?  Maybe the one-wayness attacker makes no queries, and just outputs a point~$z$.  Then the correctness attacker does what?  Ask some query~$q_z$ related to~$z$ ---remember, queries are not syntactically restricted to set membership!--- and see if the oracle returns the true value $q_z(S)$?  This is pretty complicated... and it's not clear how to do a quality reduction.   }
-
-
-\tsnote{Likewise the other way: the one-wayness adversary does not get~$S$, and yet needs to provide this to the correctness adversary.}
 
