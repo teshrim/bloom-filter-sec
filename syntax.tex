@@ -2,7 +2,8 @@
 
 \heading{Preliminaries. } When~$\univ$ is a set and $n>0$ is an
 integer, we let $[\univ]^n$ denote the set of all size-$n$ subsets
-\jnote{Multisets?} of~$\univ$. We write $x \getsr \univ$ to denote
+%\jnote{Multisets?} 
+of~$\univ$. We write $x \getsr \univ$ to denote
 sampling an element from~$\univ$ and assigning this to~$x$, and we
 extend this notation to randomized algorithms.  When~$X$ is a string
 over some alphabet~$\Sigma$, we write $|X|$ for the bitlength
@@ -110,8 +111,7 @@ too much.}
 will be on data structures that support multiplicity queries, of
 which set-membership queries are a special case.
 \begin{definition} A \emph{set-multiplicity data structure} is a data
-structure with $D=\mathbb{N}$ \jnote{Notation. (Anyway, I don't
-think we need an explicit symbol for the range of queries.)} and
+structure with $\Gamma=\mathbb{N}$ and
 where $\calQ=\{q_x \,|\, x \in \univ\}$ where $q_x(S)$ is defined to
 be the multiplicity of~$x$ in the multiset~$S$. \hfill\dqed
 \end{definition}
@@ -132,9 +132,7 @@ be the multiplicity of~$x$ in the multiset~$S$. \hfill\dqed
 
 %\heading{Bloom Filters and Related Data Structures. }
 It is not hard to see Bloom filters are one possible instantiation a
-set-multiplicity data structure. Fix an $n \geq 0$, let
-$\mathcal{S}=[\univ]^n$, and let $\Sigma=\Gamma=\bits$. Define the
-queries so that $q_x(S)=1$ if $x \in S$, and 0 otherwise.  Define
+set-multiplicity data structure.  Fix $\Sigma=\Gamma=\bits$.  Define
 algorithm~$\Rep$, with functions $k=k(|S|), m=m(|S|)$ and a
 description of a hash function family~$\mathcal{H}=\{h \colon \univ
 \to \{1,2,\ldots,m\}\}$ hardwired into it, to sample hash functions
