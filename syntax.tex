@@ -2,9 +2,9 @@
 
 \heading{Preliminaries. } When~$\univ$ is a set and $n>0$ is an
 integer, we let $[\univ]^n$ denote the set of all size-$n$ subsets
-%\jnote{Multisets?} 
 of~$\univ$, and $[[\univ]]^n$ for the set of all multisets
-over~$\univ$ with total multiplicity~$n$. We write $x \getsr \univ$ to denote
+over~$\univ$ with total multiplicity~$n$. \tsnote{We may not need all
+  of that.} We write $x \getsr \univ$ to denote
 sampling an element from~$\univ$ and assigning this to~$x$, and we
 extend this notation to randomized algorithms.  When~$X$ is a string
 over some alphabet~$\Sigma$, we write $|X|$ for the bitlength
@@ -16,9 +16,9 @@ Algorithms may be provided black-box access to one or more oracles, which we wri
 \heading{Data structures.}  We being by defining a general primitive
 that produces a representation of a given multiset, and provides a
 mechanism to answer a specified collection of questions about that
-multiset.  Informally, the representation should serve as a good
-approximation of the multiset, at least with respect to the allowed
-questions.
+multiset. 
+%Informally, the representation should serve as a good
+%approximation of the multiset, at least with respect to the allowed queries.
 \begin{definition}[Data structure] \rm
 Fix a non-empty set~$\univ$. A \emph{data structure} (over universe~$\univ$)
 is a tuple $\setprim=(\Sigma,\Gamma,\calS,\calQ,\Rep, \Qry)$ where:
@@ -106,7 +106,7 @@ events that depend on other sources of randomness. \tsnote{Not sure
 if there's more to say in this section.}
 
 
-\heading{Set-multiplicity Data Structures. } Our particular focus
+\heading{Data Structures for Set-Multiplicity Queries. } Our particular focus
 will be on data structures that support multiplicity queries, of
 which set-membership queries are a special case.
 \begin{definition} A \emph{set-multiplicity data structure} is a data
@@ -142,8 +142,11 @@ counters as~$M$.  The $\Qry$-algorithm remains the same. Such a
 construction gives a static version of a counting Bloom
 filter~\cite{xxx}.  We will capture dynamic versions, as well as
 count-min sketches~\cite{xxx}, scalable Bloom filters~\cite{xxx},
-etc., in a later section.
+etc., in a later section.\tsnote{If we ultimately do!}
 
-A Bloom filter with secret hash functions is captured by setting $\privaux=(h_1,h_2,\ldots,h_k)$, and setting $\pubaux=\emptystring$.  Related constructions \tsnote{Name them?} that use a secret key~$K$, but not for hashing, are captured setting $\privaux=K, \pubaux=(h_1, \ldots, h_k)$.
+A Bloom filter with secret hash functions is captured by setting
+$\privaux=(h_1,h_2,\ldots,h_k)$, and setting $\pubaux=\emptystring$.
+Related constructions that use a secret key~$K$, but not for hashing (e.g. the PRP-based
+construction from NY), are captured setting $\privaux=K, \pubaux=(h_1, \ldots, h_k)$.
 
 The so-called ``garbled Bloom filter'' due to Dong, Chen and Wen~\cite{xxx}, which stores xor-shares of bitstring~$x \in S$ at positions $h_1(x),h_2(x),\ldots,h_k(x)$ in an array, falls within our syntax by letting~$\Sigma=\bits^L$ for a specified integer~$L>0$.  Similarly the cuckoo-hashing construction from NY, which (loosely speaking) stores a hash $g(x)$ at positions determined by $h_1(x),h_2(x),\ldots,h_k(x)$. \tsnote{Check the correctness of this claim.}
