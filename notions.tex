@@ -9,7 +9,7 @@ set-representations. The first two have the flavor of a one-wayness game, in whi
 \subsection{Correctness Against Adaptive Adversaries}
 
 First, a set~$S$ is chosen according to some
-distribution~$\distr{\calS}{}$ over the collection of multisets
+distribution~$\distr{}{}$ over the collection of multisets
 $\mathcal{S}$ associated to~$\Pi$, and then
 $\Rep(S)$ is run to generate $(M,\pubaux,\privaux)$.
 %(Unless stated otherwise, we assume security holds for all distributions and thus for all sets $S$.)
@@ -30,8 +30,8 @@ random-oracle(s).
 \fpage{.6}{
 \hpagess{.6}{.35}
 {
-\experimentv{$\ExpCorrect{\setprim,\distr{\calS}{},r}{A}$}\\
-$S \getsr \distr{\calS}{}$\\
+\experimentv{$\ExpCorrect{\setprim,\distr{}{},r}{A}$}\\
+$S \getsr \distr{}{}$\\
 $\mathrm{err}\gets 0$\\
 $(M,\pubaux,\privaux) \getsr \Rep(S)$\\
 $z \getsr A^{\TestOracle}(S,\pubaux)$\\
@@ -48,7 +48,7 @@ Return~$(a,\mathrm{err})$
 }
 }
 \caption{Correctness of~$\Pi$ against (adaptive) adversary~$A$, when
-  the target multiset~$S$ is sampled from~$\calS$ according to distribution~$\distr{\calS}{}$.} 
+  the target multiset~$S$ is sampled from~$\calS$ according to distribution~$\distr{}{}$.} 
 \label{fig:correctness}
 \end{figure}
 
@@ -56,9 +56,9 @@ In this experiment we track the time-complexity (relative to some
 implied model of computation) and query-complexity (i.e., number of
 queries) of the adversary~$A$.  
 We define the advantage of adversary~$A$ in the correctness experiment as 
-$\AdvCorrect{\Pi,\distr{\calS}{},r}{A} = \Prob{\ExpCorrect{\Pi,\distr{\calS}{}, r,}{A}=1}$.
-Overloading notation, we write $\AdvCorrect{\Pi,\distr{\calS}{},r}{t,q}$ for the maximum over all~$t$-time adversaries that ask at most~$q$ queries. Roughly, we say that a
-set-representation~$\Pi$ is $(t,q,r,\epsilon')$-correct if $\AdvCorrect{\Pi,\distr{\calS}{},r}{t,q} \leq \epsilon'$.  
+$\AdvCorrect{\Pi,\distr{}{},r}{A} = \Prob{\ExpCorrect{\Pi,\distr{}{}, r,}{A}=1}$.
+Overloading notation, we write $\AdvCorrect{\Pi,\distr{}{},r}{t,q}$ for the maximum over all~$t$-time adversaries that ask at most~$q$ queries. Roughly, we say that a
+set-representation~$\Pi$ is $(t,q,r,\epsilon')$-correct if $\AdvCorrect{\Pi,\distr{}{},r}{t,q} \leq \epsilon'$.  
 
 
 
@@ -133,26 +133,26 @@ only~$\pubaux$.  The wpriv-notion captures leakage about the elements
 of~$S$ that results from observing the results of allowed queries.
 The stronger priv-notion captures what is jointly leaked, by the
 representation~$M$ and the allowed queries, about set elements.  We
-define advantage measures $\AdvPriv{\Pi,\distr{\calS}{}}{A} =
-\Prob{\ExpPriv{\Pi,\distr{\calS}{}}{A}=1}$ and $\AdvWPriv{\Pi,\distr{\calS}{}}{A} =
-\Prob{\ExpWPriv{\Pi,\distr{\calS}{}}{A}=1}$; in both we track the
+define advantage measures $\AdvPriv{\Pi,\distr{}{}}{A} =
+\Prob{\ExpPriv{\Pi,\distr{}{}}{A}=1}$ and $\AdvWPriv{\Pi,\distr{}{}}{A} =
+\Prob{\ExpWPriv{\Pi,\distr{}{}}{A}=1}$; in both we track the
 time-complexity~$t$ and number of oracle queries~$q$ made by the adversary.
 
 \tsnote{Still messing about here, and in the figure.}
 In Figure~\ref{fig:privacy-ss} we give a definition capturing semantic-security (of sets)
 with respect to the full representation (ss-rep).  In the ``real''
-setting (ss-rep-1), a set~$S$ is sampled according to distribution~$\distr{\calS}{}$,
+setting (ss-rep-1), a set~$S$ is sampled according to distribution~$\distr{}{}$,
 and the adversary is given the~$M,\pubaux$ that result from running
 $\Rep(S)$.  It is also provided oracle access to $\TestOracle$.
 The adversary must output a function~$f\colon\calS \to \bits^*$ and a
 string~$v$ such that $f(S)=v$.  In the ``fake'' setting (ss-rep-0) a
 predictor~$P$ is given $\pubaux$ only, and no $\TestOracle$ access.  It
 also outputs an $f,v$ pair such that $f(S)=v$.  The advantage of~$A$ (over~$P$)
-is $\AdvPrivSS{\Pi,\distr{\calS}{}}{A,P} =
-\Prob{\ExpPrivSSreal{\Pi,\distr{\calS}{}}{A}=1} -
-\Prob{\ExpPrivSSsim{\Pi,\distr{\calS}{}}{P}=1}$.  To prevent trivial wins
+is $\AdvPrivSS{\Pi,\distr{}{}}{A,P} =
+\Prob{\ExpPrivSSreal{\Pi,\distr{}{}}{A}=1} -
+\Prob{\ExpPrivSSsim{\Pi,\distr{}{}}{P}=1}$.  To prevent trivial wins
 for~$A$, e.g. $f(S)=M$, we forbid~$A$ from outputting~$f$
-such that $f(S)=f(S')$ for all $S,S'$ in the support of $\distr{\calS}{}$.
+such that $f(S)=f(S')$ for all $S,S'$ in the support of $\distr{}{}$.
 
 
 \begin{figure}[htbp]
@@ -160,16 +160,16 @@ such that $f(S)=f(S')$ for all $S,S'$ in the support of $\distr{\calS}{}$.
 \fpage{.495}{
 \hpagess{.5}{.45}
 {
-\experimentv{$\ExpPriv{\setprim,\distr{\calS}{}}{A}$}\\
-$S \getsr \distr{\calS}{}$\\
+\experimentv{$\ExpPriv{\setprim,\distr{}{}}{A}$}\\
+$S \getsr \distr{}{}$\\
 $(M,\pubaux,\privaux) \getsr \Rep(S)$\\
 $z \getsr A^{\TestOracle}(M,\pubaux)$\\
 if $z \in S$ then Return 1\\
 Return 0\\
 
 \medskip
-\experimentv{$\ExpWPriv{\setprim,\distr{\calS}{}}{A}$}\\
-$S \getsr \distr{\calS}{}$\\
+\experimentv{$\ExpWPriv{\setprim,\distr{}{}}{A}$}\\
+$S \getsr \distr{}{}$\\
 $(M,\pubaux,\privaux) \getsr \Rep(S)$\\
 $z \getsr A^{\TestOracle}(\pubaux)$\\
 if $z \in S$ then Return 1\\
@@ -196,8 +196,8 @@ Return~$a$
 \hpagess{.49}{.49}
 {
 
-\experimentv{$\ExpPrivSSreal{\setprim,\distr{\calS}{}}{A}$}\\
-$S\getsr \distr{\calS}{}$\\
+\experimentv{$\ExpPrivSSreal{\setprim,\distr{}{}}{A}$}\\
+$S\getsr \distr{}{}$\\
 $(M,\pubaux,\privaux) \getsr \Rep(S)$\\
 $(f,v) \getsr A^{\TestOracle}(M,\pubaux)$\\
 if $f(S)=v$ then\\
@@ -205,8 +205,8 @@ if $f(S)=v$ then\\
 Return 0\\
 
 \medskip
-\experimentv{$\ExpPrivSSsim{\setprim,\distr{\calS}{}}{P}$}\\
-$S\getsr \distr{\calS}{}$\\
+\experimentv{$\ExpPrivSSsim{\setprim,\distr{}{}}{P}$}\\
+$S\getsr \distr{}{}$\\
 $(M,\pubaux,\privaux) \getsr \Rep(S)$\\
 $(f,v) \getsr P(\pubaux)$\\
 if $f(S)=v$ then\\
@@ -223,8 +223,8 @@ Return~$a$\\
 {
 \hpagess{.49}{.49}
 {
-\experimentv{$\ExpPrivSS{\setprim,\distr{\calS}{},P}{A}$}\\
-$S\getsr \distr{\calS}{}$\\
+\experimentv{$\ExpPrivSS{\setprim,\distr{}{},P}{A}$}\\
+$S\getsr \distr{}{}$\\
 $b \getsr \bits$\\
 %$(M,\pubaux,\privaux) \getsr \Rep(S)$\\
 $(M_1,\pubaux,\privaux) \getsr \Rep(S)$\\
@@ -237,8 +237,8 @@ if $b'=b$ then\\
 Return 0\\
 %
 %\medskip
-%\experimentv{$\ExpPrivSSsim{\setprim,\distr{\calS}{}}{P}$}\\
-%$S\getsr \distr{\calS}{}$\\
+%\experimentv{$\ExpPrivSSsim{\setprim,\distr{}{}}{P}$}\\
+%$S\getsr \distr{}{}$\\
 %$(M,\pubaux,\privaux) \getsr \Rep(S)$\\
 %$(f,v) \getsr P(\pubaux)$\\
 %if $f(S)=v$ then\\
@@ -256,7 +256,7 @@ Return~$a$\\
   definitions. \textcolor{red}{On the left, need to protect against
     adversary outputting
     things like $f(S)=M$.  One idea is to forbid~$f$ such that
-    $f(S)=f(S')$ for all $S,S'$ in the support of $\distr{\calS}{}$.}
+    $f(S)=f(S')$ for all $S,S'$ in the support of $\distr{}{}$.}
     } 
 \label{fig:privacy-ss}
 \end{figure}
