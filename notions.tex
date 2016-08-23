@@ -111,85 +111,53 @@ This is immediate.
 
 \subsection{Notions of Privacy}
 One can also consider the orthogonal notion of privacy for a
-set-representation.   There are various ways to formalize privacy, and
-we give some of these in Figure~\ref{fig:privacy}.  
+set-representation.  We formalize two types of privacy notions. One
+type captures a kind of one-wayness of the representation~$M$,
+relative to the allowed queries.  Informally, that given the
+representation and the public information, it is hard to guess any
+value in the represented set~$S$.  The other type captures a kind of
+semantic security, essentially requiring that $(M,\pub)$ and th
+allowed queries do not leak any (non-trivial) information about the set~$S$.
 %\jnote{Actually, I am now unsure what the right way to define it is. It seems natural
 %to give the attacker $\aux$. But if we give them $\aux$ and $M$ then they have everything.
 %If $S$ has high min-entropy (element-wise), then it might still be
 %possible to have security here.}\tsnote{I think we will always bump up
 %against the (element-wise) min-entropy of the distribution over~$S$,
 %at least in the ``one-wayness'' style definition that I had been imagining. }
-On the left side of this figure, we give two ``one-wayness''
+
+In Figure~\ref{fig:privacy-ow} we give two ``one-wayness''
 definitions, in which the adversary must output an element of the
 set~$S$ represented by~$M$.  The first version (priv) gives the
 adversary~$(M,\pubaux)$ as input; the second (wpriv) gives
 only~$\pubaux$.  The wpriv-notion captures leakage about the elements
 of~$S$ that results from observing the results of allowed queries.
 The stronger priv-notion captures what is jointly leaked, by the
-representation~$M$ and the allowed queries, about set elements.
+representation~$M$ and the allowed queries, about set elements.  We
+define advantage measures $\AdvPriv{\Pi,\distr{\calS}{}}{A} =
+\Prob{\ExpPriv{\Pi,\distr{\calS}{}}{A}=1}$ and $\AdvWPriv{\Pi,\distr{\calS}{}}{A} =
+\Prob{\ExpWPriv{\Pi,\distr{\calS}{}}{A}=1}$; in both we track the
+time-complexity~$t$ and number of oracle queries~$q$ made by the adversary.
 
-%On the right side of the figure, we give two ``indistinguishability''
-%notions of privacy.  The first version (ind-qry) captures more
-%generally what~$M$ and the allowed queries leak about the set that is
-%represented.  In particular, two sets~$S_0,S_1$ are sampled according
-%to distribution~$\distr{\calS}{}$, one of these is picked at random to
-%be represented.  The adversary is provided the resulting~$M,\pubaux$
-%and allowed to make queries~$q \in \calQ$; it must determine which
-%of~$S_0$ or~$S_1$ was actually represented.  We call this notion
-%indistinguishabilty (of sets) under a (adaptively chosen) query
-%attack.
-%
-On the right side of the figure, we give a definition
-inspired by the semantic security notion for
-encryption schemes.  We refer to it as semantic-security (of sets)
-with respect to the full representation (ss-rep).  In this experiment,
-a set~$\calS$ is sample according to distribution~$\distr{\calS}{}$,
-and the adversary is given the full ouput of running $\Rep(S)$,
-i.e. $(M,\pubaux,\privaux)$.  The adversary must output a
-function~$f\colon\calS \to \bits^*$ such that $f(S)$ differs from
-$f(S')$ for a set~$S'$ that is subsequently sampled according to~$\distr{\calS}{}$.
-
-
-\if{0}
-There are several possible definitions:
-\begin{enumerate}
-\item A ``one-wayness'' definition where $S$ has high min-entropy (element-wise), and we
-give the attacker $\pubaux$ and either $M$ or oracle access to $\Qry$. The attacker
-succeeds if it can output an element in~$S$. \tsnote{fixed by
-  changing syntax.}\tsnote{Neither of these seems to capture the Neidermeier et al. attack.  Giving the adversary~$M$ is closest, but our syntax would put the hash function secret keys into~$M$, which the Neidermeier attack doesn't get.}
-
-\item An ``indistinguishability'' definition where either $S_0$ or $S_1$ is used, and the attacker
-must determine which. Here the attacker is given $\pubaux$ but only oracle access to $\Qry$, and
-it is disallowed from asking any query $q$ for which $q(S_0) \neq
-q(S_1)$. \tsnote{I'm not convinced this is the right restriction.
-  This says that security is required \emph{only} for properties that are
-  true of both sets.  So a scheme with $M=S$ will be trivially secure
-  against set membership queries.  Maybe we restrict from queries~$q$ that are a priori known to have the same value for all sets~$S \in \calS$, or all~$S$ of a given size, etc., as these might be pointless?)}
-
-\tsnote{Is this the right kind of indistinguishability anyway?  This
-  current notion says, in effect, that $S_0$ and $S_1$ are
-  indistinguishable \emph{with respect to the allowed queries}
-  (assuming that $\pubaux$ doesn't stupidly leak information.)  But
-  why not try to formalize the intution that a representation~$M$ and
-  the public info~$\pubaux$ tell you nothing (non-trivial) about the
-  set being represented, period?  (Classical BFs, by the way,
-  essentially leak the number of elements in the set by looking at the
-  number of 0-bits in the array.)   That's tricky to define... I'll
-  take a shot at it.}
-%\tsnote{How will the adversary know that a query satisfies
-%  this in (say) the case of the classical BF?  We can, of course,
-%enforce it in the experiment, but then our resource accounting risks
-%overcounting the number of queries.} \jnote{I was assuming the attacker knows $S_0, S_1$.}
-%\tsnote{Also, we need that, in general, $\aux$ itself
-%does not leak information about~$S_0$ vs.\ $S_1$. } \jnote{Sure, this would be implied
-%by the definition in this case.}
-\end{enumerate}
-\fi
+\tsnote{Still messing about here, and in the figure.}
+In Figure~\ref{fig:privacy-ss} we give a definition capturing semantic-security (of sets)
+with respect to the full representation (ss-rep).  In the ``real''
+setting (ss-rep-1), a set~$S$ is sampled according to distribution~$\distr{\calS}{}$,
+and the adversary is given the~$M,\pubaux$ that result from running
+$\Rep(S)$.  It is also provided oracle access to $\QryOracle$.
+The adversary must output a function~$f\colon\calS \to \bits^*$ and a
+string~$v$ such that $f(S)=v$.  In the ``fake'' setting (ss-rep-0) a
+predictor~$P$ is given $\pubaux$ only, and no $\QryOracle$ access.  It
+also outputs an $f,v$ pair such that $f(S)=v$.  The advantage of~$A$ (over~$P$)
+is $\AdvPrivSS{\Pi,\distr{\calS}{}}{A,P} =
+\Prob{\ExpPrivSSreal{\Pi,\distr{\calS}{}}{A}=1} -
+\Prob{\ExpPrivSSsim{\Pi,\distr{\calS}{}}{P}=1}$.  To prevent trivial wins
+for~$A$, e.g. $f(S)=M$, we forbid~$A$ from outputting~$f$
+such that $f(S)=f(S')$ for all $S,S'$ in the support of $\distr{\calS}{}$.
 
 
 \begin{figure}[htbp]
 \centering
-\hfpages{.495}{
+\fpage{.495}{
 \hpagess{.5}{.45}
 {
 \experimentv{$\ExpPriv{\setprim,\distr{\calS}{}}{A}$}\\
@@ -214,25 +182,34 @@ $a \gets \Qry(M,\pubaux,\privaux,q)$\\
 Return~$a$
 }
 }
+\caption{``One-wayness'' style privacy
+  definitions. The bottom is a weaker notion, because the representation
+  is hidden from the adversary.} 
+\label{fig:privacy-ow}
+\end{figure}
+
 %
+\begin{figure}[htbp]
+\centering
+\hfpages{.495}
 {
-\hpagess{.485}{.5}
+\hpagess{.49}{.49}
 {
-%\experimentv{$\ExpPrivInd{\setprim,\distr{\calS}{}}{A}$}\\
-%$b \getsr \bits$\\
-%$S_0,S_1 \getsr \distr{\calS}{}$\\
-%$(M,\pubaux,\privaux) \getsr \Rep(S_b)$\\
-%$b' \getsr A^{\TestOracle}(M,\pubaux)$\\
-%if $b' = b$ then Return 1\\
-%Return 0\\
-%
-%\medskip
-\experimentv{$\ExpPrivSS{\setprim,\distr{\calS}{}}{A}$}\\
+
+\experimentv{$\ExpPrivSSreal{\setprim,\distr{\calS}{}}{A}$}\\
 $S\getsr \distr{\calS}{}$\\
 $(M,\pubaux,\privaux) \getsr \Rep(S)$\\
-$f \getsr A(M,\pubaux,\privaux)$\\
-$S' \getsr \distr{\calS}{}$\\
-if $f(S) \neq f(S')$ then\\
+$(f,v) \getsr A^{\TestOracle}(M,\pubaux)$\\
+if $f(S)=v$ then\\
+\nudge Return 1\\
+Return 0\\
+
+\medskip
+\experimentv{$\ExpPrivSSsim{\setprim,\distr{\calS}{}}{P}$}\\
+$S\getsr \distr{\calS}{}$\\
+$(M,\pubaux,\privaux) \getsr \Rep(S)$\\
+$(f,v) \getsr P(\pubaux)$\\
+if $f(S)=v$ then\\
 \nudge Return 1\\
 Return 0\\
 }
@@ -241,26 +218,43 @@ Return 0\\
 \oracle{$\TestOracle(q)$}\\
 $a \gets \Qry(M,\pubaux,\privaux,q)$\\
 Return~$a$\\
-
+}
+}
+{
+\hpagess{.49}{.49}
+{
+\experimentv{$\ExpPrivSS{\setprim,\distr{\calS}{},P}{A}$}\\
+$S\getsr \distr{\calS}{}$\\
+$b \getsr \bits$\\
+%$(M,\pubaux,\privaux) \getsr \Rep(S)$\\
+$(M_1,\pubaux,\privaux) \getsr \Rep(S)$\\
+$M_0 \getsr P(\pubaux)$\\
+%$(f,v) \getsr \getsr A^{\TestOracle}(M,\pubaux)$\\
+$b' \getsr A^{\TestOracle}(M_b,\pubaux)$\\
+%if $f(S)=v$ then\\
+if $b'=b$ then\\
+\nudge Return 1\\
+Return 0\\
+%
 %\medskip
-%\oracle{$\RepOracle(S_0,S_1)$}\\
-%if $\mathrm{used}=\true$ then Return $\bot$\\
-%%if $|S_0|\neq|S_1|$ then \\
-%%\nudge Ret $\bot$\\
-%$S_0,S_1 \getsr \distr{\calS}{}$\\
-%$\mathrm{used}=\true$\\
-%$(M,\aux) \getsr \Rep(S_b)$\\
-%Return $(S_0,S_1,\aux)$\\
-
+%\experimentv{$\ExpPrivSSsim{\setprim,\distr{\calS}{}}{P}$}\\
+%$S\getsr \distr{\calS}{}$\\
+%$(M,\pubaux,\privaux) \getsr \Rep(S)$\\
+%$(f,v) \getsr P(\pubaux)$\\
+%if $f(S)=v$ then\\
+%\nudge Return 1\\
+%Return 0\\
+}
+%
+{
+\oracle{$\TestOracle(q)$}\\
+$a \gets \Qry(M_1,\pubaux,\privaux,q)$\\
+Return~$a$\\
 }
 }
-\caption{Privacy notions. {\bf Left:} ``One-wayness'' style
-  definitions. The bottom is a weaker notion, because the representation
-  is hidden from the adversary. {\bf Right:} An
-  ``indistinguishability'' style notion and a semantic-security style notion. (Still playing...)} 
-\label{fig:privacy}
+\caption{Semantic-security style privacy definitions. } 
+\label{fig:privacy-ss}
 \end{figure}
-
 \subsection{Relationships Among Notions}
 
 \heading{Privacy notions. }
