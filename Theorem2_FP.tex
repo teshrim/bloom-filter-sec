@@ -2,21 +2,21 @@
 \newcommand{\rhoK}{\rho(\langle j,x \rangle)}
 \newcommand{\OK}{\calO(\langle j,x \rangle)}
 
-\heading{Construction of PRF with domain separation.}
-Let $B_{\mathrm{ds}}=(\Hash,\Rep,\Qry)$ be a hash-based filter defined as follows. Fix non-empty sets ~$\univ$, $\calK$ and integers $k,m,n>0$.  Let $F\colon\mathcal{K} \times \univ \to [m]$ be a function family.  The $\Hash$ algorithm provides randomness with domain separation, as it samples key $K \getsr \mathcal{K}$ and defines $h_j(x) = \FK $ for $j \in [1,k]$.  The $\Rep$ and $\Qry$ algorithms are the standard (determinisitic) BF ones. $B_{\mathrm{ds}}$ is another instantiation of the set-multiplicity data structure. Like $B_{\mathrm{lin}}$, $B_{\mathrm{ds}}$ admits errors in form of false positives only. Informally, the following result shows, if~$F$ is PRF secure and the filter has low error rate in the non-adaptive setting, then $B_{\mathrm{ds}}$ is correct against adaptive error finding adversaries. Hereafter, we refer errors and error-rate in $B_{\mathrm{ds}}$ as false-positives and false-positive rate, respectively.
-
-\begin{theorem}\label{thm2}
-Fix $k,m,n,r >0$. Let $B_{\mathrm{ds}}$ be the hash based filter just described. If there exists an adaptive adversary, $A$ compatible with $\ExpCorrect{B_{\mathrm{ds}},\distr{\calS}{},r}{\cdot}$ asking $q$ queries, and has time complexity O(t), then there exists an adversary $B$ (explicitly constructed in the proof of this theorem), such that 
-\[
-\AdvCorrect{B_{\mathrm{ds}},\distr{\calS}{},r}{A} \leq  \AdvPRF{F}{B}  + {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
-\]
-Here, $B$ asks $q$ queries, and has time complexity $O(t+qm)$.
-\end{theorem}
+%\heading{Construction of PRF with domain separation.}
+%Let $\Pi_{\mathrm{ds}}= (\Sigma,\Gamma,\calS,\calQ,\Rep, \Qry)$ be a set-multiplicity data structure identical to $\Pi_{\mathrm{lin}}, except the $Hash$ algorithm which is defined as follows. Fix non-empty sets ~$\univ$, $\calK$ and integers $k,m,n>0$.  Let $F\colon\mathcal{K} \times \univ \to [m]$ be a function family.  The $\Hash$ algorithm provides randomness with domain separation, as it samples key $K \getsr \mathcal{K}$ and defines $h_j(x) = F_K(\langle j,x \rangle) $ for $j \in [1,k]$. Like $\Pi_{\mathrm{lin}}$, $\Pi_{\mathrm{ds}}$ admits errors in form of false positives only. Informally, the following result shows, if~$F$ is PRF secure and the filter has low error rate in the non-adaptive setting, then $\Pi_{\mathrm{ds}}$ is correct against adaptive error finding adversaries. Hereafter, we refer errors and error-rate in $\Pi_{\mathrm{ds}}$ as false-positives and false-positive rate, respectively.
+%
+%\begin{theorem}\label{thm2}
+%Fix $k,m,n,r >0$. Let $\Pi_{\mathrm{ds}}$ be the hash based filter just described. If there exists an adaptive adversary, $A$ compatible with $\ExpCorrect{\Pi_{\mathrm{ds}},\distr{\calS}{},r}{\cdot}$ asking $q$ queries, and has time complexity O(t), then there exists an adversary $B$ (explicitly constructed in the proof of this theorem), such that 
+%\[
+%\AdvCorrect{\Pi_{\mathrm{ds}},\distr{\calS}{},r}{A} \leq  \AdvPRF{F}{B}  + {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
+%\]
+%Here, $B$ asks $q$ queries, and has time complexity $O(t+qm)$.
+%\end{theorem}
 
 \begin{proof}[\Cref{thm2}]
-We use a game playing argument (shown in \Cref{fig:2TGame}) similar to \Cref{thm1} to prove this theorem. In \game{0}(A), adversary attacks the FP game with  hash functions $h_j(x) = \FK $, and hence exactly simulates $\ExpCorrect{B_{\mathrm{ds}},\distr{\calS}{},r}{A}$.
+We use a game playing argument (shown in \Cref{fig:2TGame}) similar to \Cref{thm1} to prove this theorem. In \game{0}(A), adversary attacks the FP game with  hash functions $h_j(x) = \FK $, and hence exactly simulates $\ExpCorrect{\Pi_{\mathrm{ds}},\distr{\calS}{},r}{A}$.
 \begin{equation}
-\AdvCorrect{B_{\mathrm{ds}},\distr{\calS}{},r}{A} = \Prob{\game{0}(A)=1}\label{eq:2T0}
+\AdvCorrect{\Pi_{\mathrm{ds}},\distr{\calS}{},r}{A} = \Prob{\game{0}(A)=1}\label{eq:2T0}
 \end{equation}
 
 Let $B$ be a prf-adversary as shown in \Cref{fig:2TD}. Based on its challenge bit $b$, it exactly simulates $\game{0}$ or $\game{1}$. So,
@@ -31,24 +31,24 @@ By a standard conditioning of PRF advantage, we have
 \Prob{\game{0}(A)=1} = \AdvPRF{F}{B} + \Prob{\game{1}(A)=1}%\label{eq:13}
 \end{equation*}
 
-In $\game{1}$, $A$ attacks a different filter $\tilde{B}_\mathrm{ds}$, in which $F_K$ is replaced by a random function. $\game{2}$ and $\game{3}$ on the other hand use lazy sampling in $\Hash$ to select random values from $[m]$. It can be observed that, except  $\Hash$, $\game{2}$ and $\game{3}$ are identical to $\game{3}$ and $\game{4}$ of previous theorem. Since, $\Hash$ in all of these games returns random values, the analysis and results of \Cref{thm1} apply to this theorem as well. Therefore,
+In $\game{1}$, $A$ attacks a different filter $\tilde{\Pi}_\mathrm{ds}$, in which $F_K$ is replaced by a random function. $\game{2}$ and $\game{3}$ on the other hand use lazy sampling in $\Hash$ to select random values from $[m]$. It can be observed that, except  $\Hash$, $\game{2}$ and $\game{3}$ are identical to $\game{3}$ and $\game{4}$ of previous theorem. Since, $\Hash$ in all of these games returns random values, the analysis and results of \Cref{thm1} apply to this theorem as well. Therefore,
 \begin{align*}
 \Prob{\game{1}(A)=1} = \Prob{\game{2}(A)=1}\\
 \Prob{\game{3}(A)=1} = \frac{1}{\dbinom{q}{r}}\Prob{\game{2}(A)=1}
 \end{align*}
 
-Let $D$ be a non-adaptive adversary (shown in \Cref{fig:2TD}) that finds ~$r$ false positives against $\tilde{B}_{\mathrm{ds}}$. As discussed in the previous theorem, if $A$ wins $\game{3}$, then $D$ wins $\ExpCorrect{\tilde{B}_{\mathrm{ds}},\distr{\calS}{},r}{\cdot}$ game. So, 
+Let $D$ be a non-adaptive adversary (shown in \Cref{fig:2TD}) that finds ~$r$ false positives against $\tilde{\Pi}_{\mathrm{ds}}$. As discussed in the previous theorem, if $A$ wins $\game{3}$, then $D$ wins $\ExpCorrect{\tilde{\Pi}_{\mathrm{ds}},\distr{\calS}{},r}{\cdot}$ game. So, 
 \begin{equation*}
-\AdvCorrect{\tilde{B}_{\mathrm{ds}},\distr{\calS}{},r}{D} = \Prob{\game{3}(A) = 1}\label{eq:2T8}
+\AdvCorrect{\tilde{\Pi}_{\mathrm{ds}},\distr{\calS}{},r}{D} = \Prob{\game{3}(A) = 1}\label{eq:2T8}
 \end{equation*}
-Note that like $\tilde{B}_{\mathrm{lin}}$, $\tilde{B}_{\mathrm{ds}}$ is the scheme that is analyzed in the classical Bloom filter literature. So, for a non-adaptive adversary $D$ and $r=1$, the upper bound on false-positive probability of a classical Bloom filter applies to $\tilde{B}_{\mathrm{ds}}$ as well. For $r > 1$, based on the assumption that $A$ makes no pointless queries, the queries made by $A$ are distinct and not elements of the original set $S$. Also, since $\game{3}$ uses independent random functions, the event of getting a false positive is independent of the index of the query. So,
+Note that like $\tilde{\Pi}_{\mathrm{lin}}$, $\tilde{\Pi}_{\mathrm{ds}}$ is the scheme that is analyzed in the classical Bloom filter literature. So, for a non-adaptive adversary $D$ and $r=1$, the upper bound on false-positive probability of a classical Bloom filter applies to $\tilde{\Pi}_{\mathrm{ds}}$ as well. For $r > 1$, based on the assumption that $A$ makes no pointless queries, the queries made by $A$ are distinct and not elements of the original set $S$. Also, since $\game{3}$ uses independent random functions, the event of getting a false positive is independent of the index of the query. So,
 \begin{equation*}
-\AdvCorrect{\tilde{B}_{\mathrm{ds}},\distr{\calS}{},r}{D} =   {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r
+\AdvCorrect{\tilde{\Pi}_{\mathrm{ds}},\distr{\calS}{},r}{D} =   {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r
 \end{equation*}
 \noindent
 To summarize, we have
 \[
-\AdvCorrect{B_{\mathrm{ds}},\distr{\calS}{},r}{A} \leq  \AdvPRF{F}{B}  + {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r
+\AdvCorrect{\Pi_{\mathrm{ds}},\distr{\calS}{},r}{A} \leq  \AdvPRF{F}{B}  + {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r
 \]
 which is the bound claimed in the theorem statement. \hfill \qed
 

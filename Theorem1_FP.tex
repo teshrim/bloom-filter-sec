@@ -1,32 +1,28 @@
-%\acnote{I am moving comments to end of the proof in tex file and commenting them as the labels are getting mangled}
-\heading{Linear-PRF construction. }
-Here we consider a hash-based filter that was attacked by Neidermayer et al. in~\cite{xxx}.  Let $B_{\mathrm{lin}}=(\Hash,\Rep,\Qry)$ be defined as follows.  Fix non-empty sets ~$\calK$, $\univ$ and integers $k,m,n>0$.  Let $F\colon\mathcal{K} \times \univ \to [m]$ be a function family.  The $\Hash$ algorithm samples two keys $K_0,K_1 \getsr \mathcal{K}$ and defines $h_j(x) = F_{K_0}(x) + j\cdot F_{K_1}(x) \bmod m$ for $j \in [1,k]$.  The $\Rep$ and $\Qry$ algorithms are the standard (determinisitic) BF ones. $B_{\mathrm{lin}}$ is in fact one instantiation of a set-multiplicity data structure. It must be noted that $B_{\mathrm{lin}}$ admits errors in form of false-positives(FP) only. So, error rate of $B_{\mathrm{lin}}$ is same as the (non-adaptive) FP rate. The following result shows, informally, that if~$F$ is a good PRF and the error rate is sufficiently small, then $B_\mathrm{lin}$ is correct against adaptive error-finding adversaries. Henceforth, we refer errors and error-rate in $B_{\mathrm{lin}}$ as FP's and FP rate, respectively.
-
-\begin{theorem}\label{thm1}
-Fix $k,m,n,r>0$, and let $B_\mathrm{lin}=(\Hash,\Rep,\Qry)$ be the hash-based filter just described. 
-For any adversary~$A$ that makes a total of~$q$ queries to its oracle
-and has time-complexity~$O(t)$,
-there exist adversaries~$B_1,B_2$ (explicitly constructed in the proof of this theorem) such that
-\[
-\AdvCorrect{B_{\mathrm{lin}},\distr{\calS}{},r}{A} \leq  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}  +{\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
-\]
-Here, $B_1$ and $B_2$, each ask~$q$ oracle queries and have time complexity~$O(t+qm)$.
-\end{theorem}
-Before giving the proof, we note that Kirsch and Mitzenmacher~\cite{xxx} show
-that the ($r=1$, non-adaptive) FP-probability for~$B_\mathrm{lin}$ is
-always within $O(1/n)$ of $(1-e^{-kn/m})^k$, although the asymptotic
-rate of convergence is faster than~$1/n$.  The factor of $\dbinom{q}{r}$ arises as a result
-of removing adaptivity.  Finally, $\dbinom{q}{r} \leq q^r$ (with
-reasonable tightness when~$r$ is small) in which case the final term in the bound behaves as 
-$(q (1-e^{-kn/m})^k + O(q/n) )^r$; loosely, the bound one expects for
-trying to find a single FP in each of~$r$ independent``rounds'', each round
-consisting of~$q$ attempts.
+%\heading{Linear-PRF construction. }
+%Here we consider a set-multiplicity data structure that was attacked by Neidermayer et al. in~\cite{xxx}.  Let $\Pi_{\mathrm{lin}}= (\Sigma,\Gamma,\calS,\calQ,\Rep, \Qry)$ be defined as follows. Fix an $n \geq 0$, let $\mathcal{S}=[\univ]^n$, and let $\Sigma=\Gamma=\bits$. The queries are defined so that $q_x(S)=1$ if $x \in S$, and 0 otherwise.  Fix non-empty sets ~$\calK$, $\univ$ and integers $k,m,n>0$.  Let $F\colon\mathcal{K} \times \univ \to [m]$ be a function family. Define $\Hash$ as an algorithm that samples two keys $K_0,K_1 \getsr \mathcal{K}$ and defines $h_j(x) = F_{K_0}(x) + j\cdot F_{K_1}(x) \bmod m$ for $j \in [1,k]$.  $\Rep$ uses $\Hash$ to set $\privaux=\pubaux = (h_1, \ldots, h_k)$, and computes an $m$ bit array, $M$ in the standard way and returns $(M,\pubaux,\privaux)$.  The $\Qry$ algorithm gets $(M,\privaux, q_x)$ as input, and returns the AND of values at $M[h_1(x)],\ldots,M[h_k(x)]$. It must be noted that $\Pi_{\mathrm{lin}}$ admits errors in form of false-positives(FP) only. So, error rate of $\Pi_{\mathrm{lin}}$ is same as the (non-adaptive) FP rate. The following result shows, informally, that if~$F$ is a good PRF and the error rate is sufficiently small, then $\Pi_\mathrm{lin}$ is correct against adaptive error-finding adversaries. Henceforth, we refer errors and error-rate in $\Pi_{\mathrm{lin}}$ as FP's and FP rate, respectively.
+%
+%\begin{theorem}\label{thm1}
+%Fix $k,m,n,r>0$, and let $\Pi_{\mathrm{lin}}= (\Sigma,\Gamma,\calS,\calQ,\Rep, \Qry)$ be the set-multiplicity data structure just described. For any adversary~$A$ that makes a total of~$q$ queries to its oracle and has time-complexity~$O(t)$, there exist adversaries~$B_1,B_2$ (explicitly constructed in the proof of this theorem) such that
+%\[
+%\AdvCorrect{\Pi_{\mathrm{lin}},\distr{\calS}{},r}{A} \leq  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}  +{\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
+%\]
+%Here, $B_1$ and $B_2$, each ask~$q$ oracle queries and have time complexity~$O(t+qm)$.
+%\end{theorem}
+%Before giving the proof, we note that Kirsch and Mitzenmacher~\cite{xxx} show
+%that the ($r=1$, non-adaptive) FP-probability for~$\Pi_\mathrm{lin}$ is
+%always within $O(1/n)$ of $(1-e^{-kn/m})^k$, although the asymptotic
+%rate of convergence is faster than~$1/n$.  The factor of $\dbinom{q}{r}$ arises as a result
+%of removing adaptivity.  Finally, $\dbinom{q}{r} \leq q^r$ (with
+%reasonable tightness when~$r$ is small) in which case the final term in the bound behaves as 
+%$(q (1-e^{-kn/m})^k + O(q/n) )^r$; loosely, the bound one expects for
+%trying to find a single FP in each of~$r$ independent``rounds'', each round
+%consisting of~$q$ attempts.
 
 \begin{proof}[\Cref{thm1}]
-The proof of the theorem will use a game playing argument as shown in \Cref{fig:Game}. $\game{0}(A)$ exactly simulates $\ExpCorrect{B_\mathrm{lin},\distr{\calS}{},r}{A}$ with hash functions $h_j(x) =  F_{K_0}(x) + j\cdot F_{K_1}(x) \bmod m$. So,
+The proof of the theorem will use a game playing argument as shown in \Cref{fig:Game}. $\game{0}(A)$ exactly simulates $\ExpCorrect{\Pi_\mathrm{lin},\distr{\calS}{},r}{A}$ with hash functions $h_j(x) =  F_{K_0}(x) + j\cdot F_{K_1}(x) \bmod m$. So,
 
 \begin{equation}
-\AdvCorrect{B_{\mathrm{lin}},\distr{\calS}{},r}{A} = \Prob{\game{0}(A)=1}\label{eq:0}
+\AdvCorrect{\Pi_{\mathrm{lin}},\distr{\calS}{},r}{A} = \Prob{\game{0}(A)=1}\label{eq:0}
 \end{equation}
 
  In $\game{1}(A)$, $F_{K_1}$ is replaced by a random function, whereas in $\game{2}(A)$, both $F_{K_0}$ and $F_{K_1}$ are replaced by random functions.
@@ -145,20 +141,20 @@ $1/\dbinom{q}{r}$, and we have
 \Prob{\game{4}(A)=1} = \frac{1}{\dbinom{q}{r}}\Prob{\game{3}(A)=1}
 \end{equation*}
 
-Recall that adversary~$A$ wins $\ExpCorrect{B_{\mathrm{lin}},\distr{\calS}{},r}{}$ by finding~$r$ false positives. We can assume, without loss of generality,  that~$A$ halts immediately upon finding its $r$-th false positive. % We can also assume that every point in $\calZ$ has already been queried to $\Test$.  This latter assumption is not without loss, but can be  easily enforced (in the original security definitions) by counting as part of the number of queries~$q$, the points in $\mathcal{Z}$. 
+Recall that adversary~$A$ wins $\ExpCorrect{\Pi_{\mathrm{lin}},\distr{\calS}{},r}{}$ by finding~$r$ false positives. We can assume, without loss of generality,  that~$A$ halts immediately upon finding its $r$-th false positive. % We can also assume that every point in $\calZ$ has already been queried to $\Test$.  This latter assumption is not without loss, but can be  easily enforced (in the original security definitions) by counting as part of the number of queries~$q$, the points in $\mathcal{Z}$. 
 %
 %Under these assumptions,
-So, if $\game{4}(A)=1$, then there is a non-adaptive adversary~$D$ that finds~$r$ false positives against $\tilde{B}_{\mathrm{lin}}$, which is $B_{\mathrm{lin}}$ but with $F_{K_1}$ and $F_{K_2}$ replaced by random functions $\rho_1$ and $\rho_2$, respectively.  We give this~$D$ in \Cref{fig:D}. Intuitively, adversary~$D$ guesses which~$r$ of~$A$'s queries will be false positives; it simulates the~$\Test$ oracle by returning 1 on the guessed queries, and 0 otherwise; and it halts after finding $r$ FP's.  Thus we have
-$\Prob{\game{4}(A)=1} =\Prob{\ExpCorrect{\tilde{B}_{\mathrm{lin}},\distr{\calS}{},r}{D} = 1}$.
+So, if $\game{4}(A)=1$, then there is a non-adaptive adversary~$D$ that finds~$r$ false positives against $\tilde{\Pi}_{\mathrm{lin}}$, which is $\Pi_{\mathrm{lin}}$ but with $F_{K_1}$ and $F_{K_2}$ replaced by random functions $\rho_1$ and $\rho_2$, respectively.  We give this~$D$ in \Cref{fig:D}. Intuitively, adversary~$D$ guesses which~$r$ of~$A$'s queries will be false positives; it simulates the~$\Test$ oracle by returning 1 on the guessed queries, and 0 otherwise; and it halts after finding $r$ FP's.  Thus we have
+$\Prob{\game{4}(A)=1} =\Prob{\ExpCorrect{\tilde{\Pi}_{\mathrm{lin}},\distr{\calS}{},r}{D} = 1}$.
 
-Note that $\tilde{B}_{\mathrm{lin}}$ is the scheme that is analyzed in the classical Bloom filter literature ---the hash functions are modeled as independent random functions, and the parameters $k,m,n$  are set to achieve a target maximum false-positive probability (or rate).  Kirsch and Mitzenmacher~\cite{KM} show that the upperbound on false-positive probability for a non-adaptive adversary and $r=1$ is $\left( (1-e^{-kn/m})^k + O(1/n) \right)$.  For $r>1$, we observe that~$A$'s queries $x_1,x_2,\ldots,x_q$ are distinct and not elements of the original set~$S$, since we assume no pointless queries. Let $\calF_i$ be the event that~$x_i(i \in \mathcal{I})$ is a false positive.  Since $\game{4}$ (equivalently $\tilde{B}_{\mathrm{lin}}$) use independent random functions, the events $\calF_1,\calF_2,\ldots,\calF_r$ are independent. 
+Note that $\tilde{\Pi}_{\mathrm{lin}}$ is the scheme that is analyzed in the classical Bloom filter literature ---the hash functions are modeled as independent random functions, and the parameters $k,m,n$  are set to achieve a target maximum false-positive probability (or rate).  Kirsch and Mitzenmacher~\cite{KM} show that the upperbound on false-positive probability for a non-adaptive adversary and $r=1$ is $\left( (1-e^{-kn/m})^k + O(1/n) \right)$.  For $r>1$, we observe that~$A$'s queries $x_1,x_2,\ldots,x_q$ are distinct and not elements of the original set~$S$, since we assume no pointless queries. Let $\calF_i$ be the event that~$x_i(i \in \mathcal{I})$ is a false positive.  Since $\game{4}$ (equivalently $\tilde{\Pi}_{\mathrm{lin}}$) use independent random functions, the events $\calF_1,\calF_2,\ldots,\calF_r$ are independent. 
 \[
-\Prob{\ExpCorrect{\tilde{B}_{\mathrm{lin}},\distr{\calS}{},r}{D} = 1}\leq \left( (1-e^{-kn/m})^k + O(1/n) \right)^r 
+\Prob{\ExpCorrect{\tilde{\Pi}_{\mathrm{lin}},\distr{\calS}{},r}{D} = 1}\leq \left( (1-e^{-kn/m})^k + O(1/n) \right)^r 
 \]
 
 To summarize, we have 
 \[
-\AdvCorrect{B_{\mathrm{lin}},\distr{\calS}{},r}{A}  \leq  \AdvPRF{F}{B_1} +\AdvPRF{F}{B_2} +\dbinom{q}{r}\left( (1-e^{-kn/m})^k + O(1/n) \right)^r
+\AdvCorrect{\Pi_{\mathrm{lin}},\distr{\calS}{},r}{A}  \leq  \AdvPRF{F}{B_1} +\AdvPRF{F}{B_2} +\dbinom{q}{r}\left( (1-e^{-kn/m})^k + O(1/n) \right)^r
 \]
 which is the bound claimed in the theorem statement. \hfill \qed
 
