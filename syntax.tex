@@ -3,13 +3,13 @@
 \heading{Preliminaries. } When~$\univ$ is a set and $n>0$ is an
 integer, we let $[\univ]^n$ denote the set of all size-$n$ subsets
 %\jnote{Multisets?} 
-of~$\univ$. We write $x \getsr \univ$ to denote
+of~$\univ$, and $[[\univ]]^n$ for the set of all multisets
+over~$\univ$ with total multiplicity~$n$. We write $x \getsr \univ$ to denote
 sampling an element from~$\univ$ and assigning this to~$x$, and we
 extend this notation to randomized algorithms.  When~$X$ is a string
 over some alphabet~$\Sigma$, we write $|X|$ for the bitlength
 of~$X$, relative to some fixed encoding.  When~$X$ is a multiset, we
-overload the notation so that~$|X|$ is the number of elements in~$X$
-(with mutiplicity).
+overload the notation so that~$|X|$ is the total multiplicity of~$X$.
 
 Algorithms may be provided black-box access to one or more oracles, which we write as superscripts, e.g., $F^{O_1,O_2,\ldots}$.  An \emph{adversary} is a randomized algorithm
 
@@ -20,10 +20,10 @@ multiset.  Informally, the representation should serve as a good
 approximation of the multiset, at least with respect to the allowed
 questions.
 \begin{definition}[Data structure] \rm
-Fix a non-empty set~$\univ$. A \emph{static data structure} (over universe~$\univ$)
+Fix a non-empty set~$\univ$. A \emph{data structure} (over universe~$\univ$)
 is a tuple $\setprim=(\Sigma,\Gamma,\calS,\calQ,\Rep, \Qry)$ where:
 \begin{itemize}
-\item $\Sigma$ is the \emph{representation alphabet}. 
+\item $\Sigma$ is the \emph{representation alphabet}.
 %\jnote{Is there any reason not to simply fix this to $\{0,1\}$?}
 \item $\Gamma$ is the set of possible \emph{query answers}.
 %\jnote{Do we need this for any reason?}
@@ -35,11 +35,14 @@ is a tuple $\setprim=(\Sigma,\Gamma,\calS,\calQ,\Rep, \Qry)$ where:
     algorithm}, taking as input $S \in \mathcal{S}$, and
     outputting a \emph{representation} $M \in \Sigma^*$,
     \emph{private side information} $\privaux \in \bits^*$, and
-    \emph{public side information} $\pubaux \in \bits^*$.
-\item $\Qry\colon \Sigma^* \times \bits^* \times \calQ \to
+    \emph{public side information} $\pubaux \in \bits^*$.  We write
+    $(M,\pubaux,\privaux \getsr \Rep(S)$ as shorthand for this execution.
+\item $\Qry\colon \Sigma^* \times \bits^* \times \bits^* \times \calQ \to
     \Gamma$ is a deterministic \emph{query-evaluation}
-    algorithm, taking as input $M, \pubaux,\privaux, q$, and returns
-    \emph{answer} $a \in \Gamma$. 
+    algorithm, taking as input $M\in\Sigma^*$, $\pubaux,\privaux \in
+    \bits^*$ and $q \in \calQ$, and outputting
+    an \emph{answer} $a \in \Gamma$.  We write $a \gets
+    \Qry(M,\pubaux,\privaux,q)$ for this execution.
 \end{itemize}
 \hfill\dqed
 \end{definition}
@@ -80,7 +83,7 @@ taken over choice of the random oracle.
 We will sometimes say that a data structure is
 $(1-\epsilon)$-correct, meaning it has error probability~$\epsilon$.
 Note that $1-\epsilon$ is a worst-case lower bound on the
-correctness of the data structure.
+correctness of the data structure. \tsnote{Don't know if this will be necessary.}
 
 \todo{Add discussion of just how broad the syntax is, in general.}
 
@@ -89,9 +92,6 @@ correctness of the data structure.
 Let~$\Pi$ be a scheme that is $(1-\epsilon)$-correct, and consider
 an attack that asks random queries $q_1,q_2,\ldots,q_T$, i.e.,
 uniform samples from~$\calQ$.
-%The expected number of random queries needed to
-%find a error is $1/\epsilon$ tries; thus, an attacker making $O(t/\epsilon)$ queries succeeds with constant probability (almost always).
-%Actually, it seems worthwhile to formalize this.
 Let $\mathrm{Err}_i$ be a random variable indicating the event $\Qry(M,\pubaux,\privaux,q_i)\neq q_i(S)$.
 The $(1-\epsilon)$-correctness of~$\Pi$ guarantees that the probability that $\mathrm{Err}_i=1$ is at most~$\epsilon$,
 and it is tempting to model the~$\mathrm{Err}_i$ as i.i.d. Bernoulli trials with success probability~$\epsilon$.
@@ -114,23 +114,8 @@ structure with $\Gamma=\mathbb{N}$ and
 where $\calQ=\{q_x \,|\, x \in \univ\}$ where $q_x(S)$ is defined to
 be the multiplicity of~$x$ in the multiset~$S$. \hfill\dqed
 \end{definition}
-%
-%\todo{Readdress issue of representation size.  A general statement might be something like `` The \emph{size} of a set-representation is the maximum (bit)length of any~$M$ that can be output by $\Rep$.''  But all of the natural constructions will have representation whose size will not depend on the coins of $\Rep$, i.e. they depend on $|S|$, number of hash functions, desired error rate. }
 
-%Our treatment of $M,\privaux$ is not symmetric, since we only count $M$ against the size
-%of the set-representation. When we define security
-%we may give the attacker $\privaux$ but not~$M$, and in that case the set-representation cannot
-%trivially make everything part of~$\privaux$.
-%\tsnote{Encoding secrets into~$M$ may cause some headaches in the security definitions; we'll see. }
-%\tsnote{By the way, I'm coming around to the
-%  viewpoint that it is fair to include in the ``size'' of the
-%  representation any secret information.  In makes more difficult
-%  comparisons to classical lower-bounds (which [NY] makes, incorrectly
-% IMO), but it does seem fair to say ``this is how many bits of memory
-% you need to allocate to represent this set \emph{securely}.''}
-
-%\heading{Bloom Filters and Related Data Structures. }
-It is not hard to see Bloom filters are one possible instantiation a
+It is not hard to see Bloom filters are an instantiation a
 set-multiplicity data structure.  Fix $\Sigma=\Gamma=\bits$.  Define
 algorithm~$\Rep$, with functions $k=k(|S|), m=m(|S|)$ and a
 description of a hash function family~$\mathcal{H}=\{h \colon \univ
