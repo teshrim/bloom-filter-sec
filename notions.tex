@@ -252,7 +252,12 @@ $a \gets \Qry(M_1,\pubaux,\privaux,q)$\\
 Return~$a$\\
 }
 }
-\caption{Semantic-security style privacy definitions. } 
+\caption{Semantic-security style privacy
+  definitions. \textcolor{red}{On the left, need to protect against
+    adversary outputting
+    things like $f(S)=M$.  One idea is to forbid~$f$ such that
+    $f(S)=f(S')$ for all $S,S'$ in the support of $\distr{\calS}{}$.}
+    } 
 \label{fig:privacy-ss}
 \end{figure}
 \subsection{Relationships Among Notions}
