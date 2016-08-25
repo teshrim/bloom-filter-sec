@@ -2,20 +2,25 @@
 \def\full{0}
 \def\llncs{1}
 
-\documentclass[11pt]{llncs}
+\documentclass[11pt]{article}
 %\documentclass{sig-alternate-10pt}
 %\documentclass{sig-alternate-tom}
 %\documentclass{acm_proc_article-sp}
 
-\usepackage[letterpaper,hmargin=0.9in,vmargin=1in]{geometry}
+\usepackage{fullpage}
+%letterpaper,hmargin=0.9in,vmargin=1in]{geometry}
 \usepackage{amssymb,latexsym,url,amsfonts,xspace}
-\usepackage{amsmath}
+\usepackage{amsmath,amsthm}
 %\usepackage[dvipdf]{graphicx}
 \usepackage[usenames,dvipsnames]{color}
 \usepackage{cleveref}
 % Theorem environments
 
-% deluxe proof enviroment
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+
+\def\bydef{\stackrel{\rm def}{=}}
+% deluxe proof environment
 \def\qsym{\vrule width0.6ex height1em depth0ex}
 \def\qedsym{{\hspace{5pt}\rule[-1pt]{3pt}{9pt}}}
 

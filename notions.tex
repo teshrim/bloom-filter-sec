@@ -1,7 +1,7 @@
 \section{Security Notions}
 \label{sec:security-notions}
 Following NY, we are interested in defining an adaptive (i.e.,
-adversarial) notion of correctness.   
+adversarial) notion of correctness.
 In addition to correctness, we establish three notions of privacy for
 set-representations. The first two have the flavor of a one-wayness
 game, in which the adversary seeks to return an element of the
@@ -55,17 +55,17 @@ Return~$(a,\mathrm{err})$
 }
 }
 \caption{Correctness of~$\Pi$ against (adaptive) adversary~$A$, when
-  the represented multiset~$S$ is sampled according to distribution~$\distr{}{}$.} 
+  the represented multiset~$S$ is sampled according to distribution~$\distr{}{}$.}
 \label{fig:correctness}
 \end{figure}
 
 In this experiment we track the time-complexity (relative to some
 implied model of computation) and query-complexity (i.e., number of
-queries) of the adversary~$A$.  
-We define the advantage of adversary~$A$ in the correctness experiment as 
+queries) of the adversary~$A$.
+We define the advantage of adversary~$A$ in the correctness experiment as
 $\AdvCorrect{\Pi,\distr{}{},r}{A} = \Prob{\ExpCorrect{\Pi,\distr{}{}, r,}{A}=1}$.
 Overloading notation, we write $\AdvCorrect{\Pi,\distr{}{},r}{t,q}$ for the maximum over all~$t$-time adversaries that ask at most~$q$ queries. Roughly, we say that a
-set-representation~$\Pi$ is $(t,q,r,\epsilon')$-correct if $\AdvCorrect{\Pi,\distr{}{},r}{t,q} \leq \epsilon'$.  
+set-representation~$\Pi$ is $(t,q,r,\epsilon')$-correct if $\AdvCorrect{\Pi,\distr{}{},r}{t,q} \leq \epsilon'$.
 
 
 \heading{Comparison to Naor-Yogev definition.}
@@ -99,13 +99,14 @@ This is immediate.
 
 \subsection{Notions of Privacy}
 One can also consider the orthogonal notion of privacy for a
-set-representation.  We formalize two types of privacy notions. One
-type captures a kind of one-wayness of the representation~$M$,
-relative to the allowed queries.  Informally, that given the
-representation and the public information, it is hard to guess any
-value in the represented set~$S$.  The other type captures a kind of
-semantic security, essentially requiring that $(M,\pub)$ and th
-allowed queries do not leak any (non-trivial) information about the set~$S$.
+data structure. \jnote{I am still hoping that we can treat data structures
+at an even more general level than set-representation data structures.}
+We formalize two types of privacy notions. The first captures
+a ``one-wayness'' property, which (informally) requires that an attacker
+cannot learn any value in a set $S$ given its
+representation $M$ along with the public information~$\pub$.  The second definition
+captures a flavor of semantic security, essentially requiring that $M$ and $\pub$ do
+not leak any (non-trivial) information about the set~$S$ they represent.
 %\jnote{Actually, I am now unsure what the right way to define it is. It seems natural
 %to give the attacker $\aux$. But if we give them $\aux$ and $M$ then they have everything.
 %If $S$ has high min-entropy (element-wise), then it might still be
@@ -113,117 +114,141 @@ allowed queries do not leak any (non-trivial) information about the set~$S$.
 %against the (element-wise) min-entropy of the distribution over~$S$,
 %at least in the ``one-wayness'' style definition that I had been imagining. }
 
-In Figure~\ref{fig:privacy-ow} we give two ``one-wayness''
-definitions, in which the adversary must output an element of the
-set~$S$ represented by~$M$.  The first version (priv) gives the
-adversary~$(M,\pubaux)$ as input; the second (wpriv) gives
-only~$\pubaux$.  The wpriv-notion captures leakage about the elements
-of~$S$ that results from observing the results of allowed queries.
-The stronger priv-notion captures what is jointly leaked, by the
-representation~$M$ and the allowed queries, about set elements.  We
-define advantage measures $\AdvPriv{\Pi,\distr{}{}}{A} =
-\Prob{\ExpPriv{\Pi,\distr{}{}}{A}=1}$ and $\AdvWPriv{\Pi,\distr{}{}}{A} =
-\Prob{\ExpWPriv{\Pi,\distr{}{}}{A}=1}$; in both we track the
+\jnote{OK, from here on I specialize to set-representation data structures\ldots}
+The one-wayness definition (see
+Figure~\ref{fig:privacy-ow}) is parameterized by a distribution $\distr{}{}$ over
+sets. \jnote{I got rid of the weaker definition, since it seems unnatural to me.}
+A set $S$ is chosen from this distribution, and a representation
+$(M,\pubaux,\privaux)$ of that set is computed.
+In one experiment ($\ExpPriv{\Pi,\distr{}{}}$), the attacker is given $M, \pubaux$;
+in a second experiment (${\bf Exp}^{\rm null}_{\Pi,\distr{}{}}$), it is not.
+In both cases, the attacker is given
+access to an oracle via which it can
+issue queries and obtain the corresponding responses.
+For a given $\distr{}{}$ and $A$, we define the advantage measure
+$\AdvPriv{\Pi,\distr{}{}}{A} \bydef
+\left| \Prob{\ExpPriv{\Pi,\distr{}{}}{A}=1} - \Prob{{\bf Exp}^{\rm null}_{\Pi,\distr{}{}}(A)=1} \right|$.
+We track the
 time-complexity~$t$ and number of oracle queries~$q$ made by the adversary.
 
-\tsnote{Wet paint...}
-In Figure~\ref{fig:privacy-ss} we give a definition capturing semantic-security (of sets)
-with respect to the full representation (ss-rep).  In the ``real''
-setting (ss-rep-1), a set~$S$ is sampled according to distribution~$\distr{}{}$,
-and the adversary is given the~$M,\pubaux$ that result from running
-$\Rep(S)$.  It is also provided oracle access to $\TestOracle$.
-The adversary must output a function~$f\colon\calS \to \bits^*$ and a
-string~$v$ such that $f(S)=v$.  In the ``fake'' setting (ss-rep-0) a
-predictor~$P$ is given $\pubaux$ only, and no $\TestOracle$ access.  It
-also outputs an $f,v$ pair such that $f(S)=v$.  The advantage of~$A$ (over~$P$)
-is $\AdvPrivSS{\Pi,\distr{}{}}{A,P} =
-\Prob{\ExpPrivSSreal{\Pi,\distr{}{}}{A}=1} -
-\Prob{\ExpPrivSSsim{\Pi,\distr{}{}}{P}=1}$.  To prevent trivial wins
-for~$A$, e.g. $f(S)=M$, we forbid~$A$ from outputting~$f$
-such that $f(S)=f(S')$ for all $S,S'$ in the support of the
-distribution $\distr{}{}$.
 
-
-\begin{figure}[htbp]
+\begin{figure}[hbtp]
 \centering
-\fpage{.495}{
+\fpage{.6}{
 \hpagess{.5}{.45}
 {
 \experimentv{$\ExpPriv{\setprim,\distr{}{}}{A}$}\\
 $S \getsr \distr{}{}$\\
 $(M,\pubaux,\privaux) \getsr \Rep(S)$\\
 $z \getsr A^{\TestOracle}(M,\pubaux)$\\
-if $z \in S$ then Return 1\\
-Return 0\\
+if $z \in S$ then return 1\\
+return 0\\
 
 \medskip
-\experimentv{$\ExpWPriv{\setprim,\distr{}{}}{A}$}\\
+\experimentv{${\bf Exp}^{\rm null}_{\Pi, \distr{}{}}(A)$} \\
 $S \getsr \distr{}{}$\\
 $(M,\pubaux,\privaux) \getsr \Rep(S)$\\
-$z \getsr A^{\TestOracle}(\pubaux)$\\
-if $z \in S$ then Return 1\\
-Return 0\\
+$z \getsr A^{\TestOracle}()$\\
+if $z \in S$ then return 1\\
+return 0\\
+%\medskip
+%\experimentv{$\ExpWPriv{\setprim,\distr{}{}}{A}$}\\
+%$S \getsr \distr{}{}$\\
+%$(M,\pubaux,\privaux) \getsr \Rep(S)$\\
+%$z \getsr A^{\TestOracle}(\pubaux)$\\
+%if $z \in S$ then Return 1\\
+%Return 0\\
 }
 %
 {
 \oracle{$\TestOracle(q)$}\\
 $a \gets \Qry(M,\pubaux,\privaux,q)$\\
-Return~$a$
+return~$a$
 }
 }
-\caption{``One-wayness'' style privacy
-  definitions. The bottom is a weaker notion, because the representation
-  is hidden from the adversary.} 
+\caption{Experiments for a ``one-wayness'' style privacy
+  definition.}
 \label{fig:privacy-ow}
 \end{figure}
 
-%
-\begin{figure}[htbp]
-\centering
-\hfpages{.495}
-{
-\hpagess{.49}{.49}
-{
+\jnote{I'm not sure whether we want to limit consideration to ``high-entropy''
+distributions
+and require the probability of finding an element to be low,
+or whether we want to allow arbitrary distributions but compare the attacker's
+success probability when given $(M, \pub)$ to its success probability when given nothing.
+The latter seems cleaner, so I took that approach here.}
 
-\experimentv{$\ExpPrivSSreal{\setprim,\distr{}{}}{A}$}\\
-$S\getsr \distr{}{}$\\
+\jnote{Actually, I am unsure whether a one-wayness definition is independently
+interesting if we have (and can achieve) a semantic-security definition.}
+
+Our semantic-secure definition is simulation-based (see
+Figure~\ref{fig:privacy-ss}).
+In this definition we compare the probabilities with which an attacker $A$ outputs~1
+in two experiments: one ``real'' and one ``simulated.''
+In the real experiment (ss-rep-1), $A$ outputs a set $S$ and is given the
+$M,\pubaux$ that result from running $\Rep(S)$.
+In the simulated experiment (ss-rep-0), $A$ outputs $S$ and is given $M, \pubaux$ output
+by a simulator $\calS$ that is only given ${\sf leak}(S)$. \jnote{Note
+there is no need for a query oracle here, since the attacker knows the set. Interestingly,
+if we provide a query oracle in the real world and an oracle that returns the correct
+answer in the simulated world, then this definition seems to imply correctness also.}
+For a given function ${\sf leak}$, adversary $A$, and simulator~$\calS$,
+we define the advantage measure
+$\AdvPrivSS{\Pi,{\sf leak}}{A,\calS} \bydef
+\left| \Prob{\ExpPrivSSreal{\Pi}{A}=1} -
+\Prob{\ExpPrivSSsim{\Pi,{\sf leak}}{A, \calS}=1} \right|$.
+Informally, a scheme $\Pi$ is secure with respect to some leakage ${\sf leak}$
+if there is a simulator $\calS$ such that $\AdvPrivSS{\Pi,{\sf leak}}{A,\calS}$ is small
+for all~$A$. Intuitively, this means that the public portion
+$M, \pubaux$ of the representation of a set~$S$ leaks only ${\sf leak}(S)$. 
+
+\begin{figure}[hbtp]
+\centering
+\fpage{.6}{
+\hpagess{.5}{.45}
+{
+\experimentv{${\bf Exp}^{\rm ss\mbox{-}rep\mbox{-}1}_{\Pi}(A)$}\\
+$S \gets A()$ \\
 $(M,\pubaux,\privaux) \getsr \Rep(S)$\\
-$(f,v) \getsr A^{\TestOracle}(M,\pubaux)$\\
-if $f(S)=v$ then\\
-\nudge Return 1\\
-Return 0\\
+return $A(M,\pubaux)$\\
 
 \medskip
-\experimentv{$\ExpPrivSSsim{\setprim,\distr{}{}}{P}$}\\
-$S\getsr \distr{}{}$\\
-$(M,\pubaux,\privaux) \getsr \Rep(S)$\\
-$(f,v) \getsr P(\pubaux)$\\
-if $f(S)=v$ then\\
-\nudge Return 1\\
-Return 0\\
+\experimentv{${\bf Exp}^{\rm ss\mbox{-}rep\mbox{-}0}_{\Pi, {\sf leak}}(A, \calS)$}\\
+$S \gets A()$\\
+$(M,\pubaux) \getsr \calS({\sf info}(S))$ \\
+return $A(M,\pubaux)$\\
+%\medskip
+%\experimentv{$\ExpWPriv{\setprim,\distr{}{}}{A}$}\\
+%$S \getsr \distr{}{}$\\
+%$(M,\pubaux,\privaux) \getsr \Rep(S)$\\
+%$z \getsr A^{\TestOracle}(\pubaux)$\\
+%if $z \in S$ then Return 1\\
+%Return 0\\
 }
 %
-{
-\oracle{$\TestOracle(q)$}\\
-$a \gets \Qry(M,\pubaux,\privaux,q)$\\
-Return~$a$\\
+{}
 }
-}
-{
-\hpagess{.49}{.49}
-{
-\experimentv{$\ExpPrivSS{\setprim,\distr{}{},P}{A}$}\\
-$S\getsr \distr{}{}$\\
-$b \getsr \bits$\\
+\caption{Experiments for a ``semantic-security'' style privacy
+  definition.}
+\label{fig:privacy-ss}
+\end{figure}
+
+
+%
+%\begin{figure}[htbp]
+%\centering
+%\hfpages{.495}
+%{
+%\hpagess{.49}{.49}
+%{
+%
+%\experimentv{$\ExpPrivSSreal{\setprim,\distr{}{}}{A}$}\\
+%$S\getsr \distr{}{}$\\
 %$(M,\pubaux,\privaux) \getsr \Rep(S)$\\
-$(M_1,\pubaux,\privaux) \getsr \Rep(S)$\\
-$M_0 \getsr P(\pubaux)$\\
-%$(f,v) \getsr \getsr A^{\TestOracle}(M,\pubaux)$\\
-$b' \getsr A^{\TestOracle}(M_b,\pubaux)$\\
+%$(f,v) \getsr A^{\TestOracle}(M,\pubaux)$\\
 %if $f(S)=v$ then\\
-if $b'=b$ then\\
-\nudge Return 1\\
-Return 0\\
+%\nudge Return 1\\
+%Return 0\\
 %
 %\medskip
 %\experimentv{$\ExpPrivSSsim{\setprim,\distr{}{}}{P}$}\\
@@ -233,22 +258,54 @@ Return 0\\
 %if $f(S)=v$ then\\
 %\nudge Return 1\\
 %Return 0\\
-}
-%
-{
-\oracle{$\TestOracle(q)$}\\
-$a \gets \Qry(M_1,\pubaux,\privaux,q)$\\
-Return~$a$\\
-}
-}
-\caption{Semantic-security style privacy
-  definitions. \textcolor{red}{On the left, need to protect against
-    adversary outputting
-    things like $f(S)=M$.  One idea is to forbid~$f$ such that
-    $f(S)=f(S')$ for all $S,S'$ in the support of $\distr{}{}$.}
-    } 
-\label{fig:privacy-ss}
-\end{figure}
+%}
+%%
+%{
+%\oracle{$\TestOracle(q)$}\\
+%$a \gets \Qry(M,\pubaux,\privaux,q)$\\
+%Return~$a$\\
+%}
+%}
+%{
+%\hpagess{.49}{.49}
+%{
+%\experimentv{$\ExpPrivSS{\setprim,\distr{}{},P}{A}$}\\
+%$S\getsr \distr{}{}$\\
+%$b \getsr \bits$\\
+%%$(M,\pubaux,\privaux) \getsr \Rep(S)$\\
+%$(M_1,\pubaux,\privaux) \getsr \Rep(S)$\\
+%$M_0 \getsr P(\pubaux)$\\
+%%$(f,v) \getsr \getsr A^{\TestOracle}(M,\pubaux)$\\
+%$b' \getsr A^{\TestOracle}(M_b,\pubaux)$\\
+%%if $f(S)=v$ then\\
+%if $b'=b$ then\\
+%\nudge Return 1\\
+%Return 0\\
+%%
+%%\medskip
+%%\experimentv{$\ExpPrivSSsim{\setprim,\distr{}{}}{P}$}\\
+%%$S\getsr \distr{}{}$\\
+%%$(M,\pubaux,\privaux) \getsr \Rep(S)$\\
+%%$(f,v) \getsr P(\pubaux)$\\
+%%if $f(S)=v$ then\\
+%%\nudge Return 1\\
+%%Return 0\\
+%}
+%%
+%{
+%\oracle{$\TestOracle(q)$}\\
+%$a \gets \Qry(M_1,\pubaux,\privaux,q)$\\
+%Return~$a$\\
+%}
+%}
+%\caption{Semantic-security style privacy
+%  definitions. \textcolor{red}{On the left, need to protect against
+%    adversary outputting
+%    things like $f(S)=M$.  One idea is to forbid~$f$ such that
+%    $f(S)=f(S')$ for all $S,S'$ in the support of $\distr{}{}$.}
+%    }
+%\label{fig:privacy-ss}
+%\end{figure}
 
 \subsection{Relationships Among Notions}\todo{Decide which of these
   statements should have formal theorems and proofs.}
@@ -257,7 +314,7 @@ reduction.  The converse is not true, however: consider the previous
 construction in which $M = S \setminus \{x\}$ for a random $x \in S$,
 and $\pubaux=\privaux=\emptystring$.  We note that this construction
 also serves to separate the priv notion from our notion of
-correctness.  (It is $1-(1/|S|)$ correct, but has no priv-security.)  
+correctness.  (It is $1-(1/|S|)$ correct, but has no priv-security.)
 
 Curiously, the trivial scheme that sets $M=S$, $\pubaux=\privaux=\emptystring$ does seem to be both correct and wpriv-secure (up to the element-wise min-entropy of~$S$).
 \tsnote{In general, reducing correctness to wPriv is syntactically possible, but not clear how to connect the success events.  In the one-wayness game, you win by outputing an element of~$S$; but how does this lead to finding an error-inducing query?  Maybe the one-wayness attacker makes no queries, and just outputs a point~$z$.  Then the correctness attacker does what?  Ask some query~$q_z$ related to~$z$ ---remember, queries are not syntactically restricted to set membership!--- and see if the oracle returns the true value $q_z(S)$?  This is pretty complicated... and it's not clear how to do a quality reduction.   }
@@ -270,6 +327,3 @@ Curiously, the trivial scheme that sets $M=S$, $\pubaux=\privaux=\emptystring$ d
     structures} \tsnote{but probably not in general}
 \item \{w\}priv $\not\Rightarrow$ ss-rep
 \end{itemize}
-
-
-
