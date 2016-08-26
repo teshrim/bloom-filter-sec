@@ -208,14 +208,14 @@ $M, \pubaux$ of the representation of a set~$S$ leaks only ${\sf leak}(S)$.
 \hpagess{.5}{.45}
 {
 \experimentv{$\ExpPrivSSreal{\Pi}{A}$}\\
-$S \gets A()$ \\
+$S \getsr A()$ \\
 $(M,\pubaux,\privaux) \getsr \Rep(S)$\\
 return $A(M,\pubaux)$\\
 }
 %
 {
 \experimentv{$\ExpPrivSSsim{\Pi, {\sf leak}}{A, \calS}$}\\
-$S \gets A()$\\
+$S \getsr A()$\\
 $(M,\pubaux) \getsr \calS({\sf leak}(S))$ \\
 return $A(M,\pubaux)$\\
 
