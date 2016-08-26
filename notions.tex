@@ -117,7 +117,11 @@ not leak any (non-trivial) information about the set~$S$ they represent.
 \jnote{OK, from here on I specialize to set-representation data structures\ldots}
 The one-wayness definition (see
 Figure~\ref{fig:privacy-ow}) is parameterized by a distribution $\distr{}{}$ over
-sets. \jnote{I got rid of the weaker definition, since it seems unnatural to me.}
+sets. \jnote{I got rid of the weaker definition, since it seems
+  unnatural to me.}\tsnote{Why? It captures things like the Squid
+  summary cache -- hash functions are public (in the code, in the
+  literature), but you would need to corrupt the HTTP proxy-server to
+  get the representation.}
 A set $S$ is chosen from this distribution, and a representation
 $(M,\pubaux,\privaux)$ of that set is computed.
 In one experiment ($\ExpPriv{\Pi,\distr{}{}}$), the attacker is given $M, \pubaux$;
@@ -176,11 +180,21 @@ distributions
 and require the probability of finding an element to be low,
 or whether we want to allow arbitrary distributions but compare the attacker's
 success probability when given $(M, \pub)$ to its success probability when given nothing.
-The latter seems cleaner, so I took that approach here.}
+The latter seems cleaner, so I took that approach here.}\tsnote{I
+guess I prefer the former.  Security bounds will always surface the (elementwise)
+min-entropy of~$\distr{}{}$.  In any case, it's not clear to me that
+the null experiment captures reference/trivial attacks, which is what
+I think you are trying to capture with it.  I mean, why not give the
+public information? }
 
 \jnote{Actually, I am unsure whether a one-wayness definition is independently
 interesting if we have (and can achieve) a semantic-security definition.}
-
+\tsnote{Depends on what information we decide is okay to leak.  A
+  classical BF gives an~$M$ that leaks a good approximation of $|S|$.
+Do we want that to be considered semantically secure?  On the other
+hand, a classical BF is one-way in the ROM, up to the min-entropy of
+the distribution over~$S$.  So that may already give an interesting
+example that fits in the gap.}
 Our semantic-secure definition is simulation-based (see
 Figure~\ref{fig:privacy-ss}).
 In this definition we compare the probabilities with which an attacker $A$ outputs~1
