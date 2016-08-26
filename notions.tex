@@ -207,15 +207,15 @@ $M, \pubaux$ of the representation of a set~$S$ leaks only ${\sf leak}(S)$.
 \fpage{.6}{
 \hpagess{.5}{.45}
 {
-\experimentv{${\bf Exp}^{\rm ss\mbox{-}rep\mbox{-}1}_{\Pi}(A)$}\\
+\experimentv{$\ExpPrivSSreal{\Pi}{A}$}\\
 $S \gets A()$ \\
 $(M,\pubaux,\privaux) \getsr \Rep(S)$\\
 return $A(M,\pubaux)$\\
 
 \medskip
-\experimentv{${\bf Exp}^{\rm ss\mbox{-}rep\mbox{-}0}_{\Pi, {\sf leak}}(A, \calS)$}\\
+\experimentv{$\ExpPrivSSsim{\Pi, {\sf leak}}{A, \calS}$}\\
 $S \gets A()$\\
-$(M,\pubaux) \getsr \calS({\sf info}(S))$ \\
+$(M,\pubaux) \getsr \calS({\sf leak}(S))$ \\
 return $A(M,\pubaux)$\\
 %\medskip
 %\experimentv{$\ExpWPriv{\setprim,\distr{}{}}{A}$}\\
