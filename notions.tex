@@ -211,22 +211,21 @@ $M, \pubaux$ of the representation of a set~$S$ leaks only ${\sf leak}(S)$.
 $S \gets A()$ \\
 $(M,\pubaux,\privaux) \getsr \Rep(S)$\\
 return $A(M,\pubaux)$\\
-
-\medskip
+}
+%
+{
 \experimentv{$\ExpPrivSSsim{\Pi, {\sf leak}}{A, \calS}$}\\
 $S \gets A()$\\
 $(M,\pubaux) \getsr \calS({\sf leak}(S))$ \\
 return $A(M,\pubaux)$\\
-%\medskip
-%\experimentv{$\ExpWPriv{\setprim,\distr{}{}}{A}$}\\
-%$S \getsr \distr{}{}$\\
-%$(M,\pubaux,\privaux) \getsr \Rep(S)$\\
-%$z \getsr A^{\TestOracle}(\pubaux)$\\
-%if $z \in S$ then Return 1\\
-%Return 0\\
+
+\medskip
+\experimentv{$\ExpPrivSSsim{\Pi}{A, \calS}$}\\
+$S \gets A()$\\
+$(M,\pubaux,\privaux) \getsr \Rep(S)$\\
+$(M',\pubaux) \gets \calS(\pubaux)$ \\
+return $A(M',\pubaux)$\\
 }
-%
-{}
 }
 \caption{Experiments for a ``semantic-security'' style privacy
   definition.}
