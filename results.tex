@@ -1,4 +1,9 @@
 \section{Achieving Security Notions}
+
+\jnote{Outline:
+}
+
+
 \heading{Linear-PRF construction. }
 Here we consider a set-multiplicity data structure that was attacked by Neidermayer et al. in~\cite{xxx}.  Let $\Pi_{\mathrm{lin}}= (\Sigma,\Gamma,\calS,\calQ,\Rep, \Qry)$ be defined as follows. Fix an $n \geq 0$, let $\mathcal{S}=[\univ]^n$, and let $\Sigma=\Gamma=\bits$. The queries are defined so that $q_x(S)=1$ if $x \in S$, and 0 otherwise.  Fix non-empty sets ~$\calK$, $\univ$ and integers $k,m,n>0$.  Let $F\colon\mathcal{K} \times \univ \to [m]$ be a function family. Define $\Hash$ as an algorithm that samples two keys $K_0,K_1 \getsr \mathcal{K}$ and defines $h_j(x) = F_{K_0}(x) + j\cdot F_{K_1}(x) \bmod m$ for $j \in [1,k]$.  $\Rep$ uses $\Hash$ to set $\privaux=\pubaux = (h_1, \ldots, h_k)$, computes an $m$ bit array, $M$ in the standard way and returns $(M,\pubaux,\privaux)$.  The $\Qry$ algorithm gets $(M,\privaux, q_x)$ as input, and returns the AND of values at $M[h_1(x)],\ldots,M[h_k(x)]$. It must be noted that $\Pi_{\mathrm{lin}}$ admits errors in form of false-positives(FP) only. So, error rate of $\Pi_{\mathrm{lin}}$ is same as the (non-adaptive) FP rate. The following result shows, informally, that if~$F$ is a good PRF and the error rate is sufficiently small, then $\Pi_\mathrm{lin}$ is correct against adaptive error-finding adversaries. Henceforth, we refer errors and error-rate in $\Pi_{\mathrm{lin}}$ as FP's and FP rate, respectively.
 
@@ -14,7 +19,7 @@ that the ($r=1$, non-adaptive) FP-probability for~$\Pi_\mathrm{lin}$ is
 always within $O(1/n)$ of $(1-e^{-kn/m})^k$, although the asymptotic
 rate of convergence is faster than~$1/n$.  The factor of $\dbinom{q}{r}$ arises as a result
 of removing adaptivity.  Finally, $\dbinom{q}{r} \leq q^r$ (with
-reasonable tightness when~$r$ is small) in which case the final term in the bound behaves as 
+reasonable tightness when~$r$ is small) in which case the final term in the bound behaves as
 $(q (1-e^{-kn/m})^k + O(q/n) )^r$; loosely, the bound one expects for
 trying to find a single FP in each of~$r$ independent``rounds'', each round
 consisting of~$q$ attempts.
@@ -23,7 +28,7 @@ consisting of~$q$ attempts.
 Let $\Pi_{\mathrm{ds}}= (\Sigma,\Gamma,\calS,\calQ,\Rep, \Qry)$ be a set-multiplicity data structure identical to $\Pi_{\mathrm{lin}}$, except the $Hash$ algorithm, which is defined as follows. Fix non-empty sets ~$\calK$, $\univ$ and integers $k,m,n>0$.  Let $F\colon\mathcal{K} \times \univ \to [m]$ be a function family.  The $\Hash$ algorithm provides randomness with domain separation, as it samples key $K \getsr \mathcal{K}$ and defines $h_j(x) = F_K(\langle j,x \rangle) $ for $j \in [1,k]$. Like $\Pi_{\mathrm{lin}}$, $\Pi_{\mathrm{ds}}$ admits errors in form of false positives only. Informally, the following result shows, if~$F$ is PRF secure and the data structure has low error rate in the non-adaptive setting, then $\Pi_{\mathrm{ds}}$ is correct against adaptive error finding adversaries. Hereafter, we refer errors and error-rate in $\Pi_{\mathrm{ds}}$ as false-positives and false-positive rate, respectively.
 
 \begin{theorem}\label{thm2}
-Fix $k,m,n,r >0$. Let $\Pi_{\mathrm{ds}}$ be the set-multiplicity data structure just described. If there exists an adaptive adversary, $A$ compatible with $\ExpCorrect{\Pi_{\mathrm{ds}},\distr{\calS}{},r}{\cdot}$ asking $q$ queries, and has time complexity O(t), then there exists a prf-adversary $B$ (explicitly constructed in the proof of this theorem), such that 
+Fix $k,m,n,r >0$. Let $\Pi_{\mathrm{ds}}$ be the set-multiplicity data structure just described. If there exists an adaptive adversary, $A$ compatible with $\ExpCorrect{\Pi_{\mathrm{ds}},\distr{\calS}{},r}{\cdot}$ asking $q$ queries, and has time complexity O(t), then there exists a prf-adversary $B$ (explicitly constructed in the proof of this theorem), such that
 \[
 \AdvCorrect{\Pi_{\mathrm{ds}},\distr{\calS}{},r}{A} \leq  \AdvPRF{F}{B}  + {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
 \]
@@ -34,9 +39,11 @@ Here, $B$ asks $q$ queries, and has time complexity $O(t+qm)$.
 
 \heading{Correctness. }  Here we give security proofs and attacks with respect to the correctness notions.
 \begin{itemize}
-\item Show Bloom Filter is correct in the ROM 
-\item correctness security/attacks on bigram/PRF-based double-hashing construction ($h_j(x) = F_{K1}(x) + j\cdot F_{K2}(x) \bmod m$ where the~$x$ are bigrams of names, etc.) 
-\item correctness-security/attacks on bigram/domain-separated PRF construction ($h_j(x)=F_K(\langle j,x \rangle) \bmod m$, or just assume range of~$F$ is $[m]$.)
+\item Show Bloom Filter is correct in the ROM. \jnote{Should follow along the lines
+of Theorem~2, but taking into account adversary's oracle queries.}
+\item correctness security/attacks on the bigram/PRF-based double-hashing construction ($h_j(x) = F_{K1}(x) + j\cdot F_{K2}(x) \bmod m$ where the~$x$ are bigrams of names, etc.)
+\jnote{Done}
+\item correctness-security/attacks on the bigram/domain-separated PRF construction ($h_j(x)=F_K(\langle j,x \rangle) \bmod m$, or just assume range of~$F$ is $[m]$.) \jnote{Done}
 \item correctness-security/attacks Dong, Chen, Wen ``garbled Bloom filter'' construction
 
 \end{itemize}
@@ -48,11 +55,13 @@ Here, $B$ asks $q$ queries, and has time complexity $O(t+qm)$.
 
 \item As a simple corrolary, show that the basic BF with $h_j(x)=F_K(\langle j,x \rangle)$ is private.  \tsnote{I believe this also shows that the bigram/PRF approach examined by Neidermayer et al.\ is secure when the hash functions are the $h_j(x)$ just described.  This was, in fact, one of the countermeasures they proposed. }
 
-\item Prove privacy bounds for the constructions from NY
+\item Prove privacy bounds for the constructions from NY. \jnote{Is this interesting?}
 
-\item Cast Neidermayer et al.\ attacks on the bigram/PRF-based double-hashing construction (see their paper) into our formalism.  \tsnote{Note that their attack would allow one to recover \emph{every} name, not just one.} 
+\item Cast Neidermayer et al.\ attacks on the bigram/PRF-based double-hashing construction (see their paper) into our formalism.  \tsnote{Note that their attack would allow one to recover \emph{every} name, not just one.}
 
 \item Prove a privacy bound for the bigram/PRF-based double-hashing construction that Neidermayer et al.\ attacks. I expect that the provable security bound is considerably worse than the min-entropy because of the way the representation is made.  (Essentially, the Hamming weight of the representation is a good estimate of the length of the longest surname in filter.)
+\jnote{Maybe tailor leakage function appropriately, i.e., so that
+it only leaks the number of bigrams?}
 
 \item Attack priv-security of Dong, Chen, Wen ``garbled Bloom Filter'' construction when the hash functions are public.\tsnote{I give the attack in the related work section.  Copy it here and flesh it out.}  Prove priv-security privacy of construction when hash functions are secret.  \tsnote{Makes the point that the application setting really matters.}
 

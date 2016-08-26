@@ -66,7 +66,8 @@ We define the advantage of adversary~$A$ in the correctness experiment as
 $\AdvCorrect{\Pi,\distr{}{},r}{A} = \Prob{\ExpCorrect{\Pi,\distr{}{}, r,}{A}=1}$.
 Overloading notation, we write $\AdvCorrect{\Pi,\distr{}{},r}{t,q}$ for the maximum over all~$t$-time adversaries that ask at most~$q$ queries. Roughly, we say that a
 set-representation~$\Pi$ is $(t,q,r,\epsilon')$-correct if $\AdvCorrect{\Pi,\distr{}{},r}{t,q} \leq \epsilon'$.
-
+\jnote{Note that test includes err because we don't want to penalize
+the adversary's resources for computing $q(S)$.}
 
 \heading{Comparison to Naor-Yogev definition.}
 The style of the Naor-Yogev (NY) definition is slightly different. \jnote{Even if we ignore
@@ -92,6 +93,10 @@ given the public information.
 at least for attackers making at most $q-1$ queries.
 This is immediate.
 \end{enumerate}
+\jnote{Case of $r=1$ does not necessarily imply anything for $r>1$: can have a scheme
+where finding the first false positive is hard but then the rest are easy; can have
+a scheme where finding one false positive is easy but there do not exist
+any more false positives.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -121,7 +126,10 @@ sets. \jnote{I got rid of the weaker definition, since it seems
   unnatural to me.}\tsnote{Why? It captures things like the Squid
   summary cache -- hash functions are public (in the code, in the
   literature), but you would need to corrupt the HTTP proxy-server to
-  get the representation.}
+  get the representation.} \jnote{We can include the weaker definition, or perhaps
+  it is cleaner to just have the syntax output $(\pub, \privaux)$ with $\pub$ always
+  public and $\privaux$ always private; a scheme can then choose whether $M$ is in $\pub$
+  or $\privaux$. If we do this, then need to be careful how to define size.}
 A set $S$ is chosen from this distribution, and a representation
 $(M,\pubaux,\privaux)$ of that set is computed.
 In one experiment ($\ExpPriv{\Pi,\distr{}{}}$), the attacker is given $M, \pubaux$;
@@ -131,10 +139,13 @@ access to an oracle via which it can
 issue queries and obtain the corresponding responses.
 For a given $\distr{}{}$ and $A$, we define the advantage measure
 $\AdvPriv{\Pi,\distr{}{}}{A} \bydef
-\left| \Prob{\ExpPriv{\Pi,\distr{}{}}{A}=1} - \Prob{\ExpPrivNull{\Pi,\distr{}{}}{A}=1} \right|$.
+\left| \Prob{\ExpPriv{\Pi,\distr{}{}}{A}=1} - \Prob{\ExpPrivNull{\Pi,\distr{}{}}{P}=1} \right|$.
 We track the
 time-complexity~$t$ and number of oracle queries~$q$ made by the adversary.
-
+\jnote{Change. Compare $A$ in the 1-world to $P$ in the 0-world. Security means
+there exists a $P$
+such that for all~$A$ the following holds: $A$ in the 1-world does not do much better than
+$P$ in the 0-world. Note that there is a canonical $P$ that does best, information-theoretically.}
 
 \begin{figure}[hbtp]
 \centering
@@ -149,10 +160,10 @@ if $z \in S$ then return 1\\
 return 0\\
 
 \medskip
-\experimentv{$\ExpPrivNull{\Pi, \distr{}{}}{A}$} \\
+\experimentv{$\ExpPrivNull{\Pi, \distr{}{}}{P}$} \\
 $S \getsr \distr{}{}$\\
-$(M,\pubaux,\privaux) \getsr \Rep(S)$\\
-$z \getsr A^{\TestOracle}(\emptystring,\emptystring)$\\
+%$(M,\pubaux,\privaux) \getsr \Rep(S)$\\
+$z \getsr P()$\\
 if $z \in S$ then return 1\\
 return 0\\
 %\medskip
@@ -194,7 +205,9 @@ interesting if we have (and can achieve) a semantic-security definition.}
 Do we want that to be considered semantically secure?  On the other
 hand, a classical BF is one-way in the ROM, up to the min-entropy of
 the distribution over~$S$.  So that may already give an interesting
-example that fits in the gap.}
+example that fits in the gap.} \jnote{Yes. Semantic security
+is parameterized by the leakage function, and so might or might not imply
+one-wayness.}
 Our semantic-secure definition is simulation-based (see
 Figure~\ref{fig:privacy-ss}).
 In this definition we compare the probabilities with which an attacker $A$ outputs~1
@@ -202,13 +215,15 @@ in two experiments: one ``real'' and one ``simulated.''
 In the real experiment (ss-rep-1), $A$ outputs a set $S$ and is given the
 $M,\pubaux$ that result from running $\Rep(S)$.
 In the simulated experiment (ss-rep-0), $A$ outputs $S$ and is given $M, \pubaux$ output
-by a simulator $\calS$ that is only given ${\sf leak}(S)$. \jnote{Note
+by a simulator $\calS$ that is only given ${\sf leak}(S)$. \jnote{${\sf leak}$ can
+be randomized.} \jnote{Note
 there is no need for a query oracle here, since the attacker knows the set. Interestingly,
 if we provide a query oracle in the real world and an oracle that returns the correct
 answer in the simulated world, then this definition seems to imply
 correctness also.}
 \tsnote{Need to pass state between stages if you want~$A$ to know the
-  set it previously sampled, right?}
+  set it previously sampled, right?} \jnote{Yes, unless by convention all algorithms
+  are stateful. (smiley face).}
 For a given function ${\sf leak}$, adversary $A$, and simulator~$\calS$,
 we define the advantage measure
 $\AdvPrivSS{\Pi,{\sf leak}}{A,\calS} \bydef
@@ -217,7 +232,7 @@ $\AdvPrivSS{\Pi,{\sf leak}}{A,\calS} \bydef
 Informally, a scheme $\Pi$ is secure with respect to some leakage ${\sf leak}$
 if there is a simulator $\calS$ such that $\AdvPrivSS{\Pi,{\sf leak}}{A,\calS}$ is small
 for all~$A$. Intuitively, this means that the public portion
-$M, \pubaux$ of the representation of a set~$S$ leaks only ${\sf leak}(S)$. 
+$M, \pubaux$ of the representation of a set~$S$ leaks only ${\sf leak}(S)$.
 
 \begin{figure}[hbtp]
 \centering
@@ -236,12 +251,12 @@ $S \getsr A()$\\
 $(M,\pubaux) \getsr \calS({\sf leak}(S))$ \\
 return $A(M,\pubaux)$\\
 
-\medskip
-\experimentv{$\ExpPrivSSsim{\Pi}{A, \calS}$}\\
-$S \gets A()$\\
-$(M,\pubaux,\privaux) \getsr \Rep(S)$\\
-$(M',\pubaux) \gets \calS(\pubaux)$ \\
-return $A(M',\pubaux)$\\
+%\medskip
+%\experimentv{$\ExpPrivSSsim{\Pi}{A, \calS}$}\\
+%$S \gets A()$\\
+%$(M,\pubaux,\privaux) \getsr \Rep(S)$\\
+%$(M',\pubaux) \gets \calS(\pubaux)$ \\
+%return $A(M',\pubaux)$\\
 }
 }
 \caption{Experiments for a ``semantic-security'' style privacy
