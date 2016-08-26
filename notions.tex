@@ -191,7 +191,10 @@ In the simulated experiment (ss-rep-0), $A$ outputs $S$ and is given $M, \pubaux
 by a simulator $\calS$ that is only given ${\sf leak}(S)$. \jnote{Note
 there is no need for a query oracle here, since the attacker knows the set. Interestingly,
 if we provide a query oracle in the real world and an oracle that returns the correct
-answer in the simulated world, then this definition seems to imply correctness also.}
+answer in the simulated world, then this definition seems to imply
+correctness also.}
+\tsnote{Need to pass state between stages if you want~$A$ to know the
+  set it previously sampled, right?}
 For a given function ${\sf leak}$, adversary $A$, and simulator~$\calS$,
 we define the advantage measure
 $\AdvPrivSS{\Pi,{\sf leak}}{A,\calS} \bydef
