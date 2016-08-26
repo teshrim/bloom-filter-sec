@@ -34,8 +34,8 @@ random-oracle(s).
 
 \begin{figure}[htp]
 \centering
-\fpage{.7}{
-\hpagess{.6}{.35}
+\fpage{.6}{
+\hpagess{.5}{.45}
 {
 \experimentv{$\ExpCorrect{\setprim,\distr{}{},r}{A}$}\\
 $S \getsr \distr{}{}$\\
@@ -121,13 +121,13 @@ sets. \jnote{I got rid of the weaker definition, since it seems unnatural to me.
 A set $S$ is chosen from this distribution, and a representation
 $(M,\pubaux,\privaux)$ of that set is computed.
 In one experiment ($\ExpPriv{\Pi,\distr{}{}}$), the attacker is given $M, \pubaux$;
-in a second experiment (${\bf Exp}^{\rm null}_{\Pi,\distr{}{}}$), it is not.
+in a second experiment ($\ExpPrivNull{\Pi,\distr{}{}}{}$), it is not.
 In both cases, the attacker is given
 access to an oracle via which it can
 issue queries and obtain the corresponding responses.
 For a given $\distr{}{}$ and $A$, we define the advantage measure
 $\AdvPriv{\Pi,\distr{}{}}{A} \bydef
-\left| \Prob{\ExpPriv{\Pi,\distr{}{}}{A}=1} - \Prob{{\bf Exp}^{\rm null}_{\Pi,\distr{}{}}(A)=1} \right|$.
+\left| \Prob{\ExpPriv{\Pi,\distr{}{}}{A}=1} - \Prob{\ExpPrivNull{\Pi,\distr{}{}}{A}=1} \right|$.
 We track the
 time-complexity~$t$ and number of oracle queries~$q$ made by the adversary.
 
@@ -145,10 +145,10 @@ if $z \in S$ then return 1\\
 return 0\\
 
 \medskip
-\experimentv{${\bf Exp}^{\rm null}_{\Pi, \distr{}{}}(A)$} \\
+\experimentv{$\ExpPrivNull{\Pi, \distr{}{}}{A}$} \\
 $S \getsr \distr{}{}$\\
 $(M,\pubaux,\privaux) \getsr \Rep(S)$\\
-$z \getsr A^{\TestOracle}()$\\
+$z \getsr A^{\TestOracle}(\emptystring,\emptystring)$\\
 if $z \in S$ then return 1\\
 return 0\\
 %\medskip
