@@ -108,6 +108,7 @@ $S \getsr \distr{\calS}{}$\\
 $\err \gets 0$\\
 $(M,\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
 $z \getsr A^{\TestOracle}(S,\pubaux)$\\
+if $\bad = \true$ then \fbox{Return 0}\\
 if $\err  < r$ then Return 0\\
 Return 1
 }
