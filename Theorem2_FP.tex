@@ -99,7 +99,7 @@ Ret $\left(h_1(x),\ldots,h_k(x)\right)$
 }
 }
 \fpage{.9}{
-\hpagessl{.55}{.3}
+\hpagessl{.55}{.4}
 {
 \underline{{$\game{2}(A)$},\fbox{$\game{3}(A)$}}\\
 $c\gets 0$, $\bad \gets \false$\\
@@ -126,8 +126,8 @@ if $v \neq q(S)$\\
 Return~$(v,\err )$\\\\
 %
 \oracle{$\HashOracle(x)$}\\
-$a \getsr [m]$\\
 for $j = 1$ to~$k$\\
+\nudge $a \getsr [m]$\\
 \nudge $v_j = a$\\
 Ret $\left(v_1,\ldots,v_k\right)$
 }
