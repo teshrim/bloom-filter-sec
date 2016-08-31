@@ -20,17 +20,13 @@ multiset.
 %Informally, the representation should serve as a good
 %approximation of the multiset, at least with respect to the allowed queries.
 \begin{definition}[Data structure] \rm
-Fix a non-empty set~$\univ$. A \emph{data structure} (over universe~$\univ$)
-is a tuple $\setprim=(\Sigma,\Gamma,\calS,\calQ,\Rep, \Qry)$ where:
+Fix a non-empty set~$\univ$, and a set of multisets~$\calS$ over
+$\univ$. 
+A \emph{data structure} (for $\calS$) is a tuple $\setprim=(\calQ,\Rep, \Qry)$ where:
 \begin{itemize}
-\item $\Sigma$ is the \emph{representation alphabet}.
-%\jnote{Is there any reason not to simply fix this to $\{0,1\}$?}
-\item $\Gamma$ is the set of possible \emph{query answers}.
-%\jnote{Do we need this for any reason?}
-\item $\calS$ is a set  of multisets over universe~$\univ$.
 \item $\mathcal{Q}=\{q \colon \mathcal{S} \to \Gamma\}$ is a set
-    of supported \emph{queries}.
-\item $\Rep \colon \mathcal{S} \to \Sigma^* \times \bits^*
+    of supported \emph{queries}, where $\Gamma$ is the set of query \emph{answers}.
+\item $\Rep \colon \mathcal{S} \to \bits^*
     \times \bits^*$ is a randomized \emph{representation
     algorithm}, taking as input $S \in \mathcal{S}$, and
     outputting a \emph{representation} $M \in \Sigma^*$,
