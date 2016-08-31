@@ -156,7 +156,7 @@ To summarize, we have
 \[
 \AdvCorrect{\Pi_{\mathrm{lin}},\distr{\calS}{},r}{A}  \leq  \AdvPRF{F}{B_1} +\AdvPRF{F}{B_2} +\dbinom{q}{r}\left( (1-e^{-kn/m})^k + O(1/n) \right)^r
 \]
-which is the bound claimed in the theorem statement. \hfill \qed
+which is the bound claimed in the theorem statement. %\hfill \qed
 
 %\caption{Game playing argument}\label{fig:Game}
 \begin{figure}
@@ -169,13 +169,13 @@ $\err \gets 0$\\
 $(M,\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
 $z \getsr A^{\TestOracle}(S,\pubaux)$\\
 if $\err  < r$ then Return 0\\
-Return 1\\\\
+Return 1\\
 %
 \oracle{$\TestOracle(q)$}\\
 $a \gets \Qry^{\HashOracle}(M,\privaux,q)$\\
 if $a \neq q(S)$ then \\
 \nudge $\err \gets\err +1$\\
-Return~$(a,\err )$\\\\
+Return~$(a,\err )$\\
 %
 \oracle{$\HashOracle(x)$}\\
 for $i = 1$ to $k$\\
@@ -190,13 +190,13 @@ $\err \gets 0$\\
 $(M,\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
 $z \getsr A^{\TestOracle}(S,\pubaux)$\\
 if $\err  < r$ then Return 0\\
-Return 1\\\\
+Return 1\\
 %
 \oracle{$\TestOracle(q)$}\\
 $a \gets \Qry^{\HashOracle}(M,\privaux,q)$\\
 if $a \neq q(S)$ then \\
 \nudge $\err \gets\err +1$\\
-Return~$(a,\err )$\\\\
+Return~$(a,\err )$\\
 %
 \oracle{$\HashOracle(x)$}\\
 for $i=1$ to $k$\\
@@ -214,7 +214,7 @@ $\err \gets 0$\\
 $(M,\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
 $z \getsr A^{\TestOracle}(S,\pubaux)$\\
 if $\err  < r$ then Return 0\\
-Return 1\\\\
+Return 1\\
 %
 \oracle{$\TestOracle(q)$}\\
 $a \gets \Qry^{\HashOracle}(M,\privaux,q)$\\
@@ -229,14 +229,14 @@ Ret $\left(h_1(x),\ldots,h_k(x)\right)$
 }
 {
 \underline{{$\game{3}(A)$},\fbox{$\game{4}(A)$}}\\
-$c\gets 0$, $\bad \gets \false$\\
+$c\gets 0$, $\bad \gets \false$, $\err \gets 0$\\
 $\mathcal{I}\getsr [\{1,2,\ldots,q\}]^r$\\
 $S \getsr \distr{\calS}{}$\\
-$\err \gets 0$\\
 $(M,\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
 $z \getsr A^{\TestOracle}(S,\pubaux)$\\
+if $\bad = \true$ then \fbox{Return 0}\\
 if $\err  < r$ then Return 0\\
-Return 1\\\\
+Return 1\\
 %
 \oracle{$\TestOracle(q)$}\\
 $c \gets c+1$\\
@@ -247,7 +247,7 @@ if $c \not\in \mathcal{I}$ and $v \neq q(S)$ then \\
 \nudge $\bad \gets \true$\\
 if $v \neq q(S)$\\
 \nudge $\err \gets\err +1$\\
-Return~$(v,\err )$\\\\
+Return~$(v,\err )$\\
 %
 \oracle{$\HashOracle(x)$}\\
 $a,b \getsr [m]$\\

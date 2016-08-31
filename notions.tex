@@ -12,11 +12,11 @@ set-representations.
 First, a set~$S$ is chosen according to some
 distribution~$\distr{}{}$ over the collection of multisets
 $\mathcal{S}$ associated to~$\Pi$, and then
-$\Rep(S)$ is run to generate $(M,\pubaux,\privaux)$.
+$\Rep(S)$ is run to generate $(\pubaux,\privaux)$.
 %(Unless stated otherwise, we assume security holds for all distributions and thus for all sets $S$.)
 Adversary~$A$ is given~$\calS$ and $\pubaux$~as input; it is
 provided an oracle~$\TestOracle$ that, on input a query~$q \in \calQ$,
-computes (and returns) the result of $\Qry(M,\privaux,q)$, and increments
+computes (and returns) the result of $\Qry(\pubaux,\privaux,q)$, and increments
 a counter if this result is in error.  The adversary wins if it
 manages to cause at least~$r>0$ such errors among its queries.
 
@@ -34,7 +34,7 @@ random-oracle(s).
 \experimentv{$\ExpCorrect{\setprim,\distr{}{},r}{A}$}\\
 $S \getsr \distr{}{}$\\
 $\mathrm{err}\gets 0$\\
-$(M,\pubaux,\privaux) \getsr \Rep(S)$\\
+$(\pubaux,\privaux) \getsr \Rep(S)$\\
 $z \getsr A^{\TestOracle}(S,\pubaux)$\\
 if $\mathrm{err} < r$ then Return 0\\
 Return 1
@@ -42,7 +42,7 @@ Return 1
 %
 {
 \oracle{$\TestOracle(q)$}\\
-$a \gets \Qry(M,\pubaux,\privaux,q)$\\
+$a \gets \Qry(\pubaux,\privaux,q)$\\
 if $a \neq q(S)$ then \\
 \nudge $\mathrm{err}\gets\mathrm{err}+1$\\
 Return~$(a,\mathrm{err})$
