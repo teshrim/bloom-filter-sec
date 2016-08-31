@@ -192,21 +192,23 @@ issuing queries; since $A$ knows the set~$S$, such an oracle would be superfluou
 if we provided a query oracle in the real world and an oracle that returns the correct
 answer in the simulated world, then the definition seems to imply
 correctness also.}}
-In the simulated experiment (ss-rep-0), $A$ outputs $S$ and is given $\pubaux$ output
-by a simulator $\Sim$ that is only given ${\sf leak}(S)$ for some (possibly randomized)
-function~${\sf leak}$.
 \tsnote{Need to pass state between stages if you want~$A$ to know the
   set it previously sampled, right?} \jnote{Yes, unless by convention all algorithms
   are stateful. (smiley face). Whatever you prefer is fine with me.}
+In the simulated experiment (ss-rep-0), $A$ outputs $S$ and is given $\pubaux$ output
+by a simulator $\Sim$ that is only given ${\sf leak}(S)$ for some (possibly randomized)
+function~${\sf leak}$. \jnote{Could also give $\Sim$ a membership oracle.}
 For a given function ${\sf leak}$, adversary $A$, and simulator~$\Sim$,
 we define the advantage measure
 $\AdvPrivSS{\Pi,{\sf leak}}{A,\Sim} \bydef
 \left| \Prob{\ExpPrivSSreal{\Pi}{A}=1} -
 \Prob{\ExpPrivSSsim{\Pi,{\sf leak}}{A, \Sim}=1} \right|$.
 Informally, a scheme $\Pi$ is secure with respect to some leakage function ${\sf leak}$
-if there is a simulator $\Sim$ such that $\AdvPrivSS{\Pi,{\sf leak}}{A,\Sim}$ is small
-for all~$A$. Intuitively, this means that the public portion
+if for all $A$ there is a simulator $\Sim$ such that
+$\AdvPrivSS{\Pi,{\sf leak}}{A,\Sim}$ is small.
+Intuitively, this means that the public portion
 $\pubaux$ of the representation of a set~$S$ leaks~${\sf leak}(S)$ and nothing more.
+\jnote{Need to relate running time of $\Sim$ to running time of~$A$.}
 
 \begin{figure}[hbtp]
 \centering
