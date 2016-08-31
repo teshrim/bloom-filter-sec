@@ -19,7 +19,7 @@ We use a game playing argument (shown in \Cref{fig:2TGame}) similar to \Cref{thm
 \AdvCorrect{\Pi_{\mathrm{ds}},\distr{\calS}{},r}{A} = \Prob{\game{0}(A)=1}\label{eq:2T0}
 \end{equation}
 
-Let $B$ be a prf-adversary as shown in \Cref{fig:2TD}. Based on its challenge bit $b$, it exactly simulates $\game{0}$ or $\game{1}$. So,
+Let $B$ be a prf-adversary as shown in \Cref{fig:D}. Based on its challenge bit $b$, it exactly simulates $\game{0}$ or $\game{1}$. So,
 \begin{align*}
 \Prob{\ExpPRF{F}{B} = 1\,|\,b=1} &= \Prob{\game{0}(A)=1} \\%\label{eq:m1}\\
 \Prob{\ExpPRF{F}{B} = 1\,|\,b=0} &= 1-\Prob{\game{1}(A)=1}
@@ -37,7 +37,7 @@ In $\game{1}$, $A$ attacks a different filter $\tilde{\Pi}_\mathrm{ds}$, in whic
 \Prob{\game{3}(A)=1} = \frac{1}{\dbinom{q}{r}}\Prob{\game{2}(A)=1}
 \end{align*}
 
-Let $D$ be a non-adaptive adversary (shown in \Cref{fig:2TD}) that finds ~$r$ false positives against $\tilde{\Pi}_{\mathrm{ds}}$. As discussed in the previous theorem, if $A$ wins $\game{3}$, then $D$ wins $\ExpCorrect{\tilde{\Pi}_{\mathrm{ds}},\distr{\calS}{},r}{\cdot}$ game. So, 
+Let $D$ be a non-adaptive adversary (shown in \Cref{fig:2TD}) that finds ~$r$ false positives against $\tilde{\Pi}_{\mathrm{ds}}$. Using explanations from previous theorem, if $A$ wins $\game{3}$, then $D$ wins $\ExpCorrect{\tilde{\Pi}_{\mathrm{ds}},\distr{\calS}{},r}{\cdot}$ game. So, 
 \begin{equation*}
 \AdvCorrect{\tilde{\Pi}_{\mathrm{ds}},\distr{\calS}{},r}{D} = \Prob{\game{3}(A) = 1}\label{eq:2T8}
 \end{equation*}
@@ -134,12 +134,10 @@ Ret $\left(v_1,\ldots,v_k\right)$
 \caption{\Cref{thm2}: Game playing argument}\label{fig:2TGame}
 \end{figure}
 
-%\caption{PRF adversary $B$ simulating $\game{1}(A)$ and $\game{2}(A)$, and non-adaptive adversary $D$ simulating $\game{4}(A)$} 
+%\caption{PRF adversary $B$ simulating $\game{1}(A)$ and $\game{2}(A)$
 \begin{figure}
 \centering
-\fpage{0.9}{
-\hpagessl{0.5}{0.5}
-{
+\fpage{0.5}{
 $\adversaryv{B^{\calO}}$\\
 $S \getsr \distr{\calS}{}$\\
 $\err \gets 0$\\
@@ -158,33 +156,7 @@ When $A$ halts: \\
 \oracle{$\HashOracle(x)$}\\
 \nudge Ret $\OK$, for $j\in[1,k]$\\
 }
-{
-$\adversaryv{D^{\TestOracle, \calS}}$\\
-$c \gets 0$\\%, $\calX \gets \emptyset$\\
-$\err \gets 0$\\
-$\mathcal{I}\getsr [\{1,2,\ldots,q\}]^r$\\
-Run $A(S)$\\
-When $A$ asks $\TestOracle(x)$:\\
-\nudge $c \gets c+1$\\
-\nudge $r \gets 0$\\
-\nudge if $c \in \mathcal{I}$\\
-%\nudge \nudge $\calX \gets \calX \cup \{x\}$\\
-\nudge \nudge $r \gets 1$\\
-\nudge \nudge $\err \gets \err + 1$\\
-\nudge Ret $(r,\err )$\\
-When $A$ halts:\\
-\nudge Ret 1
-}
-%
-%\oracle{$\TestOracle(x)$}\\
-% Ret $\Qry^{\HashOracle}(M,x)$\\\\
-%
-%\oracle{$\HashOracle(x)$}\\
-%for $j = 1$ to~$k$\\
-%\nudge $v_j = \rhoK $\\
-%Ret $\left(v_1,\ldots,v_k\right)$
-}
-\caption{\Cref{thm2}: \textbf{Left}: PRF adversary $B$ simulating $\game{1}(A)$ and $\game{2}(A)$. \textbf{Right}: Non-adaptive adversary $D$ simulating $\game{4}(A)$} \label{fig:2TD}
+\caption{\Cref{thm2}: PRF adversary $B$ simulating $\game{1}(A)$ and $\game{2}(A)$} \label{fig:2TD}
 \end{figure}	
 
 

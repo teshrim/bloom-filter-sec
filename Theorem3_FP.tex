@@ -3,13 +3,12 @@
 As discussed earlier, the classical Bloom filter (BF) is an instantiation of a set multiplicity data structure and admits errors in form of false  positives (FP) only. In the ROM, $\Rep$ queries the random oracle to get the hash indices of elements of set $S$. It then computes the $m$-bit array, $M$ and outputs $\privaux=\emptystring$, $\pubaux = \emptystring$ and $M$ as the representation of
 the Bloom filter. The $\Qry$ oracle uses the random oracle in a similar way. For any query $q$, it gets the hash indices $h_1, \ldots, h_k$ from the random oracle and returns 1 if $M[h_i(x)]=1$ for all $i\in [k]$, and 0 otherwise.
 \begin{theorem}\label{thm3}
-Fix $k,m,n,r>0$. Let $A$ be an adaptive adversary (for attacking BF) asking $q_\mathsf{A}$ queries to the random oracle. Let $t_\mathsf{A}$ be the running time of $A$ given these queries. Then there is a prf-adversary  $B$ (explicitly given in the proof) such that
+Fix $k,m,n,r>0$. Let $A$ be an adaptive adversary (for attacking BF) asking $q$ queries to the random oracle. Let $t$ be the running time of $A$ given these queries. Then, 
 \[
-\AdvCorrect{{BF},\distr{\calS}{},r}{A} \leq  \AdvPRF{F}{B}  +{\dbinom{q_\mathsf{A}}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
+\AdvCorrect{{BF},\distr{\calS}{},r}{A} \leq  {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
 \]
-Here, $B$ asks~$O(q_\mathsf{A})$ oracle queries and has time complexity~$O(t_A+q_\mathsf{A}m)$.
 \end{theorem}
 
 \begin{proof}[\Cref{thm3}]
-The proof of this theorem will follow along the lines of \Cref{thm2} with the following alterations. In $\game{0}$, the $\Hash$ oracle does lazy sampling to mimic a random oracle; in rest of the games, it returns $k$ random elements for each query. We get rid of $\game{1}$, and $\Rep$, $\Qry$ and adversary $A$ are given access to the random oracle in all the games. 
+The proof of this theorem will follow along the lines of \Cref{thm2}.
 \end{proof}
