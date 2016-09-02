@@ -1,15 +1,89 @@
 \acnote{To be verified before moving the theorem to section 4}
 \heading{Classical Bloom filter in random oracle model (ROM). }
-As discussed earlier, the classical Bloom filter (BF) is an instantiation of a set multiplicity data structure and admits errors in form of false  positives (FP) only. In the ROM, $\Rep$ queries the random oracle to get the hash indices of elements of set $S$. It then computes the $m$-bit array, $M$ and outputs $\privaux=\emptystring$, $\pubaux = \emptystring$ and $M$ as the representation of
+As discussed earlier, the classical Bloom filter (BF) is an instantiation of a set multiplicity data structure and admits errors in form of false-positives(FPs) only. In the ROM, $\Rep$ queries the random oracle to get the hash indices of elements of set $S$. It then computes the $m$-bit array, $M$ and outputs $\privaux=\emptystring$, $\pubaux = \emptystring$ and $M$ as the representation of
 the Bloom filter. The $\Qry$ oracle uses the random oracle in a similar way. For any query $q$, it gets the hash indices $h_1, \ldots, h_k$ from the random oracle and returns 1 if $M[h_i(x)]=1$ for all $i\in [k]$, and 0 otherwise.
 \begin{theorem}\label{thm3}
-Fix $k,m,n,r>0$. Let $A$ be an adaptive adversary (for attacking BF) asking $q_\mathsf{A}$ queries to the random oracle. Let $t_\mathsf{A}$ be the running time of $A$ given these queries. Then there is a prf-adversary  $B$ (explicitly given in the proof) such that
+Fix $k,m,n,r>0$. Let $A$ be an adaptive adversary (for attacking BF) asking $q$ queries to the random oracle. Let $t$ be the running time of $A$ given these queries. Then, 
 \[
-\AdvCorrect{{BF},\distr{\calS}{},r}{A} \leq  \AdvPRF{F}{B}  +{\dbinom{q_\mathsf{A}}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
+\AdvCorrect{{BF},\distr{\calS}{},r}{A} \leq  {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
 \]
-Here, $B$ asks~$O(q_\mathsf{A})$ oracle queries and has time complexity~$O(t_A+q_\mathsf{A}m)$.
 \end{theorem}
 
 \begin{proof}[\Cref{thm3}]
-The proof of this theorem will follow along the lines of \Cref{thm2} with the following alterations. In $\game{0}$, the $\Hash$ oracle does lazy sampling to mimic a random oracle; in rest of the games, it returns $k$ random elements for each query. We get rid of $\game{1}$, and $\Rep$, $\Qry$ and adversary $A$ are given access to the random oracle in all the games. 
+The proof of this theorem will follow along the lines of \Cref{thm2}. As in previous proofs, we use a game playing argument to prove this theorem as well. In $\game{0}$, the $\HashOracle$ does lazy sampling of elements from $[m]$ to mimic a random oracle(RO). It can be observed that, $\game{0}$ exactly simulates the BF's correctness game attacked by an adaptive adversary. So, $\AdvCorrect{{BF},\distr{\calS}{},r}{A} = \Prob{\game{0}(A) = 1}$.
+%
+In $\game{1}$, assuming $A$ does not make any pointless queries, $\HashOracle$ is modified to sample random elements from $[m]$. In addition, $\Test$ sets $\bad$ to $\true$ if queries indexed by set $\calI$ fail to be FPs, or if any of the remaining queries are FPs. $\game{2}$, on the other hand is exactly same as $\game{1}$ except it returns 0, if $\bad$ is set to $\true$. It can be easily seen that, $\game{1}$ and $\game{2}$ are exactly same as $\game{2}$ and $\game{3}$ of \Cref{thm2}'s game playing argument. So, 
+\begin{align*}
+\Prob{\game{1}(A)=1} = \Prob{\game{0}(A)=1}\\
+\Prob{\game{2}(A)=1} = \frac{1}{\dbinom{q}{r}}\Prob{\game{1}(A)=1}
+\end{align*}
+\Cref{fig:D} shows non-adaptive adversary, $D$ that finds $r$ FPs against the standard BF. Using a similar explanation from previous proofs,
+\begin{align*}
+\AdvCorrect{{BF},\distr{\calS}{},r}{D} &= \Prob{\game{2}(A) = 1}\\
+\AdvCorrect{{BF},\distr{\calS}{},r}{D} &\leq \left( (1-e^{-kn/m})^k + O(1/n) \right)^r \,.
+\end{align*}
+To summarize, we have
+\[
+\AdvCorrect{{BF},\distr{\calS}{},r}{A} \leq  {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
+\]
+
+\begin{figure}
+\fpage{.9}{
+\hpagessl{.45}{.5}
+{
+\underline{\game{0}(A)}\\
+$S \getsr \distr{\calS}{}$\\
+$\err \gets 0$\\
+$(M,\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+$z \getsr A^{\TestOracle}(S,\pubaux)$\\
+if $\err  < r$ then Return 0\\
+Return 1\\\\
+%
+\oracle{$\TestOracle(q)$}\\
+$a \gets \Qry^{\HashOracle}(M,\privaux,q)$\\
+if $a \neq q(S)$ then \\
+\nudge $\err \gets\err +1$\\
+Return~$(a,\err )$\\\\
+%
+\oracle{$\HashOracle(x)$}\\
+for $j = 1$ to $k$\\
+\nudge $v_j \getsr [m]$\\
+\nudge if $T_j[x] \neq \undefined$\\
+\nudge \nudge $v_j \gets T_j[x]$\\
+\nudge $T_j[x] \gets v_j$\\
+Ret $\left(v_1,\ldots,v_k\right)$
+}
+{
+\underline{{$\game{1}(A)$},\fbox{$\game{2}(A)$}}\\
+$c\gets 0$, $\bad \gets \false$\\
+$\mathcal{I}\getsr [\{1,2,\ldots,q\}]^r$\\
+$S \getsr \distr{\calS}{}$\\
+$\err \gets 0$\\
+$(M,\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+$z \getsr A^{\TestOracle}(S,\pubaux)$\\
+if $\bad = \true$ then \fbox{Return 0}\\
+if $\err  < r$ then Return 0\\
+Return 1\\ 
+%
+\oracle{$\TestOracle(q)$}\\
+$c \gets c+1$\\
+$v \gets \Qry^{\HashOracle}(M,\privaux,q)$\\
+if $c \in \mathcal{I}$ and $v = q(S)$ then \\
+\nudge $\bad \gets \true$ \\
+if $c \not\in \mathcal{I}$ and $v \neq q(S)$ then \\
+\nudge $\bad \gets \true$\\
+if $v \neq q(S)$\\
+\nudge $\err \gets\err +1$\\
+Return~$(v,\err )$\\\\
+%
+\oracle{$\HashOracle(x)$}\\
+for $j = 1$ to~$k$\\
+\nudge $v_j \getsr [m]$\\
+Ret $\left(v_1,\ldots,v_k\right)$
+}
+}
+\caption{\Cref{thm3}: Game playing argument}\label{fig:3TGame}
+\end{figure}
+
+
 \end{proof}
