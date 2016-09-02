@@ -67,8 +67,7 @@ the adversary's resources for computing $q(S)$.}
 The style of the Naor-Yogev (NY) definition is slightly different. \jnote{Even if we ignore
 all the other issues, chief among them the inconsistent way it treats the hash functions.}
 Lifting their definition to our setting, the experiment is similar but the attacker
-succeeds only if it outputs a single query $q$ for which $\Qry( M,
-\aux, q) \neq q(S)$  \emph{subject to the restriction that it did not query $q$ to its $\Qry$ oracle}.
+succeeds only if it outputs a single query $q$ for which $\Qry(\pubaux,\privaux, q) \neq q(S)$  \emph{subject to the restriction that it did not query $q$ to its $\Qry$ oracle}.
 It will be interesting to understand formally the relation between our definition and theirs.
 Here are some observations:
 \begin{enumerate}
@@ -181,13 +180,13 @@ two versions of semantic security.}
 %example that fits in the gap.} \jnote{Yes. Semantic security
 %is parameterized by the leakage function, and so might or might not imply
 %one-wayness.}
-Our semantic-secure definition is simulation-based (see
-Figure~\ref{fig:privacy-ss}).
+Our semantic-secure definition is simulation-based (see Figure~\ref{fig:privacy-ss}).
 In this definition we compare the probabilities with which an attacker $A$ outputs~1
 in two experiments: one ``real'' and one ``simulated.''
-In the real experiment (ss-rep-1), $A$ outputs a set $S$ and is given the
-public information $\pubaux$ that results from running $\Rep(S)$.\footnote{We do not give $A$ an oracle for
-issuing queries; since $A$ knows the set~$S$, such an oracle would be superfluous.
+In the real experiment (ss-rep-1), $A$ outputs a set $S$  and is given the
+public information $\pubaux$ that results from running $\Rep(S)$.
+\footnote{We do not give $A$ an oracle for issuing queries; 
+since $A$ knows the set~$S$, such an oracle would be superfluous.
 \jnote{Interestingly,
 if we provided a query oracle in the real world and an oracle that returns the correct
 answer in the simulated world, then the definition seems to imply
@@ -195,9 +194,9 @@ correctness also.}}
 In the simulated experiment (ss-rep-0), $A$ outputs $S$ and is given $\pubaux$ output
 by a simulator $\Sim$ that is only given ${\sf leak}(S)$ for some (possibly randomized)
 function~${\sf leak}$.
-\tsnote{Need to pass state between stages if you want~$A$ to know the
-  set it previously sampled, right?} \jnote{Yes, unless by convention all algorithms
-  are stateful. (smiley face). Whatever you prefer is fine with me.}
+%\tsnote{Need to pass state between stages if you want~$A$ to know the
+%  set it previously sampled, right?} \jnote{Yes, unless by convention all algorithms
+%  are stateful. (smiley face). Whatever you prefer is fine with me.}
 For a given function ${\sf leak}$, adversary $A$, and simulator~$\Sim$,
 we define the advantage measure
 $\AdvPrivSS{\Pi,{\sf leak}}{A,\Sim} \bydef
@@ -214,16 +213,16 @@ $\pubaux$ of the representation of a set~$S$ leaks~${\sf leak}(S)$ and nothing m
 \hpagess{.5}{.45}
 {
 \experimentv{$\ExpPrivSSreal{\Pi}{A}$}\\
-$S \getsr A()$ \\
-$(M,\pubaux,\privaux) \getsr \Rep(S)$\\
-return $A(M,\pubaux)$\\
+$(S,\st) \getsr A()$ \\
+$(\pubaux,\privaux) \getsr \Rep(S)$\\
+return $A(\st,\pubaux)$\\
 }
 %
 {
 \experimentv{$\ExpPrivSSsim{\Pi, {\sf leak}}{A, \Sim}$}\\
-$S \getsr A()$\\
-$(M,\pubaux) \getsr \Sim({\sf leak}(S))$ \\
-return $A(M,\pubaux)$\\
+$(S,\st) \getsr A()$\\
+$(\st,\pubaux) \getsr \Sim({\sf leak}(S))$ \\
+return $A(\st,\pubaux)$\\
 
 %\medskip
 %\experimentv{$\ExpPrivSSsim{\Pi}{A, \calS}$}\\
