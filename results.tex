@@ -15,18 +15,19 @@ Fix $k,m,n,r>0$, and let $\Pi_{\mathrm{lin}}= (\Sigma,\Gamma,\calS,\calQ,\Rep, \
 Here, $B_1$ and $B_2$, each ask~$q$ oracle queries and have time complexity~$O(t+qm)$.
 \end{theorem}
 Before giving the proof, we note that Kirsch and Mitzenmacher~\cite{xxx} show
-that the ($r=1$, non-adaptive) FP-probability for~$\Pi_\mathrm{lin}$ is
+that the ($r=1$, zero-query) FP-probability for~$\Pi_\mathrm{lin}$ is
 always within $O(1/n)$ of $(1-e^{-kn/m})^k$, although the asymptotic
 rate of convergence is faster than~$1/n$.  The factor of $\dbinom{q}{r}$ arises as a result
-of removing adaptivity.  Finally, $\dbinom{q}{r} \leq q^r$ (with
+of moving from the adaptive to the zero-query setting.  Finally, $\dbinom{q}{r} \leq q^r$ (with
 reasonable tightness when~$r$ is small) in which case the final term in the bound behaves as
 $(q (1-e^{-kn/m})^k + O(q/n) )^r$; loosely, the bound one expects for
 trying to find a single FP in each of~$r$ independent``rounds'', each round
 consisting of~$q$ attempts.
 
 \heading{Construction of PRF with domain separation.}
-Let $\Pi_{\mathrm{ds}}= (\Sigma,\Gamma,\calS,\calQ,\Rep, \Qry)$ be a set-multiplicity data structure identical to $\Pi_{\mathrm{lin}}$, except the $\Hash$ oracle, which is defined as follows. Fix non-empty sets ~$\calK$, $\univ$ and integers $k,m,n>0$.  Let $F\colon\mathcal{K} \times \univ \to [m]$ be a function family.  The $\Hash$ algorithm provides randomness with domain separation, as it samples key $K \getsr \mathcal{K}$ and defines $h_j(x) = F_K(\langle j,x \rangle) $ for $j \in [1,k]$. Like $\Pi_{\mathrm{lin}}$, $\Pi_{\mathrm{ds}}$ admits errors in form of false positives only. Informally, the following result shows, if~$F$ is PRF secure and the data structure has low error rate in the non-adaptive setting, then $\Pi_{\mathrm{ds}}$ is correct against adaptive error finding adversaries. Hereafter, we refer errors and error-rate in $\Pi_{\mathrm{ds}}$ as false-positives and false-positive rate, respectively.
+Let $\Pi_{\mathrm{ds}}= (\calQ,\Rep, \Qry)$ be a set-multiplicity data structure defined on the right-side of Figure~\ref{fig:lin-and-ds}.  As with the preceding theorem, the following says (informally) that if~$F$ is a secure PRF, then this domain-separated PRF construction is correct against adaptive adversaries.
 
+\fixme{Make look like the previous theorem}
 \begin{theorem}\label{thm2}
 Fix $k,m,n,r >0$. Let $\Pi_{\mathrm{ds}}$ be the set-multiplicity data structure just described. If there exists an adaptive adversary, $A$ compatible with $\ExpCorrect{\Pi_{\mathrm{ds}},\distr{\calS}{},r}{\cdot}$ asking $q$ queries, and has time complexity O(t), then there exists a prf-adversary $B$ (explicitly constructed in the proof of this theorem), such that
 \[
