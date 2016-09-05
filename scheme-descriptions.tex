@@ -46,3 +46,38 @@ Return 1
   \univ \to \bits\}$ where $q_x(S)=1 \Leftrightarrow x \in S$.  }
 \label{fig:lin-and-ds}
 \end{figure}
+
+\begin{figure}[htp]
+\centering
+\hfpages{.45}
+{
+\algorithmv{$\Rep^H(S)$}\\
+$M \gets 0^m$\\
+for $x \in S$\\
+\nudge for $j \in \{1,2,\ldots,k\}$\\
+\nudge\nudge $h_j \gets H(j,x)$\\
+\nudge\nudge $M[h_j] \gets 1$\\
+$\pubaux \gets M$, $\privaux \gets \emptystring$\\
+Return $(\pubaux,\privaux)$\\
+
+\medskip
+\algorithmv{$\Qry^H(\pubaux,\privaux,q_x)$}\\
+$M\gets\pubaux$\\
+for $j \in \{1,2,\ldots,k\}$\\
+\nudge $h_j \gets H(j,x)$\\
+\nudge if $M[h_j] \neq 1$ then Return 0\\
+Return 1
+}
+{
+\algorithmv{$\Rep(S)$}\\
+
+
+\medskip
+\algorithmv{$\Qry(\pubaux,\privaux,q_x)$}\\
+}
+\caption{{\bf Left:} $\Rep$ and $\Qry$ algorithms for classic Bloom
+  filter $\Pi_{\mathrm{Bloom}}$ in the ROM for a hash function $H\colon \mathbb{N} \times
+  \univ \to [m]$. {\bf Right:} [unfinished]. For both, the query set is $\calQ=\{q_x\colon
+  \univ \to \bits\}$ where $q_x(S)=1 \Leftrightarrow x \in S$.  }
+\label{fig:bf-and-garbled-bf}
+\end{figure}
