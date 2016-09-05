@@ -13,7 +13,7 @@ overload the notation so that~$|X|$ is the total multiplicity of~$X$.
 
 Algorithms may be provided black-box access to one or more oracles, which we write as superscripts, e.g., $F^{O_1,O_2,\ldots}$.  An \emph{adversary} is a randomized algorithm
 
-\heading{Data structures.}  We being by defining a general primitive
+\heading{Data structures.}  We begin by defining a general primitive
 that produces a representation of a given multiset, and provides a
 mechanism to answer a specified collection of questions about that
 multiset.
@@ -71,8 +71,7 @@ $\Rep$ would allow this.}
 %  I don't think we ever explicitly care about size for any of our results.}
 
 \begin{definition}[Error probability and rate] \rm
-Fix a data structure $\setprim=(\Sigma,\Gamma,\calS,\calQ,\Rep,
-\Qry)$. Let $\mathrm{Err}(S,q,\pubaux,\privaux)$ be a predicate that is
+Fix a data structure $\setprim=(\calQ,\Rep, \Qry)$. Let $\mathrm{Err}(S,q,\pubaux,\privaux)$ be a predicate that is
 true iff $\Qry(\pubaux,\privaux, q) \neq q(S)$.  Then a data structure
 has \emph{error probability} $\epsilon$ if
 $\max_{S,q}\Pr[(\pubaux,\privaux) \getsr \Rep(S) :
@@ -98,10 +97,10 @@ correctness of the data structure. \tsnote{Don't know if this will be necessary.
 Let~$\Pi$ be a scheme that is $(1-\epsilon)$-correct, and consider
 an attack that asks random queries $q_1,q_2,\ldots,q_T$, i.e.,
 uniform samples from~$\calQ$.
-Let $\mathrm{Err}_i$ be a random variable indicating the event $\Qry(M,\pubaux,\privaux,q_i)\neq q_i(S)$.
+Let $\mathrm{Err}_i$ be a random variable indicating the event $\Qry(\pubaux,\privaux,q_i)\neq q_i(S)$.
 The $(1-\epsilon)$-correctness of~$\Pi$ guarantees that the probability that $\mathrm{Err}_i=1$ is at most~$\epsilon$,
 and it is tempting to model the~$\mathrm{Err}_i$ as i.i.d. Bernoulli trials with success probability~$\epsilon$.
-However, a moment's reflection shows that this is not the case.  Concretely, consider the following scheme.  Fix $|S|=n$ for all $S \in \calS$, where $n \ll |\univ|$.  For the queries, let $\calQ = \{q_x\colon \calS \to \bits \,|\, \forall x \in \univ\}$ where $\forall S \in \calS$ the predicate $q_x(S)=1 \Leftrightarrow x \in S$.  Let $\Rep(S)$ pick a random element~$s \in S$, and return $M = S \setminus \{s\}$ and $\privaux = \emptystring$.  To respond to queries, let~$\Qry(M,\pubaux,\privaux,q_x)=1$ iff $x \in M$.  It is easy to see that this scheme is $1/n$-correct; for any fixed~$S$, there are exactly~$n$ queries~$q_x$ that have probability~$1/n$  (over the coins of~$\Rep$) of causing a correctness error, and the remaining $|\univ|-n$ queries have probability zero of causing an error.  Moreover, once the coins of~$\Rep$ are fixed, there is exactly \emph{one} query that will cause an error.  Thus for random queries from~$Q$, for all~$i\in[T]$ we have $\Prob{\mathrm{Err}_i=1}=1/|\univ| \ll 1/n = \epsilon$.
+However, a moment's reflection shows that this is not the case.  Concretely, consider the following scheme.  Fix $|S|=n$ for all $S \in \calS$, where $n \ll |\univ|$.  For the queries, let $\calQ = \{q_x\colon \calS \to \bits \,|\, \forall x \in \univ\}$ where $\forall S \in \calS$ the predicate $q_x(S)=1 \Leftrightarrow x \in S$.  Let $\Rep(S)$ pick a random element~$s \in S$, and return $M = S \setminus \{s\}$ and $\privaux = \emptystring$.  To respond to queries, let~$\Qry(\pubaux,\privaux,q_x)=1$ iff $x \in M$.  It is easy to see that this scheme is $1/n$-correct; for any fixed~$S$, there are exactly~$n$ queries~$q_x$ that have probability~$1/n$  (over the coins of~$\Rep$) of causing a correctness error, and the remaining $|\univ|-n$ queries have probability zero of causing an error.  Moreover, once the coins of~$\Rep$ are fixed, there is exactly \emph{one} query that will cause an error.  Thus for random queries from~$Q$, for all~$i\in[T]$ we have $\Prob{\mathrm{Err}_i=1}=1/|\univ| \ll 1/n = \epsilon$.
 
 This example is contrived, but it highlights the important
 difference between error probability and error rate.  In particular,
@@ -121,7 +120,7 @@ where $\calQ=\{q_x \,|\, x \in \univ\}$ where $q_x(S)$ is defined to
 be the multiplicity of~$x$ in the multiset~$S$. \hfill\dqed
 \end{definition}
 
-It is not hard to see Bloom filters are an instantiation a
+It is not hard to see Bloom filters are an instantiation of a
 set-multiplicity data structure.  Fix $\Sigma=\Gamma=\bits$.  Define
 algorithm~$\Rep$, with functions $k=k(|S|), m=m(|S|)$ and a
 description of a hash function family~$\mathcal{H}=\{h \colon \univ
@@ -129,10 +128,10 @@ description of a hash function family~$\mathcal{H}=\{h \colon \univ
 $h_1, \ldots, h_k$ from~$\mathcal{H}$ and then compute an $m$-bit
 array~$M$ (intialized to 0 everywhere) by setting $M[h_i(x)]=1$ for
 all $i\in [k]$ and $x \in S$.  Finally, $\Rep$ returns
-$\privaux=\emptystring$, $\pubaux = (h_1,\ldots, h_k)$, and~$M$ as the
+$\privaux=\emptystring$ and $\pubaux = M$ as the
 representation.
 %
-The algorithm~$\Qry$ is defined so that, on input $(M,\pubaux,\privaux,q_x)$, it
+The algorithm~$\Qry$ is defined so that, on input $(\pubaux,\privaux,q_x)$, it
 returns the minimum of the values $M[h_1(x)],\ldots,M[h_k(x)]$.  We note that, while our error
 probability and error rate do not distinguish among ``types'' of
 errors, they also do not preclude instantiations (like the classical
@@ -140,7 +139,7 @@ Bloom filter) that admit only one type of error, e.g.
 false-positives.
 
 As a simple extension, consider $\Sigma=\mathbb{N}$ and modify the
-basic Bloom filter so that it that stores counters, rather than
+basic Bloom filter so that it stores counters, rather than
 bits, at each position in an array.  In particular, for each~$x \in
 S$ the $\Rep$~algorithm increments the counters stored at positions
 $h_1(x), h_2(x), \ldots, h_k(x)$, returns the final array of
@@ -151,11 +150,11 @@ count-min sketches~\cite{xxx}, scalable Bloom filters~\cite{xxx},
 etc., in a later section.\tsnote{If we ultimately do!}
 
 A Bloom filter with secret hash functions is captured by setting
-$\privaux=(h_1,h_2,\ldots,h_k)$, and setting $\pubaux=\emptystring$.
+$\privaux=(h_1,h_2,\ldots,h_k)$, and setting $\pubaux=M$.
 Related constructions that use a secret key~$K$, but not for hashing (e.g.\ the PRP-based
-construction from NY), are captured setting $\privaux=K, \pubaux=(h_1, \ldots, h_k)$.
+construction from NY), are captured setting $\privaux=K, \pubaux=M$.
 
-By setting $\Sigma=\bits^L$ for a specified $L>0$, we capture he
+By setting $\Sigma=\bits^L$ for a specified $L>0$, we capture the
 so-called ``garbled Bloom filter'' due to Dong, Chen and
 Wen~\cite{xxx}.  This stores xor-shares of bitstring~$x \in S$ at
 positions $h_1(x),h_2(x),\ldots,h_k(x)$ in an array.  Similarly, the

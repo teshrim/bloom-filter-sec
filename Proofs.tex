@@ -4,29 +4,4 @@
 \tsnote{Jon: ignore these for now.  This is Animesh's workspace.}
 \input{Theorem2_FP}
 \input{Theorem3_FP}
-%\input{Theorem3_priv}
 
-\iffalse
-\section{Summary of attacks(based on Bloom filter exploit) on Squid}
-\acnote{For reference}\\
-\heading{Crossby and Wallach: Squid Attack on hash tables} 
-\begin{itemize}
-\item A Squid server was ran on a stand-alone machine.
-\item A file containing a list of URL's was prepared.
-\item The URL requests were parsed and served by the Squid server. This completed the set-up phase.
-\item Crossby and Wallach targeted hash collisions in Squid to increase the average URL load time. The authors quote ``This attack does not represent a ''smoking gun'' for algorithmic complexity attacks, but it does illustrate how common network services may be sensitive to these attacks". 2 experiments were carried out to illustrate this.
-\item In experiment 1, around 143K random URL's were requested to the proxy server, whereas in experiment 2, same number of carefully chosen URL's that collide with the already present URL's in the hash-table were requested. 
-\item Observation: The load time of random URL's was less than the chosen URL's. It must be noted that, the authors did not use a brute-force approach to find collisions. Rather,  they proposed an efficient method to find hash-collisions. The method involves finding a set of elements that hash to the same index and using a combination of those elements to find more elements. 
-\end{itemize}
-
-\heading{Gerber et. al. : Squid attack on cache digest:}
-\begin{itemize}
-\item Squid servers follow a hierarchical model, and in this model the peers can exchange summary of their cache using Bloom filters(cache-digest). 
-\item In the set-up phase, the authors configure 2 peer Squid servers for caching and an HTTP server which responds to all queries of the Squid servers. 
-\item Peer 1's cache-digest is polluted using fake URL's. Both the peers exchange their cache-digests 
-\item Client(s) of Peer 2, start making URL requests. The URL's which are not cached by the latter are searched in its neighbors cache-digest and false positives are counted.
-\item Observation: There is a substantial increase in FP's due to pollution as compared to FP's without it.
-\item Reason: Fake URL's increase the Hamming weight of the cache digest of peer 1 and hence increase false positives.
-\end{itemize}
-
-\fi
