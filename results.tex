@@ -2,10 +2,10 @@
 
 \jnote{Organize by scheme, not by security notions.
 }
-
+\include{scheme-descriptions}
 
 \heading{Linear-PRF construction. }
-Here we consider a set-multiplicity data structure that was attacked by Neidermayer et al. in~\cite{xxx}.  Let $\Pi_{\mathrm{lin}}= (\Sigma,\Gamma,\calS,\calQ,\Rep, \Qry)$ be defined as follows. Fix an $n \geq 0$, let $\mathcal{S}=[\univ]^n$, and let $\Sigma=\Gamma=\bits$. The queries are defined so that $q_x(S)=1$ if $x \in S$, and 0 otherwise.  Fix non-empty sets ~$\calK$, $\univ$ and integers $k,m,n>0$.  Let $F\colon\mathcal{K} \times \univ \to [m]$ be a function family. Define $\Hash$ as an algorithm that samples two keys $K_0,K_1 \getsr \mathcal{K}$ and defines $h_j(x) = F_{K_0}(x) + j\cdot F_{K_1}(x) \bmod m$ for $j \in [1,k]$.  $\Rep$ uses $\Hash$ to set $\privaux=\pubaux = (h_1, \ldots, h_k)$, computes an $m$ bit array, $M$ in the standard way and returns $(M,\pubaux,\privaux)$.  The $\Qry$ algorithm gets $(M,\privaux, q_x)$ as input, and returns the AND of values at $M[h_1(x)],\ldots,M[h_k(x)]$. It must be noted that $\Pi_{\mathrm{lin}}$ admits errors in form of false-positives(FP) only. So, error rate of $\Pi_{\mathrm{lin}}$ is same as the (non-adaptive) FP rate. The following result shows, informally, that if~$F$ is a good PRF and the error rate is sufficiently small, then $\Pi_\mathrm{lin}$ is correct against adaptive error-finding adversaries. Henceforth, we refer errors and error-rate in $\Pi_{\mathrm{lin}}$ as FP's and FP rate, respectively.
+Here we consider a set-multiplicity data structure that was attacked by Neidermayer et al. in~\cite{xxx}. Fix $n,k,m \geq 0$ and let $\mathcal{S}=[\univ]^n$.  Then $\Pi_{\mathrm{lin}}= (\calQ,\Rep, \Qry)$ is defined as in Figure~\ref{fig:lin-and-ds} (left side).  The following result shows, informally, that if~$F$ is a good PRF, then $\Pi_\mathrm{lin}$ is correct against adaptive error-finding adversaries. 
 
 \begin{theorem}\label{thm1}
 Fix $k,m,n,r>0$, and let $\Pi_{\mathrm{lin}}= (\Sigma,\Gamma,\calS,\calQ,\Rep, \Qry)$ be the set-multiplicity data structure just described. For any adversary~$A$ that makes a total of~$q$ queries to its oracle and has time-complexity~$O(t)$, there exist prf-adversaries~$B_1,B_2$ (explicitly constructed in the proof of this theorem) such that

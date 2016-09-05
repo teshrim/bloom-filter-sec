@@ -29,8 +29,8 @@ A \emph{data structure} (for $\calS$) is a tuple $\setprim=(\calQ,\Rep, \Qry)$ w
 \item $\Rep \colon \mathcal{S} \to \bits^*
     \times \bits^*$ is a randomized \emph{representation
     algorithm}, taking as input $S \in \mathcal{S}$, and outputting %a \emph{representation} $M \in \Sigma^*$,
-    \emph{private representation data} $\privaux \in \bits^*$, and
-    \emph{public representation data} $\pubaux \in \bits^*$.  We write
+    \emph{public representation data} $\pubaux \in \bits^*$ and
+    \emph{private representation data} $\privaux \in \bits^*$. We write
     $(\pubaux,\privaux) \getsr \Rep(S)$ as shorthand for this execution.
 \item $\Qry\colon \Sigma^* \times \bits^* \times \bits^* \times \calQ \to
     \Gamma$ is a deterministic \emph{query-evaluation}
@@ -72,15 +72,15 @@ $\Rep$ would allow this.}
 
 \begin{definition}[Error probability and rate] \rm
 Fix a data structure $\setprim=(\Sigma,\Gamma,\calS,\calQ,\Rep,
-\Qry)$. Let $\mathrm{Err}(S,q,M,\pubaux,\privaux)$ be a predicate that is
-true iff $\Qry(M, \pubaux,\privaux, q) \neq q(S)$.  Then a data structure
+\Qry)$. Let $\mathrm{Err}(S,q,\pubaux,\privaux)$ be a predicate that is
+true iff $\Qry(\pubaux,\privaux, q) \neq q(S)$.  Then a data structure
 has \emph{error probability} $\epsilon$ if
-$\max_{S,q}\Pr[(M,\pubaux,\privaux) \getsr \Rep(S) :
-\mathrm{Err}(S,q,M,\pubaux,\privaux)=1 ] \leq \epsilon$.
+$\max_{S,q}\Pr[(\pubaux,\privaux) \getsr \Rep(S) :
+\mathrm{Err}(S,q,\pubaux,\privaux)=1 ] \leq \epsilon$.
 %
 It has \emph{error rate} $\tilde{\epsilon}$ if
-$\max_{S}\Pr[(M,\pubaux,\privaux) \getsr \Rep(S);\, q \getsr \calQ :
-\mathrm{Err}(S,q,M,\pubaux,\privaux)=1] \leq \tilde{\epsilon}$. \hfill\dqed
+$\max_{S}\Pr[(\pubaux,\privaux) \getsr \Rep(S);\, q \getsr \calQ :
+\mathrm{Err}(S,q,\pubaux,\privaux)=1] \leq \tilde{\epsilon}$. \hfill\dqed
 \end{definition}
 
 \noindent The definition can be lifted to the random-oracle model by
