@@ -20,6 +20,10 @@ provided with access to an oracle~$\TestOracle$ that, on input a query~$q \in \c
 returns $\Qry(\pubaux,\privaux,q)$ and increments
 a counter if this result is in error.  The adversary wins if it
 manages to cause at least~$r>0$ such errors among its queries.
+\jnote{If we are specializing the set-multiplicity data structures then we
+may as well have the attacker query $x$ which gets translated to query $q_x$. If
+we are trying to be more general then we should be consistent.} \jnote{Why does $A$ output
+anything at all?}
 
 The notion is lifted to the random-oracle model by providing
 $\Rep,\Qry$ and the adversary~$A$ with oracle access to the
@@ -49,29 +53,65 @@ if $a \neq q(S)$ then \\
 Return~$(a,\mathrm{err})$
 }
 }
-\caption{Correctness of~$\Pi$ against (adaptive) adversary~$A$, when
+\caption{Correctness of~$\Pi$ against an (adaptive) adversary~$A$, when
   the represented multiset~$S$ is sampled according to distribution~$\distr{}{}$.}
 \label{fig:correctness}
 \end{figure}
 
-In this experiment we track the time-complexity (relative to some
-implied model of computation) and query-complexity (i.e., number of
-queries) of the adversary~$A$.
+In this experiment we track the time complexity (relative to some
+model of computation) and query complexity (i.e., number of
+queries to $\TestOracle$) of~$A$.
 We define the advantage of adversary~$A$ in the correctness experiment as
 $\AdvCorrect{\Pi,\distr{}{},r}{A} = \Prob{\ExpCorrect{\Pi,\distr{}{}, r,}{A}=1}$.
-Overloading notation, we write $\AdvCorrect{\Pi,\distr{}{},r}{t,q}$ for the maximum over all~$t$-time adversaries that ask at most~$q$ queries. Roughly, we say that a
-set-representation~$\Pi$ is $(t,q,r,\epsilon')$-correct if $\AdvCorrect{\Pi,\distr{}{},r}{t,q} \leq \epsilon'$.
+Overloading notation, we write $\AdvCorrect{\Pi,\distr{}{},r}{t,q}$ for the maximum over
+all~$t$-time adversaries that ask at most~$q$ queries. We say that a
+set-representation data structure~$\Pi$ is $(t,q,r,\epsilon')$-correct if $\AdvCorrect{\Pi,\distr{}{},r}{t,q} \leq \epsilon'$.
 \jnote{Note~$q$ is overloaded here.}
 %\jnote{Note that test includes err because we don't want to penalize
 %the adversary's resources for computing $q(S)$.}
 
 \heading{Comparison to Naor-Yogev definition.}
-The style of the Naor-Yogev (NY) definition is slightly different. \jnote{Even if we ignore
-all the other issues, chief among them the inconsistent way it treats the hash functions.}
-Lifting their definition to our setting, the experiment is similar but the attacker
-succeeds only if it outputs a single query $q$ for which
+The style of the Naor-Yogev definition is different from ours.
+Lifting their definition\footnote{They focus specifically on set-representation data structures
+with no false negatives, and consider worst-case choice of~$S$. Their data-structure syntax
+also does not distinguish public and private portions of the representation. Nevertheless, it is straightforward
+to extend their definition to more closely match ours.}
+to our setting,
+the experiment is similar but the attacker
+succeeds only if it outputs a (single) query $q$ for which
 $\Qry(\pubaux,\privaux, q) \neq q(S)$  \emph{subject to the restriction that it did not
-query $q$ to its $\TestOracle$ oracle}.
+previously query $q$ to its $\TestOracle$ oracle} (see Figure~\ref{fig:NYcorrectness}).
+
+\begin{figure}[htp]
+\centering
+\fpage{.6}{
+\hpagess{.5}{.45}
+{
+\experimentv{$\ExpCorrect{\setprim,\distr{}{},r}{A}$}\\
+$S \getsr \distr{}{}$\\
+$\mathcal{Q} \gets \emptyset$\\
+%$\mathrm{err}\gets 0$\\
+$(\pubaux,\privaux) \getsr \Rep(S)$\\
+$q \getsr A^{\TestOracle}(S,\pubaux)$\\
+if $\left(q \not \in \mathcal{Q}\right.$ and \\
+\nudge $\left.\Qry(\pubaux,\privaux,q) \neq q(S)\right)$ \\
+\nudge \nudge then Return 1\\
+Return 0
+}
+%
+{
+\oracle{$\TestOracle(q)$}\\
+$a \gets \Qry(\pubaux,\privaux,q)$\\
+$\mathcal{Q} \gets \mathcal{Q} \cup \{q\}$ \\
+%\nudge $\mathrm{err}\gets\mathrm{err}+1$\\
+Return~$(a,q(S))$
+}
+}
+\caption{The Naor-Yogev definition of
+correctness, adapted to our setting.}
+\label{fig:NYcorrectness}
+\end{figure}
+
 It will be interesting to understand formally the relation between our
 definition and theirs.
 Here are some observations:
