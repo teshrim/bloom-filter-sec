@@ -1,0 +1,6 @@
+\begin{theorem}
+Fix $k,m,n,r>0$, and let $\Pi_{\mathrm{ds}}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-ds}.  For any set~$S$, let $\leak(S)=|S|$.  For any adversary~$A$ that makes a total of~$q$ queries to its oracle and has time-complexity~$O(t)$, there exists a simulator~$\Sim$ and a prf-adversary ~$B$ (both explicitly constructed in the proof of this theorem) such that
+$
+\AdvPrivSS{\Pi_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}.
+$
+\end{theorem}

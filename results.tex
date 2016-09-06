@@ -10,7 +10,7 @@ Here we consider a set-multiplicity data structure that was attacked by Neiderma
 \begin{theorem}\label{thm1}
 Fix $k,m,n,r>0$, and let $\Pi_{\mathrm{lin}}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-ds}. Let $\distr{}{}$ be a distribution over~$\mathcal{S}$.  For any adversary~$A$ that makes a total of~$q$ queries to its oracle and has time-complexity~$O(t)$, there exist prf-adversaries~$B_1,B_2$ (explicitly constructed in the proof of this theorem) such that
 \[
-\AdvCorrect{\Pi_{\mathrm{lin}},\distr{\calS}{},r}{A} \leq  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}  +{\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
+\AdvCorrect{\Pi_{\mathrm{lin}},\distr{}{},r}{A} \leq  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}  +{\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
 \]
 Here, $B_1$ and $B_2$, each ask~$q$ oracle queries and have time complexity~$O(t+qm)$.
 \end{theorem}
@@ -31,10 +31,15 @@ Let $\Pi_{\mathrm{ds}}= (\calQ,\Rep, \Qry)$ be a set-multiplicity data structure
 \begin{theorem}\label{thm2}
 Fix $k,m,n,r>0$, and let $\Pi_{\mathrm{ds}}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure in Figure~\ref{fig:lin-and-ds}. Let $\distr{}{}$ be a distribution over~$\mathcal{S}$.  For any adversary~$A$ that makes a total of~$q$ queries to its oracle and has time-complexity~$O(t)$, there exists a prf-adversary ~$B$ (explicitly constructed in the proof of this theorem) such that
 \[
-\AdvCorrect{\Pi_{\mathrm{ds}},\distr{\calS}{},r}{A} \leq  \AdvPRF{F}{B}  + {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
+\AdvCorrect{\Pi_{\mathrm{ds}},\distr{}{},r}{A} \leq  \AdvPRF{F}{B}  + {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
 \]
 Here, $B$ asks $q$ queries, and has time complexity $O(t+qm)$.
 \end{theorem}
+
+%%%%%%%%%%
+\input{ds-ss-proof}
+%%%%%%%%%%
+
 
 \todo{Below are two lists of things that we should show.}
 
