@@ -78,6 +78,12 @@ set-representation data structure~$\Pi$ is $(t,q,r,\epsilon)$-correct if $\AdvCo
 %\jnote{Note that test includes err because we don't want to penalize
 %the adversary's resources for computing $q(S)$.}
 
+\jnote{Case of $r=1$ does not necessarily imply anything for $r>1$: can have a scheme
+where finding the first false positive is hard but then the rest are easy; can have
+a scheme where finding one false positive is easy finding more is hard (e.g.,
+because there do not exist
+any more).}
+
 \heading{Comparison to the Naor-Yogev definition.}
 The structure of the Naor-Yogev definition is different from ours.
 Lifting their definition\footnote{They focus specifically on set-representation data structures
@@ -205,12 +211,6 @@ correctly for every other query. The theorem follows.
 \jnote{I'm not sure what to conclude from any of the results above. The proofs
 are also all trivial.}
 
-\jnote{Case of $r=1$ does not necessarily imply anything for $r>1$: can have a scheme
-where finding the first false positive is hard but then the rest are easy; can have
-a scheme where finding one false positive is easy finding more is hard (e.g.,
-because there do not exist
-any more).}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -218,6 +218,15 @@ any more).}
 \subsection{Privacy}
 \jnote{Define appropriate notion of min-entropy for our setting.
 Define one-wayness.}
+
+In this section we specialize to the case of set-membership data structures, and
+focus on sets rather than multisets.
+Before continuing, it will be useful to define a notion of ``point-wise min-entropy.''
+Let ${\cal D}$ be
+a distribution on sets over some universe ${\cal X}$. Then the \emph{point-wise
+min-entropy} of ${\cal D}$ is defined as
+\[H_\infty({\cal D}) \bydef -\log \max_{x \in {\cal X}} \Pr[S \getsr {\cal D} : x \in S].\]
+
 
 One can also consider the orthogonal notion of \emph{privacy} for a
 data structure. \jnote{I am still hoping that we can treat data structures
