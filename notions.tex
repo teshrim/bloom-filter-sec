@@ -147,11 +147,13 @@ $(t, q', r, q'\epsilon'/r)$-correct for any $q' \leq q+1$ and $r\geq 1$.
 \end{theorem}
 \begin{proof}
 Let $\Pi$ be a set-representation data structure that is $(t,q,\epsilon')$-NY-correct,
-and assume that for some $q' \leq q+1$ and $r \geq 1$
+and assume that for some distribution $\distr{}{}$, some $q' \leq q+1$, and
+some $r \geq 1$
 there is an adversary $A$ running in time~$t$
-and making $q'$ oracle queries (note that without loss of generality
-we may assume $A$ always makes exactly $q'$ queries) such that
+and making $q'$ oracle queries such that
 $\AdvCorrect{\Pi,\distr{}{},r}{A} > q'\epsilon'/r$.
+(Note that
+we may assume $A$ always makes exactly $q'$ queries without loss of generality.)
 With probability at least
 $q'\epsilon'/r$ in an execution of $\ExpCorrect{\Pi,\distr{}{},r}{A}$, we have that
 $A$ makes at least $r$ distinct queries to $\TestOracle$ for which
@@ -166,7 +168,13 @@ to its oracle, this is a contradiction.
 \end{proof}
 
 \jnote{It is unclear whether the above is tight, but it is also unclear whether
-that is something worth thinking about. }
+that is something worth thinking about.}
+\jnote{I guess the most interesting(?)\@ case for comparison purposes
+is when $r=1$. Then one can have a scheme, say, where every query is independently
+answered incorrectly with probability~$\epsilon$. Such a
+scheme will be $(t,q,\epsilon)$-NY-correct
+for any $t, q$, however an adversary making $q=1/\epsilon$ queries has constant advantage
+under our correctness definition (for $r=1$). So the theorem is tight for $r=1$.}
 
 \begin{enumerate}
 \item Say a scheme is $\epsilon_{NY}$-secure under the NY definition.
