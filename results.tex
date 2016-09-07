@@ -4,17 +4,20 @@
 }
 \include{scheme-descriptions}
 
+
+%%%%%%%%%%%%%%%%% LINEAR-PRF %%%%%%%%%%%%%%%%%%%%
+
 \heading{Linear-PRF construction. }
 Here we consider a set-multiplicity data structure that was attacked by Neidermayer et al. in~\cite{xxx}. Fix $n,k,m \geq 0$ and let $\mathcal{S}=[\univ]^n$.  Then $\Pi_{\mathrm{lin}}= (\calQ,\Rep, \Qry)$ is defined as in Figure~\ref{fig:lin-and-ds} (left side).  The following result shows, informally, that if~$F$ is a good PRF, then $\Pi_\mathrm{lin}$ is correct against adaptive error-finding adversaries. 
 
-\begin{theorem}\label{thm1}
+\begin{theorem}\label{thm1}\label{thm:lin-correctness}
 Fix $k,m,n,r>0$, and let $\Pi_{\mathrm{lin}}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-ds}. Let $\distr{}{}$ be a distribution over~$\mathcal{S}$.  For any adversary~$A$ that makes a total of~$q$ queries to its oracle and has time-complexity~$O(t)$, there exist prf-adversaries~$B_1,B_2$ (explicitly constructed in the proof of this theorem) such that
 \[
 \AdvCorrect{\Pi_{\mathrm{lin}},\distr{}{},r}{A} \leq  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}  +{\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
 \]
 Here, $B_1$ and $B_2$, each ask~$q$ oracle queries and have time complexity~$O(t+qm)$.
 \end{theorem}
-Before giving the proof, we note that Kirsch and Mitzenmacher~\cite{xxx} show
+The proof appears in Appendix~\ref{app:xxx}.  We note that Kirsch and Mitzenmacher~\cite{xxx} show
 that the ($r=1$, zero-query) FP-probability for~$\Pi_\mathrm{lin}$ is
 always within $O(1/n)$ of $(1-e^{-kn/m})^k$, although the asymptotic
 rate of convergence is faster than~$1/n$.  The factor of $\dbinom{q}{r}$ arises as a result
@@ -24,11 +27,23 @@ $(q (1-e^{-kn/m})^k + O(q/n) )^r$; loosely, the bound one expects for
 trying to find a single FP in each of~$r$ independent``rounds'', each round
 consisting of~$q$ attempts.
 
+\begin{theorem}\label{thm:lin-ss}
+Fix $k,m,n>0$, and let $\Pi_{\mathrm{ds}}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-ds}.  For any set~$S$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ such that, for any adversary~$A$ 
+\[
+\AdvPrivSS{\Pi_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B} + \mbox{[TBD]}
+\]
+where~$B$ is constructed from~$A$.  (Both~$B$ and~$\Sim$ are explicitly constructed in the proof of this theorem.) 
+\end{theorem}
+\begin{proof}[Proof (sketch). ]
+\end{proof}
+
+%%%%%%%%%%%%%%%%% DOMAIN-SEPARATED PRF %%%%%%%%%%%%%%%%%%%%
+
 \heading{Construction of PRF with domain separation.}
 Let $\Pi_{\mathrm{ds}}= (\calQ,\Rep, \Qry)$ be a set-multiplicity data structure defined on the right-side of Figure~\ref{fig:lin-and-ds}.  As with the preceding theorem, the following says (informally) that if~$F$ is a secure PRF, then this domain-separated PRF construction is correct against adaptive adversaries.  We note that Neidermayer et al. in~\cite{xxx} suggest replacing the linear-PRF hash functions in the previous construction with independently keyed PRFs as a way to thwart their attacks.  The construction we consider now achieves the same end, albeit via explict domain separation rather than separate keys.
 
 
-\begin{theorem}\label{thm2}
+\begin{theorem}\label{thm2}\label{thm:ds-correctness}
 Fix $k,m,n,r>0$, and let $\Pi_{\mathrm{ds}}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure in Figure~\ref{fig:lin-and-ds}. Let $\distr{}{}$ be a distribution over~$\mathcal{S}$.  For any adversary~$A$ that makes a total of~$q$ queries to its oracle and has time-complexity~$O(t)$, there exists a prf-adversary ~$B$ (explicitly constructed in the proof of this theorem) such that
 \[
 \AdvCorrect{\Pi_{\mathrm{ds}},\distr{}{},r}{A} \leq  \AdvPRF{F}{B}  + {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
@@ -37,7 +52,7 @@ Here, $B$ asks $q$ queries, and has time complexity $O(t+qm)$.
 \end{theorem}
 
 %%%%%%%%%%
-\begin{theorem}
+\begin{theorem}\label{thm:ds-ss}
 Fix $k,m,n>0$, and let $\Pi_{\mathrm{ds}}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-ds}.  For any set~$S$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ such that, for any adversary~$A$ 
 \[
 \AdvPrivSS{\Pi_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}
