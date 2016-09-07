@@ -73,10 +73,16 @@ We define the advantage of adversary~$A$ in the correctness experiment as
 $\AdvCorrect{\Pi,\distr{}{},r}{A} = \Prob{\ExpCorrect{\Pi,\distr{}{}, r}{A}=1}$.
 Overloading notation, we write $\AdvCorrect{\Pi,\distr{}{},r}{t,q}$ for the maximum over
 all~$t$-time adversaries that ask at most~$q$ queries. We say that a
-set-representation data structure~$\Pi$ is $(t,q,r,\epsilon')$-correct if $\AdvCorrect{\Pi,\distr{}{},r}{t,q} \leq \epsilon'$.
+set-representation data structure~$\Pi$ is $(t,q,r,\epsilon)$-correct if $\AdvCorrect{\Pi,\distr{}{},r}{t,q} \leq \epsilon$.
 \jnote{Note~$q$ is overloaded here.}
 %\jnote{Note that test includes err because we don't want to penalize
 %the adversary's resources for computing $q(S)$.}
+
+\jnote{Case of $r=1$ does not necessarily imply anything for $r>1$: can have a scheme
+where finding the first false positive is hard but then the rest are easy; can have
+a scheme where finding one false positive is easy finding more is hard (e.g.,
+because there do not exist
+any more).}
 
 \heading{Comparison to the Naor-Yogev definition.}
 The structure of the Naor-Yogev definition is different from ours.
@@ -94,8 +100,8 @@ We define the advantage of adversary~$A$ as
 $\NYAdvCorrect{\Pi,\distr{}{}}{A} = \Prob{\NYExpCorrect{\Pi,\distr{}{}}{A}=1}$,
 and write $\NYAdvCorrect{\Pi,\distr{}{},r}{t,q}$ for the maximum over
 all~$t$-time adversaries that ask at most~$q$ queries. We say that a
-set-representation data structure~$\Pi$ is $(t,q,\epsilon')$-NY-correct if
-$\NYAdvCorrect{\Pi,\distr{}{}}{t,q} \leq \epsilon'$. \jnote{This should all probably
+set-representation data structure~$\Pi$ is $(t,q,\epsilon)$-NY-correct if
+$\NYAdvCorrect{\Pi,\distr{}{}}{t,q} \leq \epsilon$. \jnote{This should all probably
 move to an appendix; it's a lot of notation to digest for something we never use again
 in the paper.}
 
@@ -136,68 +142,74 @@ correctness, adapted to our setting.}
 
 With the above in place we can now relate their definition to ours.
 
-\jnote{There's something ``morally wrong'' with the follow theorem statement:
-if we increase $q$ then the assumption about the NY-correctness of $\Pi$ (presumably)
-gets stronger---even if formally that is not true---but the conclusion of the theorem
-becomes weaker.}
+\jnote{Do we have a compelling example of why the definition in Figure~\ref{fig:correctness}
+is ``better'' than the definition in Figure~\ref{fig:NYcorrectness}?}
 
 \begin{theorem}
-If $\Pi$ is $(t,q,\epsilon')$-NY-correct, then it is also
-$(t, q', r, q'\epsilon'/r)$-correct for any $q' \leq q+1$ and $r\geq 1$.
+If $\Pi$ is $(t,q,\epsilon)$-NY-correct, then it is also
+$(t, q', r, q'\epsilon/r)$-correct for any $q' \leq q+1$ and $r\geq 1$.
 \end{theorem}
 \begin{proof}
-Let $\Pi$ be a set-representation data structure that is $(t,q,\epsilon')$-NY-correct,
+Let $\Pi$ be a set-representation data structure that is $(t,q,\epsilon)$-NY-correct,
 and assume that for some distribution $\distr{}{}$, some $q' \leq q+1$, and
 some $r \geq 1$
 there is an adversary $A$ running in time~$t$
 and making $q'$ oracle queries such that
-$\AdvCorrect{\Pi,\distr{}{},r}{A} > q'\epsilon'/r$.
+$\AdvCorrect{\Pi,\distr{}{},r}{A} > q'\epsilon/r$.
 (Note that
 we may assume $A$ always makes exactly $q'$ queries without loss of generality.)
 With probability at least
-$q'\epsilon'/r$ in an execution of $\ExpCorrect{\Pi,\distr{}{},r}{A}$, we have that
+$q'\epsilon/r$ in an execution of $\ExpCorrect{\Pi,\distr{}{},r}{A}$, we have that
 $A$ makes at least $r$ distinct queries to $\TestOracle$ for which
 an incorrect answer is returned. Let $A'$ be the algorithm that simply
 runs~$A$, but chooses
 uniformly one of the $q'$ queries of $A$ to its $\TestOracle$ oracle and outputs that query
-as its final output. Then with probability at least $r/q' \cdot (q'\epsilon'/r)=\epsilon'$
+as its final output. Then with probability at least $r/q' \cdot (q'\epsilon/r)=\epsilon$
 the query chosen by $A'$
 leads to an incorrect answer, and was not previously asked to the $\TestOracle$ oracle.
 Since the running time of $A'$ is at most $t$, and it makes at most $q'-1 \leq q$ queries
 to its oracle, this is a contradiction.
 \end{proof}
 
-\jnote{It is unclear whether the above is tight, but it is also unclear whether
-that is something worth thinking about.}
-\jnote{I guess the most interesting(?)\@ case for comparison purposes
-is when $r=1$. Then one can have a scheme, say, where every query is independently
+\jnote{The above is tight, at least for $r=1$. Specifically, consider a scheme
+in which every query is independently
 answered incorrectly with probability~$\epsilon$. Such a
 scheme will be $(t,q,\epsilon)$-NY-correct
 for any $t, q$, however an adversary making $q=1/\epsilon$ queries has constant advantage
-under our correctness definition (for $r=1$). So the theorem is tight for $r=1$.}
+under our correctness definition (for $r=1$).}
 
-\begin{enumerate}
-\item Say a scheme is $\epsilon_{NY}$-secure under the NY definition.
-Then we claim it is $(t,q, r, q\epsilon_{NY}/r)$-correct. To see
-this, assume not. Then there is a $t$-time attacker~$A$ that, with
-probability at least $\epsilon'=q\epsilon_{NY}/r$,
-issues~$q$ Test-queries of which at least~$r$ cause errors.
-If we simply run~$A$ and then choose a random Test-query to
-output, we succeed with probability at least $\epsilon' \cdot r/q$.
-It is unclear whether this is tight.
+\begin{theorem}
+If $\Pi$ is $(t, q, 1, \epsilon)$-correct, then it is also $(t, q-1, \epsilon)$-NY-correct.
+\end{theorem}
+\begin{proof}
+Let $\Pi$ be a set-representation data structure that is $(t,q,1,\epsilon)$-correct,
+and assume that for some distribution $\distr{}{}$
+there is an adversary $A$ running in time~$t$
+and making at most $q-1$ oracle queries such that
+$\NYAdvCorrect{\Pi,\distr{}{}}{A} > \epsilon$.
+Let $A'$ be the algorithm that simply
+runs~$A$, passing the oracle queries of $A$ to its own oracle, until $A$ terminates
+with output~$q$; then, $A'$ sends $q$ to $\TestOracle$. \jnote{$q$ is (still)
+overloaded!} It is immediate that $A'$ makes at most $q$ oracle queries, and
+$\AdvCorrect{\Pi,\distr{}{},1}{A'} \geq \NYAdvCorrect{\Pi,\distr{}{}}{A}$, a contradiction.
+\end{proof}
 
-\item There is a contrived scheme that is $(t, q, 2, 0)$-correct but not NY-secure at all; the basic idea is
-to have a set-representation that always has \emph{exactly one} false positive that is easy to find
-given the public information.
+\begin{theorem}
+There exists a set-representation data structure $\Pi$ that
+is $(t, q, 2, 0)$-correct, but is not $(t, 0, \epsilon)$-NY-correct
+for any $\epsilon<1$.
+\end{theorem}
+\begin{proof}
+We prove the theorem for set-membership data structures.
+Let $x \in {\cal X}$ be an arbitrary element of the universe, and
+let $\Pi$ be the data structure in which $\Rep(S)$ outputs $\pubaux=\privaux=S$, and
+$\Qry(S, S, q_y)$ outputs $q_y(S)$ if $y \neq x$ but outputs $1-q_x(S)$ otherwise. This
+scheme always answers incorrectly for a single, fixed query, and answers
+correctly for every other query. The theorem follows.
+\end{proof}
 
-\item If a scheme is $(t,q,1,\epsilon)$-correct, then it is also $\epsilon$-secure under the NY definition,
-at least for attackers making at most $q-1$ queries.
-This is immediate.
-\end{enumerate}
-\jnote{Case of $r=1$ does not necessarily imply anything for $r>1$: can have a scheme
-where finding the first false positive is hard but then the rest are easy; can have
-a scheme where finding one false positive is easy but there do not exist
-any more false positives.}
+\jnote{I'm not sure what to conclude from any of the results above. The proofs
+are also all trivial.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -207,6 +219,15 @@ any more false positives.}
 \subsection{Privacy}
 \jnote{Define appropriate notion of min-entropy for our setting.
 Define one-wayness.}
+
+In this section we specialize to the case of set-membership data structures, and
+focus on sets rather than multisets.
+Before continuing, it will be useful to define a notion of ``point-wise min-entropy.''
+Let ${\cal D}$ be
+a distribution on sets over some universe ${\cal X}$. Then the \emph{point-wise
+min-entropy} of ${\cal D}$ is defined as
+\[H_\infty({\cal D}) \bydef -\log \max_{x \in {\cal X}} \Pr[S \getsr {\cal D} : x \in S].\]
+
 
 One can also consider the orthogonal notion of \emph{privacy} for a
 data structure. \jnote{I am still hoping that we can treat data structures
