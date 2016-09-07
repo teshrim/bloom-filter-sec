@@ -3,7 +3,7 @@
 Following NY, we are interested in defining an adaptive (i.e.,
 adversarial) notion of correctness.
 In addition to correctness, we establish notions of privacy for
-set-representations.
+set-multiplicity data structures.
 
 \tsnote{flesh out}
 
@@ -11,28 +11,40 @@ set-representations.
 
 First, a set~$S$ is chosen according to some
 distribution~$\distr{}{}$ over the collection of multisets
-$\mathcal{S}$ associated to~$\Pi$, and then
-$\Rep(S)$ is run to generate $(\pubaux,\privaux)$.
+$\mathcal{S}$ associated with~$\Pi$, and then
+$\Rep(S)$ is run to generate $(\pubaux,\privaux)$. \jnote{I thought we were going to let
+the adversary choose~$S$?} \jnote{If instead we choose $S$ from ${\cal D}$, then
+is it clear we want to give $S$ to~$A$?}
 %(Unless stated otherwise, we assume security holds for all distributions and thus for all sets $S$.)
-Adversary~$A$ is given~$\calS$ and $\pubaux$~as input; it is
-provided an oracle~$\TestOracle$ that, on input a query~$q \in \calQ$,
-computes (and returns) the result of $\Qry(\pubaux,\privaux,q)$, and increments
+Adversary~$A$ is given~$\pubaux$~as input; it is also
+provided with access to an oracle~$\TestOracle$ that, on input a query~$q \in \calQ$,
+returns $\Qry(\pubaux,\privaux,q)$ and increments
 a counter if this result is in error.  The adversary wins if it
 manages to cause at least~$r>0$ such errors among its queries.
+\jnote{If we are specializing the set-multiplicity data structures then we
+may as well have the attacker query $x$ which gets translated to query $q_x$. If
+we are trying to be more general then we should be consistent.} \jnote{Why does $A$ output
+anything at all?}
 
 The notion is lifted to the random-oracle model by providing
 $\Rep,\Qry$ and the adversary~$A$ with oracle access to the
 random-oracle(s).
 
+\jnote{I changed $\TestOracle$ so that it outputs $(a, q(S))$ rather
+than $(a,\mathrm{err})$. Note that the latter can be computed from the former,
+and in the general case I think the former is what we want.} \jnote{I also changed
+the definition so the adversary has to find $r$ {\bf unique} inputs on which
+there is an error.}
 
 
 \begin{figure}[htp]
 \centering
-\fpage{.6}{
+\fpage{.65}{
 \hpagess{.5}{.45}
 {
 \experimentv{$\ExpCorrect{\setprim,\distr{}{},r}{A}$}\\
 $S \getsr \distr{}{}$\\
+$\mathcal{Q} \gets \emptyset$ \\
 $\mathrm{err}\gets 0$\\
 $(\pubaux,\privaux) \getsr \Rep(S)$\\
 $z \getsr A^{\TestOracle}(S,\pubaux)$\\
@@ -43,40 +55,136 @@ Return 1
 {
 \oracle{$\TestOracle(q)$}\\
 $a \gets \Qry(\pubaux,\privaux,q)$\\
-if $a \neq q(S)$ then \\
+if ($a \neq q(S)$ and $q \not \in \mathcal{Q}$) then \\
 \nudge $\mathrm{err}\gets\mathrm{err}+1$\\
-Return~$(a,\mathrm{err})$
+$\mathcal{Q} \gets \mathcal{Q} \cup \{q\}$ \\
+Return~$(a,q(S))$
 }
 }
-\caption{Correctness of~$\Pi$ against (adaptive) adversary~$A$, when
+\caption{Correctness of~$\Pi$ against an (adaptive) adversary~$A$, when
   the represented multiset~$S$ is sampled according to distribution~$\distr{}{}$.}
 \label{fig:correctness}
 \end{figure}
 
-In this experiment we track the time-complexity (relative to some
-implied model of computation) and query-complexity (i.e., number of
-queries) of the adversary~$A$.
+In this experiment we track the time complexity (relative to some
+model of computation) and query complexity (i.e., number of
+queries to $\TestOracle$) of~$A$.
 We define the advantage of adversary~$A$ in the correctness experiment as
-$\AdvCorrect{\Pi,\distr{}{},r}{A} = \Prob{\ExpCorrect{\Pi,\distr{}{}, r,}{A}=1}$.
-Overloading notation, we write $\AdvCorrect{\Pi,\distr{}{},r}{t,q}$ for the maximum over all~$t$-time adversaries that ask at most~$q$ queries. Roughly, we say that a
-set-representation~$\Pi$ is $(t,q,r,\epsilon')$-correct if $\AdvCorrect{\Pi,\distr{}{},r}{t,q} \leq \epsilon'$.
-\jnote{Note that test includes err because we don't want to penalize
-the adversary's resources for computing $q(S)$.}
+$\AdvCorrect{\Pi,\distr{}{},r}{A} = \Prob{\ExpCorrect{\Pi,\distr{}{}, r}{A}=1}$.
+Overloading notation, we write $\AdvCorrect{\Pi,\distr{}{},r}{t,q}$ for the maximum over
+all~$t$-time adversaries that ask at most~$q$ queries. We say that a
+set-representation data structure~$\Pi$ is $(t,q,r,\epsilon')$-correct if $\AdvCorrect{\Pi,\distr{}{},r}{t,q} \leq \epsilon'$.
+\jnote{Note~$q$ is overloaded here.}
+%\jnote{Note that test includes err because we don't want to penalize
+%the adversary's resources for computing $q(S)$.}
 
-\heading{Comparison to Naor-Yogev definition.}
-The style of the Naor-Yogev (NY) definition is slightly different. \jnote{Even if we ignore
-all the other issues, chief among them the inconsistent way it treats the hash functions.}
-Lifting their definition to our setting, the experiment is similar but the attacker
-succeeds only if it outputs a single query $q$ for which $\Qry(\pubaux,\privaux, q) \neq q(S)$  \emph{subject to the restriction that it did not query $q$ to its $\Qry$ oracle}.
-It will be interesting to understand formally the relation between our definition and theirs.
-Here are some observations:
+\heading{Comparison to the Naor-Yogev definition.}
+The structure of the Naor-Yogev definition is different from ours.
+Lifting their definition\footnote{They focus specifically on set-representation data structures
+with no false negatives, and consider worst-case choice of~$S$. Their data-structure syntax
+also does not distinguish public and private portions of the representation. Nevertheless, it is straightforward
+to extend their definition to more closely match ours.}
+to our setting,
+the experiment is similar but the attacker
+succeeds only if it outputs a (single) query $q$ for which
+$\Qry(\pubaux,\privaux, q) \neq q(S)$  \emph{subject to the restriction that it did not
+previously query $q$ to its $\TestOracle$ oracle}. We refer to
+Figure~\ref{fig:NYcorrectness} for a definition of the relevant experiment.
+We define the advantage of adversary~$A$ as
+$\NYAdvCorrect{\Pi,\distr{}{}}{A} = \Prob{\NYExpCorrect{\Pi,\distr{}{}}{A}=1}$,
+and write $\NYAdvCorrect{\Pi,\distr{}{},r}{t,q}$ for the maximum over
+all~$t$-time adversaries that ask at most~$q$ queries. We say that a
+set-representation data structure~$\Pi$ is $(t,q,\epsilon')$-NY-correct if
+$\NYAdvCorrect{\Pi,\distr{}{}}{t,q} \leq \epsilon'$. \jnote{This should all probably
+move to an appendix; it's a lot of notation to digest for something we never use again
+in the paper.}
+
+\jnote{Just noticed something (else) odd about the NY definition: we cannot assume w.l.o.g.\
+that $A$ makes exactly $q$ queries, and in fact it is possible to have cases where increasing
+the number of queries the attacker makes can decrease its advantage! This seems like
+another drawback of the definition.}
+
+\begin{figure}[htp]
+\centering
+\fpage{.6}{
+\hpagess{.5}{.45}
+{
+\experimentv{$\ExpCorrect{\setprim,\distr{}{}}{A}$}\\
+$S \getsr \distr{}{}$\\
+$\mathcal{Q} \gets \emptyset$\\
+%$\mathrm{err}\gets 0$\\
+$(\pubaux,\privaux) \getsr \Rep(S)$\\
+$q \getsr A^{\TestOracle}(S,\pubaux)$\\
+if $\left(q \not \in \mathcal{Q}\right.$ and \\
+\nudge $\left.\Qry(\pubaux,\privaux,q) \neq q(S)\right)$ \\
+\nudge \nudge then Return 1\\
+Return 0
+}
+%
+{
+\oracle{$\TestOracle(q)$}\\
+$a \gets \Qry(\pubaux,\privaux,q)$\\
+$\mathcal{Q} \gets \mathcal{Q} \cup \{q\}$ \\
+%\nudge $\mathrm{err}\gets\mathrm{err}+1$\\
+Return~$(a,q(S))$
+}
+}
+\caption{The Naor-Yogev definition of
+correctness, adapted to our setting.}
+\label{fig:NYcorrectness}
+\end{figure}
+
+With the above in place we can now relate their definition to ours.
+
+\jnote{There's something ``morally wrong'' with the follow theorem statement:
+if we increase $q$ then the assumption about the NY-correctness of $\Pi$ (presumably)
+gets stronger---even if formally that is not true---but the conclusion of the theorem
+becomes weaker.}
+
+\begin{theorem}
+If $\Pi$ is $(t,q,\epsilon')$-NY-correct, then it is also
+$(t, q', r, q'\epsilon'/r)$-correct for any $q' \leq q+1$ and $r\geq 1$.
+\end{theorem}
+\begin{proof}
+Let $\Pi$ be a set-representation data structure that is $(t,q,\epsilon')$-NY-correct,
+and assume that for some distribution $\distr{}{}$, some $q' \leq q+1$, and
+some $r \geq 1$
+there is an adversary $A$ running in time~$t$
+and making $q'$ oracle queries such that
+$\AdvCorrect{\Pi,\distr{}{},r}{A} > q'\epsilon'/r$.
+(Note that
+we may assume $A$ always makes exactly $q'$ queries without loss of generality.)
+With probability at least
+$q'\epsilon'/r$ in an execution of $\ExpCorrect{\Pi,\distr{}{},r}{A}$, we have that
+$A$ makes at least $r$ distinct queries to $\TestOracle$ for which
+an incorrect answer is returned. Let $A'$ be the algorithm that simply
+runs~$A$, but chooses
+uniformly one of the $q'$ queries of $A$ to its $\TestOracle$ oracle and outputs that query
+as its final output. Then with probability at least $r/q' \cdot (q'\epsilon'/r)=\epsilon'$
+the query chosen by $A'$
+leads to an incorrect answer, and was not previously asked to the $\TestOracle$ oracle.
+Since the running time of $A'$ is at most $t$, and it makes at most $q'-1 \leq q$ queries
+to its oracle, this is a contradiction.
+\end{proof}
+
+\jnote{It is unclear whether the above is tight, but it is also unclear whether
+that is something worth thinking about.}
+\jnote{I guess the most interesting(?)\@ case for comparison purposes
+is when $r=1$. Then one can have a scheme, say, where every query is independently
+answered incorrectly with probability~$\epsilon$. Such a
+scheme will be $(t,q,\epsilon)$-NY-correct
+for any $t, q$, however an adversary making $q=1/\epsilon$ queries has constant advantage
+under our correctness definition (for $r=1$). So the theorem is tight for $r=1$.}
+
 \begin{enumerate}
 \item Say a scheme is $\epsilon_{NY}$-secure under the NY definition.
 Then we claim it is $(t,q, r, q\epsilon_{NY}/r)$-correct. To see
 this, assume not. Then there is a $t$-time attacker~$A$ that, with
 probability at least $\epsilon'=q\epsilon_{NY}/r$,
-issues~$q$ Test-queries of which at least~$r$ cause errors. If we simply run~$A$ and then choose a random Test-query to
-output, we succeed with probability at least $\epsilon' \cdot r/q$. It is unclear whether this is tight.
+issues~$q$ Test-queries of which at least~$r$ cause errors.
+If we simply run~$A$ and then choose a random Test-query to
+output, we succeed with probability at least $\epsilon' \cdot r/q$.
+It is unclear whether this is tight.
 
 \item There is a contrived scheme that is $(t, q, 2, 0)$-correct but not NY-secure at all; the basic idea is
 to have a set-representation that always has \emph{exactly one} false positive that is easy to find
@@ -120,7 +228,7 @@ In this definition we compare the probabilities with which an attacker $A$ outpu
 in two experiments: one ``real'' and one ``simulated.''
 In the real experiment (ss-rep-1), $A$ outputs a set $S$  and is given the
 public information $\pubaux$ that results from running $\Rep(S)$.
-\footnote{We do not give $A$ an oracle for issuing queries; 
+\footnote{We do not give $A$ an oracle for issuing queries;
 since $A$ knows the set~$S$, such an oracle would be superfluous.
 \jnote{Interestingly,
 if we provided a query oracle in the real world and an oracle that returns the correct
@@ -265,6 +373,3 @@ eturn $\Qry(\pubaux,\privaux,q)$
   SS$\not\Rightarrow$ correctness; the converse is already shown by
   the example I gave earlier, i.e. $M=S\setminus\{x\}$ for random $x
   \in S$.}
-
-
-

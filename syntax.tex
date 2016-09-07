@@ -3,15 +3,19 @@
 \heading{Preliminaries. } When~$\univ$ is a set and $n>0$ is an
 integer, we let $[\univ]^n$ denote the set of all size-$n$ subsets
 of~$\univ$, and $[[\univ]]^n$ for the set of all multisets
-over~$\univ$ with total multiplicity~$n$. \tsnote{We may not need all
+over~$\univ$ with total multiplicity~$n$. \jnote{I guess we are
+viewing sets as a special case of multisets, so maybe just say
+that.} \tsnote{We may not need all
   of that.} We write $x \getsr \univ$ to denote
-sampling an element from~$\univ$ and assigning this to~$x$, and we
-extend this notation to randomized algorithms.  When~$X$ is a string
-over some alphabet~$\Sigma$, we write $|X|$ for the bitlength
+sampling an element uniformly from~$\univ$ and assigning it to~$x$,
+and we extend this notation to randomized algorithms. When~$X$ is a
+string over some alphabet~$\Sigma$, we write $|X|$ for the bitlength
 of~$X$, relative to some fixed encoding.  When~$X$ is a multiset, we
-overload the notation so that~$|X|$ is the total multiplicity of~$X$.
+overload the notation so that~$|X|$ is the total multiplicity
+of~$X$.
 
-Algorithms may be provided black-box access to one or more oracles, which we write as superscripts, e.g., $F^{O_1,O_2,\ldots}$.  An \emph{adversary} is a randomized algorithm
+Algorithms may be provided black-box access to one or more oracles,
+which we write as superscripts, e.g., $F^{O_1,O_2,\ldots}$.  An \emph{adversary} is a randomized algorithm.
 
 \heading{Data structures.}  We begin by defining a general primitive
 that produces a representation of a given multiset, and provides a
@@ -20,24 +24,24 @@ multiset.
 %Informally, the representation should serve as a good
 %approximation of the multiset, at least with respect to the allowed queries.
 \begin{definition}[Data structure] \rm
-Fix a non-empty set~$\univ$, and a set of multisets~$\calS$ over
-$\univ$. 
-A \emph{data structure} (for $\calS$) is a tuple $\setprim=(\calQ,\Rep, \Qry)$ where:
+Fix a non-empty set~$\univ$, and a collection of (multi)sets~$\calS$
+over $\univ$. A \emph{data structure} (for $\calS$) is a tuple
+$\setprim=(\calQ,\Rep, \Qry)$ where:
 \begin{itemize}
 \item $\mathcal{Q}=\{q \colon \mathcal{S} \to \Gamma\}$ is a set
     of supported \emph{queries}, where $\Gamma$ is the set of query \emph{answers}.
 \item $\Rep \colon \mathcal{S} \to \bits^*
     \times \bits^*$ is a randomized \emph{representation
-    algorithm}, taking as input $S \in \mathcal{S}$, and outputting %a \emph{representation} $M \in \Sigma^*$,
+    algorithm}, taking as input a (multi)set $S \in \mathcal{S}$, and outputting %a \emph{representation} $M \in \Sigma^*$,
     \emph{public representation data} $\pubaux \in \bits^*$ and
     \emph{private representation data} $\privaux \in \bits^*$. We write
     $(\pubaux,\privaux) \getsr \Rep(S)$ as shorthand for this execution.
-\item $\Qry\colon \Sigma^* \times \bits^* \times \bits^* \times \calQ \to
+\item $\Qry\colon \bits^* \times \bits^* \times \calQ \to
     \Gamma$ is a deterministic \emph{query-evaluation}
-    algorithm, taking as input $\pubaux,\privaux \in
-    \bits^*$ and $q \in \calQ$, and outputting
-    an \emph{answer} $a \in \Gamma$.  We write $a \gets
-    \Qry(\pubaux,\privaux,q)$ for this execution.
+    algorithm, taking as input $\pubaux,\privaux \in \bits^*$
+    and a query $q \in \calQ$, and outputting an \emph{answer}
+    $a \in \Gamma$.  We write $a \gets \Qry(\pubaux,\privaux,q)$
+    for this execution.
 \end{itemize}
 \hfill\dqed
 \end{definition}
@@ -71,36 +75,62 @@ $\Rep$ would allow this.}
 %  I don't think we ever explicitly care about size for any of our results.}
 
 \begin{definition}[Error probability and rate] \rm
-Fix a data structure $\setprim=(\calQ,\Rep, \Qry)$. Let $\mathrm{Err}(S,q,\pubaux,\privaux)$ be a predicate that is
-true iff $\Qry(\pubaux,\privaux, q) \neq q(S)$.  Then a data structure
-has \emph{error probability} $\epsilon$ if
-$\max_{S,q}\Pr[(\pubaux,\privaux) \getsr \Rep(S) :
-\mathrm{Err}(S,q,\pubaux,\privaux)=1 ] \leq \epsilon$.
+For a given data structure $\setprim=(\calQ,\Rep, \Qry)$, let
+$\mathrm{Err}(S,q,\pubaux,\privaux)$ be a predicate that is true iff
+$\Qry(\pubaux,\privaux, q) \neq q(S)$.  Then $\Pi$ has \emph{error
+probability} $\epsilon$ if $\max_{S,q}\Pr[(\pubaux,\privaux) \getsr
+\Rep(S) : \mathrm{Err}(S,q,\pubaux,\privaux)=1 ] \leq \epsilon$.
 %
 It has \emph{error rate} $\tilde{\epsilon}$ if
 $\max_{S}\Pr[(\pubaux,\privaux) \getsr \Rep(S);\, q \getsr \calQ :
 \mathrm{Err}(S,q,\pubaux,\privaux)=1] \leq \tilde{\epsilon}$. \hfill\dqed
 \end{definition}
 
-\noindent The definition can be lifted to the random-oracle model by
-giving $\Rep, \Qry$ access to a random oracle. In that case, the
-probabilities defining the error probability and error rate are also
-taken over choice of the random oracle.
+\noindent The definitions above can be lifted to the random-oracle
+model by giving $\Rep, \Qry$ access to a random oracle. In that
+case, the probabilities defining the error probability and error
+rate are also taken over choice of the random oracle.
 
 We will sometimes say that a data structure is
 $(1-\epsilon)$-correct, meaning it has error probability~$\epsilon$.
 Note that $1-\epsilon$ is a worst-case lower bound on the
 correctness of the data structure. \tsnote{Don't know if this will be necessary.}
 
+We note that, while our error probability and error rate do not
+distinguish among ``types'' of errors, they also do not preclude
+instantiations (like the classical Bloom filter) that admit only one
+type of error, e.g., false positives.
+
 \def\bin{{\sf Bin}}
-\heading{``Trivial'' attacks, and error probability vs.\ error rate. }
-Let~$\Pi$ be a scheme that is $(1-\epsilon)$-correct, and consider
-an attack that asks random queries $q_1,q_2,\ldots,q_T$, i.e.,
-uniform samples from~$\calQ$.
-Let $\mathrm{Err}_i$ be a random variable indicating the event $\Qry(\pubaux,\privaux,q_i)\neq q_i(S)$.
-The $(1-\epsilon)$-correctness of~$\Pi$ guarantees that the probability that $\mathrm{Err}_i=1$ is at most~$\epsilon$,
-and it is tempting to model the~$\mathrm{Err}_i$ as i.i.d. Bernoulli trials with success probability~$\epsilon$.
-However, a moment's reflection shows that this is not the case.  Concretely, consider the following scheme.  Fix $|S|=n$ for all $S \in \calS$, where $n \ll |\univ|$.  For the queries, let $\calQ = \{q_x\colon \calS \to \bits \,|\, \forall x \in \univ\}$ where $\forall S \in \calS$ the predicate $q_x(S)=1 \Leftrightarrow x \in S$.  Let $\Rep(S)$ pick a random element~$s \in S$, and return $M = S \setminus \{s\}$ and $\privaux = \emptystring$.  To respond to queries, let~$\Qry(\pubaux,\privaux,q_x)=1$ iff $x \in M$.  It is easy to see that this scheme is $1/n$-correct; for any fixed~$S$, there are exactly~$n$ queries~$q_x$ that have probability~$1/n$  (over the coins of~$\Rep$) of causing a correctness error, and the remaining $|\univ|-n$ queries have probability zero of causing an error.  Moreover, once the coins of~$\Rep$ are fixed, there is exactly \emph{one} query that will cause an error.  Thus for random queries from~$Q$, for all~$i\in[T]$ we have $\Prob{\mathrm{Err}_i=1}=1/|\univ| \ll 1/n = \epsilon$.
+\heading{``Trivial'' attacks, and error probability vs.\ error
+rate.} \jnote{Not sure this belongs here. I'd rather move any
+discussion of ``attacks'' (trivial or not) to later. But if we just
+want to highlight the difference between error and error rate we
+could do that here.} Let~$\Pi$ be a scheme that is
+$(1-\epsilon)$-correct, and consider an attack that asks random
+queries $q_1,q_2,\ldots,q_T$, i.e., uniform samples from~$\calQ$.
+Let $\mathrm{Err}_i$ be a random variable indicating the event
+$\Qry(\pubaux,\privaux,q_i)\neq q_i(S)$. The
+$(1-\epsilon)$-correctness of~$\Pi$ guarantees that the probability
+that $\mathrm{Err}_i=1$ is at most~$\epsilon$, and it is tempting to
+model the~$\mathrm{Err}_i$ as i.i.d. Bernoulli trials with success
+probability~$\epsilon$. However, a moment's reflection shows that
+this is not the case.  Concretely, consider the following scheme.
+Fix $|S|=n$ for all $S \in \calS$, where $n \ll |\univ|$. For the
+queries, let $\calQ = \{q_x\colon \calS \to \bits \,|\, \forall x
+\in \univ\}$ where $\forall S \in \calS$ the predicate $q_x(S)=1
+\Leftrightarrow x \in S$.  Let $\Rep(S)$ pick a random element~$s
+\in S$, and return $M = S \setminus \{s\}$ and $\privaux =
+\emptystring$.  To respond to queries,
+let~$\Qry(\pubaux,\privaux,q_x)=1$ iff $x \in M$.  It is easy to see
+that this scheme is $1/n$-correct; for any fixed~$S$, there are
+exactly~$n$ queries~$q_x$ that have probability~$1/n$  (over the
+coins of~$\Rep$) of causing a correctness error, and the remaining
+$|\univ|-n$ queries have probability zero of causing an error.
+Moreover, once the coins of~$\Rep$ are fixed, there is exactly
+\emph{one} query that will cause an error.  Thus for random queries
+from~$Q$, for all~$i\in[T]$ we have
+$\Prob{\mathrm{Err}_i=1}=1/|\univ| \ll 1/n = \epsilon$.
 
 This example is contrived, but it highlights the important
 difference between error probability and error rate.  In particular,
@@ -111,37 +141,41 @@ events that depend on other sources of randomness. \tsnote{Not sure
 if there's more to say in this section.}
 
 
-\heading{Data Structures for Set-Multiplicity Queries. } Our particular focus
-will be on data structures that support multiplicity queries, of
-which set-membership queries are a special case.
-\begin{definition} A \emph{set-multiplicity data structure} is a data
-structure with $\Gamma=\mathbb{N}$ and
-where $\calQ=\{q_x \,|\, x \in \univ\}$ where $q_x(S)$ is defined to
-be the multiplicity of~$x$ in the multiset~$S$. \hfill\dqed
+\heading{Data structures for set-multiplicity queries.} Our
+particular focus will be on data structures that support
+multiplicity queries, of which set-membership queries are a special
+case.
+\begin{definition} \rm
+A \emph{set-multiplicity data structure} is a data structure with
+$\Gamma=\mathbb{N}$ and $\calQ=\{q_x\}_{x \in \univ}$, where
+$q_x(S)$ is defined to be the multiplicity of~$x$ in the
+multiset~$S$. \hfill\dqed
 \end{definition}
 
-It is not hard to see Bloom filters are an instantiation of a
-set-multiplicity data structure.  Fix $\Sigma=\Gamma=\bits$.  Define
-algorithm~$\Rep$, with functions $k=k(|S|), m=m(|S|)$ and a
-description of a hash function family~$\mathcal{H}=\{h \colon \univ
-\to \{1,2,\ldots,m\}\}$ hardwired into it, to sample hash functions
-$h_1, \ldots, h_k$ from~$\mathcal{H}$ and then compute an $m$-bit
-array~$M$ (intialized to 0 everywhere) by setting $M[h_i(x)]=1$ for
-all $i\in [k]$ and $x \in S$.  Finally, $\Rep$ returns
-$\privaux=\emptystring$ and $\pubaux = M$ as the
+We illustrate our notation by casting Bloom filters as a particular
+example of a set-multiplicity data structure. \jnote{Only handles
+sets, not multisets.} Let $\Gamma=\bits$, and fix functions
+$k(\cdot)$ and $m(\cdot)$ parameterizing the scheme. Algorithm
+$\Rep$, on input a set~$S$, computes $k=k(|S|)$ and $m=m(|S|)$ and
+then chooses $k$ functions $h_1, \ldots, h_k \in \mathcal{H}$ for
+some function family $\mathcal{H}=\{h \colon \univ \to
+\{1,2,\ldots,m\}\}$. \jnote{Note depends on $m$. It might be easier
+(especially since we talk about error) to already let the hash
+functions be independent random oracles.} It then computes an
+$m$-bit array~$M$ (initialized to 0 everywhere) by setting
+$M[h_i(x)]=1$ for all $i\in [k]$ and $x \in S$.  Finally, $\Rep$
+returns $\privaux=\emptystring$ and $\pubaux = M$ as the
 representation.
 %
-The algorithm~$\Qry$ is defined so that, on input $(\pubaux,\privaux,q_x)$, it
-returns the minimum of the values $M[h_1(x)],\ldots,M[h_k(x)]$.  We note that, while our error
-probability and error rate do not distinguish among ``types'' of
-errors, they also do not preclude instantiations (like the classical
-Bloom filter) that admit only one type of error, e.g.
-false-positives.
+Algorithm~$\Qry$ is defined so that, on input
+$(\pubaux,\privaux,q_x)$, it returns the minimum of the values
+$M[h_1(x)],\ldots,M[h_k(x)]$. \jnote{How does $\Qry$ know the hash
+functions?}
 
-As a simple extension, consider $\Sigma=\mathbb{N}$ and modify the
-basic Bloom filter so that it stores counters, rather than
-bits, at each position in an array.  In particular, for each~$x \in
-S$ the $\Rep$~algorithm increments the counters stored at positions
+As a simple extension, consider $\Gamma=\mathbb{N}$ and modify the
+basic Bloom filter so that it stores counters, rather than bits, at
+each position in an array.  In particular, for each~$x \in S$ the
+$\Rep$~algorithm increments the counters stored at positions
 $h_1(x), h_2(x), \ldots, h_k(x)$, returns the final array of
 counters as~$M$.  The $\Qry$-algorithm remains the same. Such a
 construction gives a static version of a counting Bloom
@@ -154,10 +188,12 @@ $\privaux=(h_1,h_2,\ldots,h_k)$, and setting $\pubaux=M$.
 Related constructions that use a secret key~$K$, but not for hashing (e.g.\ the PRP-based
 construction from NY), are captured setting $\privaux=K, \pubaux=M$.
 
-By setting $\Sigma=\bits^L$ for a specified $L>0$, we capture the
-so-called ``garbled Bloom filter'' due to Dong, Chen and
-Wen~\cite{xxx}.  This stores xor-shares of bitstring~$x \in S$ at
-positions $h_1(x),h_2(x),\ldots,h_k(x)$ in an array.  Similarly, the
-cuckoo-hashing construction from NY, which (loosely speaking) stores a
-hash $g(x)$ at positions determined by $h_1(x),h_2(x),\ldots,h_k(x)$,
-is captured when $L=|g(x)|$. \tsnote{Check the correctness of this claim.}
+By setting $\Sigma=\bits^L$ for a specified $L>0$, we can capture
+the so-called ``garbled Bloom filter'' due to Dong, Chen and
+Wen~\cite{xxx}. \jnote{Details have to be filled in.} This stores
+xor-shares of bitstring~$x \in S$ at positions
+$h_1(x),h_2(x),\ldots,h_k(x)$ in an array. Similarly, the
+cuckoo-hashing construction from NY, which (loosely speaking) stores
+a hash $g(x)$ at positions determined by
+$h_1(x),h_2(x),\ldots,h_k(x)$, is captured when $L=|g(x)|$.
+\tsnote{Check the correctness of this claim.}
