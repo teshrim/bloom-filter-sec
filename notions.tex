@@ -16,11 +16,13 @@ $\Rep(S)$ is run to generate $(\pubaux,\privaux)$. \jnote{I thought we were goin
 the adversary choose~$S$?} \tsnote{Email discussion. At this point,
 I'm happy just making~$S$ part of the experiment ``name'', the
 way~$\distr{}{}$ is now.  The distribution seems not to matter for
-correctness, at least for the schemes we consdier.} \jnote{If instead we choose $S$ from ${\cal D}$, then
+correctness, at least for the schemes we consider.} \jnote{If instead we choose $S$ from ${\cal D}$, then
 is it clear we want to give $S$ to~$A$?} \tsnote{For \emph{correctness},
 yes, if for no other reason than to allow~$A$ to know when it asking
 a pointless query.  But also it will make no difference to the
 provable correctness of the constructions we consider.}
+\jnote{OK, I think I would just change the definitions so that the attacker
+chooses $S$.}
 %(Unless stated otherwise, we assume security holds for all distributions and thus for all sets $S$.)
 Adversary~$A$ is given~$\pubaux$~as input; it is also
 provided with access to an oracle~$\TestOracle$ that, on input a query~$q \in \calQ$,
@@ -34,9 +36,7 @@ we are trying to be more general then we should be consistent.}
   set-multiplicity data structures.  I don't think we actually
   specialize notions in any way until, maybe, the OW privacy notion.
   It is true that we only deliver concrete results for set-multiplicty
-data structures, however.}\jnote{Why does $A$ output
-anything at all?}\tsnote{To signify it is finished execution.  Matter
-of taste, I'm not hardover about it.}
+data structures, however.}
 
 The notion is lifted to the random-oracle model by providing
 $\Rep,\Qry$ and the adversary~$A$ with oracle access to the
@@ -47,10 +47,11 @@ than $(a,\mathrm{err})$. Note that the latter can be computed from the former,
 and in the general case I think the former is what we
 want.}\tsnote{This may have implications for the efficiency of
 reductions, I'm not sure. The reason I introduced the $\mathrm{err}$
-counter and returned this was to avoid~$A$ be forced to evalutate
-queries of unknown computational cost.} 
-%\jnote{I also changedthe definition so the adversary has to find $r$
-% {\bf unique} inputs on which there is an error.}
+counter and returned this was to avoid~$A$ be forced to evaluate
+queries of unknown computational cost.} \jnote{Not sure what you mean. If the
+oracle returns $q(S)$ then $A$ doesn't have to evaluate it. All $A$ has to do
+is an equality check to see if $a=q(S)$ or not.}
+
 
 
 \begin{figure}[htp]
@@ -92,11 +93,12 @@ all~$t$-time adversaries that ask at most~$q$ queries. We say that a
 set-representation data structure~$\Pi$ is $(t,q,r,\epsilon)$-correct if $\AdvCorrect{\Pi,\distr{}{},r}{t,q} \leq \epsilon$.
 \jnote{Note~$q$ is overloaded here.}\tsnote{True, and do we even need
   it, other than for making a compact statements of comparison with
-  NY?  Why not just have explict advantage bounding statements, as we
+  NY?  Why not just have explicit advantage bounding statements, as we
   do for our other results, relating our notion to NY's?  (And,
   probably, moving all of that to an appendix, as you later suggest.)}
-%\jnote{Note that test includes err because we don't want to penalize
-%the adversary's resources for computing $q(S)$.}
+\jnote{Not sure what you mean. I was pointing out that we use $q$ both for a particular
+query, as well as for the bound on the number of attacker's queries. Don't we want to
+keep track of the query bound?}
 
 \todo{Explain that the case of $r=1$ does not necessarily imply anything for $r>1$: can have a scheme
 where finding the first false positive is hard but then the rest are easy; can have
@@ -171,14 +173,16 @@ doesn't seem to suffer. Anyway, it's a bit of an unfair comparison, in
 their favor.  You're lifting their notion to ours, which is more
 general.  And by the time we get to that, we have already done them
 the favor of cleaning up the syntax, so that their ``lifted'' notion
-looks better than it was.}
+looks better than it was.} \jnote{I agree, it's just that once we have ``lifted'' it
+appropriately, it's not clear what's wrong with it and why we introduce a different
+style of definition.}
 
 \begin{theorem}
 If $\Pi$ is $(t,q,\epsilon)$-NY-correct, then it is also
 $(t, q', r, q'\epsilon/r)$-correct for any $q' \leq q+1$ and $r\geq
 1$.
 \tsnote{this could easily be written, albeit less compactly, without
-introducing the resource-parameterized notation; likewise the others.}
+introducing the resource-parameterized notation; likewise the others.} \jnote{How?}
 \end{theorem}
 \begin{proof}
 Let $\Pi$ be a set-representation data structure that is $(t,q,\epsilon)$-NY-correct,
@@ -244,7 +248,9 @@ correctly for every other query. The theorem follows.
 are also all trivial.} \tsnote{Trivial or not, it's all part of the
 overall contribution, which is putting this topic on a solid
 foundation.  We can move it all to an appendix, but I still see it as
-very worthwhile.}
+very worthwhile.} \jnote{It's worth having for completeness, I'm just not sure
+what we (or the reader) is supposed to do with it. It's not like we can draw
+any simple conclusions like ``our definition implies theirs'' or anything.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -252,8 +258,6 @@ very worthwhile.}
 
 \newcommand{\leak}{{\sf leak}}
 \subsection{Privacy}
-\jnote{Define appropriate notion of min-entropy for our setting.
-Define one-wayness.}
 
 In this section we specialize to the case of set-membership data structures, and
 focus on sets rather than multisets.
@@ -265,8 +269,7 @@ min-entropy} of ${\cal D}$ is defined as
 
 
 One can also consider the orthogonal notion of \emph{privacy} for a
-data structure. \jnote{I am still hoping that we can treat data structures
-at an even more general level than set-representation data structures.}
+data structure.
 We formalize two types of privacy notions. The first captures
 a ``one-wayness'' property that (informally) requires that
 the representation of some set~$S$ does not make it any easier for an attacker
@@ -275,10 +278,6 @@ The second definition
 captures a flavor of semantic security, essentially requiring that $M$ and $\pub$ do
 not leak any information about the set~$S$ they represent beyond
 what is captured in some explicit leakage function.
-
-\jnote{OK, from here on I specialize to set-representation data
-  structures\ldots} \tsnote{I don't understand this comment.  That's
-  what our syntax supports anyway, so how is this specializing?}
 
 
 Our semantic-secure definition is simulation-based (see Figure~\ref{fig:privacy-ss}).
