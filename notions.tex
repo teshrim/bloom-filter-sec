@@ -13,8 +13,11 @@ First, a set~$S$ is chosen according to some
 distribution~$\distr{}{}$ over the collection of multisets
 $\mathcal{S}$ associated with~$\Pi$, and then
 $\Rep(S)$ is run to generate $(\pubaux,\privaux)$. \jnote{I thought we were going to let
-the adversary choose~$S$?} \jnote{If instead we choose $S$ from ${\cal D}$, then
-is it clear we want to give $S$ to~$A$?}
+the adversary choose~$S$?} \tsnote{Email discussion.} \jnote{If instead we choose $S$ from ${\cal D}$, then
+is it clear we want to give $S$ to~$A$?} \tsnote{For \emph{correctness},
+yes, if for no other reason than to allow~$A$ to know when it asking
+a pointless query.  But also it will make no difference to the
+provable correctness of the constructions we consider.}
 %(Unless stated otherwise, we assume security holds for all distributions and thus for all sets $S$.)
 Adversary~$A$ is given~$\pubaux$~as input; it is also
 provided with access to an oracle~$\TestOracle$ that, on input a query~$q \in \calQ$,
@@ -23,8 +26,14 @@ a counter if this result is in error.  The adversary wins if it
 manages to cause at least~$r>0$ such errors among its queries.
 \jnote{If we are specializing the set-multiplicity data structures then we
 may as well have the attacker query $x$ which gets translated to query $q_x$. If
-we are trying to be more general then we should be consistent.} \jnote{Why does $A$ output
-anything at all?}
+we are trying to be more general then we should be consistent.}
+\tsnote{I don't see how this correctness notion is specialized to
+  set-multiplicity data structures.  I don't think we actually
+  specialize notions in any way until, maybe, the OW privacy notion.
+  It is true that we only deliver concrete results for set-multiplicty
+data structures, however.}\jnote{Why does $A$ output
+anything at all?}\tsnote{To signify it is finished execution.  Matter
+of taste, I'm not hardover about it.}
 
 The notion is lifted to the random-oracle model by providing
 $\Rep,\Qry$ and the adversary~$A$ with oracle access to the
@@ -32,9 +41,13 @@ random-oracle(s).
 
 \jnote{I changed $\TestOracle$ so that it outputs $(a, q(S))$ rather
 than $(a,\mathrm{err})$. Note that the latter can be computed from the former,
-and in the general case I think the former is what we want.} \jnote{I also changed
-the definition so the adversary has to find $r$ {\bf unique} inputs on which
-there is an error.}
+and in the general case I think the former is what we
+want.}\tsnote{This may have implications for the efficiency of
+reductions, I'm not sure. The reason I introduced the $\mathrm{err}$
+counter and returned this was to avoid~$A$ be forced to evalutate
+queries of unknown computational cost.} 
+%\jnote{I also changedthe definition so the adversary has to find $r$
+% {\bf unique} inputs on which there is an error.}
 
 
 \begin{figure}[htp]
@@ -44,8 +57,7 @@ there is an error.}
 {
 \experimentv{$\ExpCorrect{\setprim,\distr{}{},r}{A}$}\\
 $S \getsr \distr{}{}$\\
-$\mathcal{Q} \gets \emptyset$ \\
-$\mathrm{err}\gets 0$\\
+$\mathcal{C} \gets \emptyset$; $\mathrm{err}\gets 0$\\
 $(\pubaux,\privaux) \getsr \Rep(S)$\\
 $z \getsr A^{\TestOracle}(S,\pubaux)$\\
 if $\mathrm{err} < r$ then Return 0\\
@@ -54,10 +66,11 @@ Return 1
 %
 {
 \oracle{$\TestOracle(q)$}\\
+if $q \in \mathcal{C}$ then Return $\bot$\\
 $a \gets \Qry(\pubaux,\privaux,q)$\\
-if ($a \neq q(S)$ and $q \not \in \mathcal{Q}$) then \\
+if $a \neq q(S)$ then \\
 \nudge $\mathrm{err}\gets\mathrm{err}+1$\\
-$\mathcal{Q} \gets \mathcal{Q} \cup \{q\}$ \\
+$\mathcal{C} \gets \mathcal{C} \cup \{q\}$ \\
 Return~$(a,q(S))$
 }
 }
