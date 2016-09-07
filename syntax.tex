@@ -86,32 +86,37 @@ $\max_{S}\Pr[(\pubaux,\privaux) \getsr \Rep(S);\, q \getsr \calQ :
 \mathrm{Err}(S,q,\pubaux,\privaux)=1] \leq \tilde{\epsilon}$. \hfill\dqed
 \end{definition}
 
-\noindent The definitions above can be lifted to the random-oracle
+%We will sometimes say that a data structure is
+%$(1-\epsilon)$-correct, meaning it has error probability~$\epsilon$.
+%Note that $1-\epsilon$ is a worst-case lower bound on the
+%correctness of the data structure. \tsnote{Don't know if this will be necessary.}
+
+These definitions, and those that follow, can be lifted to the random-oracle
 model by giving $\Rep, \Qry$ access to a random oracle. In that
 case, the probabilities defining the error probability and error
 rate are also taken over choice of the random oracle.
-
-We will sometimes say that a data structure is
-$(1-\epsilon)$-correct, meaning it has error probability~$\epsilon$.
-Note that $1-\epsilon$ is a worst-case lower bound on the
-correctness of the data structure. \tsnote{Don't know if this will be necessary.}
 
 We note that, while our error probability and error rate do not
 distinguish among ``types'' of errors, they also do not preclude
 instantiations (like the classical Bloom filter) that admit only one
 type of error, e.g., false positives.
 
+
 \def\bin{{\sf Bin}}
-\heading{``Trivial'' attacks, and error probability vs.\ error
-rate.} \jnote{Not sure this belongs here. I'd rather move any
-discussion of ``attacks'' (trivial or not) to later. But if we just
-want to highlight the difference between error and error rate we
-could do that here.} Let~$\Pi$ be a scheme that is
-$(1-\epsilon)$-correct, and consider an attack that asks random
+\heading{Error probability vs.\ error rate. }
+We pause to highlight an important
+difference between error probability and error rate.  In particular,
+the error probability~$\epsilon$ is measured only over the coins
+of~$\Rep$, for a fixed~$S$ and query~$q$. Once the coins of~$\Rep$
+are fixed, it is not straightforward how to connect~$\epsilon$ to
+events that depend on other sources of randomness.   We illustrate how
+this surfaces with the following example.
+
+Let~$\Pi$ be a data structure that has error-probability $\epsilon$,
+and consider a correctness-violating attack that asks random
 queries $q_1,q_2,\ldots,q_T$, i.e., uniform samples from~$\calQ$.
 Let $\mathrm{Err}_i$ be a random variable indicating the event
-$\Qry(\pubaux,\privaux,q_i)\neq q_i(S)$. The
-$(1-\epsilon)$-correctness of~$\Pi$ guarantees that the probability
+$\Qry(\pubaux,\privaux,q_i)\neq q_i(S)$.  We know that the probability
 that $\mathrm{Err}_i=1$ is at most~$\epsilon$, and it is tempting to
 model the~$\mathrm{Err}_i$ as i.i.d. Bernoulli trials with success
 probability~$\epsilon$. However, a moment's reflection shows that
@@ -132,19 +137,11 @@ Moreover, once the coins of~$\Rep$ are fixed, there is exactly
 from~$Q$, for all~$i\in[T]$ we have
 $\Prob{\mathrm{Err}_i=1}=1/|\univ| \ll 1/n = \epsilon$.
 
-This example is contrived, but it highlights the important
-difference between error probability and error rate.  In particular,
-the error probability~$\epsilon$ is measured only over the coins
-of~$\Rep$, for a fixed~$S$ and query~$q$. Once the coins of~$\Rep$
-are fixed, it is not straightforward how to connect~$\epsilon$ to
-events that depend on other sources of randomness. \tsnote{Not sure
-if there's more to say in this section.}
-
 
 \heading{Data structures for set-multiplicity queries.} Our
 particular focus will be on data structures that support
-multiplicity queries, of which set-membership queries are a special
-case.
+multiplicity queries.
+
 \begin{definition} \rm
 A \emph{set-multiplicity data structure} is a data structure with
 $\Gamma=\mathbb{N}$ and $\calQ=\{q_x\}_{x \in \univ}$, where
@@ -152,28 +149,35 @@ $q_x(S)$ is defined to be the multiplicity of~$x$ in the
 multiset~$S$. \hfill\dqed
 \end{definition}
 
-We illustrate our notation by casting Bloom filters as a particular
-example of a set-multiplicity data structure. \jnote{Only handles
-sets, not multisets.} Let $\Gamma=\bits$, and fix functions
+The classical Bloom filter is a special case of a set-multiplicity
+data structure, as set-membership query is a type of
+set-multiplicity query.  Specifically, 
+%\jnote{Only handles sets, not multisets.} 
+let $\Gamma=\bits$, and fix functions
 $k(\cdot)$ and $m(\cdot)$ parameterizing the scheme. Algorithm
 $\Rep$, on input a set~$S$, computes $k=k(|S|)$ and $m=m(|S|)$ and
 then chooses $k$ functions $h_1, \ldots, h_k \in \mathcal{H}$ for
 some function family $\mathcal{H}=\{h \colon \univ \to
 \{1,2,\ldots,m\}\}$. \jnote{Note depends on $m$. It might be easier
 (especially since we talk about error) to already let the hash
-functions be independent random oracles.} It then computes an
-$m$-bit array~$M$ (initialized to 0 everywhere) by setting
+functions be independent random oracles.} \tsnote{I don't see the
+problem.  $\Rep$ knows~$m$, so any function (whose range admits at
+least~$m$ values) can be effectively treated as having range~$[m]$.
+But I added a sentence at the end of this paragraph, too.  See if that
+helps.} 
+It then computes an $m$-bit array~$M$ (initialized to 0 everywhere) by setting
 $M[h_i(x)]=1$ for all $i\in [k]$ and $x \in S$.  Finally, $\Rep$
-returns $\privaux=\emptystring$ and $\pubaux = M$ as the
+returns $\privaux=\emptystring$ and $\pubaux = \langle M,h_1,h_2,\ldots,h_k\rangle$ as the
 representation.
 %
 Algorithm~$\Qry$ is defined so that, on input
 $(\pubaux,\privaux,q_x)$, it returns the minimum of the values
-$M[h_1(x)],\ldots,M[h_k(x)]$. \jnote{How does $\Qry$ know the hash
-functions?}
+$M[h_1(x)],\ldots,M[h_k(x)]$.  We note that the standard Bloom filter
+analysis treats $h_1,h_2,\ldots,h_k$ as independent random functions,
+which we may capture in the ROM with some simple adjustments to the above.
 
 As a simple extension, consider $\Gamma=\mathbb{N}$ and modify the
-basic Bloom filter so that it stores counters, rather than bits, at
+classical Bloom filter so that it stores counters, rather than bits, at
 each position in an array.  In particular, for each~$x \in S$ the
 $\Rep$~algorithm increments the counters stored at positions
 $h_1(x), h_2(x), \ldots, h_k(x)$, returns the final array of
@@ -181,7 +185,7 @@ counters as~$M$.  The $\Qry$-algorithm remains the same. Such a
 construction gives a static version of a counting Bloom
 filter~\cite{xxx}.  We will capture dynamic versions, as well as
 count-min sketches~\cite{xxx}, scalable Bloom filters~\cite{xxx},
-etc., in a later section.\tsnote{If we ultimately do!}
+etc., in future work.\tsnote{?}
 
 A Bloom filter with secret hash functions is captured by setting
 $\privaux=(h_1,h_2,\ldots,h_k)$, and setting $\pubaux=M$.
@@ -196,4 +200,4 @@ $h_1(x),h_2(x),\ldots,h_k(x)$ in an array. Similarly, the
 cuckoo-hashing construction from NY, which (loosely speaking) stores
 a hash $g(x)$ at positions determined by
 $h_1(x),h_2(x),\ldots,h_k(x)$, is captured when $L=|g(x)|$.
-\tsnote{Check the correctness of this claim.}
+\todo{Check the correctness of this claim.}
