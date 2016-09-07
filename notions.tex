@@ -13,7 +13,10 @@ First, a set~$S$ is chosen according to some
 distribution~$\distr{}{}$ over the collection of multisets
 $\mathcal{S}$ associated with~$\Pi$, and then
 $\Rep(S)$ is run to generate $(\pubaux,\privaux)$. \jnote{I thought we were going to let
-the adversary choose~$S$?} \tsnote{Email discussion.} \jnote{If instead we choose $S$ from ${\cal D}$, then
+the adversary choose~$S$?} \tsnote{Email discussion. At this point,
+I'm happy just making~$S$ part of the experiment ``name'', the
+way~$\distr{}{}$ is now.  The distribution seems not to matter for
+correctness, at least for the schemes we consdier.} \jnote{If instead we choose $S$ from ${\cal D}$, then
 is it clear we want to give $S$ to~$A$?} \tsnote{For \emph{correctness},
 yes, if for no other reason than to allow~$A$ to know when it asking
 a pointless query.  But also it will make no difference to the
@@ -87,11 +90,15 @@ $\AdvCorrect{\Pi,\distr{}{},r}{A} = \Prob{\ExpCorrect{\Pi,\distr{}{}, r}{A}=1}$.
 Overloading notation, we write $\AdvCorrect{\Pi,\distr{}{},r}{t,q}$ for the maximum over
 all~$t$-time adversaries that ask at most~$q$ queries. We say that a
 set-representation data structure~$\Pi$ is $(t,q,r,\epsilon)$-correct if $\AdvCorrect{\Pi,\distr{}{},r}{t,q} \leq \epsilon$.
-\jnote{Note~$q$ is overloaded here.}
+\jnote{Note~$q$ is overloaded here.}\tsnote{True, and do we even need
+  it, other than for making a compact statements of comparison with
+  NY?  Why not just have explict advantage bounding statements, as we
+  do for our other results, relating our notion to NY's?  (And,
+  probably, moving all of that to an appendix, as you later suggest.)}
 %\jnote{Note that test includes err because we don't want to penalize
 %the adversary's resources for computing $q(S)$.}
 
-\jnote{Case of $r=1$ does not necessarily imply anything for $r>1$: can have a scheme
+\todo{Explain that the case of $r=1$ does not necessarily imply anything for $r>1$: can have a scheme
 where finding the first false positive is hard but then the rest are easy; can have
 a scheme where finding one false positive is easy finding more is hard (e.g.,
 because there do not exist
@@ -121,16 +128,17 @@ in the paper.}
 \jnote{Just noticed something (else) odd about the NY definition: we cannot assume w.l.o.g.\
 that $A$ makes exactly $q$ queries, and in fact it is possible to have cases where increasing
 the number of queries the attacker makes can decrease its advantage! This seems like
-another drawback of the definition.}
+another drawback of the definition.}\tsnote{Really?  That seems worth
+pointing out, as part of our list of complaints.}
 
 \begin{figure}[htp]
 \centering
 \fpage{.6}{
 \hpagess{.5}{.45}
 {
-\experimentv{$\ExpCorrect{\setprim,\distr{}{}}{A}$}\\
+\experimentv{$\NYExpCorrect{\setprim,\distr{}{}}{A}$}\\
 $S \getsr \distr{}{}$\\
-$\mathcal{Q} \gets \emptyset$\\
+$\mathcal{C} \gets \emptyset$\\
 %$\mathrm{err}\gets 0$\\
 $(\pubaux,\privaux) \getsr \Rep(S)$\\
 $q \getsr A^{\TestOracle}(S,\pubaux)$\\
@@ -143,7 +151,7 @@ Return 0
 {
 \oracle{$\TestOracle(q)$}\\
 $a \gets \Qry(\pubaux,\privaux,q)$\\
-$\mathcal{Q} \gets \mathcal{Q} \cup \{q\}$ \\
+$\mathcal{C} \gets \mathcal{C} \cup \{q\}$ \\
 %\nudge $\mathrm{err}\gets\mathrm{err}+1$\\
 Return~$(a,q(S))$
 }
@@ -156,11 +164,21 @@ correctness, adapted to our setting.}
 With the above in place we can now relate their definition to ours.
 
 \jnote{Do we have a compelling example of why the definition in Figure~\ref{fig:correctness}
-is ``better'' than the definition in Figure~\ref{fig:NYcorrectness}?}
+is ``better'' than the definition in
+Figure~\ref{fig:NYcorrectness}?}\tsnote{I don't know, but we do seem
+to have a compelling list of shortcomings of their notion, which ours
+doesn't seem to suffer. Anyway, it's a bit of an unfair comparison, in
+their favor.  You're lifting their notion to ours, which is more
+general.  And by the time we get to that, we have already done them
+the favor of cleaning up the syntax, so that their ``lifted'' notion
+looks better than it was.}
 
 \begin{theorem}
 If $\Pi$ is $(t,q,\epsilon)$-NY-correct, then it is also
-$(t, q', r, q'\epsilon/r)$-correct for any $q' \leq q+1$ and $r\geq 1$.
+$(t, q', r, q'\epsilon/r)$-correct for any $q' \leq q+1$ and $r\geq
+1$.
+\tsnote{this could easily be written, albeit less compactly, without
+introducing the resource-parameterized notation; likewise the others.}
 \end{theorem}
 \begin{proof}
 Let $\Pi$ be a set-representation data structure that is $(t,q,\epsilon)$-NY-correct,
@@ -194,6 +212,7 @@ under our correctness definition (for $r=1$).}
 \begin{theorem}
 If $\Pi$ is $(t, q, 1, \epsilon)$-correct, then it is also $(t, q-1, \epsilon)$-NY-correct.
 \end{theorem}
+
 \begin{proof}
 Let $\Pi$ be a set-representation data structure that is $(t,q,1,\epsilon)$-correct,
 and assume that for some distribution $\distr{}{}$
@@ -222,7 +241,10 @@ correctly for every other query. The theorem follows.
 \end{proof}
 
 \jnote{I'm not sure what to conclude from any of the results above. The proofs
-are also all trivial.}
+are also all trivial.} \tsnote{Trivial or not, it's all part of the
+overall contribution, which is putting this topic on a solid
+foundation.  We can move it all to an appendix, but I still see it as
+very worthwhile.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -254,7 +276,9 @@ captures a flavor of semantic security, essentially requiring that $M$ and $\pub
 not leak any information about the set~$S$ they represent beyond
 what is captured in some explicit leakage function.
 
-\jnote{OK, from here on I specialize to set-representation data structures\ldots}
+\jnote{OK, from here on I specialize to set-representation data
+  structures\ldots} \tsnote{I don't understand this comment.  That's
+  what our syntax supports anyway, so how is this specializing?}
 
 
 Our semantic-secure definition is simulation-based (see Figure~\ref{fig:privacy-ss}).

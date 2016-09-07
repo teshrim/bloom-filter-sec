@@ -25,7 +25,7 @@ trying to find a single FP in each of~$r$ independent``rounds'', each round
 consisting of~$q$ attempts.
 
 \heading{Construction of PRF with domain separation.}
-Let $\Pi_{\mathrm{ds}}= (\calQ,\Rep, \Qry)$ be a set-multiplicity data structure defined on the right-side of Figure~\ref{fig:lin-and-ds}.  As with the preceding theorem, the following says (informally) that if~$F$ is a secure PRF, then this domain-separated PRF construction is correct against adaptive adversaries.
+Let $\Pi_{\mathrm{ds}}= (\calQ,\Rep, \Qry)$ be a set-multiplicity data structure defined on the right-side of Figure~\ref{fig:lin-and-ds}.  As with the preceding theorem, the following says (informally) that if~$F$ is a secure PRF, then this domain-separated PRF construction is correct against adaptive adversaries.  We note that Neidermayer et al. in~\cite{xxx} suggest replacing the linear-PRF hash functions in the previous construction with independently keyed PRFs as a way to thwart their attacks.  The construction we consider now achieves the same end, albeit via explict domain separation rather than separate keys.
 
 
 \begin{theorem}\label{thm2}
