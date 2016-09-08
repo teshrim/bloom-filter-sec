@@ -5,8 +5,7 @@ integer, we let $[\univ]^n$ denote the set of all size-$n$ subsets
 of~$\univ$, and $[[\univ]]^n$ for the set of all multisets
 over~$\univ$ with total multiplicity~$n$. \jnote{I guess we are
 viewing sets as a special case of multisets, so maybe just say
-that.} \tsnote{We may not need all
-  of that.} We write $x \getsr \univ$ to denote
+that.}  We write $x \getsr \univ$ to denote
 sampling an element uniformly from~$\univ$ and assigning it to~$x$,
 and we extend this notation to randomized algorithms. When~$X$ is a
 string over some alphabet~$\Sigma$, we write $|X|$ for the bitlength
@@ -154,18 +153,15 @@ data structure, as set-membership queries are a type of
 set-multiplicity query.  Specifically,
 %\jnote{Only handles sets, not multisets.}
 let $\Gamma=\bits$, and fix functions $k(\cdot)$ and $m(\cdot)$
-parameterizing the scheme. Algorithm $\Rep$, on input a set~$S$,
+parameterizing the scheme.  Algorithm $\Rep$, on input a set~$S$,
 computes $k=k(|S|)$ and $m=m(|S|)$ and then chooses $k$ functions
 $h_1, \ldots, h_k \in \mathcal{H}$ for some function family
-$\mathcal{H}=\{h \colon \univ \to \{1,2,\ldots,m\}\}$. \jnote{Note
-depends on $m$. It might be easier (especially since we talk about
-error) to already let the hash functions be independent random
-oracles.} \tsnote{I don't see the problem.  $\Rep$ knows~$m$, so any
-function (whose range admits at least~$m$ values) can be effectively
-treated as having range~$[m]$. But I added a sentence at the end of
-this paragraph, too.  See if that helps.} \jnote{$\Rep$ knows $m$,
-but $m$ can take any value so we need an $\mathcal{H}$ that is
-defined for every possible~$m$.} It then computes an $m$-bit
+$\mathcal{H}=\{h \colon \univ \to \mathbb{N}\}$.\footnote{For this
+  example, we are implicitly assuming that the range of the hash
+  functions admits a natural mapping to $[m]$.  In practice, this
+  could be enforced in various ways, including allowing $\Rep$ to
+  return an indication of error. }
+It then computes an $m$-bit
 array~$M$ (initialized to 0 everywhere) by setting $M[h_i(x)]=1$ for
 all $i\in [k]$ and $x \in S$.  Finally, $\Rep$ returns
 $\privaux=\emptystring$ and $\pubaux = \langle
