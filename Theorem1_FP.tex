@@ -21,13 +21,13 @@ When $A$ asks $\TestOracle(q_x)$:\\
 \nudge $a \gets \Qry^{\HashOracle}(\pubaux,\privaux,q_x)$\\
 \nudge if $a \neq q_x(S)$ then \\
 \nudge \nudge $\err \gets \err +1$\\
-\nudge Return~$(a,\err )$\\
+\nudge Return~$(a,q_x(S) )$\\
 When $A$ halts: \\
 \nudge if $\err  < r$ then Return 0\\
 \nudge Return 1\\\\
 %
 \oracle{$\HashOracle(x)$}\\
-$ \mathrm{Ret} \nudge F_{K_1}(x) + i\cdot \calO(x)$, for $i\in[1,k]$\\
+Return $F_{K_1}(x) + i\cdot \calO(x)$, for $i\in[1,k]$\\
 }
 {
 $\adversaryv{B_2^{\calO}}$\\
@@ -39,7 +39,7 @@ When $A$ asks $\TestOracle(q_x)$:\\
 \nudge $a \gets \Qry^{\HashOracle}(\pubaux,\privaux,q_x)$\\
 \nudge if $a \neq q_x(S)$ then \\
 \nudge \nudge $\err \gets\err +1$\\
-\nudge Return~$(a,\err )$\\
+\nudge Return~$(a,q_x(S))$\\
 When $A$ halts: \\
 \nudge if $\err  < r$ then Return 0\\
 \nudge Return 1\\\\
@@ -48,7 +48,7 @@ $a \getsr [m]$\\
 if $T[x] \neq \undefined$\\
 \nudge $a \gets T[x]$\\
 $T[x] \gets a$\\
-Ret  $\calO(x) + i\cdot a$, for $i\in[1,k]$
+Return  $\calO(x) + i\cdot a$, for $i\in[1,k]$
 }
 }
 \caption{\Cref{thm1}:Adversary $B_1, B_2$ simulating $\game{1}(A)$ and $\game{2}(A)$ respectively}\label{fig:BGame1}
@@ -155,7 +155,7 @@ Return 1\\
 $a \gets \Qry^{\HashOracle}(\pubaux,\privaux,q_x)$\\
 if $a \neq q_x(S)$ then \\
 \nudge $\err \gets\err +1$\\
-Return~$(a,\err )$\\
+Return~$(a,q_x(S))$\\
 %
 \oracle{$\HashOracle(x)$}\\
 for $i = 1$ to $k$\\
@@ -176,7 +176,7 @@ Return 1\\
 $a \gets \Qry^{\HashOracle}(\pubaux,\privaux,q_x)$\\
 if $a \neq q_x(S)$ then \\
 \nudge $\err \gets\err +1$\\
-Return~$(a,\err )$\\
+Return~$(a,q_x(S))$\\
 %
 \oracle{$\HashOracle(x)$}\\
 for $i=1$ to $k$\\
@@ -200,7 +200,7 @@ Return 1\\
 $a \gets \Qry^{\HashOracle}(\pubaux,\privaux,q_x)$\\
 if $a \neq q_x(S)$ then \\
 \nudge $\err \gets\err +1$\\
-Return~$(a,\err )$\\\\
+Return~$(a,q_x(S))$\\\\
 %
 \oracle{$\HashOracle(x)$}\\
 for $i=1$ to $k$\\
@@ -227,13 +227,13 @@ if $c \not\in \mathcal{I}$ and $v \neq q_x(S)$ then \\
 \nudge $\bad \gets \true$\\
 if $v \neq q_x(S)$\\
 \nudge $\err \gets\err +1$\\
-Return~$(v,\err )$\\
+Return~$(v,q_x(S))$\\
 %
 \oracle{$\HashOracle(x)$}\\
 $a,b \getsr [m]$\\
 for $i = 1$ to~$k$\\
 \nudge $v_i = a+i \cdot b \bmod m$\\
-Ret $\left(v_1,\ldots,v_k\right)$
+Return $\left(v_1,\ldots,v_k\right)$
 }
 }
 \caption{\Cref{thm1}:Game playing argument}\label{fig:Game}
@@ -251,13 +251,13 @@ $K \getsr \calK $\\
 $\rho \getsr \Func{\univ,[m]}$\\
 $b \getsr \bits$\\
 $b' \getsr B^\calO$\\
-Ret $[b = b']$\\
+Return $[b = b']$\\
 }
 {
 $\oracle{\calO \smallskip(x)}$\\
 if $ b = 1$ then\\
-\nudge Ret $F_K(x)$\\
-Ret $\rho(x)$\\
+\nudge Return $F_K(x)$\\
+Return $\rho(x)$\\
 }
 }
 \caption{PRF security notion}\label{fig:prf}
@@ -273,16 +273,16 @@ $c \gets 0$\\%, $\calX \gets \emptyset$\\
 $\err \gets 0$\\
 $\mathcal{I}\getsr [\{1,2,\ldots,q\}]^r$\\
 Run $A(S, \pubaux)$\\
-When $A$ asks $\Test(x)$:\\
+When $A$ asks $\Test(q_x)$:\\
 \nudge $c \gets c+1$\\
 \nudge $r \gets 0$\\
 \nudge if $c \in \mathcal{I}$\\
 %\nudge \nudge $\calX \gets \calX \cup \{x\}$\\
 \nudge \nudge $r \gets 1$\\
 \nudge \nudge $\err \gets \err + 1$\\
-\nudge Ret $(r,\err )$\\
+\nudge Return $(r,q_x(S))$\\
 When $A$ halts:\\
-\nudge Ret 1
+\nudge Return 1
 }
 \caption{Zero-query adversary $D$} \label{fig:D}
 \end{figure}	

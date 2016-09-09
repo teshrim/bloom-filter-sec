@@ -59,12 +59,12 @@ Return 1\\\\
 $a \gets \Qry^{\HashOracle}(\pubaux,\privaux,q_x)$\\
 if $a \neq q_x(S)$ then \\
 \nudge $\err \gets\err +1$\\
-Return~$(a,\err )$\\\\
+Return~$(a,q_x(S) )$\\\\
 %
 \oracle{$\HashOracle(x)$}\\
 for $j = 1$ to $k$\\
 \nudge $h_j(x) =\FK $\\
-Ret $\left(h_1(x),\ldots,h_k(x)\right)$
+Return $\left(h_1(x),\ldots,h_k(x)\right)$
 }
 {
 \underline{\game{1}(A)}\\
@@ -80,12 +80,12 @@ Return 1\\\\
 $a \gets \Qry^{\HashOracle}(\pubaux,\privaux,q_x)$\\
 if $a \neq q_x(S)$ then \\
 \nudge $\err \gets\err +1$\\
-Return~$(a,\err )$\\\\
+Return~$(a,q_x(S) )$\\\\
 %
 \oracle{$\HashOracle(x)$}\\
 for $j=1$ to $k$\\
 \nudge $h_j(x) = \rhoK $\\
-Ret $\left(h_1(x),\ldots,h_k(x)\right)$
+Return $\left(h_1(x),\ldots,h_k(x)\right)$
 }
 }
 \fpage{.9}{
@@ -113,12 +113,12 @@ if $c \not\in \mathcal{I}$ and $v \neq q_x(S)$ then \\
 \nudge $\bad \gets \true$\\
 if $v \neq q_x(S)$\\
 \nudge $\err \gets\err +1$\\
-Return~$(v,\err )$\\\\
+Return~$(v,q_x(S))$\\\\
 %
 \oracle{$\HashOracle(x)$}\\
 for $j = 1$ to~$k$\\
 \nudge $v_j \getsr [m]$\\
-Ret $\left(v_1,\ldots,v_k\right)$
+Return $\left(v_1,\ldots,v_k\right)$
 }
 }
 \caption{\Cref{thm2}: Game playing argument}\label{fig:2TGame}
@@ -137,14 +137,14 @@ When $A$ asks $\TestOracle(q_x)$:\\
 \nudge $a \gets \Qry^{\HashOracle}(\pubaux,\privaux,q_x)$\\
 \nudge if $a \neq q_x(S)$ then \\
 \nudge \nudge $\err \gets \err +1$\\
-\nudge Return~$(a,\err )$\\
+\nudge Return~$(a,q_x(S))$\\
 When $A$ halts: \\
 \nudge if $\err  < r$ then Return 0\\
 \nudge Return 1\\\\
 %
 %
 \oracle{$\HashOracle(x)$}\\
-\nudge Ret $\OK$, for $j\in[1,k]$\\
+\nudge Return $\OK$, for $j\in[1,k]$\\
 }
 \caption{\Cref{thm2}: PRF adversary $B$ simulating $\game{1}(A)$ and $\game{2}(A)$} \label{fig:2TD}
 \end{figure}	
