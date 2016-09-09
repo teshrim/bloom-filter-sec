@@ -1,18 +1,13 @@
-\heading{Classical Bloom filter in random oracle model (ROM). }
-Fix $n,k,m \geq 0$ and let $\mathcal{S}=[\univ]^n$.  Then $\Pi_{\mathrm{Bloom}}= (\calQ,\Rep, \Qry)$ is defined as in Figure~\ref{fig:bf-and-garbled-bf} (left side).  The following result shows,
-\begin{theorem}\label{thm3}
-Fix $k,m,n,r>0$, and let $\Pi_{\mathrm{Bloom}}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure just described. For any adversary~$A$ that makes a total of~$q_T$ queries to the $\Test$ oracle, and $q_R$ queries to the RO, and has time-complexity~$O(t)$, then
-\[
-\AdvCorrect{\Pi_{\mathrm{Bloom}},\distr{\calS}{},r}{A} \leq  {\dbinom{q_T + q_H}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
-\]
-\end{theorem}
-
 \begin{proof}[\Cref{thm3}]
 We use a game playing argument to prove this theorem in the ROM. In $\game{0}$, the $\Hash$ does lazy sampling of elements from $[m]$ to mimic a random oracle(RO). For every distinct query, $\Hash$ returns a random value sampled from $[m]$. Here, the adversary $A$, along with $\Rep$ and $\Qry$ are given access to $\Hash$. It can be seen that, $\game{0}$ exactly simulates the correctness game of $\Pi_{\mathrm{Bloom}}$. So, $\AdvCorrect{\Pi_{\mathrm{Bloom}},\distr{\calS}{},r}{A} = \Prob{\game{0}(A) = 1}$.
 
-$\game{1}$ is exactly same as $\game{0}$ except the $\Qry$ oracle is replaced by the code of $\Qry$, whereas in $\game{2}$, the $\Test$ oracle returns the hash values back to the adversary along with value of $\err$ and output of the $\Qry$ oracle. $\game{3}$ on the other hand, returns all the $k$ hash values for any query. This results in adversary getting $(k-1)$ hash values for free corresponding to each query, whereas we charge the adversary for a single query. Since $k$ is likely to be very small compared to the number of queries the adversary makes, this does not change the dynamics significantly. Also, in real world, RO will be a hash function, and hence the adversary can perform local computations to get the hash values. It can be easily seen that the output of all the games will be same. Hence, $\Prob{\game{0}(A) = 1} = \Prob{\game{1}(A) = 1} = \Prob{\game{2}(A) = 1} = \Prob{\game{3}(A) = 1}$. 
+$\game{1}$ is exactly same as $\game{0}$ except the $\Qry$ oracle is replaced by the code of $\Qry$, whereas in $\game{2}$, the $\Test$ oracle returns the hash values back to the adversary along with $q_x(S)$ and output of the $\Qry$ oracle. $\game{3}$ on the other hand, returns all the $k$ hash values for any query. This results in adversary getting $(k-1)$ hash values for free as we charge the adversary for a single query. Since $k$ is likely to be very small compared to the number of queries the adversary makes, this would not affect the analysis in any significant manner. Also, in real world, RO will be a hash function; hence the adversary can perform local computations to get the hash values. It can be easily seen that the output of all the games will be same. So, $\Prob{\game{0}(A) = 1} = \Prob{\game{1}(A) = 1} = \Prob{\game{2}(A) = 1} = \Prob{\game{3}(A) = 1}$. 
 
-In $\game{4}$, we offload all of $\Test$'s computations to $\Hash$, which now maintains an $\Ans$ table to compute and save answers for each query. For any query, $q$, the $\Test$ oracle returns answer stored at $\Ans[q]$. We also introduce the $\bad$ flag in this game. Like in the earlier proofs,  $\bad$ is set to true, if queries indexed by the r-set $\calI$ fail to be false positives, or the other queries are false-positives. $\bad$ in fact does not affect the output of $\Hash$ or the game. So, $\Prob{\game{4}(A) = 1} = \Prob{\game{3}(A) = 1}$. $\game{5}$ is exactly same as $\game{4}$, but returns 0, if $\bad$ is set to true. It can be observed that, the total queries made to the $\Hash$ oracle by the adversary(in both games) is the sum of queries($q_T$) made by the $\Test$ oracle, and adversary's direct queries($q_H$). Using analyses and intermediate results of previous proofs, $\Prob{\game{5}(A)=1} = \frac{1}{\dbinom{q}{r}}\Prob{\game{4}(A)=1}$.
+In $\game{4}$, assuming $A$ does not make any pointless queries, $\Hash$ returns $k$ random values (for each query) sampled from $[m]$. Also, we offload all of $\Test$'s computations to $\Hash$, which now maintains an $\Ans$ table to compute and save answers for each query.  For any query, $q$, the $\Test$ oracle returns answer stored at $\Ans[q]$. We also introduce the $\bad$ flag in this game. Like in the earlier proofs,  $\bad$ is set to true, if queries indexed by the r-set $\calI$ fail to be false positives, or the other queries are false-positives. $\bad$ in fact does not affect the output of $\Hash$ or the game. So, $\Prob{\game{4}(A) = 1} = \Prob{\game{3}(A) = 1}$. 
+
+$\game{5}$ is exactly same as $\game{4}$, but returns 0, if $\bad$ is set to true. It can be observed that, the total queries made to the $\Hash$ oracle by the adversary is the sum of queries($q_T$) made by the $\Test$ oracle, and adversary's direct queries($q_H$). Using analyses and intermediate results of previous proofs, $\Prob{\game{5}(A)=1} = \frac{1}{\dbinom{q_T + q_H}{r}}\Prob{\game{4}(A)=1}$.
+
+For $r=1$, $\game{5}$ exactly simulates the classical Bloom filter. Since, $\Hash$ returns random values for each query, the event of getting a false-positive is independent of the index of the query. Using Kirsch and Mitzenmacher's upper bound on false positive probability of a classical Bloom filter, we have  $\Prob{\game{5}(A)=1} = \left( (1-e^{-kn/m})^k + O(1/n) \right)^r$.
 
 To summarize, 
 \[
@@ -34,7 +29,7 @@ Return 1\\
 $a \gets \Qry^{\HashOracle}(\pubaux,\privaux,q_x)$\\
 if $a \neq q_x(S)$ then \\
 \nudge $\err \gets\err +1$\\
-Return~$(a,\err )$\\
+Return~$(a,q_x(S) )$\\
 %
 \oracle{$\HashOracle(i,q_y)$}\\
 $v \getsr [m]$\\
@@ -55,9 +50,9 @@ Return 1\\
 $M \gets\pubaux$\\
 for $j \in \{1,2,\ldots,k\}$\\
 \nudge $h_j \gets \HashOracle(j,q_x)$\\
-\nudge if $M[h_j] \neq 1$ then Return $(0, \err)$\\
+\nudge if $M[h_j] \neq 1$ then Return $(0, q_x(S))$\\
 $\err \gets \err +1$\\
-Return~$(1,\err )$\\
+Return~$(1,q_x(S))$\\
 %
 \oracle{$\HashOracle(i,q_y)$}\\
 $v \getsr [m]$\\
@@ -82,10 +77,10 @@ $M \gets\pubaux$\\
 for $j \in \{1,2,\ldots,k\}$\\
 \nudge $h_j \gets \HashOracle(j,q_x)$\\
 \nudge if $M[h_j] \neq 1$\\
-\nudge \nudge if $j = 1$ then Return $(0, \err, \emptystring)$\\
-\nudge \nudge Return $(0, \err, (h_1, \ldots, h_j))$\\
+%\nudge \nudge if $j = 1$ then Return $(0, \err, \emptystring)$\\
+\nudge \nudge Return $(0, q_x(S), (h_1, \ldots, h_j))$\\
 $\err \gets \err +1$\\
-Return~$(1,\err, (h_1, \ldots, h_{k}) )$\\
+Return~$(1,q_x(S), (h_1, \ldots, h_{k}) )$\\
 %
 \oracle{$\HashOracle(i,q_y)$}\\
 $v \getsr [m]$\\
@@ -107,13 +102,13 @@ $M \gets\pubaux $\\
 $(h_1, \ldots, h_{k}) \gets \HashOracle(q_x)$\\
 for $j \in \{1,2,\ldots,k\}$\\
 \nudge if $M[h_j] \neq 1$ then \\
-\nudge \nudge Return~$(0,\err, (h_1, \ldots, h_{k}) )$\\
+\nudge \nudge Return~$(0,q_x(S), (h_1, \ldots, h_{k}) )$\\
 $\err \gets \err +1$\\
-Return~$(1,\err, (h_1, \ldots, h_{k}) )$\\
+Return~$(1,q_x(S), (h_1, \ldots, h_{k}) )$\\
 %
 \oracle{$\HashOracle(q_y)$}\\
-$v_j \getsr [m]$\\
 for $j \in \{1,2,\ldots,k\}$\\
+\nudge $v_j \getsr [m]$\\
 \nudge if $T[j,q_y] \neq \undefined$\\
 \nudge \nudge $v_j \gets T[j,q_y]$\\
 \nudge $T[j,q_y] \gets v_j$\\
@@ -146,42 +141,22 @@ Return $\Ans[x]$\\
 {
 \oracle{$\HashOracle(q_y)$}\\
 $c \gets c + 1$\\
-$v_j \getsr [m]$\\
 for $j \in \{1,2,\ldots,k\}$\\
-\nudge if $T[j,x] \neq \undefined$\\
-\nudge \nudge $v_j \gets T[j,q_y]$\\
-\nudge $T[j,q_y] \gets v_j$\\
+\nudge $v_j \getsr [m]$\\
 %
 $M \gets\pubaux$\\
 for $j \in \{1,2,\ldots,k\}$\\
 \nudge if $M[v_j] \neq 1$ then \\
-\nudge \nudge $\Ans[q_y] \gets (0,\err, (v_1, \ldots, v_{k}) )$\\
+\nudge \nudge $\Ans[q_y] \gets (0, q_y(S), (v_1, \ldots, v_{k}) )$\\
 \nudge \nudge if $c \in \calI$ then $\bad \gets \true$\\
 \nudge \nudge $\Break$\\
 if $c \notin \calI$ then $\bad \gets \true$\\
 $\err \gets \err +1$\\
-$\Ans[q_y] \gets (1,\err, (v_1, \ldots, v_{k}))$\\
+$\Ans[q_y] \gets (1, q_y(S), (v_1, \ldots, v_{k}))$\\
 Ret $\left(v_1,\ldots,v_k\right)$
 }
 }
 \caption{\Cref{thm3}: $\game{4}$ and $\game{5}$ of game playing argument}\label{fig:3TGame}
 \end{figure}
-
-%The proof of this theorem will follow along the lines of \Cref{thm2}. As in previous proofs, we use a game playing argument to prove this theorem as well. In $\game{0}$, the $\HashOracle$ does lazy sampling of elements from $[m]$ to mimic a random oracle(RO). It can be observed that, $\game{0}$ exactly simulates the BF's correctness game attacked by an adaptive adversary. So, $\AdvCorrect{{BF},\distr{\calS}{},r}{A} = \Prob{\game{0}(A) = 1}$.
-%
-%In $\game{1}$, assuming $A$ does not make any pointless queries, $\HashOracle$ is modified to sample random elements from $[m]$. In addition, $\Test$ sets $\bad$ to $\true$ if queries indexed by set $\calI$ fail to be FPs, or if any of the remaining queries are FPs. $\game{2}$, on the other hand is exactly same as $\game{1}$ except it returns 0, if $\bad$ is set to $\true$. It can be easily seen that, $\game{1}$ and $\game{2}$ are exactly same as $\game{2}$ and $\game{3}$ of \Cref{thm2}'s game playing argument. So, 
-%\begin{align*}
-%\Prob{\game{1}(A)=1} = \Prob{\game{0}(A)=1}\\
-%\Prob{\game{2}(A)=1} = \frac{1}{\dbinom{q}{r}}\Prob{\game{1}(A)=1}
-%\end{align*}
-%\Cref{fig:D} shows non-adaptive adversary, $D$ that finds $r$ FPs against the standard BF. Using a similar explanation from previous proofs,
-%\begin{align*}
-%\AdvCorrect{{BF},\distr{\calS}{},r}{D} &= \Prob{\game{2}(A) = 1}\\
-%\AdvCorrect{{BF},\distr{\calS}{},r}{D} &\leq \left( (1-e^{-kn/m})^k + O(1/n) \right)^r \,.
-%\end{align*}
-%To summarize, we have
-%\[
-%\AdvCorrect{{BF},\distr{\calS}{},r}{A} \leq  {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
-%\]
 
 \end{proof}

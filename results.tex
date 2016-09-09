@@ -64,6 +64,19 @@ Adversary~$B^{f}$ simulates the steps of $\ExpPrivSSreal{\Pi_{\mathrm{ds}}}{A}$,
 \end{proof}
 %%%%%%%%%%
 
+%%%%%%%%%%%%%%%%% CLASSICAL BLOOM FILTER IN ROM %%%%%%%%%%%%%%%%%%%%
+
+\heading{Classical Bloom filter in random oracle model (ROM). }
+Fix $n,k,m \geq 0$ and let $\mathcal{S}=[\univ]^n$.  Then $\Pi_{\mathrm{Bloom}}= (\calQ,\Rep, \Qry)$ is defined as in Figure~\ref{fig:bf-and-garbled-bf} (left side).  The following result shows,
+
+\begin{theorem}\label{thm3}\label{thm:bf-correctness}
+Fix $k,m,n,r>0$, and let $\Pi_{\mathrm{Bloom}}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure just described. For any adversary~$A$ that makes a total of~$q_T$ queries to the $\Test$ oracle, and $q_R$ queries to the RO, and has time-complexity~$O(t)$,
+\[
+\AdvCorrect{\Pi_{\mathrm{Bloom}},\distr{\calS}{},r}{A} \leq  {\dbinom{q_T + q_H}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
+\]
+\end{theorem}
+
+\input{Theorem3_FP}
 
 \todo{Below are two lists of things that we should show.}
 
