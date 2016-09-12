@@ -9,20 +9,20 @@ set-multiplicity data structures.
 
 \subsection{Correctness Against Adaptive Adversaries}
 
-First, a set~$S$ is chosen according to some
-distribution~$\distr{}{}$ over the collection of multisets
-$\mathcal{S}$ associated with~$\Pi$, and then
-$\Rep(S)$ is run to generate $(\pubaux,\privaux)$. \jnote{I thought we were going to let
-the adversary choose~$S$?} \tsnote{Email discussion. At this point,
-I'm happy just making~$S$ part of the experiment ``name'', the
-way~$\distr{}{}$ is now.  The distribution seems not to matter for
-correctness, at least for the schemes we consider.} \jnote{If instead we choose $S$ from ${\cal D}$, then
-is it clear we want to give $S$ to~$A$?} \tsnote{For \emph{correctness},
-yes, if for no other reason than to allow~$A$ to know when it asking
-a pointless query.  But also it will make no difference to the
-provable correctness of the constructions we consider.}
-\jnote{OK, I think I would just change the definitions so that the attacker
-chooses $S$.}
+First, the adversary $A$ outputs a set $S$ from among those supported by
+the data structure. Then,
+$\Rep(S)$ is run to generate $(\pubaux,\privaux)$.
+%\jnote{I thought we were going to let
+%the adversary choose~$S$?} \tsnote{Email discussion. At this point,
+%I'm happy just making~$S$ part of the experiment ``name'', the
+%way~$\distr{}{}$ is now.  The distribution seems not to matter for
+%correctness, at least for the schemes we consider.} \jnote{If instead we choose $S$ from ${\cal D}$, then
+%is it clear we want to give $S$ to~$A$?} \tsnote{For \emph{correctness},
+%yes, if for no other reason than to allow~$A$ to know when it asking
+%a pointless query.  But also it will make no difference to the
+%provable correctness of the constructions we consider.}
+%\jnote{OK, I think I would just change the definitions so that the attacker
+%chooses $S$.}
 %(Unless stated otherwise, we assume security holds for all distributions and thus for all sets $S$.)
 Adversary~$A$ is given~$\pubaux$~as input; it is also
 provided with access to an oracle~$\TestOracle$ that, on input a query~$q \in \calQ$,
