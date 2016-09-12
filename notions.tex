@@ -4,6 +4,7 @@ Following NY, we are interested in defining an adaptive (i.e.,
 adversarial) notion of correctness.
 In addition to correctness, we establish notions of privacy for
 set-multiplicity data structures.
+All adversaries are stateful by default.
 
 \tsnote{flesh out}
 
@@ -29,28 +30,19 @@ provided with access to an oracle~$\TestOracle$ that, on input a query~$q \in \c
 returns $\Qry(\pubaux,\privaux,q)$ and increments
 a counter if this result is in error.  The adversary wins if it
 manages to cause at least~$r>0$ such errors among its queries.
-\jnote{If we are specializing the set-multiplicity data structures then we
-may as well have the attacker query $x$ which gets translated to query $q_x$. If
-we are trying to be more general then we should be consistent.}
-\tsnote{I don't see how this correctness notion is specialized to
-  set-multiplicity data structures.  I don't think we actually
-  specialize notions in any way until, maybe, the OW privacy notion.
-  It is true that we only deliver concrete results for set-multiplicty
-data structures, however.}
-
-The notion is lifted to the random-oracle model by providing
+The notion can be lifted to the random-oracle model by providing
 $\Rep,\Qry$ and the adversary~$A$ with oracle access to the
 random-oracle(s).
 
-\jnote{I changed $\TestOracle$ so that it outputs $(a, q(S))$ rather
-than $(a,\mathrm{err})$. Note that the latter can be computed from the former,
-and in the general case I think the former is what we
-want.}\tsnote{This may have implications for the efficiency of
-reductions, I'm not sure. The reason I introduced the $\mathrm{err}$
-counter and returned this was to avoid~$A$ be forced to evaluate
-queries of unknown computational cost.} \jnote{Not sure what you mean. If the
-oracle returns $q(S)$ then $A$ doesn't have to evaluate it. All $A$ has to do
-is an equality check to see if $a=q(S)$ or not.}
+%\jnote{I changed $\TestOracle$ so that it outputs $(a, q(S))$ rather
+%than $(a,\mathrm{err})$. Note that the latter can be computed from the former,
+%and in the general case I think the former is what we
+%want.}\tsnote{This may have implications for the efficiency of
+%reductions, I'm not sure. The reason I introduced the $\mathrm{err}$
+%counter and returned this was to avoid~$A$ be forced to evaluate
+%queries of unknown computational cost.} \jnote{Not sure what you mean. If the
+%oracle returns $q(S)$ then $A$ doesn't have to evaluate it. All $A$ has to do
+%is an equality check to see if $a=q(S)$ or not.}
 
 
 
@@ -59,8 +51,8 @@ is an equality check to see if $a=q(S)$ or not.}
 \fpage{.65}{
 \hpagess{.5}{.45}
 {
-\experimentv{$\ExpCorrect{\setprim,\distr{}{},r}{A}$}\\
-$S \getsr \distr{}{}$\\
+\experimentv{$\ExpCorrect{\setprim,r}{A}$}\\
+$S \getsr A$\\
 $\mathcal{C} \gets \emptyset$; $\mathrm{err}\gets 0$\\
 $(\pubaux,\privaux) \getsr \Rep(S)$\\
 $z \getsr A^{\TestOracle}(S,\pubaux)$\\
@@ -75,11 +67,10 @@ $a \gets \Qry(\pubaux,\privaux,q)$\\
 if $a \neq q(S)$ then \\
 \nudge $\mathrm{err}\gets\mathrm{err}+1$\\
 $\mathcal{C} \gets \mathcal{C} \cup \{q\}$ \\
-Return~$(a,q(S))$
+Return~$a$
 }
 }
-\caption{Correctness of~$\Pi$ against an (adaptive) adversary~$A$, when
-  the represented multiset~$S$ is sampled according to distribution~$\distr{}{}$.}
+\caption{Correctness of~$\Pi$ against an (adaptive) adversary~$A$.}
 \label{fig:correctness}
 \end{figure}
 
@@ -108,9 +99,10 @@ any more).}
 
 \heading{Comparison to the Naor-Yogev definition.}
 The structure of the Naor-Yogev definition is different from ours.
-Lifting their definition\footnote{They focus specifically on set-representation data structures
-with no false negatives, and consider worst-case choice of~$S$. Their data-structure syntax
-also does not distinguish public and private portions of the representation. Nevertheless, it is straightforward
+Lifting their definition\footnote{They focus specifically on set-representation data
+structures
+with no false negatives, and their data-structure syntax
+does not distinguish public and private portions of the representation. Nevertheless, it is straightforward
 to extend their definition to more closely match ours.}
 to our setting,
 the experiment is similar but the attacker
@@ -139,7 +131,7 @@ pointing out, as part of our list of complaints.}
 \hpagess{.5}{.45}
 {
 \experimentv{$\NYExpCorrect{\setprim,\distr{}{}}{A}$}\\
-$S \getsr \distr{}{}$\\
+$S \getsr A$\\
 $\mathcal{C} \gets \emptyset$\\
 %$\mathrm{err}\gets 0$\\
 $(\pubaux,\privaux) \getsr \Rep(S)$\\
@@ -155,7 +147,7 @@ Return 0
 $a \gets \Qry(\pubaux,\privaux,q)$\\
 $\mathcal{C} \gets \mathcal{C} \cup \{q\}$ \\
 %\nudge $\mathrm{err}\gets\mathrm{err}+1$\\
-Return~$(a,q(S))$
+Return~$a$
 }
 }
 \caption{The Naor-Yogev definition of
