@@ -78,10 +78,10 @@ In this experiment we track the time complexity (relative to some
 model of computation) and query complexity (i.e., number of
 queries to $\TestOracle$) of~$A$.
 We define the advantage of adversary~$A$ in the correctness experiment as
-$\AdvCorrect{\Pi,\distr{}{},r}{A} = \Prob{\ExpCorrect{\Pi,\distr{}{}, r}{A}=1}$.
-Overloading notation, we write $\AdvCorrect{\Pi,\distr{}{},r}{t,q}$ for the maximum over
-all~$t$-time adversaries that ask at most~$q$ queries. We say that a
-set-representation data structure~$\Pi$ is $(t,q,r,\epsilon)$-correct if $\AdvCorrect{\Pi,\distr{}{},r}{t,q} \leq \epsilon$.
+$\AdvCorrect{\Pi,r}{A} = \Prob{\ExpCorrect{\Pi,r}{A}=1}$.
+Overloading notation, we write $\AdvCorrect{\Pi,r}{t,q}$ for the maximum over
+all~$t$-time adversaries that ask at most~$q$ queries. We say a
+data structure~$\Pi$ is $(t,q,r,\epsilon)$-correct if $\AdvCorrect{\Pi,r}{t,q} \leq \epsilon$.
 \jnote{Note~$q$ is overloaded here.}\tsnote{True, and do we even need
   it, other than for making a compact statements of comparison with
   NY?  Why not just have explicit advantage bounding statements, as we
@@ -111,11 +111,11 @@ $\Qry(\pubaux,\privaux, q) \neq q(S)$  \emph{subject to the restriction that it 
 previously query $q$ to its $\TestOracle$ oracle}. We refer to
 Figure~\ref{fig:NYcorrectness} for a definition of the relevant experiment.
 We define the advantage of adversary~$A$ as
-$\NYAdvCorrect{\Pi,\distr{}{}}{A} = \Prob{\NYExpCorrect{\Pi,\distr{}{}}{A}=1}$,
-and write $\NYAdvCorrect{\Pi,\distr{}{},r}{t,q}$ for the maximum over
+$\NYAdvCorrect{\Pi}{A} = \Prob{\NYExpCorrect{\Pi}{A}=1}$,
+and write $\NYAdvCorrect{\Pi,r}{t,q}$ for the maximum over
 all~$t$-time adversaries that ask at most~$q$ queries. We say that a
-set-representation data structure~$\Pi$ is $(t,q,\epsilon)$-NY-correct if
-$\NYAdvCorrect{\Pi,\distr{}{}}{t,q} \leq \epsilon$. \jnote{This should all probably
+data structure~$\Pi$ is $(t,q,\epsilon)$-NY-correct if
+$\NYAdvCorrect{\Pi}{t,q} \leq \epsilon$. \jnote{This should all probably
 move to an appendix; it's a lot of notation to digest for something we never use again
 in the paper.}
 
@@ -130,7 +130,7 @@ pointing out, as part of our list of complaints.}
 \fpage{.6}{
 \hpagess{.5}{.45}
 {
-\experimentv{$\NYExpCorrect{\setprim,\distr{}{}}{A}$}\\
+\experimentv{$\NYExpCorrect{\setprim}{A}$}\\
 $S \getsr A$\\
 $\mathcal{C} \gets \emptyset$\\
 %$\mathrm{err}\gets 0$\\
@@ -177,16 +177,16 @@ $(t, q', r, q'\epsilon/r)$-correct for any $q' \leq q+1$ and $r\geq
 introducing the resource-parameterized notation; likewise the others.} \jnote{How?}
 \end{theorem}
 \begin{proof}
-Let $\Pi$ be a set-representation data structure that is $(t,q,\epsilon)$-NY-correct,
-and assume that for some distribution $\distr{}{}$, some $q' \leq q+1$, and
-some $r \geq 1$
+Let $\Pi$ be a data structure that is $(t,q,\epsilon)$-NY-correct,
+and assume that for some $q' \leq q+1$ and
+$r \geq 1$
 there is an adversary $A$ running in time~$t$
 and making $q'$ oracle queries such that
-$\AdvCorrect{\Pi,\distr{}{},r}{A} > q'\epsilon/r$.
+$\AdvCorrect{\Pi,r}{A} > q'\epsilon/r$.
 (Note that
 we may assume $A$ always makes exactly $q'$ queries without loss of generality.)
 With probability at least
-$q'\epsilon/r$ in an execution of $\ExpCorrect{\Pi,\distr{}{},r}{A}$, we have that
+$q'\epsilon/r$ in an execution of $\ExpCorrect{\Pi,r}{A}$, we have that
 $A$ makes at least $r$ distinct queries to $\TestOracle$ for which
 an incorrect answer is returned. Let $A'$ be the algorithm that simply
 runs~$A$, but chooses
@@ -210,28 +210,28 @@ If $\Pi$ is $(t, q, 1, \epsilon)$-correct, then it is also $(t, q-1, \epsilon)$-
 \end{theorem}
 
 \begin{proof}
-Let $\Pi$ be a set-representation data structure that is $(t,q,1,\epsilon)$-correct,
-and assume that for some distribution $\distr{}{}$
+Let $\Pi$ be a data structure that is $(t,q,1,\epsilon)$-correct,
+and assume
 there is an adversary $A$ running in time~$t$
 and making at most $q-1$ oracle queries such that
-$\NYAdvCorrect{\Pi,\distr{}{}}{A} > \epsilon$.
+$\NYAdvCorrect{\Pi}{A} > \epsilon$.
 Let $A'$ be the algorithm that simply
 runs~$A$, passing the oracle queries of $A$ to its own oracle, until $A$ terminates
 with output~$q$; then, $A'$ sends $q$ to $\TestOracle$. \jnote{$q$ is (still)
 overloaded!} It is immediate that $A'$ makes at most $q$ oracle queries, and
-$\AdvCorrect{\Pi,\distr{}{},1}{A'} \geq \NYAdvCorrect{\Pi,\distr{}{}}{A}$, a contradiction.
+$\AdvCorrect{\Pi,1}{A'} \geq \NYAdvCorrect{\Pi}{A}$, a contradiction.
 \end{proof}
 
 \begin{theorem}
-There exists a set-representation data structure $\Pi$ that
+There exists a data structure $\Pi$ that
 is $(t, q, 2, 0)$-correct, but is not $(t, 0, \epsilon)$-NY-correct
 for any $\epsilon<1$.
 \end{theorem}
 \begin{proof}
-We prove the theorem for set-membership data structures.
-Let $x \in {\cal X}$ be an arbitrary element of the universe, and
-let $\Pi$ be the data structure in which $\Rep(S)$ outputs $\pubaux=\privaux=S$, and
-$\Qry(S, S, q_y)$ outputs $q_y(S)$ if $y \neq x$ but outputs $1-q_x(S)$ otherwise. This
+Let $\Pi$ be the set-membership data structure in which $\Rep(S)$ outputs
+$\pubaux=\privaux=S$, and
+$\Qry(S, S, q_y)$ outputs $q_y(S)$ if $y \neq x$ but outputs $1-q_x(S)$ otherwise,
+where $x \in {\cal X}$ is a fixed element of the universe. This
 scheme always answers incorrectly for a single, fixed query, and answers
 correctly for every other query. The theorem follows.
 \end{proof}
