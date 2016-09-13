@@ -150,6 +150,7 @@ for $j \in \{1,2,\ldots,k\}$\\
 \nudge \nudge $\Ans[q_y] \gets (0, q_y(S), (v_1, \ldots, v_{k}) )$\\
 \nudge \nudge if $c \in \calI$ then $\bad \gets \true$\\
 \nudge \nudge $\Break$\\
+if $j < k$ then Return $\left(v_1,\ldots,v_k\right)$\\
 if $c \notin \calI$ then $\bad \gets \true$\\
 $\err \gets \err +1$\\
 $\Ans[q_y] \gets (1, q_y(S), (v_1, \ldots, v_{k}))$\\
