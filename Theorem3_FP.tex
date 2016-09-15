@@ -19,17 +19,19 @@ which is the bound claimed in the theorem statement.
 \hpagessl{.45}{.5}
 {
 \underline{\game{0}(A)}\\
-$S \getsr \distr{\calS}{}$, $\err \gets 0$\\
+$S \getsr \distr{\calS}{}$; $\calC \gets \emptyset$; $\err \gets 0$\\
 $(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
-$z \getsr A^{\TestOracle, \HashOracle}(S,\pubaux)$\\
+$\bot \getsr A^{\TestOracle}(S,\pubaux)$\\
 if $\err  < r$ then Return 0\\
 Return 1\\
 %
 \oracle{$\TestOracle(q_x)$}\\
+if $q_x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup \{q_x\}$\\
 $a \gets \Qry^{\HashOracle}(\pubaux,\privaux,q_x)$\\
 if $a \neq q_x(S)$ then \\
-\nudge $\err \gets\err +1$\\
-Return~$(a,q_x(S) )$\\
+\nudge $\err \gets \err + 1$\\
+Return~$a$\\
 %
 \oracle{$\HashOracle(i,q_y)$}\\
 $v \getsr [m]$\\
@@ -40,19 +42,20 @@ Ret $v$
 }
 {
 \underline{$\game{1}(A)$}\\
-$S \getsr \distr{\calS}{}$, $\err \gets 0$\\
+$S \getsr \distr{\calS}{}$; $\calC \gets \emptyset$; $\err \gets 0$\\
 $(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
-$z \getsr A^{\TestOracle, \HashOracle}(S,\pubaux)$\\
+$\bot \getsr A^{\TestOracle}(S,\pubaux)$\\
 if $\err  < r$ then Return 0\\
-Return 1\\ 
+Return 1\\
 %
 \oracle{$\TestOracle(q_x)$}\\
-$M \gets\pubaux$\\
+if $q_x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup \{q_x\}$; $M \gets\pubaux$\\
 for $j \in \{1,2,\ldots,k\}$\\
 \nudge $h_j \gets \HashOracle(j,q_x)$\\
-\nudge if $M[h_j] \neq 1$ then Return $(0, q_x(S))$\\
-$\err \gets \err +1$\\
-Return~$(1,q_x(S))$\\
+\nudge if $M[h_j] \neq 1$ then Return 0\\
+$\err \gets \err + 1$\\
+Return 1\\
 %
 \oracle{$\HashOracle(i,q_y)$}\\
 $v \getsr [m]$\\
@@ -66,21 +69,21 @@ Ret $v$
 \hpagessl{.45}{.5}
 {
 \underline{$\game{2}(A)$}\\
-$S \getsr \distr{\calS}{}$, $\err \gets 0$\\
+$S \getsr \distr{\calS}{}$; $\calC \gets \emptyset$; $\err \gets 0$\\
 $(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
-$z \getsr A^{\TestOracle, \HashOracle}(S,\pubaux)$\\
+$\bot \getsr A^{\TestOracle}(S,\pubaux)$\\
 if $\err  < r$ then Return 0\\
 Return 1\\ 
 %
 \oracle{$\TestOracle(q_x)$}\\
-$M \gets\pubaux$\\
+if $q_x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup \{q_x\}$; $M \gets\pubaux$\\
 for $j \in \{1,2,\ldots,k\}$\\
 \nudge $h_j \gets \HashOracle(j,q_x)$\\
 \nudge if $M[h_j] \neq 1$\\
-%\nudge \nudge if $j = 1$ then Return $(0, \err, \emptystring)$\\
-\nudge \nudge Return $(0, q_x(S), (h_1, \ldots, h_j))$\\
+\nudge \nudge Return $(0, (h_1, \ldots, h_j))$\\
 $\err \gets \err +1$\\
-Return~$(1,q_x(S), (h_1, \ldots, h_{k}) )$\\
+Return~$(1, (h_1, \ldots, h_{k}) )$\\
 %
 \oracle{$\HashOracle(i,q_y)$}\\
 $v \getsr [m]$\\
@@ -91,20 +94,21 @@ Ret $v$
 }
 {
 \underline{$\game{3}(A)$}\\
-$S \getsr \distr{\calS}{}$, $\err \gets 0$\\
+$S \getsr \distr{\calS}{}$; $\calC \gets \emptyset$; $\err \gets 0$\\
 $(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
-$z \getsr A^{\TestOracle, \HashOracle}(S,\pubaux)$\\
+$\bot \getsr A^{\TestOracle}(S,\pubaux)$\\
 if $\err  < r$ then Return 0\\
 Return 1\\ 
 %
 \oracle{$\TestOracle(q_x)$}\\
-$M \gets\pubaux $\\
+if $q_x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup \{q_x\}$; $M \gets\pubaux$\\
 $(h_1, \ldots, h_{k}) \gets \HashOracle(q_x)$\\
 for $j \in \{1,2,\ldots,k\}$\\
 \nudge if $M[h_j] \neq 1$ then \\
-\nudge \nudge Return~$(0,q_x(S), (h_1, \ldots, h_{k}) )$\\
+\nudge \nudge Return~$(0, (h_1, \ldots, h_{k}) )$\\
 $\err \gets \err +1$\\
-Return~$(1,q_x(S), (h_1, \ldots, h_{k}) )$\\
+Return~$(1, (h_1, \ldots, h_{k}) )$\\
 %
 \oracle{$\HashOracle(q_y)$}\\
 for $j \in \{1,2,\ldots,k\}$\\
@@ -122,17 +126,17 @@ Ret $\left(v_1,\ldots,v_k\right)$
 \hpagessl{.45}{.5}
 {
 \underline{\game{4}(A)\fbox{\game{5}(A)}}\\
-$S \getsr \distr{\calS}{}$\\
-$\err \gets 0$, $\Ans \gets \emptyset$\\
-$c \gets 0$, $\bad \gets \false$\\
-$\mathcal{I}\getsr [\{1,2,\ldots,q\}]^r$\\
+$c\gets 0$, $\bad \gets \false$, $\err \gets 0$;  $\calC \gets \emptyset$\\
+$S \getsr \distr{\calS}{}$; $\mathcal{I}\getsr [\{1,2,\ldots,q\}]^r$\\
 $(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
-$z \getsr A^{\TestOracle, \HashOracle}(S,\pubaux)$\\
+$\bot \getsr A^{\TestOracle}(S,\pubaux)$\\
 if $\bad = \true$ then \fbox{Return 0}\\
 if $\err  < r$ then Return 0\\
 Return 1\\
 %
 \oracle{$\TestOracle(q_x)$}\\
+if $q_x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup \{q_x\}$\\
 if $\Ans[x] \neq \undefined$\\
 \nudge $(h_1, \ldots, h_{k}) \gets \HashOracle(q_x)$\\
 Return $\Ans[x]$\\
@@ -147,13 +151,13 @@ for $j \in \{1,2,\ldots,k\}$\\
 $M \gets\pubaux$\\
 for $j \in \{1,2,\ldots,k\}$\\
 \nudge if $M[v_j] \neq 1$ then \\
-\nudge \nudge $\Ans[q_y] \gets (0, q_y(S), (v_1, \ldots, v_{k}) )$\\
+\nudge \nudge $\Ans[q_y] \gets (0, (v_1, \ldots, v_{k}) )$\\
 \nudge \nudge if $c \in \calI$ then $\bad \gets \true$\\
 \nudge \nudge $\Break$\\
 if $j < k$ then Return $\left(v_1,\ldots,v_k\right)$\\
 if $c \notin \calI$ then $\bad \gets \true$\\
 $\err \gets \err +1$\\
-$\Ans[q_y] \gets (1, q_y(S), (v_1, \ldots, v_{k}))$\\
+$\Ans[q_y] \gets (1, (v_1, \ldots, v_{k}))$\\
 Return $\left(v_1,\ldots,v_k\right)$
 }
 }
