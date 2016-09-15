@@ -19,10 +19,10 @@ $(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
 Run~$A(S, \pubaux)$\\
 When $A$ asks $\TestOracle(q_x)$:\\
 \nudge if $q_x \in \mathcal{C}$ then Return $\bot$\\
+\nudge $\calC \gets \calC \cup \{q_x\}$\\
 \nudge $a \gets \Qry^{\HashOracle}(\pubaux,\privaux,q_x)$\\
 \nudge if $a \neq q_x(S)$ then \\
 \nudge \nudge $\err \gets \err + 1$\\
-\nudge \nudge  $\calC \gets \calC \cup \{q_x\}$\\
 \nudge Return~$a$\\
 When $A$ halts: \\
 \nudge if $\err  < r$ then Return 0\\
@@ -39,10 +39,10 @@ $(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
 Run~$A(S, \pubaux)$\\
 When $A$ asks $\TestOracle(q_x)$:\\
 \nudge if $q_x \in \mathcal{C}$ then Return $\bot$\\
+\nudge $\calC \gets \calC \cup \{q_x\}$\\
 \nudge $a \gets \Qry^{\HashOracle}(\pubaux,\privaux,q_x)$\\
 \nudge if $a \neq q_x(S)$ then \\
 \nudge \nudge $\err \gets \err +1$\\
-\nudge \nudge $\calC \gets \calC \cup \{q_x\}$\\
 \nudge Return~$a$\\
 When $A$ halts: \\
 \nudge if $\err  < r$ then Return 0\\
@@ -156,9 +156,9 @@ Return 1\\
 %
 \oracle{$\TestOracle(q_x)$}\\
 if $q_x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup \{q_x\}$\\
 $a \gets \Qry^{\HashOracle}(\pubaux,\privaux,q_x)$\\
-if $a \neq q_x(S)$ then \\
-\nudge $\err \gets \err + 1$; $\calC \gets \calC \cup \{q_x\}$\\
+if $a \neq q_x(S)$ then $\err \gets \err + 1$\\
 Return~$a$\\
 %
 \oracle{$\HashOracle(x)$}\\
@@ -177,9 +177,9 @@ Return 1\\
 %
 \oracle{$\TestOracle(q_x)$}\\
 if $q_x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup \{q_x\}$\\
 $a \gets \Qry^{\HashOracle}(\pubaux,\privaux,q_x)$\\
-if $a \neq q_x(S)$ then \\
-\nudge $\err \gets \err + 1$; $\calC \gets \calC \cup \{q_x\}$\\
+if $a \neq q_x(S)$ then $\err \gets \err + 1$\\
 Return~$a$\\
 %
 \oracle{$\HashOracle(x)$}\\
@@ -201,9 +201,9 @@ Return 1\\
 %
 \oracle{$\TestOracle(q_x)$}\\
 if $q_x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup \{q_x\}$\\
 $a \gets \Qry^{\HashOracle}(\pubaux,\privaux,q_x)$\\
-if $a \neq q_x(S)$ then \\
-\nudge $\err \gets \err + 1$; $\calC \gets \calC \cup \{q_x\}$\\
+if $a \neq q_x(S)$ then $\err \gets \err + 1$\\
 Return~$a$\\\\
 %
 \oracle{$\HashOracle(x)$}\\
@@ -223,14 +223,14 @@ Return 1\\
 %
 \oracle{$\TestOracle(q_x)$}\\
 if $q_x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup \{q_x\}$\\
 $c \gets c+1$\\
 $v \gets \Qry^{\HashOracle}(\pubaux,\privaux,q_x)$\\
 if $c \in \mathcal{I}$ and $v = q_x(S)$ then \\
 \nudge $\bad \gets \true$ \\
 if $c \not\in \mathcal{I}$ and $v \neq q_x(S)$ then \\
 \nudge $\bad \gets \true$\\
-if $v \neq q_x(S)$\\
-\nudge $\err \gets \err +1$; $\calC \gets \calC \cup \{q_x\}$\\
+if $v \neq q_x(S)$ then $\err \gets \err +1$\\
 Return~$v$\\
 %
 \oracle{$\HashOracle(x)$}\\
@@ -240,7 +240,7 @@ for $i = 1$ to~$k$\\
 Return $\left(v_1,\ldots,v_k\right)$
 }
 }
-\caption{\Cref{thm1}:Game playing argument}\label{fig:Game}
+\caption{\Cref{thm1}: Game playing argument}\label{fig:Game}
 \end{figure}
 
 
@@ -278,13 +278,13 @@ $\calC \gets \emptyset$; $\err \gets 0$\\
 $\mathcal{I}\getsr [\{1,2,\ldots,q\}]^r$\\
 Run $A(S, \pubaux)$\\
 When $A$ asks $\TestOracle(q_x)$:\\
-if $q_x \in \mathcal{C}$ then Return $\bot$\\
+\nudge if $q_x \in \mathcal{C}$ then Return $\bot$\\
+\nudge $\calC \gets \calC \cup \{q_x\}$\\
 \nudge $c \gets c+1$\\
 \nudge $r \gets 0$\\
 \nudge if $c \in \mathcal{I}$\\
 \nudge \nudge $r \gets 1$\\
 \nudge \nudge $\err \gets \err + 1$\\
-\nudge \nudge $\calC \gets \calC \cup \{q_x\}$\\
 \nudge Return $r$\\
 When $A$ halts:\\
 \nudge Return $\bot$
