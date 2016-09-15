@@ -55,7 +55,7 @@ random-oracle(s).
 $S \getsr A$\\
 $\mathcal{C} \gets \emptyset$; $\mathrm{err}\gets 0$\\
 $(\pubaux,\privaux) \getsr \Rep(S)$\\
-$z \getsr A^{\TestOracle}(S,\pubaux)$\\
+$\perp \getsr A^{\TestOracle}(\pubaux)$\\
 if $\mathrm{err} < r$ then Return 0\\
 Return 1
 }
@@ -82,6 +82,7 @@ $\AdvCorrect{\Pi,r}{A} = \Prob{\ExpCorrect{\Pi,r}{A}=1}$.
 Overloading notation, we write $\AdvCorrect{\Pi,r}{t,q}$ for the maximum over
 all~$t$-time adversaries that ask at most~$q$ queries. We say a
 data structure~$\Pi$ is $(t,q,r,\epsilon)$-correct if $\AdvCorrect{\Pi,r}{t,q} \leq \epsilon$.
+
 \jnote{Note~$q$ is overloaded here.}\tsnote{True, and do we even need
   it, other than for making a compact statements of comparison with
   NY?  Why not just have explicit advantage bounding statements, as we
@@ -135,8 +136,8 @@ $S \getsr A$\\
 $\mathcal{C} \gets \emptyset$\\
 %$\mathrm{err}\gets 0$\\
 $(\pubaux,\privaux) \getsr \Rep(S)$\\
-$q \getsr A^{\TestOracle}(S,\pubaux)$\\
-if $\left(q \not \in \mathcal{Q}\right.$ and \\
+$q \getsr A^{\TestOracle}(\pubaux)$\\
+if $\left(q \not \in \mathcal{C}\right.$ and \\
 \nudge $\left.\Qry(\pubaux,\privaux,q) \neq q(S)\right)$ \\
 \nudge \nudge then Return 1\\
 Return 0
@@ -251,25 +252,66 @@ any simple conclusions like ``our definition implies theirs'' or anything.}
 \newcommand{\leak}{{\sf leak}}
 \subsection{Privacy}
 
-In this section we specialize to the case of set-membership data structures, and
+One can also consider the orthogonal notion of \emph{privacy} for a
+data structure.
+We specialize to the case of set-membership data structures, and
 focus on sets rather than multisets.
 Before continuing, it will be useful to define a notion of ``point-wise min-entropy.''
 Let ${\cal D}$ be
-a distribution on sets over some universe ${\cal X}$. Then the \emph{point-wise
+a distribution over subsets of some universe ${\cal X}$. The \emph{point-wise
 min-entropy} of ${\cal D}$ is defined as
 \[H_\infty({\cal D}) \bydef -\log \max_{x \in {\cal X}} \Pr[S \getsr {\cal D} : x \in S].\]
 
 
-One can also consider the orthogonal notion of \emph{privacy} for a
-data structure.
+
 We formalize two types of privacy notions. The first captures
 a ``one-wayness'' property that (informally) requires that
-the representation of some set~$S$ does not make it any easier for an attacker
-to learn an element of~$S$.
+the public representation of a set~$S$ does not make it any easier for an attacker
+to learn elements of~$S$.
 The second definition
-captures a flavor of semantic security, essentially requiring that $M$ and $\pub$ do
-not leak any information about the set~$S$ they represent beyond
-what is captured in some explicit leakage function.
+captures a flavor of semantic security, essentially requiring that $\pub$ does
+not leak any information about the set~$S$ it represents beyond
+what is captured by some explicit leakage function.
+
+Our one-wayness notion is defined in Figure~\ref{fig:privacy-ow}.
+The relevant experiment begins by first sampling a set $S$ according to a distribution
+${\cal D}$. Then $\Rep(S)$ is run to obtain $\pubaux,\privaux$, and the attacker~$A$ is given
+$\pubaux$. The attacker succeeds if it is able to output an element of~$S$.
+We define the advantage of adversary~$A$ in this experiment\footnote{We
+remark that one could consider augmenting experiment $\ExpPrivOW{\Pi,{\cal D}}{A}$ by additionally
+giving $A$ access to an oracle for testing membership in~$S$. However, it is not hard
+to see that allowing $q$ such queries can increase $A$'s advantage by at most a factor of~$q$.} as
+$\AdvPrivOW{\Pi,\mathcal{D}}{A} = \Prob{\ExpPrivOW{\Pi,{\cal D}}{A}=1}$ and,
+overloading notation, we write $\AdvPrivOW{\Pi,{\cal D}}{t}$ for the maximum of this value over
+all~$t$-time adversaries.
+Noting that an attacker can trivially succeed with probability
+$2^{-H_\infty({\cal D})}$ by outputting the element most likely to be in~$S$,
+we say a
+set-representation data structure~$\Pi$ is $(t,\epsilon)$-ow-private if for all ${\cal D}$
+we have $\AdvPrivOW{\Pi,{\cal D}}{t} - 2^{-H_\infty({\cal D})} \leq \epsilon$.
+\jnote{Not sure I'm completely happy with the definition.}
+
+\begin{figure}[hbtp]
+\centering
+\fpage{.25}{
+%\hpagess{.5}{.45}
+%{
+\experimentv{$\ExpPrivOW{\setprim,\distr{}{}}{A}$}\\
+$S \getsr \distr{}{}$\\
+$(\pubaux,\privaux) \getsr \Rep(S)$\\
+$z \getsr A(\pubaux)$\\
+if $z \in S$ then return 1\\
+return 0
+%}
+%{
+%\oracle{$\TestOracle(q)$}\\
+%Return $\Qry(\pubaux,\privaux,q)$
+%}
+}
+\caption{Experiment for a ``one-way'' style privacy
+  definition.}
+\label{fig:privacy-ow}
+\end{figure}
 
 
 Our semantic-secure definition is simulation-based (see Figure~\ref{fig:privacy-ss}).
@@ -277,17 +319,17 @@ In this definition we compare the probabilities with which an attacker $A$ outpu
 in two experiments: one ``real'' and one ``simulated.''
 In the real experiment (ss-rep-1), $A$ outputs a set $S$  and is given the
 public information $\pubaux$ that results from running $\Rep(S)$.
-\footnote{We do not give $A$ an oracle for issuing queries;
-since $A$ knows the set~$S$, such an oracle would be superfluous.
-\jnote{Interestingly,
-if we provided a query oracle in the real world and an oracle that returns the correct
-answer in the simulated world, then the definition seems to imply
-correctness also.}}
+%\footnote{We do not give $A$ an oracle for issuing queries;
+%since $A$ knows the set~$S$, such an oracle would be superfluous.
+%\jnote{Interestingly,
+%if we provided a query oracle in the real world and an oracle that returns the correct
+%answer in the simulated world, then the definition seems to imply
+%correctness also.}}
 In the simulated experiment (ss-rep-0), $A$ outputs $S$ and is given $\pubaux$ output
 by a simulator $\Sim$ that is only given ${\sf leak}(S)$ for some (possibly randomized)
 function~${\sf leak}$.
 For a given function ${\sf leak}$, adversary $A$, and simulator~$\Sim$,
-we define the advantage measure
+we define the advantage
 $\AdvPrivSS{\Pi,{\sf leak}}{A,\Sim} \bydef
 \left| \Prob{\ExpPrivSSreal{\Pi}{A}=1} -
 \Prob{\ExpPrivSSsim{\Pi,{\sf leak}}{A, \Sim}=1} \right|$.
@@ -296,24 +338,25 @@ if for all $A$ there is a simulator $\Sim$ such that
 $\AdvPrivSS{\Pi,{\sf leak}}{A,\Sim}$ is small.
 Intuitively, this means that the public portion
 $\pubaux$ of the representation of a set~$S$ leaks~${\sf leak}(S)$ and nothing more.
-\jnote{Need to relate running time of $\Sim$ to running time of~$A$.}
-\todo{Introduce OW notion, if we keep it}
+\jnote{Need to relate running time of $\Sim$ to running time of~$A$. Also, the definition
+as stated does not really work well in the presence of (programmable) random oracles.}
+
 \begin{figure}[hbtp]
 \centering
 \fpage{.6}{
 \hpagess{.5}{.45}
 {
 \experimentv{$\ExpPrivSSreal{\Pi}{A}$}\\
-$(S,\st) \getsr A()$ \\
+$S \getsr A$ \\
 $(\pubaux,\privaux) \getsr \Rep(S)$\\
-return $A(\st,\pubaux)$\\
+return $A(\pubaux)$\\
 }
 %
 {
 \experimentv{$\ExpPrivSSsim{\Pi, {\sf leak}}{A, \Sim}$}\\
-$(S,\st) \getsr A()$\\
-$(\st,\pubaux) \getsr \Sim({\sf leak}(S))$ \\
-return $A(\st,\pubaux)$\\
+$S \getsr A$\\
+$\pubaux \getsr \Sim({\sf leak}(S))$ \\
+return $A(\pubaux)$\\
 }
 }
 \caption{Experiments for a ``semantic-security'' style privacy
@@ -321,27 +364,6 @@ return $A(\st,\pubaux)$\\
 \label{fig:privacy-ss}
 \end{figure}
 
-\begin{figure}[hbtp]
-\centering
-\fpage{.6}{
-\hpagess{.5}{.45}
-{
-\experimentv{$\ExpPrivOW{\setprim,\distr{}{}}{A}$}\\
-$S \getsr \distr{}{}$\\
-$(\pubaux,\privaux) \getsr \Rep(S)$\\
-$z \getsr A^{\TestOracle}(\pubaux)$\\
-if $z \in S$ then return 1\\
-return 0\\
-}
-{
-\oracle{$\TestOracle(q)$}\\
-eturn $\Qry(\pubaux,\privaux,q)$
-}
-}
-\caption{Experiments for a ``one-way'' style privacy
-  definition.}
-\label{fig:privacy-ow}
-\end{figure}
 
 %
 %\begin{figure}[htbp]
@@ -416,9 +438,41 @@ eturn $\Qry(\pubaux,\privaux,q)$
 %\label{fig:privacy-ss}
 %\end{figure}
 
-\heading{Relationships Among Notions.} \todo{SS$\Rightarrow$OW?
-  (Probably not in general, but perhaps for set-multiplicity data
-  structures that satisfy certain assumptions on the query set.)
-  SS$\not\Rightarrow$ correctness; the converse is already shown by
-  the example I gave earlier, i.e. $M=S\setminus\{x\}$ for random $x
-  \in S$.}
+\heading{Relationships between the notions.}
+Our intuition is that semantic security implies one-wayness. And, indeed, this is
+the case---provided one is careful with the technical details.
+For a distribution ${\cal D}$
+over subsets of some universe ${\cal X}$, define
+\[\tilde H_\infty({\cal D} \mid {\sf leak}) \bydef -\log \sum_{r \in R} \Pr_{S \getsr {\cal D}}[{\sf leak}(S)=r] \cdot
+\max_{x \in {\cal X}} \Pr_{S \getsr {\cal D}}[x \in S \mid {\sf leak}(S)=r].\]
+
+\begin{theorem}
+Let $\Pi$ be a set-representation data structure that is $(t, \epsilon)$-semantically secure
+with respect to leakage ${\sf leak}:2^{\cal X} \rightarrow R$.
+Then $\AdvPrivOW{\Pi,\mathcal{D}}{t} \leq \tilde H_\infty({\cal D} \mid {\sf leak}) + \epsilon$.
+\end{theorem}
+\begin{proof}
+Fix a distribution ${\cal D}$ and an attacker
+$A$ running in time $t$, and let $\delta \bydef \AdvPrivOW{\Pi,\mathcal{D}}{A}$.
+Define an attacker $A'$ who behaves as follows: first, it samples a set $S$ according to
+distribution~${\cal D}$. Then, given $\pubaux$, it runs $A(\pubaux)$ to obtain an element~$z$.
+Finally, it outputs~1 if and only if $z \in S$.
+
+It is immediate that $\Pr[\ExpPrivSSreal{\Pi}{A'}=1] = \delta$. Semantic
+security of $\Pi$ implies that there exists a simulator $\Sim$ for which
+$\ExpPrivSSsim{\Pi, {\sf leak}}{A', \Sim} \geq \delta - \epsilon$. However,
+the only information
+that $\Sim$
+and $A'$ jointly have about the set~$S$ that was sampled is ${\sf leak}(S)$; thus,
+we must have $\ExpPrivSSsim{\Pi, {\sf leak}}{A', \Sim} \leq H_\infty({\cal D} \mid {\sf leak})$.
+This implies
+$\delta \leq \tilde H_\infty({\cal D} \mid {\sf leak})+\epsilon$ as desired.
+\end{proof}
+
+%\todo{SS$\Rightarrow$OW?
+%  (Probably not in general, but perhaps for set-multiplicity data
+%  structures that satisfy certain assumptions on the query set.)
+%  SS$\not\Rightarrow$ correctness; the converse is already shown by
+%  the example I gave earlier, i.e. $M=S\setminus\{x\}$ for random $x
+%  \in S$.} \jnote{Since we can set $\pubaux$ to be the emptystring, I think
+%  it is trivial to see that privacy does not imply correctness.}
