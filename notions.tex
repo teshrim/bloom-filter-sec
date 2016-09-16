@@ -338,7 +338,7 @@ if for all $A$ there is a simulator $\Sim$ such that
 $\AdvPrivSS{\Pi,{\sf leak}}{A,\Sim}$ is small.
 Intuitively, this means that the public portion
 $\pubaux$ of the representation of a set~$S$ leaks~${\sf leak}(S)$ and nothing more.
-\jnote{Need to relate running time of $\Sim$ to running time of~$A$. Also, the definition
+\jnote{The definition
 as stated does not really work well in the presence of (programmable) random oracles.}
 
 \begin{figure}[hbtp]
@@ -449,7 +449,7 @@ over subsets of some universe ${\cal X}$, define
 \begin{theorem}
 Let $\Pi$ be a set-representation data structure that is $(t, \epsilon)$-semantically secure
 with respect to leakage ${\sf leak}:2^{\cal X} \rightarrow R$.
-Then $\AdvPrivOW{\Pi,\mathcal{D}}{t} \leq \tilde H_\infty({\cal D} \mid {\sf leak}) + \epsilon$.
+Then $\AdvPrivOW{\Pi,\mathcal{D}}{t} \leq 2^{-\tilde H_\infty({\cal D} \mid {\sf leak})} + \epsilon$.
 \end{theorem}
 \begin{proof}
 Fix a distribution ${\cal D}$ and an attacker
@@ -464,9 +464,9 @@ $\ExpPrivSSsim{\Pi, {\sf leak}}{A', \Sim} \geq \delta - \epsilon$. However,
 the only information
 that $\Sim$
 and $A'$ jointly have about the set~$S$ that was sampled is ${\sf leak}(S)$; thus,
-we must have $\ExpPrivSSsim{\Pi, {\sf leak}}{A', \Sim} \leq H_\infty({\cal D} \mid {\sf leak})$.
+we must have $\ExpPrivSSsim{\Pi, {\sf leak}}{A', \Sim} \leq 2^{-\tilde H_\infty({\cal D} \mid {\sf leak})}$.
 This implies
-$\delta \leq \tilde H_\infty({\cal D} \mid {\sf leak})+\epsilon$ as desired.
+$\delta \leq 2^{-\tilde H_\infty({\cal D} \mid {\sf leak})}+\epsilon$ as desired.
 \end{proof}
 
 %\todo{SS$\Rightarrow$OW?
