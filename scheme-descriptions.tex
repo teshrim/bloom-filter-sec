@@ -49,7 +49,8 @@ Return 1
 
 \begin{figure}[pt]
 \centering
-\hfpages{.45}
+\fpage{0.95}{
+\hpagessl{.4}{.55}
 {
 \algorithmv{$\Rep^H(S)$}\\
 $M \gets 0^m$\\
@@ -69,16 +70,40 @@ for $j \in \{1,2,\ldots,k\}$\\
 Return 1
 }
 {
-\algorithmv{$\Rep(S)$}\\
-
+\algorithmv{$\Rep^H(S)$}\\
+$M \gets \mathrm{null}^m$; $\lambda \gets \calK$\\
+for $x \in S$\\
+\nudge $\finalshare \gets 0^\lambda$; $\emptyslot \gets -1$\\
+\nudge for $j \in \{1,2,\ldots, k\}$\\
+\nudge \nudge $h_j \gets H(j,x)$\\
+\nudge \nudge if $M[h_j] \neq \mathrm{null}$ then\\
+\nudge \nudge \nudge $\finalshare \gets \finalshare \xor M[h_j]$\\
+\nudge \nudge else if $\emptyslot = -1$ then\\
+\nudge \nudge \nudge $\emptyslot \gets h_j$\\
+\nudge \nudge else\\
+\nudge \nudge \nudge $M[h_j] \gets \bits^\lambda$\\
+\nudge \nudge \nudge $\finalshare \gets \finalshare \xor M[h_j]$\\
+\nudge $M[\emptyslot] \gets \finalshare \xor x$\\
+for $i \in \{1,2,\ldots, m\}$\\
+\nudge if $M[i] = \undefined$ then\\
+\nudge \nudge  $M[i] \gets \bits^\lambda$\\
+$\pubaux \gets M$; $\privaux \gets \lambda$\\
 
 \medskip
 \algorithmv{$\Qry(\pubaux,\privaux,q_x)$}\\
+$M \gets \pubaux$, $\lambda \gets \privaux$, $x \gets 0^\lambda$\\
+for $j \in \{1,2,\dots,k\}$\\
+\nudge $h_j \gets H(j,x)$\\
+\nudge $x \gets x \xor M[h_j]$\\
+if $x = q_x$ then Return 1\\
+Return 0
+}
 }
 \caption{{\bf Left:} $\Rep$ and $\Qry$ algorithms for classic Bloom
   filter $\Pi_{\mathrm{Bloom}}$ in the ROM for a hash function $H\colon \mathbb{N} \times
-  \univ \to [m]$. {\bf Right:} \textcolor{red}{[Garbled BF? NY
-      PRP-based construction?  NY cuckoo-hashing construction?  Other?]}. For both, the query set is $\calQ=\{q_x\colon
+  \univ \to [m]$. {\bf Right:} $\Rep$ and $\Qry$ algorithms for garbled Bloom
+  filter $\Pi_{\mathrm{garbled}}$ in the ROM for a hash function $H\colon \mathbb{N} \times \calK
+ \times \univ \to [m]$. For both, the query set is $\calQ=\{q_x\colon
   \univ \to \bits\}$ where $q_x(S)=1 \Leftrightarrow x \in S$.  }
 \label{fig:bf-and-garbled-bf}
 \end{figure}
