@@ -1,14 +1,95 @@
 \section{Achieving Security Notions}
 
-\jnote{Organize by scheme, not by security notions.
-}
+\subsection{A Meta-Theorem for Privacy}
+Here we prove a result that can be used to show that a large class of ``canonical''
+data structures are semantically secure, with respect to leakage of the size of the set.
+\jnote{It would not be too hard to generalize this to arbitrary data structures over
+arbitrary objects, so long as the number of distinct queries to the PRF made by $\Rep$
+depends only on ${\sf leak}$.}
+
+We first define what we mean by ``canonical.''
+
+\def\bool{\{0,1\}}
+
+\begin{definition}
+A set-multiplicity data structure $(\Rep, \Qry)$ is {\sf canonical} if
+there exist algorithms $\Rep_1, \Rep_2$, and a function
+$F: \bool^n \times \bool^{\ell_{in}} \rightarrow \bool^{\ell_{out}}$
+such that the following hold:
+\begin{itemize}
+\item $\Rep_1$ takes as input a set $S$ and outputs distinct values $x_1, \ldots, x_t \in \bool^{\ell_{in}}$,
+where $t$ depends only on~$|S|$.
+\item $\Rep_2$ takes as input $|S|$ and $y_1, \ldots, y_t \in \bool^{\ell_{out}}$, and outputs
+$\pubaux$.
+\item For any $S$, the distribution on $\pubaux$ output by $\Rep(S)$ is identical to the distribution
+on $\pubaux$ computing as follows:
+\begin{enumerate}
+\item $x_1, \ldots, x_t \getsr \Rep_1(S)$.
+\item $k \getsr \bool^n$.
+\item $\pubaux \getsr \Rep_2(|S|, F_k(x_1), \ldots, F_k(x_t))$.
+\end{enumerate}
+\end{itemize}
+In this case, we say that $(\Rep_1, \Rep_2, F)$ is the {\sf canonical representation}
+of~$\Rep$.
+\end{definition}
+\jnote{Not sure how general to make the above. Need to verify that it is general enough
+to prove security of all the constructions we care about.}
+
+We next show that any canonical data structure in which $F$ is a pseudorandom function is
+semantically secure with respect to leakage consisting of the size of the set.
+
+\begin{theorem}
+Let $\Pi=(\Rep, \Qry)$ be a canonical set-multiplicity data structure for which $\Rep$ has canonical representation
+$(\Rep_1, \Rep_2, F)$. If $F$ is a pseudorandom function, then $\Pi$
+is semantically secure with respect to leakage function ${\sf leak}(S) = |S|$.
+\end{theorem}
+\begin{proof}
+We define the following simulator $\Sim$: on input $n$, define $S^*=\{x_1, \ldots, x_n\}$
+(for distinct elements $x_1, \ldots, x_n$). Then compute
+\begin{enumerate}
+\item $x_1, \ldots, x_t \getsr \Rep_1(S^*)$,
+\item $k \getsr \bool^n$,
+\item $\pubaux \getsr \Rep_2(|S|, F_k(x_1), \ldots, F_k(x_t))$,
+\end{enumerate}
+and output $\pubaux$.
+
+For a given set $S$, define distribution $\mbox{{\sc Real}}_S$ as follows:
+\[ \{ (\pubaux, \privaux) \getsr \Rep(S) : \pubaux\},\]
+and define distribution $\mbox{{\sf Ideal}}_S$ as
+\[ \{ \pubaux \getsr \Sim(|S|) : \pubaux \}.\]
+Our goal is to show that
+
+\end{proof}
+
+%Here is a proof sketch:
+%The simulator, given n=|S|, runs the honest scheme on inputs x_1, ...,
+%x_n and outputs the public portion of the result.
+%
+%To see that this is indistinguishable from the real public portion on
+%the actual set S, consider the following hybrids:
+%H0: The real pub produced from the real set S={s_1, ..., s_n}
+%H1: Run the representation algorithm on S, but using random functions
+%in place of PRFs, and output pub.
+%H2: Run the representation algorithm on {x_1, ..., x_n}, still using
+%random functions in place of PRFs, and output pub. The claim is that
+%this is identically distributed to H1. The main observation is that
+%since we are using random functions, the inputs to the random
+%functions don't matter, subject to the technical condition that the
+%number of distinct inputs to the random functions does not change.
+%(Here is where we rely on the fact that |S|=n is known, as well as an
+%appropriate definition of "natural.")
+%H3: Run the representation algorithm on {x_1, ..., x_n}, using the
+%real Rep (with PRFs).
+
+\jnote{Organize by scheme, not by security notions.}
+
 \include{scheme-descriptions}
 
 
 %%%%%%%%%%%%%%%%% LINEAR-PRF %%%%%%%%%%%%%%%%%%%%
 
 \heading{Linear-PRF construction. }
-Here we consider a set-multiplicity data structure that was attacked by Neidermayer et al. in~\cite{xxx}. Fix $n,k,m \geq 0$ and let $\mathcal{S}=[\univ]^n$.  Then $\Pi_{\mathrm{lin}}= (\calQ,\Rep, \Qry)$ is defined as in Figure~\ref{fig:lin-and-ds} (left side).  The following result shows, informally, that if~$F$ is a good PRF, then $\Pi_\mathrm{lin}$ is correct against adaptive error-finding adversaries. 
+Here we consider a set-multiplicity data structure that was attacked by Neidermayer et al. in~\cite{xxx}. Fix $n,k,m \geq 0$ and let $\mathcal{S}=[\univ]^n$.  Then $\Pi_{\mathrm{lin}}= (\calQ,\Rep, \Qry)$ is defined as in Figure~\ref{fig:lin-and-ds} (left side).  The following result shows, informally, that if~$F$ is a good PRF, then $\Pi_\mathrm{lin}$ is correct against adaptive error-finding adversaries.
 
 \begin{theorem}\label{thm1}\label{thm:lin-correctness}
 Fix $k,m,n,r>0$, and let $\Pi_{\mathrm{lin}}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-ds}. Let $\distr{}{}$ be a distribution over~$\mathcal{S}$.  For any adversary~$A$ that makes a total of~$q$ queries to its oracle and has time-complexity~$O(t)$, there exist prf-adversaries~$B_1,B_2$ (explicitly constructed in the proof of this theorem) such that
@@ -28,11 +109,11 @@ trying to find a single FP in each of~$r$ independent``rounds'', each round
 consisting of~$q$ attempts.
 
 \begin{theorem}\label{thm:lin-ss}
-Fix $k,m,n>0$, and let $\Pi_{\mathrm{ds}}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-ds}.  For any set~$S$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ such that, for any adversary~$A$ 
+Fix $k,m,n>0$, and let $\Pi_{\mathrm{ds}}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-ds}.  For any set~$S$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ such that, for any adversary~$A$
 \[
 \AdvPrivSS{\Pi_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B} + \mbox{[TBD]}
 \]
-where~$B$ is constructed from~$A$.  (Both~$B$ and~$\Sim$ are explicitly constructed in the proof of this theorem.) 
+where~$B$ is constructed from~$A$.  (Both~$B$ and~$\Sim$ are explicitly constructed in the proof of this theorem.)
 \end{theorem}
 \begin{proof}[Proof (sketch). ]
 \end{proof}
@@ -53,11 +134,11 @@ Here, $B$ asks $q$ queries, and has time complexity $O(t+qm)$.
 
 %%%%%%%%%%
 \begin{theorem}\label{thm:ds-ss}
-Fix $k,m,n>0$, and let $\Pi_{\mathrm{ds}}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-ds}.  For any set~$S$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ such that, for any adversary~$A$ 
+Fix $k,m,n>0$, and let $\Pi_{\mathrm{ds}}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-ds}.  For any set~$S$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ such that, for any adversary~$A$
 \[
 \AdvPrivSS{\Pi_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}
 \]
-where~$B$ is constructed from~$A$.  (Both~$B$ and~$\Sim$ are explicitly constructed in the proof of this theorem.) 
+where~$B$ is constructed from~$A$.  (Both~$B$ and~$\Sim$ are explicitly constructed in the proof of this theorem.)
 \end{theorem}
 \begin{proof}[Proof (sketch). ]
 Adversary~$B^{f}$ simulates the steps of $\ExpPrivSSreal{\Pi_{\mathrm{ds}}}{A}$, using its oracle to simuate~$\Rep(S)$.  When~$f=F_K$ then the simulation is perfect.  When~$f=\rho$ then~$B$ simulates $\ExpPrivSSreal{\overline{\Pi}_{\mathrm{ds}}}{A}$ where $\overline{\Rep}$ effectively uses~$k$ independent random functions as the hash functions.  But the $\pub$ produced by $\overline{\Rep}$ has a distribution that depends only~$|S|=n$, not the specific elements of~$S$, and the other public parameters~$m,k$.  Thus, a simulator~$\Sim$ given only $\leak(S)=|S|$ can produce a correct~$\pub$ as follows: starting with an all-zeros array~$M$ of length~$m$, uniformly sample (with replacement)~$nk$ integers in~$[m]$ and set the resulting positions of~$M$ to 1.

@@ -247,7 +247,8 @@ One can also consider the orthogonal notion of \emph{privacy} for a
 data structure.
 We specialize to the case of set-membership data structures, and
 focus on sets rather than multisets.
-Before continuing, it will be useful to define a notion of ``point-wise min-entropy.''
+Before continuing, it will be useful to define a notion that captures the difficulty
+of guessing an element in a set chosen from some distribution.
 Let ${\cal D}$ be
 a distribution over subsets of some universe ${\cal X}$. The \emph{point-wise
 min-entropy} of ${\cal D}$ is defined as
@@ -305,7 +306,9 @@ return 0
 \end{figure}
 
 
-Our semantic-secure definition is simulation-based (see Figure~\ref{fig:privacy-ss}).
+Our semantic-security definition is based on the simulation paradigm (see Figure~\ref{fig:privacy-ss}).
+\jnote{Here it would not be hard to write the definition for general data structures, not
+specifically set-multiplicity data structures.}
 In this definition we compare the probabilities with which an attacker $A$ outputs~1
 in two experiments: one ``real'' and one ``simulated.''
 In the real experiment (ss-rep-1), $A$ outputs a set $S$  and is given the
@@ -325,12 +328,15 @@ $\AdvPrivSS{\Pi,{\sf leak}}{A,\Sim} \bydef
 \left| \Prob{\ExpPrivSSreal{\Pi}{A}=1} -
 \Prob{\ExpPrivSSsim{\Pi,{\sf leak}}{A, \Sim}=1} \right|$.
 Informally, a scheme $\Pi$ is secure with respect to some leakage function ${\sf leak}$
-if for all $A$ there is a simulator $\Sim$ such that
-$\AdvPrivSS{\Pi,{\sf leak}}{A,\Sim}$ is small.
+if for all efficient $A$ there is a simulator $\Sim$ such that
+$\AdvPrivSS{\Pi,{\sf leak}}{A,\Sim}$ is small. \jnote{Do we want to
+write a formal $t, \epsilon$-style definition?}
 Intuitively, this means that the public portion
 $\pubaux$ of the representation of a set~$S$ leaks~${\sf leak}(S)$ and nothing more.
 \jnote{The definition
 as stated does not really work well in the presence of (programmable) random oracles.}
+\jnote{In the current definition there is (intentionally) no bound on the simulator's
+running time.}
 
 \begin{figure}[hbtp]
 \centering
@@ -430,7 +436,7 @@ return $A(\pubaux)$\\
 %\end{figure}
 
 \heading{Relationships between the notions.}
-Our intuition is that semantic security implies one-wayness. And, indeed, this is
+Intuition suggests that semantic security should imply one-wayness. And, indeed, this is
 the case---provided one is careful with the technical details.
 For a distribution ${\cal D}$
 over subsets of some universe ${\cal X}$, define

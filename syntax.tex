@@ -20,13 +20,20 @@ which we write as superscripts, e.g., $F^{O_1,O_2,\ldots}$.  An \emph{adversary}
 \heading{Data structures.}  We begin by defining a general primitive
 that produces a representation of a given multiset, and provides a
 mechanism to answer a specified collection of questions about that
-multiset.
+multiset. \jnote{I still think we should be more general, and deal
+with objects other than multisets. Actually, I think we should
+either specialize to sets or talk generically about data structures
+for arbitrary objects; talking about multisets seems to make the
+definitions more cumbersome while not adding very much in terms of
+generality.}
 %Informally, the representation should serve as a good
 %approximation of the multiset, at least with respect to the allowed queries.
 \begin{definition}[Data structure] \rm
 Fix a non-empty set~$\univ$, and a collection of (multi)sets~$\calS$
 over $\univ$. A \emph{data structure} (for $\calS$) is a tuple
-$\setprim=(\calQ,\Rep, \Qry)$ where:
+$\setprim=(\calQ,\Rep, \Qry)$ where \jnote{I would prefer moving
+$\calQ$ out of the tuple, and instead calling it a ``data structure
+for $\calQ$ over $\calS$.''}:
 \begin{itemize}
 \item $\mathcal{Q}=\{\qry \colon \mathcal{S} \to \Gamma\}$ is a set
     of supported \emph{queries}, where $\Gamma$ is the set of query \emph{answers}.
