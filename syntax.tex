@@ -1,3 +1,4 @@
+\newcommand{\qry}{\mathsf{qry}}
 \section{(Multiset) Data Structures}
 
 \heading{Preliminaries. } When~$\univ$ is a set and $n>0$ is an
@@ -27,7 +28,7 @@ Fix a non-empty set~$\univ$, and a collection of (multi)sets~$\calS$
 over $\univ$. A \emph{data structure} (for $\calS$) is a tuple
 $\setprim=(\calQ,\Rep, \Qry)$ where:
 \begin{itemize}
-\item $\mathcal{Q}=\{q \colon \mathcal{S} \to \Gamma\}$ is a set
+\item $\mathcal{Q}=\{\qry \colon \mathcal{S} \to \Gamma\}$ is a set
     of supported \emph{queries}, where $\Gamma$ is the set of query \emph{answers}.
 \item $\Rep \colon \mathcal{S} \to \bits^*
     \times \bits^*$ is a randomized \emph{representation
@@ -38,8 +39,8 @@ $\setprim=(\calQ,\Rep, \Qry)$ where:
 \item $\Qry\colon \bits^* \times \bits^* \times \calQ \to
     \Gamma$ is a deterministic \emph{query-evaluation}
     algorithm, taking as input $\pubaux,\privaux \in \bits^*$
-    and a query $q \in \calQ$, and outputting an \emph{answer}
-    $a \in \Gamma$.  We write $a \gets \Qry(\pubaux,\privaux,q)$
+    and a query $\qry \in \calQ$, and outputting an \emph{answer}
+    $a \in \Gamma$.  We write $a \gets \Qry(\pubaux,\privaux,\qry)$
     for this execution.
 \end{itemize}
 \hfill\dqed
@@ -50,39 +51,18 @@ $\setprim=(\calQ,\Rep, \Qry)$ where:
 as $|\pubaux|+|\privaux|$ and comment that if one wants to compare to
 classical size bounds, a more fine-grained separation of the output of
 $\Rep$ would allow this.}
-%\tsnote{I implemented this change.}\tsnote{I'm now leaning towards
-%having $\Rep$ output~$M$ and explicit pubic/private auxillary data.
-%Pushing secrets into~$M$ makes it more difficult to capture (for
-%example) the Neidermeier et al.\ attacks in our privacy notions; see
-%Figure~\ref{fig:privacy}.  In those attacks, the adversary would get
-%the bitarray (which one naturally thinks of as~$M$) but not the
-%secret keys for the PRFs/hash functions.  You could say that the
-%bitarray is put in $\aux$ and that~$M$ \emph{only} contains the
-%secret keys, but this is unnatural.}
 
-%All of the data structures that we will consider have the property that~$|M|$ does not depend on the
-%coins of~$\Rep$. Thus we assume that~$|M|$ depends only on~$|S|$. In
-%general this need not be true, but the assumption does not restrict
-%our syntax from capturing natural constructions (e.g., those used in
-%practice), and it makes it easier to state our security notions.
-
-%\jnote{I think we agreed to just have the syntax output $(\pub, \privaux)$, with
-%the semantics being that in our definitions $\pub$ is always
-%  public and $\privaux$ is always private.
-%  Different schemes can then choose whether $M$ is in $\pub$
-%  or $\privaux$. If we do this, then need to be careful how to define size, though
-%  I don't think we ever explicitly care about size for any of our results.}
 
 \begin{definition}[Error probability and rate] \rm
 For a given data structure $\setprim=(\calQ,\Rep, \Qry)$, let
-$\mathrm{Err}(S,q,\pubaux,\privaux)$ be a predicate that is true iff
-$\Qry(\pubaux,\privaux, q) \neq q(S)$.  Then $\Pi$ has \emph{error
-probability} $\epsilon$ if $\max_{S,q}\Pr[(\pubaux,\privaux) \getsr
-\Rep(S) : \mathrm{Err}(S,q,\pubaux,\privaux)=1 ] \leq \epsilon$.
+$\mathrm{Err}(S,\qry,\pubaux,\privaux)$ be a predicate that is true iff
+$\Qry(\pubaux,\privaux, \qry) \neq \qry(S)$.  Then $\Pi$ has \emph{error
+probability} $\epsilon$ if $\max_{S,\qry}\Pr[(\pubaux,\privaux) \getsr
+\Rep(S) : \mathrm{Err}(S,\qry,\pubaux,\privaux)=1 ] \leq \epsilon$.
 %
 It has \emph{error rate} $\tilde{\epsilon}$ if
-$\max_{S}\Pr[(\pubaux,\privaux) \getsr \Rep(S);\, q \getsr \calQ :
-\mathrm{Err}(S,q,\pubaux,\privaux)=1] \leq \tilde{\epsilon}$. \hfill\dqed
+$\max_{S}\Pr[(\pubaux,\privaux) \getsr \Rep(S);\, \qry \getsr \calQ :
+\mathrm{Err}(S,\qry,\pubaux,\privaux)=1] \leq \tilde{\epsilon}$. \hfill\dqed
 \end{definition}
 
 %We will sometimes say that a data structure is
@@ -106,29 +86,29 @@ type of error, e.g., false positives.
 We pause to highlight an important
 difference between error probability and error rate.  In particular,
 the error probability~$\epsilon$ is measured only over the coins
-of~$\Rep$, for a fixed~$S$ and query~$q$. Once the coins of~$\Rep$
+of~$\Rep$, for a fixed~$S$ and query~$\qry$. Once the coins of~$\Rep$
 are fixed, it is not straightforward how to connect~$\epsilon$ to
 events that depend on other sources of randomness.   We illustrate how
 this surfaces with the following example.
 
 Let~$\Pi$ be a data structure that has error-probability $\epsilon$,
 and consider a correctness-violating attack that asks random
-queries $q_1,q_2,\ldots,q_T$, i.e., uniform samples from~$\calQ$.
+queries $\qry_1,\qry_2,\ldots,\qry_T$, i.e., uniform samples from~$\calQ$.
 Let $\mathrm{Err}_i$ be a random variable indicating the event
-$\Qry(\pubaux,\privaux,q_i)\neq q_i(S)$.  We know that the probability
+$\Qry(\pubaux,\privaux,\qry_i)\neq \qry_i(S)$.  We know that the probability
 that $\mathrm{Err}_i=1$ is at most~$\epsilon$, and it is tempting to
 model the~$\mathrm{Err}_i$ as i.i.d. Bernoulli trials with success
 probability~$\epsilon$. However, a moment's reflection shows that
 this is not the case.  Concretely, consider the following scheme.
 Fix $|S|=n$ for all $S \in \calS$, where $n \ll |\univ|$. For the
-queries, let $\calQ = \{q_x\colon \calS \to \bits \,|\, \forall x
-\in \univ\}$ where $\forall S \in \calS$ the predicate $q_x(S)=1
+queries, let $\calQ = \{\qry_x\colon \calS \to \bits \,|\, \forall x
+\in \univ\}$ where $\forall S \in \calS$ the predicate $\qry_x(S)=1
 \Leftrightarrow x \in S$.  Let $\Rep(S)$ pick a random element~$s
 \in S$, and return $M = S \setminus \{s\}$ and $\privaux =
 \emptystring$.  To respond to queries,
-let~$\Qry(\pubaux,\privaux,q_x)=1$ iff $x \in M$.  It is easy to see
+let~$\Qry(\pubaux,\privaux,\qry_x)=1$ iff $x \in M$.  It is easy to see
 that this scheme is $1/n$-correct; for any fixed~$S$, there are
-exactly~$n$ queries~$q_x$ that have probability~$1/n$  (over the
+exactly~$n$ queries~$\qry_x$ that have probability~$1/n$  (over the
 coins of~$\Rep$) of causing a correctness error, and the remaining
 $|\univ|-n$ queries have probability zero of causing an error.
 Moreover, once the coins of~$\Rep$ are fixed, there is exactly
@@ -143,8 +123,8 @@ multiplicity queries.
 
 \begin{definition} \rm
 A \emph{set-multiplicity data structure} is a data structure with
-$\Gamma=\mathbb{N}$ and $\calQ=\{q_x\}_{x \in \univ}$, where
-$q_x(S)$ is defined to be the multiplicity of~$x$ in the
+$\Gamma=\mathbb{N}$ and $\calQ=\{\qry_x\}_{x \in \univ}$, where
+$\qry_x(S)$ is defined to be the multiplicity of~$x$ in the
 multiset~$S$. \hfill\dqed
 \end{definition}
 
@@ -168,7 +148,7 @@ $\privaux=\emptystring$ and $\pubaux = \langle
 M,h_1,h_2,\ldots,h_k\rangle$ as the representation.
 %
 Algorithm~$\Qry$ is defined so that, on input
-$(\pubaux,\privaux,q_x)$, it returns the minimum of the values
+$(\pubaux,\privaux,\qry_x)$, it returns the minimum of the values
 $M[h_1(x)],\ldots,M[h_k(x)]$.  We note that the standard Bloom filter
 analysis treats $h_1,h_2,\ldots,h_k$ as independent random functions,
 which we may capture in the ROM with some simple adjustments to the above.

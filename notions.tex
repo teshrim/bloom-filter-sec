@@ -1,3 +1,4 @@
+
 \section{Security Notions}
 \label{sec:security-notions}
 Following NY, we are interested in defining an adaptive (i.e.,
@@ -26,7 +27,7 @@ $\Rep(S)$ is run to generate $(\pubaux,\privaux)$.
 %chooses $S$.}
 %(Unless stated otherwise, we assume security holds for all distributions and thus for all sets $S$.)
 Adversary~$A$ is given~$\pubaux$~as input; it is also
-provided with access to an oracle~$\TestOracle$ that, on input a query~$q \in \calQ$,
+provided with access to an oracle~$\TestOracle$ that, on input a query~$\qry \in \calQ$,
 returns $\Qry(\pubaux,\privaux,q)$ and increments
 a counter if this result is in error.  The adversary wins if it
 manages to cause at least~$r>0$ such errors among its queries.
@@ -61,12 +62,12 @@ Return 1
 }
 %
 {
-\oracle{$\TestOracle(q)$}\\
-if $q \in \mathcal{C}$ then Return $\bot$\\
-$a \gets \Qry(\pubaux,\privaux,q)$\\
-if $a \neq q(S)$ then \\
+\oracle{$\TestOracle(\qry)$}\\
+if $\qry \in \mathcal{C}$ then Return $\bot$\\
+$a \gets \Qry(\pubaux,\privaux,\qry)$\\
+if $a \neq \qry(S)$ then \\
 \nudge $\mathrm{err}\gets\mathrm{err}+1$\\
-$\mathcal{C} \gets \mathcal{C} \cup \{q\}$ \\
+$\mathcal{C} \gets \mathcal{C} \cup \{\qry\}$ \\
 Return~$a$
 }
 }
@@ -83,14 +84,7 @@ Overloading notation, we write $\AdvCorrect{\Pi,r}{t,q}$ for the maximum over
 all~$t$-time adversaries that ask at most~$q$ queries. We say a
 data structure~$\Pi$ is $(t,q,r,\epsilon)$-correct if $\AdvCorrect{\Pi,r}{t,q} \leq \epsilon$.
 
-\jnote{Note~$q$ is overloaded here.}\tsnote{True, and do we even need
-  it, other than for making a compact statements of comparison with
-  NY?  Why not just have explicit advantage bounding statements, as we
-  do for our other results, relating our notion to NY's?  (And,
-  probably, moving all of that to an appendix, as you later suggest.)}
-\jnote{Not sure what you mean. I was pointing out that we use $q$ both for a particular
-query, as well as for the bound on the number of attacker's queries. Don't we want to
-keep track of the query bound?}
+\jnote{Note~$q$ is overloaded here.}
 
 \todo{Explain that the case of $r=1$ does not necessarily imply anything for $r>1$: can have a scheme
 where finding the first false positive is hard but then the rest are easy; can have
@@ -107,9 +101,9 @@ does not distinguish public and private portions of the representation. Neverthe
 to extend their definition to more closely match ours.}
 to our setting,
 the experiment is similar but the attacker
-succeeds only if it outputs a (single) query $q$ for which
-$\Qry(\pubaux,\privaux, q) \neq q(S)$  \emph{subject to the restriction that it did not
-previously query $q$ to its $\TestOracle$ oracle}. We refer to
+succeeds only if it outputs a (single) query $\qry$ for which
+$\Qry(\pubaux,\privaux, \qry) \neq \qry(S)$  \emph{subject to the restriction that it did not
+previously query $\qry$ to its $\TestOracle$ oracle}. We refer to
 Figure~\ref{fig:NYcorrectness} for a definition of the relevant experiment.
 We define the advantage of adversary~$A$ as
 $\NYAdvCorrect{\Pi}{A} = \Prob{\NYExpCorrect{\Pi}{A}=1}$,
@@ -136,9 +130,9 @@ $S \getsr A$\\
 $\mathcal{C} \gets \emptyset$\\
 %$\mathrm{err}\gets 0$\\
 $(\pubaux,\privaux) \getsr \Rep(S)$\\
-$q \getsr A^{\TestOracle}(\pubaux)$\\
-if $\left(q \not \in \mathcal{C}\right.$ and \\
-\nudge $\left.\Qry(\pubaux,\privaux,q) \neq q(S)\right)$ \\
+$\qry \getsr A^{\TestOracle}(\pubaux)$\\
+if $\left(\qry \not \in \mathcal{C}\right.$ and \\
+\nudge $\left.\Qry(\pubaux,\privaux,\qry) \neq \qry(S)\right)$ \\
 \nudge \nudge then Return 1\\
 Return 0
 }
@@ -174,8 +168,6 @@ style of definition.}
 If $\Pi$ is $(t,q,\epsilon)$-NY-correct, then it is also
 $(t, q', r, q'\epsilon/r)$-correct for any $q' \leq q+1$ and $r\geq
 1$.
-\tsnote{this could easily be written, albeit less compactly, without
-introducing the resource-parameterized notation; likewise the others.} \jnote{How?}
 \end{theorem}
 \begin{proof}
 Let $\Pi$ be a data structure that is $(t,q,\epsilon)$-NY-correct,
@@ -217,9 +209,8 @@ there is an adversary $A$ running in time~$t$
 and making at most $q-1$ oracle queries such that
 $\NYAdvCorrect{\Pi}{A} > \epsilon$.
 Let $A'$ be the algorithm that simply
-runs~$A$, passing the oracle queries of $A$ to its own oracle, until $A$ terminates
-with output~$q$; then, $A'$ sends $q$ to $\TestOracle$. \jnote{$q$ is (still)
-overloaded!} It is immediate that $A'$ makes at most $q$ oracle queries, and
+runs~$A$, passing the oracle queries of~$A$ to its own oracle, until~$A$ terminates
+with output~$\qry$; then, $A'$ sends~$\qry$ to $\TestOracle$. It is immediate that $A'$ makes at most $q$ oracle queries, and
 $\AdvCorrect{\Pi,1}{A'} \geq \NYAdvCorrect{\Pi}{A}$, a contradiction.
 \end{proof}
 
@@ -231,7 +222,7 @@ for any $\epsilon<1$.
 \begin{proof}
 Let $\Pi$ be the set-membership data structure in which $\Rep(S)$ outputs
 $\pubaux=\privaux=S$, and
-$\Qry(S, S, q_y)$ outputs $q_y(S)$ if $y \neq x$ but outputs $1-q_x(S)$ otherwise,
+$\Qry(S, S, \qry_y)$ outputs $\qry_y(S)$ if $y \neq x$ but outputs $1-\qry_x(S)$ otherwise,
 where $x \in {\cal X}$ is a fixed element of the universe. This
 scheme always answers incorrectly for a single, fixed query, and answers
 correctly for every other query. The theorem follows.
@@ -471,7 +462,7 @@ $\delta \leq 2^{-\tilde H_\infty({\cal D} \mid {\sf leak})}+\epsilon$ as desired
 
 %\todo{SS$\Rightarrow$OW?
 %  (Probably not in general, but perhaps for set-multiplicity data
-%  structures that satisfy certain assumptions on the query set.)
+%  structures that satisfy certain assumptions on the qnuery set.)
 %  SS$\not\Rightarrow$ correctness; the converse is already shown by
 %  the example I gave earlier, i.e. $M=S\setminus\{x\}$ for random $x
 %  \in S$.} \jnote{Since we can set $\pubaux$ to be the emptystring, I think
