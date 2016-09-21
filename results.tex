@@ -40,12 +40,12 @@ semantically secure with respect to leakage consisting of the size of the set.
 
 \begin{theorem}
 Let $\Pi=(\Rep, \Qry)$ be a canonical set-multiplicity data structure for which $\Rep$ has canonical representation
-$(\Rep_1, \Rep_2, F)$. If $F$ is a pseudorandom function, then $\Pi$
+$(\Rep_1, \Rep_2, F)$. If $F$ is a $(t, \epsilon)$-pseudorandom function, then $\Pi$
 is semantically secure with respect to leakage function ${\sf leak}(S) = |S|$.
 \end{theorem}
 \begin{proof}
-We define the following simulator $\Sim$: on input $n$, define $S^*=\{x_1, \ldots, x_n\}$
-(for distinct elements $x_1, \ldots, x_n$). Then compute
+We define the following simulator $\Sim$: on input $n$, define $S^*=\{e_1, \ldots, e_n\}$
+(for distinct elements $e_1, \ldots, e_n$). Then compute
 \begin{enumerate}
 \item $x_1, \ldots, x_t \getsr \Rep_1(S^*)$,
 \item $k \getsr \bool^n$,
@@ -53,12 +53,49 @@ We define the following simulator $\Sim$: on input $n$, define $S^*=\{x_1, \ldot
 \end{enumerate}
 and output $\pubaux$.
 
-For a given set $S$, define distribution $\mbox{{\sc Real}}_S$ as follows:
+\def\hyb{\mbox{{\sc Hyb}}}
+
+For a given set $S$, define distribution $\mbox{{\sc Real}}_S$ as
 \[ \{ (\pubaux, \privaux) \getsr \Rep(S) : \pubaux\},\]
 and define distribution $\mbox{{\sf Ideal}}_S$ as
 \[ \{ \pubaux \getsr \Sim(|S|) : \pubaux \}.\]
-Our goal is to show that
+Our goal is to show that $\mbox{{\sc Real}}_S$ and $\mbox{{\sf Ideal}}_S$ are computationally
+indistinguishable for any set~$S$. \jnote{I'm not quite sure how to elegantly do a proof
+like this in the concrete setting.}
+To do so, first note that we can express $\mbox{{\sc Real}}_S$ as the outcome of
+the following experiment:
+\begin{enumerate}
+\item $x_1, \ldots, x_t \getsr \Rep_1(S)$.
+\item $k \getsr \bool^n$.
+\item $\pubaux \getsr \Rep_2(|S|, F_k(x_1), \ldots, F_k(x_t))$.
+\item Return $\pubaux$.
+\end{enumerate}
 
+Now, consider a hybrid distribution $\hyb_S$ computed as follows:
+\begin{enumerate}
+\item $x_1, \ldots, x_t \getsr \Rep_1(S)$.
+\item $y_1, \ldots, y_t \leftarrow \bool^{\ell_{out}}$
+\item $\pubaux \getsr \Rep_2(|S|, y_1, \ldots, y_t)$.
+\item Return $\pubaux$.
+\end{enumerate}
+It follows immediately from the fact that $F$ is a pseudorandom function (and efficiency
+of $\Rep_2$) that $\hyb_S$ is computationally indistinguishable from $\mbox{{\sc Real}}_S$.
+
+Next, consider the following distribution $\hyb'_S$:
+\begin{enumerate}
+\item $S^* := \{e_1, \ldots, e_n\}$, where $n = |S|$.
+\item $x_1, \ldots, x_{t^*} \getsr \Rep_1(S^*)$.
+\item $y_1, \ldots, y_{t^*} \leftarrow \bool^{\ell_{out}}$
+\item $\pubaux \getsr \Rep_2(|S|, y_1, \ldots, y_{t^*})$.
+\item Return $\pubaux$.
+\end{enumerate}
+We claim that $\hyb'_S$ is identically distributed to $\hyb_S$. The follows immediately from the
+observation that the distribution on $t$ (in $\hyb_S$) is identical to the distribution on~$t^*$
+(in $\hyb'_S$) by definition
+of what it means to be canonical.
+
+To complete the proof, we simply note that $\hyb'_S$ and $\mbox{{\sf Ideal}}_S$
+are computationally indistinguishable, again relying on pseudorandomness of~$F$.
 \end{proof}
 
 %Here is a proof sketch:
