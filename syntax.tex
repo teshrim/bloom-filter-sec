@@ -33,7 +33,11 @@ Fix a non-empty set~$\univ$, and a collection of (multi)sets~$\calS$
 over $\univ$. A \emph{data structure} (for $\calS$) is a tuple
 $\setprim=(\calQ,\Rep, \Qry)$ where \jnote{I would prefer moving
 $\calQ$ out of the tuple, and instead calling it a ``data structure
-for $\calQ$ over $\calS$.''}:
+for $\calQ$ over $\calS$.''}\tsnote{But $\Qry$ really is tied to
+$\calQ$, as those are the only queries upon which $\Qry$ is defined to
+operate.  So, if anything, I would support removing $\calQ$ from the
+high-level API, and just explaining what it is as part of the
+description of $\Qry$}:
 \begin{itemize}
 \item $\mathcal{Q}=\{\qry \colon \mathcal{S} \to \Gamma\}$ is a set
     of supported \emph{queries}, where $\Gamma$ is the set of query \emph{answers}.
@@ -176,6 +180,9 @@ $\privaux=(h_1,h_2,\ldots,h_k)$, and setting $\pubaux=M$.
 Related constructions that use a secret key~$K$, but not for hashing (e.g.\ the PRP-based
 construction from NY), are captured setting $\privaux=K, \pubaux=M$.
 
+\tsnote{needs updating, since $\Sigma$ is gone, and the range of
+  $\Rep$ is just $\bits^*$ with implicit encoding of whatever is the
+  ``natural'' way to think about $\pubaux$ (e.g. counters, xor-shares)}
 By setting $\Sigma=\bits^L$ for a specified $L>0$, we can capture
 the so-called ``garbled Bloom filter'' due to Dong, Chen and
 Wen~\cite{dong2013private}. \todo{Details have to be filled in.} This stores
