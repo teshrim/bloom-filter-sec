@@ -24,9 +24,9 @@ $\pubaux$.
 \item For any $S$, the distribution on $\pubaux$ output by $\Rep(S)$ is identical to the distribution
 on $\pubaux$ computing as follows:
 \begin{enumerate}
-\item $s_1, \ldots, s_t \getsr \Rep_1(S)$.
-\item $K \getsr \calK$.
-\item $\pubaux \getsr \Rep_2(n, F_K(s_1), \ldots,F_K(s_t))$. 
+\item $s_1, \ldots, s_t \getsr \Rep_1(S)$;
+\item $K_1,K_2,\ldots,K_p \getsr \calK$ for some fixed number of keys~$p$;
+\item $\pubaux \getsr \Rep_2(n, \{F_{K_j}(s_1), \ldots,F_{K_j}(s_t)\}_{j\in[p]})$. 
 \end{enumerate}
 \end{itemize}
 In this case, we say that $(\Rep_1, \Rep_2, F)$ is the {\sf canonical representation}
@@ -42,7 +42,7 @@ to prove security of all the constructions we care about.}
   functions and does the hashing. (Although the following theorem does
   not work in this case, of course.) It does not cover
   linear-PRF or Neidermayer. }
-We next show that any canonical data structure in which $F$ is a pseudorandom function is
+We next show that any canonical data structure in which~$F$ is a pseudorandom function is
 semantically secure with respect to leakage consisting of the size of the set.
 
 \begin{theorem}
