@@ -9,47 +9,56 @@ depends only on ${\sf leak}$.}
 
 We first define what we mean by ``canonical.''
 
-\def\bool{\{0,1\}}
+\def\bits{\{0,1\}}
 
 \begin{definition}
 A set-multiplicity data structure $(\Rep, \Qry)$ is {\sf canonical} if
 there exist algorithms $\Rep_1, \Rep_2$, and a function
-$F: \bool^n \times \bool^{\ell_{in}} \rightarrow \bool^{\ell_{out}}$
+$F: \calK \times \bits^{\ell_{in}} \rightarrow \bits^{\ell_{out}}$
 such that the following hold:
 \begin{itemize}
-\item $\Rep_1$ takes as input a set $S$ and outputs distinct values $x_1, \ldots, x_t \in \bool^{\ell_{in}}$,
-where $t$ depends only on~$|S|$.
-\item $\Rep_2$ takes as input $|S|$ and $y_1, \ldots, y_t \in \bool^{\ell_{out}}$, and outputs
+\item $\Rep_1$ takes as input a set $S=\{x_1,\ldots,x_n\}$ and outputs distinct values $s_1, \ldots, s_t \in \bits^{\ell_{in}}$,
+where $t$ depends only on~$n$.
+\item $\Rep_2$ takes as input $n$ and $y_1, \ldots, y_t \in \bits^{\ell_{out}}$, and outputs
 $\pubaux$.
 \item For any $S$, the distribution on $\pubaux$ output by $\Rep(S)$ is identical to the distribution
 on $\pubaux$ computing as follows:
 \begin{enumerate}
-\item $x_1, \ldots, x_t \getsr \Rep_1(S)$.
-\item $k \getsr \bool^n$.
-\item $\pubaux \getsr \Rep_2(|S|, F_k(x_1), \ldots, F_k(x_t))$.
+\item $s_1, \ldots, s_t \getsr \Rep_1(S)$.
+\item $K \getsr \calK$.
+\item $\pubaux \getsr \Rep_2(n, F_K(s_1), \ldots,F_K(s_t))$. 
 \end{enumerate}
 \end{itemize}
 In this case, we say that $(\Rep_1, \Rep_2, F)$ is the {\sf canonical representation}
-of~$\Rep$.
+of~$\Rep$. \tsnote{Seems odd to call it this without explaining how
+  this canonical representation handles $\privaux$, too.  }
 \end{definition}
 \jnote{Not sure how general to make the above. Need to verify that it is general enough
 to prove security of all the constructions we care about.}
-
+\tsnote{Would be good to give an example or two of the schemes this
+  covers.  Domain-separated PRF BF, for example.  I think it covers
+  classical BF, too, if $F_K(s)=s$ for all $K \in \calK$, $\Rep_1$
+  simply returns the elements of~$S$, and $\Rep_2$ actually picks hash
+  functions and does the hashing. It does not cover
+  linear-PRF or Neidermayer. }
 We next show that any canonical data structure in which $F$ is a pseudorandom function is
 semantically secure with respect to leakage consisting of the size of the set.
 
 \begin{theorem}
 Let $\Pi=(\Rep, \Qry)$ be a canonical set-multiplicity data structure for which $\Rep$ has canonical representation
-$(\Rep_1, \Rep_2, F)$. If $F$ is a $(t, \epsilon)$-pseudorandom function, then $\Pi$
-is semantically secure with respect to leakage function ${\sf leak}(S) = |S|$.
+$(\Rep_1, \Rep_2, F)$. If $F$ is a $(t, \epsilon)$-pseudorandom
+function \tsnote{overloading~$t$}, then $\Pi$ is semantically secure
+with respect to leakage function ${\sf leak}(S) = |S|$.
+\tsnote{We have a mixture of styles of theorem statements, resource-parameterized statements vs.\ ``verbose'' concrete statements.  We
+  need to make things uniform.}
 \end{theorem}
 \begin{proof}
 We define the following simulator $\Sim$: on input $n$, define $S^*=\{e_1, \ldots, e_n\}$
 (for distinct elements $e_1, \ldots, e_n$). Then compute
 \begin{enumerate}
-\item $x_1, \ldots, x_t \getsr \Rep_1(S^*)$,
-\item $k \getsr \bool^n$,
-\item $\pubaux \getsr \Rep_2(|S|, F_k(x_1), \ldots, F_k(x_t))$,
+\item $s_1, \ldots, s_t \getsr \Rep_1(S^*)$,
+\item $K \getsr \calK$,
+\item $\pubaux \getsr \Rep_2(|S|, F_K(s_1), \ldots, F_K(s_t))$,
 \end{enumerate}
 and output $\pubaux$.
 
@@ -61,31 +70,39 @@ and define distribution $\mbox{{\sf Ideal}}_S$ as
 \[ \{ \pubaux \getsr \Sim(|S|) : \pubaux \}.\]
 Our goal is to show that $\mbox{{\sc Real}}_S$ and $\mbox{{\sf Ideal}}_S$ are computationally
 indistinguishable for any set~$S$. \jnote{I'm not quite sure how to elegantly do a proof
-like this in the concrete setting.}
+like this in the concrete setting.}\tsnote{I think you just follow the
+sketch that I typeset for the Domain-Separated PRF scheme. (I'll embed
+notes below, too.) The bound will be exactly what is there, shoudl be able to just cut-and-paste,
+basically.  All that's needed, I think, is to do resource accounting
+for $\Sim$ and the PRF-adversary~$B$.}
 To do so, first note that we can express $\mbox{{\sc Real}}_S$ as the outcome of
-the following experiment:
+the following experiment: \tsnote{I'd call this ``Game $G0$''...}
 \begin{enumerate}
-\item $x_1, \ldots, x_t \getsr \Rep_1(S)$.
-\item $k \getsr \bool^n$.
-\item $\pubaux \getsr \Rep_2(|S|, F_k(x_1), \ldots, F_k(x_t))$.
+\item $s_1, \ldots, s_t \getsr \Rep_1(S)$.
+\item $K \getsr \bits^n$.
+\item $\pubaux \getsr \Rep_2(|S|, F_k(s_1), \ldots, F_k(s_t))$.
 \item Return $\pubaux$.
 \end{enumerate}
 
 Now, consider a hybrid distribution $\hyb_S$ computed as follows:
+\tsnote{...and this ``Game $G1$''...}
 \begin{enumerate}
-\item $x_1, \ldots, x_t \getsr \Rep_1(S)$.
-\item $y_1, \ldots, y_t \leftarrow \bool^{\ell_{out}}$
+\item $s_1, \ldots, s_t \getsr \Rep_1(S)$.
+\item $y_1, \ldots, y_t \leftarrow \bits^{\ell_{out}}$
 \item $\pubaux \getsr \Rep_2(|S|, y_1, \ldots, y_t)$.
 \item Return $\pubaux$.
 \end{enumerate}
 It follows immediately from the fact that $F$ is a pseudorandom function (and efficiency
 of $\Rep_2$) that $\hyb_S$ is computationally indistinguishable from $\mbox{{\sc Real}}_S$.
-
+\tsnote{...and then it's clear that the difference between the
+  probability of $G0 \outputs 1$ and $G1 \outputs 1$ is exactly the
+  PRF advantage of~$B$, who simply uses it's oracle to simulate calls
+  to $F_K$ prior to running $\Rep_2$...}
 Next, consider the following distribution $\hyb'_S$:
 \begin{enumerate}
 \item $S^* := \{e_1, \ldots, e_n\}$, where $n = |S|$.
-\item $x_1, \ldots, x_{t^*} \getsr \Rep_1(S^*)$.
-\item $y_1, \ldots, y_{t^*} \leftarrow \bool^{\ell_{out}}$
+\item $s_1, \ldots, s_{t^*} \getsr \Rep_1(S^*)$.
+\item $y_1, \ldots, y_{t^*} \leftarrow \bits^{\ell_{out}}$
 \item $\pubaux \getsr \Rep_2(|S|, y_1, \ldots, y_{t^*})$.
 \item Return $\pubaux$.
 \end{enumerate}
@@ -93,6 +110,8 @@ We claim that $\hyb'_S$ is identically distributed to $\hyb_S$. The follows imme
 observation that the distribution on $t$ (in $\hyb_S$) is identical to the distribution on~$t^*$
 (in $\hyb'_S$) by definition
 of what it means to be canonical.
+\tsnote{...and it is clear that the distriubtion of everything is the
+  same as in Game $G1$, so we are done. }
 
 To complete the proof, we simply note that $\hyb'_S$ and $\mbox{{\sf Ideal}}_S$
 are computationally indistinguishable, again relying on pseudorandomness of~$F$.
@@ -118,7 +137,7 @@ are computationally indistinguishable, again relying on pseudorandomness of~$F$.
 %H3: Run the representation algorithm on {x_1, ..., x_n}, using the
 %real Rep (with PRFs).
 
-\jnote{Organize by scheme, not by security notions.}
+%\jnote{Organize by scheme, not by security notions.}
 
 \include{scheme-descriptions}
 
@@ -147,7 +166,8 @@ $(q (1-e^{-kn/m})^k + O(q/n) )^r$; loosely, the bound one expects for
 trying to find a single FP in each of~$r$ independent``rounds'', each round
 consisting of~$q$ attempts.
 
-\todo{Privacy theorem for the ``plain'' linear-PRF scheme.  Should follow from Jon's general result(?)}
+\todo{Privacy theorem for the ``plain'' linear-PRF scheme. Does not
+  follow from Jon's general theorem.}
 
 %%%%%%%%%%%%%%%%% BIGRAM LINEAR-PRF (AKA "NEIDERMAYER")  %%%%%%%%%%%%%%%%%%%%
 \heading{Bigram Linear-PRF construction (``Neidermayer''). }
