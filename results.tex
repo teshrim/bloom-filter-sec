@@ -39,7 +39,8 @@ to prove security of all the constructions we care about.}
   covers.  Domain-separated PRF BF, for example.  I think it covers
   classical BF, too, if $F_K(s)=s$ for all $K \in \calK$, $\Rep_1$
   simply returns the elements of~$S$, and $\Rep_2$ actually picks hash
-  functions and does the hashing. It does not cover
+  functions and does the hashing. (Although the following theorem does
+  not work in this case, of course.) It does not cover
   linear-PRF or Neidermayer. }
 We next show that any canonical data structure in which $F$ is a pseudorandom function is
 semantically secure with respect to leakage consisting of the size of the set.
