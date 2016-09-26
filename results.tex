@@ -4,6 +4,8 @@
 %%%%%%%%%%%%%%%%% CLASSICAL BLOOM FILTER IN ROM %%%%%%%%%%%%%%%%%%%%
 
 \subsection{Classical Bloom filter in random oracle model (ROM). }
+
+\heading{Correctness. }
 Fix $n,k,m \geq 0$ and let $\mathcal{S}=[\univ]^n$.  Then $\Pi_{\mathrm{Bloom}}= (\calQ,\Rep, \Qry)$ is defined as in Figure~\ref{fig:bf-and-garbled-bf} (left side).  The following theorem proves correctness for this construction.  Again, we stress that this correctness is with respect to adaptive adversaries, aiming to find $r \geq 1$ errors (in this case, false-positives), and with public hash functions.
 
 \begin{theorem}\label{thm3}\label{thm:bf-correctness}
@@ -15,6 +17,7 @@ Fix $k,m,n,r>0$, and let $\Pi_{\mathrm{Bloom}}= (\calQ,\Rep, \Qry)$ be the set-m
 
 \input{Theorem3_FP}
 
+\heading{Privacy. }
 Turning to privacy, we note immediately that the classical BF, in the ROM, does not meet our SS-privacy notion when the leakage function fails to reveal the entire set~$S$.  This is because the set~$S$ is adversarially chosen, and the adversary has access to the random oracle, i.e. the hash functions used to make~$\pubaux$.  Thus the adversary can simply check that the $\pubaux$ it receives is correct.  Thus, unless $m,k,n$ are such that the false-positive rate is large, the simulator needs to call the random oracle\tsnote{I assume the simulator gets access to the RO?} on the points in~$S$ in order to ``fool'' the adversary.
 \tsnote{I'm still not completely comfortable with this.  It isn't explicit in our SS notion, but I assume that~$A$ is stateful and so knows~$S$ in its second stage?  If so, I wonder if the classic BF in the ROM would be secure relative to a weaker notion (but still stronger than OW) in which the second stage does not know~$S$?  This seems likely to me.}
 
@@ -171,6 +174,8 @@ Looking ahead to the next section, we will analyze a closely related constructio
 
 Taken together, the results of this section and the next highlight how sensitive the privacy of linear PRF-hash constructions is to usage.
 
+
+\heading{Correctness. }
 For now, let $n,k,m \geq 0$ and let $\mathcal{S}=[\univ]^n$.  Then $\Pi_{\mathrm{lin}}= (\calQ,\Rep, \Qry)$ is defined as in Figure~\ref{fig:lin-and-ds} (left side).  The following result shows, informally, that if~$F$ is a good PRF, then $\Pi_\mathrm{lin}$ is correct against adaptive error-finding adversaries.
 
 \begin{theorem}\label{thm1}\label{thm:lin-correctness}
@@ -190,8 +195,8 @@ $(q (1-e^{-kn/m})^k + O(q/n) )^r$; loosely, the bound one expects for
 trying to find a single FP in each of~$r$ independent``rounds'', each round
 consisting of~$q$ attempts.
 
+\heading{Privacy. }
 The SS-privacy of the linear-PRF hash construction follows directly from~Theorem~\ref{thm:xxx}.
-\todo{Privacy theorem.  Follows from Jon's general theorem.}
 \begin{theorem}\label{thm:lin-privacy}
 Fix $k,m,n,r>0$, and let $\Pi_{\mathrm{lin}}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-ds}. For any set~$S$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ such that, for any adversary~$A$
 \[
@@ -211,10 +216,12 @@ On input $n,F_K(s_1),F_K(s_2),\ldots,F_K(s_{2n-1}) , F_K(s_{2n})$, algorithm $\R
 %%%%%%%%%%%%%%%%% BIGRAM LINEAR-PRF (AKA "NEIDERMAYER")  %%%%%%%%%%%%%%%%%%%%
 \subsection{Bigram Linear-PRF construction}
 %\heading{Bigram Linear-PRF construction (``Neidermayer''). }
-\todo{Correctness theorem for this scheme.  Should follow pretty closely the one for ``plain'' linear-PRF.}
+\heading{Correctness.} 
+\todo{Correctness theorem for this scheme.  Should follow pretty closely the one for ``plain'' linear-PRF.}\tsnote{Actually not sure this is that interesting, but for parallel structure one would want to give it.}
 
 %Next we consider the privacy of this construction, relative to a leakage function that behaves as follows.  On input a set $S=\{x_1,x_2,\ldots,x_n\}$, it computes $B_i \gets \mathsf{bigram}(x_i)$ for each $i \in [n]$.  Then, for all $1 \leq c \leq p$, and all size-$c$ subsets $\{j_1,j_2,\ldots,j_c\} \subseteq p$, it computes $L{j_1,j_2,\ldots,j_c}=|B_{j_1} \cap B_{j_2} \cap \ldots \cap B_{j_c}|$.  That is, it computes all of the $c$-way intersections. It returns $|S|=n$ and all of the $2^p -1$ intersection sizes as the leakage. \todo{Explain why this is plausibly leaked by $\pubaux$ for this construction.} \tsnote{This is exponential in size, so that means a simulator that reads the entire leakage will also be exponential-time in~$p$.  } \tsnote{Should we be considering smaller, but less realistic leakage, like $\mathsf{leak}(S)=S\setminus\{x\}$.}
 
+\heading{Privacy. }
 Next we exhibit an efficient SS-privacy attack even when simulator is provided nearly the entire set.  Consider the following leakage function.  On input a set~$S=\{x_1,x_2,\ldots,x_n\}$, it assigns $x'_n \gets x_n[1:|x_n|-1]$ and returns $\mathsf{leak}(S)=\{x_1,x_2,\ldots,x'_n\}$.  
 
 \begin{figure}
@@ -261,6 +268,7 @@ On the other hand, the simulator~$\Sim$ is given 'cab','bab','cab' as input.  It
 
 \subsection{Domain-separated PRF-Hash}
 %\heading{Construction of PRF with domain separation.}
+\heading{Correctness. }
 Let $\Pi_{\mathrm{ds}}= (\calQ,\Rep, \Qry)$ be a set-multiplicity data
 structure defined on the right-side of Figure~\ref{fig:lin-and-ds}.
 As with the preceding theorem, the following says (informally) that
@@ -282,6 +290,7 @@ Fix $k,m,n,r>0$, and let $\Pi_{\mathrm{ds}}= (\calQ,\Rep, \Qry)$ be the set-mult
 Here, $B$ asks $q$ queries, and has time complexity $O(t+qm)$.
 \end{theorem}
 
+\heading{Privacy. }
 The privacy of $\Pi_{\mathrm{ds}}$ follows directly from our general
 result, Theorem~\ref{thm:xxx}.
 
@@ -315,24 +324,17 @@ Adversary~$B^{f}$ simulates the steps of $\ExpPrivSSreal{\Pi_{\mathrm{ds}}}{A}$,
 
 %%%%%%%%%%%%%%%%% Bigram DOMAIN-SEPARATED PRF %%%%%%%%%%%%%%%%%%%%
 
-\subsection{Domain-separated PRF-Hash}
-%\heading{Construction of PRF with domain separation.}
-Let $\Pi_{\mathrm{ds}}= (\calQ,\Rep, \Qry)$ be a set-multiplicity data
-structure defined on the right-side of Figure~\ref{fig:lin-and-ds}.
-As with the preceding theorem, the following says (informally) that
-if~$F$ is a secure PRF, then this domain-separated PRF construction is
-correct against adaptive adversaries.  
-\tsnote{Not really appropriate to say this next thing; I'll add a new section that addresses bigram DS-PRF hash.}
-We note that Neidermayer et
-al. in~\cite{xxx} suggest replacing the linear-PRF hash functions in
+\subsection{Bigram Domain-Separated PRF-Hash}
+We note that Neidermayer et al. in~\cite{xxx} suggest replacing the linear-PRF hash functions in
 the previous construction with independently keyed PRFs as a way to
 thwart their attacks.  The construction we consider now achieves the
-same end, albeit via explict domain separation rather than separate
-keys.
+same end, albeit via explict domain separation rather than separate keys.
+\todo{Privacy proof, at a minimum... if it is actually secure.}
 
 
-
-
+\begin{verbatim}
+%------------------------------------%
+\end{verbatim}
 
 \todo{Below are two lists of things that we should show.}
 
