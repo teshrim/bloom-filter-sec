@@ -147,11 +147,11 @@ are computationally indistinguishable, again relying on pseudorandomness of~$F$.
 %\heading{Linear-PRF construction. }
 The domain-separated PRF-hash requires~$k$ PRF evaluations per set-membership query, and this may be unattractive in certain use cases.  Kirsch and Mitzenmacher~\cite{xxx} have shown that two PRF evaluations suffices, defining the hash functions to be $h_i(x)=F_K(\langle 1,x \rangle) + j\cdot F_K(\langle 2,x \rangle) \bmod m$, where~$m$ is the bitlength of the Bloom filter.\footnote{Actually, they define $h_i(x)=F_{K_1}(x)  + j\cdot F_{K_2}(x) \bmod m$, using distinct keys instead of domain-separation, but the constructions are equivalent with respect to security.} We call this the \emph{linear PRF-hash} Bloom Filter.  In this section, we show that this scheme is both correct and private with respect to our SS notion.  
 
-Looking ahead to the next section, we will analyze a closely related construction, which was attacked by Neidermayer et al.~\cite{xxx} in the context of private medical-record linkage.  It uses the same linear-PRF hash functions, but has a $\Rep$ algorithm that that does not ensure that the hash functions are called on \emph{distinct} values.  We show that this is \emph{not} private with respect to our SS notion for a leakage function that leaks nearly the entire set~$S$. \todo{It would be better, perhaps, to show that it is not OW secure, since this implies it isn't SS secure, and OW security is what Neidermayer et al. violate.}
+Looking ahead to the next section, we will analyze a closely related construction, which was attacked by Neidermayer et al.~\cite{xxx} in the context of private medical-record linkage.  It uses the same linear-PRF hash functions, but has a $\Rep$ algorithm that that does not ensure that the hash functions are called on \emph{distinct} values.  We show that this is \emph{not} private with respect to our SS notion for a leakage function that leaks nearly the entire set~$S$. \todo{It would be better, perhaps, to show that it is not OW secure, since this implies it isn't SS secure, and OW security is what Neidermayer et al. violate.}  
 
+Taken together, the results of this section and the next highlight how sensitive the privacy of linear PRF-hash constructions is to usage.
 
-
-Fix $n,k,m \geq 0$ and let $\mathcal{S}=[\univ]^n$.  Then $\Pi_{\mathrm{lin}}= (\calQ,\Rep, \Qry)$ is defined as in Figure~\ref{fig:lin-and-ds} (left side).  The following result shows, informally, that if~$F$ is a good PRF, then $\Pi_\mathrm{lin}$ is correct against adaptive error-finding adversaries.
+For now, let $n,k,m \geq 0$ and let $\mathcal{S}=[\univ]^n$.  Then $\Pi_{\mathrm{lin}}= (\calQ,\Rep, \Qry)$ is defined as in Figure~\ref{fig:lin-and-ds} (left side).  The following result shows, informally, that if~$F$ is a good PRF, then $\Pi_\mathrm{lin}$ is correct against adaptive error-finding adversaries.
 
 \begin{theorem}\label{thm1}\label{thm:lin-correctness}
 Fix $k,m,n,r>0$, and let $\Pi_{\mathrm{lin}}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-ds}. Let $\distr{}{}$ be a distribution over~$\mathcal{S}$.  For any adversary~$A$ that makes a total of~$q$ queries to its oracle and has time-complexity~$O(t)$, there exist prf-adversaries~$B_1,B_2$ (explicitly constructed in the proof of this theorem) such that
@@ -170,7 +170,7 @@ $(q (1-e^{-kn/m})^k + O(q/n) )^r$; loosely, the bound one expects for
 trying to find a single FP in each of~$r$ independent``rounds'', each round
 consisting of~$q$ attempts.
 
-\todo{Privacy theorem for the ``plain'' linear-PRF scheme.  Follows from Jon's general theorem.}
+\todo{Privacy theorem.  Follows from Jon's general theorem.}
 
 %%%%%%%%%%%%%%%%% BIGRAM LINEAR-PRF (AKA "NEIDERMAYER")  %%%%%%%%%%%%%%%%%%%%
 \subsection{Bigram Linear-PRF construction}
