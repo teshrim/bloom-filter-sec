@@ -1,6 +1,8 @@
 \newcommand{\qry}{\mathsf{qry}}
 \section{(Multiset) Data Structures}
 
+\jnote{Make more general.}
+
 \heading{Preliminaries. } When~$\univ$ is a set and $n>0$ is an
 integer, we let $[\univ]^n$ denote the set of all size-$n$ subsets
 of~$\univ$, and $[[\univ]]^n$ for the set of all multisets
@@ -142,6 +144,8 @@ $\Gamma=\mathbb{N}$ and $\calQ=\{\qry_x\}_{x \in \univ}$, where
 $\qry_x(S)$ is defined to be the multiplicity of~$x$ in the
 multiset~$S$. \hfill\dqed
 \end{definition}
+
+\jnote{Clean up the following, because we discuss BFs later.}
 
 The classical Bloom filter is a special case of a set-multiplicity
 data structure, as set-membership queries are a type of
