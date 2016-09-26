@@ -6,25 +6,20 @@ Fix $k,m,n,r>0$, and let $\Pi_{\mathrm{garb}}= (\calQ,\Rep, \Qry)$ be the set-mu
 \[
 \AdvCorrect{\Pi_{\mathrm{garb}},\distr{\calS}{},r}{A} \leq  \epsilon +  \max\left(\dfrac{1}{\dbinom{m}{k}-(q-1)}\left(1-\dfrac{n}{2^\lambda}\right), \dbinom{q}{r}\left(\dfrac{1}{2^\lambda}\right)^r \right).
 \]
-Here, $\epsilon$ is the collision error(described in proof).\acnote{1)Upperbound of $\epsilon$ is loosely equal to the FP upperbound in a classical BF. 2) Recommended values of $\lambda$ in GBF paper = 80 or 256. 3) For time being, number of queries to RO is assumed to include queries to $\Test$.}
-It can be observed that, if $\dbinom{m}{k} << 2^\lambda$, and $2^\lambda >> n$
-\begin{align*}
-\AdvCorrect{\Pi_{\mathrm{garb}},\distr{\calS}{},r}{A} & \geq \epsilon + \left(\dfrac{1}{\dbinom{m}{k}-(q-1)}\right)
-\end{align*}
-Also, if $\dbinom{m}{k} >> 1$, and $2^\lambda >> n$
-\begin{align*}
-\AdvCorrect{\Pi_{\mathrm{garb}},\distr{\calS}{},r}{A} & \leq \epsilon + \max\left(\dfrac{1}{\dbinom{m}{k}-(q-1)}, \dbinom{q}{r}\left(\dfrac{1}{2^\lambda}\right)^r \right)
-\end{align*}
-\end{theorem}
+\[
+\AdvCorrect{\Pi_{\mathrm{garb}},\distr{\calS}{},r}{A}  \geq \epsilon + \left(\dfrac{1}{\dbinom{m}{k}-(q-1)}\right)
+\]
+Here, $\epsilon$ is the collision error(described in proof).\acnote{1)Upperbound of $\epsilon$ is loosely equal to the FP upperbound in a classical BF. 2) Recommended values of $\lambda$ in GBF paper = 80 or 256. 3) For time being, number of queries to RO is assumed to include queries to $\Test$.}\end{theorem}
+
 \begin{proof}%[\Cref{thm:gbf-correctness}]
-Define an adaptive attacker $A'$ that has the following behavior. It lazily samples ~$k$ positions $i_1,i_2,\ldots,i_k$ from $[m]$, xor shares($\lambda$-bit strings) at these positions in ($M$) to get a candidate~$x$.  If $h_{1}(x)=i_1 \wedge h_2(x)=i_2 \wedge \cdots \wedge h_k(x) = i_k$, then either $x \in S$ or~$x$ is a false-positive. If $x$ is not a false-positive, it repeats the attack for a different set of $k$ positions. Let $A'$ make $q$ queries to the RO; assume RO returns all $k$ hash values of each query at one go.
+Define an adaptive attacker $A$ that has the following behavior. It lazily samples ~$k$ positions $i_1,i_2,\ldots,i_k$ from $[m]$, xor shares($\lambda$-bit strings) at these positions in ($M$) to get a candidate~$x$.  If $h_{1}(x)=i_1 \wedge h_2(x)=i_2 \wedge \cdots \wedge h_k(x) = i_k$, then either $x \in S$ or~$x$ is a false-positive. If $x$ is not a false-positive, it repeats the attack for a different set of $k$ positions. Let $A$ make $q$ queries to the RO; assume RO returns all $k$ hash values of each query at one go.
 
 Let $\calF_1$ be the event that $x$ is a false-positive(in above attack).
  $$\Prob{\calF_1} = \Prob{h_{1}(x)=i_1 \wedge h_2(x)=i_2 \wedge \cdots \wedge h_k(x) = i_k : x \notin S}.\Prob{x \notin S}.$$
- The probability that $x$ is not one of the $n$ $\lambda$-bit strings is $1-\dfrac{n}{2^\lambda}$, and $ \Prob{h_{1}(x)=i_1 \wedge h_2(x)=i_2 \wedge \cdots \wedge\\ h_k(x) = i_k} = \dfrac{1}{\dbinom{m}{k}-(q-1)}$. It must be noted that the factor $q-1$ is due to lazy sampling of the $k$ positions. Putting together, $\Prob{\calF_1} =  \dfrac{1}{\dbinom{m}{k}-(q-1)} . \Big(1-\dfrac{n}{2^\lambda}\Big)$.  If adversary $A'$ makes $q = \dbinom{m}{k}$ queries, it has very high chance of winning(assuming $\lambda$ is large) the correctness game for $r=1$.  Let $q = (r+1) \times q_r$. For $r > 1$, if adversary $A'$ makes $q_r = \dbinom{m}{k}$ queries to find a single false-positive, and repeats this for $r$ times, it has high probability of winning the correctness game. The total queries that $A'$ makes is $(r+1)\dbinom{m}{k} = O\Big(\dbinom{m}{k}\Big)$.
+ The probability that $x$ is not one of the $n$ $\lambda$-bit strings is $1-\dfrac{n}{2^\lambda}$, and $ \Prob{h_{1}(x)=i_1 \wedge h_2(x)=i_2 \wedge \cdots \wedge\\ h_k(x) = i_k} = \dfrac{1}{\dbinom{m}{k}-(q-1)}$. It must be noted that the factor $q-1$ is due to lazy sampling of the $k$ positions. Putting together, $\Prob{\calF_1} =  \dfrac{1}{\dbinom{m}{k}-(q-1)} . \Big(1-\dfrac{n}{2^\lambda}\Big)$.  If adversary $A$ makes $q = \dbinom{m}{k}$ queries, it has very high chance of winning(assuming $\lambda$ is large) the correctness game for $r=1$.  Let $q = (r+1) \times q_r$. For $r > 1$, if adversary $A$ makes $q_r = \dbinom{m}{k}$ queries to find a single false-positive, and repeats this for $r$ times, it has high probability of winning the correctness game. The total queries that $A$ makes is $(r+1)\dbinom{m}{k} = O\Big(\dbinom{m}{k}\Big)$.
 
-% Let $A$ be an adaptive adversary(different from $A'$)\acnote{this attacker is similar to the adaptive attackers of previous proofs, where there is no known weakness of the filter in general} attacking $\Pi_{\mathrm{garb}}$, and
-Suppose $A'$ also finds false-positives without exploiting the inherent weakness of $\Pi_{\mathrm{garb}}$. For this case, let $D$ be the corresponding  zero-query adversary equivalent of $A'$(shown in \ref{Fig.(xxx)}). Dong et. al. \cite{dong2013private} show that the upperbound on false-positive probability in a garbled Bloom filter for a zero-query adversary and $r=1$ is $\dfrac{1}{2^\lambda}$.   Using analyses from previous proofs, the probability that $A'$ finds $r$ false-positives is upperbounded by  $\dbinom{q}{r}\left(\dfrac{1}{2^\lambda}\right)^r$. 
+% Let $A$ be an adaptive adversary(different from $A$)\acnote{this attacker is similar to the adaptive attackers of previous proofs, where there is no known weakness of the filter in general} attacking $\Pi_{\mathrm{garb}}$, and
+Suppose $A$ also finds false-positives without exploiting the inherent weakness of $\Pi_{\mathrm{garb}}$. For this case, let $D$ be the corresponding  zero-query adversary equivalent of $A$(shown in \Cref{fig:D}). Dong et. al. \cite{dong2013private} show that the upperbound on false-positive probability in a garbled Bloom filter for a zero-query adversary and $r=1$ is $\dfrac{1}{2^\lambda}$.   Using analyses from previous proofs, the probability that $A$ finds $r$ false-positives is upperbounded by  $\dbinom{q}{r}\left(\dfrac{1}{2^\lambda}\right)^r$. 
 
 Let $\calF$ be the event of finding $r$ false-positives in $\Pi_{\mathrm{garb}}$. From above analysis, we have
 \begin{align*}
@@ -37,5 +32,10 @@ Let $\calE$ be the event of finding $r$ errors in $\Pi_{\mathrm{garb}}$. Then $\
 \begin{align*}
 \AdvCorrect{\Pi_{\mathrm{garb}},\distr{\calS}{},r}{A} \leq \epsilon +  \max\left(\dfrac{1}{\dbinom{m}{k}-(q-1)}\left(1-\dfrac{n}{2^\lambda}\right), \dbinom{q}{r}\left(\dfrac{1}{2^\lambda}\right)^r \right)
 \end{align*}
+and,
+\begin{align*}
+\AdvCorrect{\Pi_{\mathrm{garb}},\distr{\calS}{},r}{A} & \geq \epsilon + \left(\dfrac{1}{\dbinom{m}{k}-(q-1)}\right)
+\end{align*}
+
 
 \end{proof}
