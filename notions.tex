@@ -94,24 +94,20 @@ any more).}
 \newcommand{\leak}{{\sf leak}}
 \subsection{Privacy}
 
-One can also consider the orthogonal notion of \emph{privacy} for a
-data structure.
+One can also consider the orthogonal notion of \emph{privacy} for a data structure.
 We specialize to the case of set-membership data structures, and
-focus on sets rather than multisets.
-Before continuing, it will be useful to define a notion that captures the difficulty
+focus on sets rather than multisets. Before continuing, it will be useful to define a notion that captures the difficulty
 of guessing an element in a set chosen from some distribution.
-Let ${\cal D}$ be
-a distribution over subsets of some universe ${\cal X}$. The \emph{point-wise
+Let ${\cal D}$ be a distribution over subsets of some universe ${\cal X}$. The \emph{point-wise
 min-entropy} of ${\cal D}$ is defined as
 \[H_\infty({\cal D}) \bydef -\log \max_{x \in {\cal X}} \Pr[S \getsr {\cal D} : x \in S].\]
 
-
-
+\tsnote{I think we should switch the order of presentation, since we
+  use the SS notion much more. }
 We formalize two types of privacy notions. The first captures
 a ``one-wayness'' property that (informally) requires that
 the public representation of a set~$S$ does not make it any easier for an attacker
-to learn elements of~$S$.
-The second definition
+to learn elements of~$S$.  The second definition
 captures a flavor of semantic security, essentially requiring that $\pub$ does
 not leak any information about the set~$S$ it represents beyond
 what is captured by some explicit leakage function.
@@ -211,80 +207,6 @@ return $A(\pubaux)$\\
   definition.}
 \label{fig:privacy-ss}
 \end{figure}
-
-
-%
-%\begin{figure}[htbp]
-%\centering
-%\hfpages{.495}
-%{
-%\hpagess{.49}{.49}
-%{
-%
-%\experimentv{$\ExpPrivSSreal{\setprim,\distr{}{}}{A}$}\\
-%$S\getsr \distr{}{}$\\
-%$(M,\pubaux,\privaux) \getsr \Rep(S)$\\
-%$(f,v) \getsr A^{\TestOracle}(M,\pubaux)$\\
-%if $f(S)=v$ then\\
-%\nudge Return 1\\
-%Return 0\\
-%
-%\medskip
-%\experimentv{$\ExpPrivSSsim{\setprim,\distr{}{}}{P}$}\\
-%$S\getsr \distr{}{}$\\
-%$(M,\pubaux,\privaux) \getsr \Rep(S)$\\
-%$(f,v) \getsr P(\pubaux)$\\
-%if $f(S)=v$ then\\
-%\nudge Return 1\\
-%Return 0\\
-%}
-%%
-%{
-%\oracle{$\TestOracle(q)$}\\
-%$a \gets \Qry(M,\pubaux,\privaux,q)$\\
-%Return~$a$\\
-%}
-%}
-%{
-%\hpagess{.49}{.49}
-%{
-%\experimentv{$\ExpPrivSS{\setprim,\distr{}{},P}{A}$}\\
-%$S\getsr \distr{}{}$\\
-%$b \getsr \bits$\\
-%%$(M,\pubaux,\privaux) \getsr \Rep(S)$\\
-%$(M_1,\pubaux,\privaux) \getsr \Rep(S)$\\
-%$M_0 \getsr P(\pubaux)$\\
-%%$(f,v) \getsr \getsr A^{\TestOracle}(M,\pubaux)$\\
-%$b' \getsr A^{\TestOracle}(M_b,\pubaux)$\\
-%%if $f(S)=v$ then\\
-%if $b'=b$ then\\
-%\nudge Return 1\\
-%Return 0\\
-%%
-%%\medskip
-%%\experimentv{$\ExpPrivSSsim{\setprim,\distr{}{}}{P}$}\\
-%%$S\getsr \distr{}{}$\\
-%%$(M,\pubaux,\privaux) \getsr \Rep(S)$\\
-%%$(f,v) \getsr P(\pubaux)$\\
-%%if $f(S)=v$ then\\
-%%\nudge Return 1\\
-%%Return 0\\
-%}
-%%
-%{
-%\oracle{$\TestOracle(q)$}\\
-%$a \gets \Qry(M_1,\pubaux,\privaux,q)$\\
-%Return~$a$\\
-%}
-%}
-%\caption{Semantic-security style privacy
-%  definitions. \textcolor{red}{On the left, need to protect against
-%    adversary outputting
-%    things like $f(S)=M$.  One idea is to forbid~$f$ such that
-%    $f(S)=f(S')$ for all $S,S'$ in the support of $\distr{}{}$.}
-%    }
-%\label{fig:privacy-ss}
-%\end{figure}
 
 \heading{Relationships between the notions.}
 Intuition suggests that semantic security should imply one-wayness. And, indeed, this is
