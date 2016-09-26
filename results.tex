@@ -144,7 +144,8 @@ are computationally indistinguishable, again relying on pseudorandomness of~$F$.
 
 %%%%%%%%%%%%%%%%% LINEAR-PRF %%%%%%%%%%%%%%%%%%%%
 
-\heading{Linear-PRF construction. }
+\subsection{Linear PRF-hash construction }
+%\heading{Linear-PRF construction. }
 Here we consider a set-multiplicity data structure that was attacked
 by Neidermayer et al. in~\cite{xxx}. \todo{Not actually a true
   statement, because $\Rep$ isn't correct.  Needs fixing.} Fix $n,k,m \geq 0$ and let $\mathcal{S}=[\univ]^n$.  Then $\Pi_{\mathrm{lin}}= (\calQ,\Rep, \Qry)$ is defined as in Figure~\ref{fig:lin-and-ds} (left side).  The following result shows, informally, that if~$F$ is a good PRF, then $\Pi_\mathrm{lin}$ is correct against adaptive error-finding adversaries.
@@ -169,7 +170,8 @@ consisting of~$q$ attempts.
 \todo{Privacy theorem for the ``plain'' linear-PRF scheme.  Follows from Jon's general theorem.}
 
 %%%%%%%%%%%%%%%%% BIGRAM LINEAR-PRF (AKA "NEIDERMAYER")  %%%%%%%%%%%%%%%%%%%%
-\heading{Bigram Linear-PRF construction (``Neidermayer''). }
+\subsection{Bigram Linear-PRF construction}
+%\heading{Bigram Linear-PRF construction (``Neidermayer''). }
 \todo{Correctness theorem for this scheme.  Should follow pretty closely the one for ``plain'' linear-PRF.}
 
 %Next we consider the privacy of this construction, relative to a leakage function that behaves as follows.  On input a set $S=\{x_1,x_2,\ldots,x_n\}$, it computes $B_i \gets \mathsf{bigram}(x_i)$ for each $i \in [n]$.  Then, for all $1 \leq c \leq p$, and all size-$c$ subsets $\{j_1,j_2,\ldots,j_c\} \subseteq p$, it computes $L{j_1,j_2,\ldots,j_c}=|B_{j_1} \cap B_{j_2} \cap \ldots \cap B_{j_c}|$.  That is, it computes all of the $c$-way intersections. It returns $|S|=n$ and all of the $2^p -1$ intersection sizes as the leakage. \todo{Explain why this is plausibly leaked by $\pubaux$ for this construction.} \tsnote{This is exponential in size, so that means a simulator that reads the entire leakage will also be exponential-time in~$p$.  } \tsnote{Should we be considering smaller, but less realistic leakage, like $\mathsf{leak}(S)=S\setminus\{x\}$.}
@@ -214,9 +216,12 @@ In the case that $B_{x_3}=\{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{ba}
 On the other hand, the simulator~$\Sim$ is given 'cab','bab','cab' as input.  It can perfectly simulate $M_1,M_2$ by lazily sampling random functions~$\rho_1,\rho_2$ itself.  However, it has no information about the bit~$z$, so at best it can cause~$A$ to output 1 with probabilility~$1/2$.
 \end{proof}
 
+\todo{OW privacy proof?}
+
 %%%%%%%%%%%%%%%%% DOMAIN-SEPARATED PRF %%%%%%%%%%%%%%%%%%%%
 
-\heading{Construction of PRF with domain separation.}
+\subsection{Domain-separated PRF-Hash}
+%\heading{Construction of PRF with domain separation.}
 Let $\Pi_{\mathrm{ds}}= (\calQ,\Rep, \Qry)$ be a set-multiplicity data
 structure defined on the right-side of Figure~\ref{fig:lin-and-ds}.
 As with the preceding theorem, the following says (informally) that
@@ -251,7 +256,7 @@ The decompose $\Rep$ into $\Rep_1$ and $\Rep_2$ as follows.  On input
 $S=\{x_1,x_2,\ldots,x_n\}$, algorithm~$\Rep_1$ returns $s_1=\langle 1,x_1 \rangle, s_2=\langle 2,x_1 \rangle, \ldots, s_k\langle k,x_1\rangle, s_{k+1}=\langle 1,x_2\rangle, \ldots, s_{2k}=\langle k,x_2\rangle, \ldots ,s_{kn+1}=\langle 1,x_n\rangle, \ldots, s_{kn}=\langle k,x_n \rangle$.  On input $n,F_K(s_1),\ldots,F_K(s_{kn})$, algorithm $\Rep_2$ simply initializes an all-zero array~$M$ of~$m$-bits, and sets the positions $M[F_K(s_i)]$ to 1.  It returns~$M$ as $\pubaux$.
 \end{proof}
 
-\fixme{The following is left only for cut-and-paste value.}
+\fixme{ ----The following is left only for cut-and-paste value---- }
 \begin{theorem}\label{thm:ds-ss}
 Fix $k,m,n>0$, and let $\Pi_{\mathrm{ds}}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-ds}.  For any set~$S$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ such that, for any adversary~$A$
 \[
@@ -265,12 +270,12 @@ where~$B$ is constructed from~$A$.  (Both~$B$ and~$\Sim$ are explicitly construc
     decomposes into $\Rep_1$ and $\Rep_2$.}
 Adversary~$B^{f}$ simulates the steps of $\ExpPrivSSreal{\Pi_{\mathrm{ds}}}{A}$, using its oracle to simuate~$\Rep(S)$.  When~$f=F_K$ then the simulation is perfect.  When~$f=\rho$ then~$B$ simulates $\ExpPrivSSreal{\overline{\Pi}_{\mathrm{ds}}}{A}$ where $\overline{\Rep}$ effectively uses~$k$ independent random functions as the hash functions.  But the $\pub$ produced by $\overline{\Rep}$ has a distribution that depends only~$|S|=n$, not the specific elements of~$S$, and the other public parameters~$m,k$.  Thus, a simulator~$\Sim$ given only $\leak(S)=|S|$ can produce a correct~$\pub$ as follows: starting with an all-zeros array~$M$ of length~$m$, uniformly sample (with replacement)~$nk$ integers in~$[m]$ and set the resulting positions of~$M$ to 1.
 \end{proof}
-\fixme{The above is left only for cut-and-paste value.}
+\fixme{ ----The above is left only for cut-and-paste value---- }
 
 %%%%%%%%%%%%%%%%% CLASSICAL BLOOM FILTER IN ROM %%%%%%%%%%%%%%%%%%%%
 
 \heading{Classical Bloom filter in random oracle model (ROM). }
-Fix $n,k,m \geq 0$ and let $\mathcal{S}=[\univ]^n$.  Then $\Pi_{\mathrm{Bloom}}= (\calQ,\Rep, \Qry)$ is defined as in Figure~\ref{fig:bf-and-garbled-bf} (left side).  The following result shows,
+Fix $n,k,m \geq 0$ and let $\mathcal{S}=[\univ]^n$.  Then $\Pi_{\mathrm{Bloom}}= (\calQ,\Rep, \Qry)$ is defined as in Figure~\ref{fig:bf-and-garbled-bf} (left side).  The following theorem proves correctness for this construction.  Again, we stress that this correctness is with respect to adaptive adversaries, aiming to find $r \geq 1$ errors (in this case, false-positives), and with public hash functions.
 
 \begin{theorem}\label{thm3}\label{thm:bf-correctness}
 Fix $k,m,n,r>0$, and let $\Pi_{\mathrm{Bloom}}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure just described. For any adversary~$A$ that makes a total of~$q_T$ queries to the $\Test$ oracle, and $q_R$ queries to the RO, and has time-complexity~$O(t)$,
@@ -280,6 +285,12 @@ Fix $k,m,n,r>0$, and let $\Pi_{\mathrm{Bloom}}= (\calQ,\Rep, \Qry)$ be the set-m
 \end{theorem}
 
 \input{Theorem3_FP}
+
+\todo{Explain why classical BF in the ROM does not meet our SS-privacy notion, and why this is intuitive/supports our definition.}
+
+\todo{OW privacy proof for classic BF in the ROM}
+
+
 
 \todo{Below are two lists of things that we should show.}
 

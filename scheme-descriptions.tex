@@ -3,19 +3,19 @@
 \hfpages{.45}
 {
 \algorithmv{$\Rep(S)$}\\
-$M \gets 0^m$; $K_1,K_2 \getsr \calK$\\
+$M \gets 0^m$; $K \getsr \calK$\\
 for $x \in S$\\
 \nudge for $j \in \{1,2,\ldots,k\}$\\
-\nudge\nudge $h_j \gets F_{K_1}(x) + j\cdot F_{K_2}(x) \bmod m$\\
+\nudge\nudge $h_j \gets F_{K}(\langle 1,x \rangle) + j\cdot F_{K}(\langle 2,x \rangle) \bmod m$\\
 \nudge\nudge $M[h_j] \gets 1$\\
-$\pubaux \gets M$, $\privaux \gets \langle K_1, K_2 \rangle$\\
+$\pubaux \gets M$, $\privaux \gets \langle K \rangle$\\
 Return $(\pubaux,\privaux)$\\
 
 \medskip
 \algorithmv{$\Qry(\pubaux,\privaux,q_x)$}\\
-$M\gets\pubaux$, $K_1,K_2 \gets \privaux$\\
+$M\gets\pubaux$, $K \gets \privaux$\\
 for $j \in \{1,2,\ldots,k\}$\\
-\nudge $h_j \gets F_{K_1}(x) + j\cdot F_{K_2}(x) \bmod m$\\
+\nudge $h_j \gets F_{K}(\langle 1,x \rangle) + j\cdot F_{K}(\langle 2,x\rangle) \bmod m$\\
 \nudge if $M[h_j] \neq 1$ then Return 0\\
 Return 1
 }
@@ -26,23 +26,22 @@ for $x \in S$\\
 \nudge for $j \in \{1,2,\ldots,k\}$\\
 \nudge\nudge $h_j \gets F_{K}(j,x) $\\
 \nudge\nudge $M[h_j] \gets 1$\\
-$\pubaux \gets M$, $\privaux \gets \langle K_1, K_2 \rangle$\\
+$\pubaux \gets M$, $\privaux \gets \langle K \rangle$\\
 Return $(\pubaux,\privaux)$\\
 
 \medskip
 \algorithmv{$\Qry(\pubaux,\privaux,q_x)$}\\
 $M\gets\pubaux$, $K \gets \privaux$\\
 for $j \in \{1,2,\ldots,k\}$\\
-\nudge $h_j \gets F_{K}(j,x) $\\
+\nudge $h_j \gets F_{K}(\langle j,x \rangle) $\\
 \nudge if $M[h_j] \neq 1$ then Return 0\\
 Return 1
 }
 \caption{{\bf Left:} $\Rep$ and $\Qry$ algorithms for the linear-PRF
-  data structure $\Pi_{\mathrm{lin}}$, with function family $F \colon
-  \calK \times \univ \to [m]$. {\bf Right:} $\Rep$ and $\Qry$
+  data structure $\Pi_{\mathrm{lin}}$ {\bf Right:} $\Rep$ and $\Qry$
   algorithms for the domain-separated PRF data structure
-  $\Pi_{\mathrm{ds}}$, with function family $F \colon \calK \times
-  [k]\times\univ \to [m]$.  For both, the query set is $\calQ=\{q_x\colon
+  $\Pi_{\mathrm{ds}}$.  Both constructions use function family $F \colon
+  \calK \times \univ \to [m]$, and have query set is $\calQ=\{q_x\colon
   \univ \to \bits\}$ where $q_x(S)=1 \Leftrightarrow x \in S$.  }
 \label{fig:lin-and-ds}
 \end{figure}
