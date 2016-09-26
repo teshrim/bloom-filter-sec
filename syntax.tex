@@ -10,9 +10,13 @@ that.}  We write $x \getsr \univ$ to denote
 sampling an element uniformly from~$\univ$ and assigning it to~$x$,
 and we extend this notation to randomized algorithms. When~$X$ is a
 string over some alphabet~$\Sigma$, we write $|X|$ for the bitlength
-of~$X$, relative to some fixed encoding.  When~$X$ is a multiset, we
-overload the notation so that~$|X|$ is the total multiplicity
+of~$X$, relative to some fixed encoding.  We write $\langle X \rangle$
+to mean the (invertible) encoding of~$X$ as a bitstring, and extend
+this in the natural way to $\langle X,Y,\ldots \rangle$.
+When~$X$ is a multiset, we overload the notation so that~$|X|$ is the total multiplicity
 of~$X$.
+
+
 
 Algorithms may be provided black-box access to one or more oracles,
 which we write as superscripts, e.g., $F^{O_1,O_2,\ldots}$.  An \emph{adversary} is a randomized algorithm.
