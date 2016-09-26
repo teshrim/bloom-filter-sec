@@ -1,6 +1,26 @@
 \section{Achieving Security Notions}
 
-\subsection{A Meta-Theorem for Privacy}
+
+%%%%%%%%%%%%%%%%% CLASSICAL BLOOM FILTER IN ROM %%%%%%%%%%%%%%%%%%%%
+
+\subsection{Classical Bloom filter in random oracle model (ROM). }
+Fix $n,k,m \geq 0$ and let $\mathcal{S}=[\univ]^n$.  Then $\Pi_{\mathrm{Bloom}}= (\calQ,\Rep, \Qry)$ is defined as in Figure~\ref{fig:bf-and-garbled-bf} (left side).  The following theorem proves correctness for this construction.  Again, we stress that this correctness is with respect to adaptive adversaries, aiming to find $r \geq 1$ errors (in this case, false-positives), and with public hash functions.
+
+\begin{theorem}\label{thm3}\label{thm:bf-correctness}
+Fix $k,m,n,r>0$, and let $\Pi_{\mathrm{Bloom}}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure just described. For any adversary~$A$ that makes a total of~$q_T$ queries to the $\Test$ oracle, and $q_R$ queries to the RO, and has time-complexity~$O(t)$,
+\[
+\AdvCorrect{\Pi_{\mathrm{Bloom}},\distr{\calS}{},r}{A} \leq  {\dbinom{q_T + q_H}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
+\]
+\end{theorem}
+
+\input{Theorem3_FP}
+
+Turning to privacy, we note immediately that the classical BF, in the ROM, does not meet our SS-privacy notion when the leakage function fails to reveal the entire set~$S$.  This is because the set~$S$ is adversarially chosen, and the adversary has access to the random oracle, i.e. the hash functions used to make~$\pubaux$.  Thus the adversary can simply check that the $\pubaux$ it receives is correct.  Thus, unless $m,k,n$ are such that the false-positive rate is large, the simulator needs to call the random oracle\tsnote{I assume the simulator gets access to the RO?} on the points in~$S$ in order to ``fool'' the adversary.
+\tsnote{I'm still not completely comfortable with this.  It isn't explicit in our SS notion, but I assume that~$A$ is stateful and so knows~$S$ in its second stage?  If so, I wonder if the classic BF in the ROM would be secure relative to a weaker notion (but still stronger than OW) in which the second stage does not know~$S$?  This seems likely to me.}
+
+\todo{distributional-SS or OW privacy proof for classic BF in the ROM}
+
+\subsection{Privacy of Secretly Keyed Canonical Data Structures}
 Here we prove a result that can be used to show that a large class of ``canonical''
 data structures are semantically secure, with respect to leakage of the size of the set.
 \jnote{It would not be too hard to generalize this to arbitrary data structures over
@@ -170,7 +190,23 @@ $(q (1-e^{-kn/m})^k + O(q/n) )^r$; loosely, the bound one expects for
 trying to find a single FP in each of~$r$ independent``rounds'', each round
 consisting of~$q$ attempts.
 
+The SS-privacy of the linear-PRF hash construction follows directly from~Theorem~\ref{thm:xxx}.
 \todo{Privacy theorem.  Follows from Jon's general theorem.}
+\begin{theorem}\label{thm:lin-privacy}
+Fix $k,m,n,r>0$, and let $\Pi_{\mathrm{lin}}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-ds}. For any set~$S$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ such that, for any adversary~$A$
+\[
+\AdvPrivSS{\Pi_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}
+\]
+where~$B$ is constructed from~$A$.  (Both~$B$ and~$\Sim$ are explicitly constructed in the proof of this theorem.)
+\end{theorem}
+\begin{proof}
+It suffices to give the decomposition of $\Rep$ in to $\Rep_1$ and $\Rep_2$ as required by Theorem~\ref{thm:xxx}.
+On input a set of distinct elements
+$S=\{x_1,x_2,\ldots,x_n\}$, algorithm~$\Rep_1$ returns $s_1=\langle 1,x_1 \rangle, s_2=\langle 2,x_1 \rangle, s_3 = \langle 1,x_2\rangle, s_4=\langle 2,x_2 \rangle,\ldots,s_{2n-1}=\langle 1,x_n \rangle, s_{2n}=\langle 2,x_n \rangle$.
+
+On input $n,F_K(s_1),F_K(s_2),\ldots,F_K(s_{2n-1}) , F_K(s_{2n})$, algorithm $\Rep_2$ initializes an all-zero array~$M$ of~$m$-bits, and sets the positions $M[F_K(s_i)+j\cdot F_K(s_{i+1})\bmod m]$ to 1, for each $j \in [k]$.  It returns~$M$ as $\pubaux$.
+\end{proof}
+
 
 %%%%%%%%%%%%%%%%% BIGRAM LINEAR-PRF (AKA "NEIDERMAYER")  %%%%%%%%%%%%%%%%%%%%
 \subsection{Bigram Linear-PRF construction}
@@ -229,7 +265,9 @@ Let $\Pi_{\mathrm{ds}}= (\calQ,\Rep, \Qry)$ be a set-multiplicity data
 structure defined on the right-side of Figure~\ref{fig:lin-and-ds}.
 As with the preceding theorem, the following says (informally) that
 if~$F$ is a secure PRF, then this domain-separated PRF construction is
-correct against adaptive adversaries.  We note that Neidermayer et
+correct against adaptive adversaries.  
+\tsnote{Not really appropriate to say this next thing; I'll add a new section that addresses bigram DS-PRF hash.}
+We note that Neidermayer et
 al. in~\cite{xxx} suggest replacing the linear-PRF hash functions in
 the previous construction with independently keyed PRFs as a way to
 thwart their attacks.  The construction we consider now achieves the
@@ -255,8 +293,8 @@ Fix $k,m,n>0$, and let $\Pi_{\mathrm{ds}}= (\calQ,\Rep, \Qry)$ be the set-multip
 where~$B$ is constructed from~$A$.  (Both~$B$ and~$\Sim$ are explicitly constructed in the proof of this theorem.)
 \end{theorem}
 \begin{proof}
-The decompose $\Rep$ into $\Rep_1$ and $\Rep_2$ as follows.  On input
-$S=\{x_1,x_2,\ldots,x_n\}$, algorithm~$\Rep_1$ returns $s_1=\langle 1,x_1 \rangle, s_2=\langle 2,x_1 \rangle, \ldots, s_k\langle k,x_1\rangle, s_{k+1}=\langle 1,x_2\rangle, \ldots, s_{2k}=\langle k,x_2\rangle, \ldots ,s_{kn+1}=\langle 1,x_n\rangle, \ldots, s_{kn}=\langle k,x_n \rangle$.  On input $n,F_K(s_1),\ldots,F_K(s_{kn})$, algorithm $\Rep_2$ simply initializes an all-zero array~$M$ of~$m$-bits, and sets the positions $M[F_K(s_i)]$ to 1.  It returns~$M$ as $\pubaux$.
+It suffices to give the decomposition of $\Rep$ in to $\Rep_1$ and $\Rep_2$ as required by Theorem~\ref{thm:xxx}.
+On input a set of distinct elements $S=\{x_1,x_2,\ldots,x_n\}$, algorithm~$\Rep_1$ returns $s_1=\langle 1,x_1 \rangle, s_2=\langle 2,x_1 \rangle, \ldots, s_k\langle k,x_1\rangle, s_{k+1}=\langle 1,x_2\rangle, \ldots, s_{2k}=\langle k,x_2\rangle, \ldots ,s_{kn+1}=\langle 1,x_n\rangle, \ldots, s_{kn}=\langle k,x_n \rangle$.  On input $n,F_K(s_1),\ldots,F_K(s_{kn})$, algorithm $\Rep_2$ simply initializes an all-zero array~$M$ of~$m$-bits, and sets the positions $M[F_K(s_i)]$ to 1.  It returns~$M$ as $\pubaux$.
 \end{proof}
 
 \fixme{ ----The following is left only for cut-and-paste value---- }
@@ -275,24 +313,24 @@ Adversary~$B^{f}$ simulates the steps of $\ExpPrivSSreal{\Pi_{\mathrm{ds}}}{A}$,
 \end{proof}
 \fixme{ ----The above is left only for cut-and-paste value---- }
 
-%%%%%%%%%%%%%%%%% CLASSICAL BLOOM FILTER IN ROM %%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%% Bigram DOMAIN-SEPARATED PRF %%%%%%%%%%%%%%%%%%%%
 
-\heading{Classical Bloom filter in random oracle model (ROM). }
-Fix $n,k,m \geq 0$ and let $\mathcal{S}=[\univ]^n$.  Then $\Pi_{\mathrm{Bloom}}= (\calQ,\Rep, \Qry)$ is defined as in Figure~\ref{fig:bf-and-garbled-bf} (left side).  The following theorem proves correctness for this construction.  Again, we stress that this correctness is with respect to adaptive adversaries, aiming to find $r \geq 1$ errors (in this case, false-positives), and with public hash functions.
+\subsection{Domain-separated PRF-Hash}
+%\heading{Construction of PRF with domain separation.}
+Let $\Pi_{\mathrm{ds}}= (\calQ,\Rep, \Qry)$ be a set-multiplicity data
+structure defined on the right-side of Figure~\ref{fig:lin-and-ds}.
+As with the preceding theorem, the following says (informally) that
+if~$F$ is a secure PRF, then this domain-separated PRF construction is
+correct against adaptive adversaries.  
+\tsnote{Not really appropriate to say this next thing; I'll add a new section that addresses bigram DS-PRF hash.}
+We note that Neidermayer et
+al. in~\cite{xxx} suggest replacing the linear-PRF hash functions in
+the previous construction with independently keyed PRFs as a way to
+thwart their attacks.  The construction we consider now achieves the
+same end, albeit via explict domain separation rather than separate
+keys.
 
-\begin{theorem}\label{thm3}\label{thm:bf-correctness}
-Fix $k,m,n,r>0$, and let $\Pi_{\mathrm{Bloom}}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure just described. For any adversary~$A$ that makes a total of~$q_T$ queries to the $\Test$ oracle, and $q_R$ queries to the RO, and has time-complexity~$O(t)$,
-\[
-\AdvCorrect{\Pi_{\mathrm{Bloom}},\distr{\calS}{},r}{A} \leq  {\dbinom{q_T + q_H}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
-\]
-\end{theorem}
 
-\input{Theorem3_FP}
-
-Turning to privacy, we note immediately that the classical BF, in the ROM, does not meet our SS-privacy notion when the leakage function fails to reveal the entire set~$S$.  This is because the set~$S$ is adversarially chosen, and the adversary has access to the random oracle, i.e. the hash functions used to make~$\pubaux$.  Thus the adversary can simply check that the $\pubaux$ it receives is correct.  Thus, unless $m,k,n$ are such that the false-positive rate is large, the simulator needs to call the random oracle\tsnote{I assume the simulator gets access to the RO?} on the points in~$S$ in order to ``fool'' the adversary.
-\tsnote{I'm still not completely comfortable with this.  It isn't explicit in our SS notion, but I assume that~$A$ is stateful and so knows~$S$ in its second stage?  If so, I wonder if the classic BF in the ROM would be secure relative to a weaker notion (but still stronger than OW) in which the second stage does not know~$S$?  This seems likely to me.}
-
-\todo{OW privacy proof for classic BF in the ROM}
 
 
 
