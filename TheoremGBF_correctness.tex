@@ -2,40 +2,30 @@
 Fix $n,k,m \geq 0$ and let $\mathcal{S}=[\univ]^n$.  Then $\Pi_{\mathrm{garb}}= (\calQ,\Rep, \Qry)$ is defined as in Figure~\ref{fig:bf-and-garbled-bf} (right side).  The following result shows,
 
 \begin{theorem}\label{thm:gbf-correctness}
-Fix $k,m,n,r>0$, and let $\Pi_{\mathrm{garb}}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure just described. For any adversary~$A$ that makes a total of~$q$ queries to the RO, and has time-complexity~$O(t)$,
+Fix $r=1$, $k,m,n>0$, and let $\Pi_{\mathrm{garb}}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure just described. For any adversary~$A$ that makes a maximum of~$\dbinom{m}{k}$ queries to the RO, and has time-complexity~$O(t)$,
 \[
-\AdvCorrect{\Pi_{\mathrm{garb}},\distr{\calS}{},r}{A} \leq  \epsilon +  \max\left(\dfrac{1}{\dbinom{m}{k}-(q-1)}\left(1-\dfrac{n}{2^\lambda}\right), \dbinom{q}{r}\left(\dfrac{1}{2^\lambda}\right)^r \right).
+\AdvCorrect{\Pi_{\mathrm{garb}},\distr{\calS}{},r}{A}  \geq   \left(1 - e^{-n/m^k}\right)^{nr} + \dfrac{1}{\dbinom{m}{k}-n-(q-1)} . \Big(1-\dfrac{n}{2^\lambda}\Big)
 \]
-\[
-\AdvCorrect{\Pi_{\mathrm{garb}},\distr{\calS}{},r}{A}  \geq \epsilon + \left(\dfrac{1}{\dbinom{m}{k}-(q-1)}\right)
-\]
-Here, $\epsilon$ is the collision error(described in proof).\acnote{1)Upperbound of $\epsilon$ is loosely equal to the FP upperbound in a classical BF. 2) Recommended values of $\lambda$ in GBF paper = 80 or 256. 3) For time being, number of queries to RO is assumed to include queries to $\Test$.}\end{theorem}
+
+The RHS of above expression contains 2 components, $\Prob{\epsilon_{fn}}$(false-negative probability) and $\Prob{\epsilon_{fp}}$(false-positive probability). For large values of $m$ and $n$, $\Prob{\epsilon_{fn}} \approx 0$. On the other hand, $A$ finds one false-positive with $\Prob{\epsilon_{fp}} \approx 1$ by making $\dbinom{m}{k} - n$ queries.
+
+\end{theorem}
 
 \begin{proof}%[\Cref{thm:gbf-correctness}]
-Define an adaptive attacker $A$ that has the following behavior. It lazily samples ~$k$ positions $i_1,i_2,\ldots,i_k$ from $[m]$, xor shares($\lambda$-bit strings) at these positions in ($M$) to get a candidate~$x$.  If $h_{1}(x)=i_1 \wedge h_2(x)=i_2 \wedge \cdots \wedge h_k(x) = i_k$, then either $x \in S$ or~$x$ is a false-positive. If $x$ is not a false-positive, it repeats the attack for a different set of $k$ positions. Let $A$ make $q$ queries to the RO; assume RO returns all $k$ hash values of each query at one go.
+A collison in a garbled Bloom filter occurs when two or more distinct elements in a set have the same set of hash values. A collision results in false-negatives as only one of the elements is captured in the representation, and hence $\Qry$ returns 1 for this element, and 0 for others. Let $\epsilon_{fn}'$ be the event of finding a false-negative in a garbled Bloom filter.  Let $x_1,x_2,\ldots,x_n$ be the elements in $S$. The probability that the hash values of $x_2,x_3,\ldots,x_n$ are not same as that of $x_1$ is $p = \left( 1-\dfrac{1}{\dbinom{m}{k}} \right)^{n-1}$. For $n >> 0$, $p \approx  e^{-n/m^k}$. The probability that $x_2,x_3,\ldots,x_n$ are false-negatives corresponding to $x_1$, i.e., $\Qry$ returns 1 for $x_1$, and 0 for others is $1-p$. % Similarly, the probability that remaining $n-1$ elements are false negatives of $x_2,x_3,\ldots,x_n$ respectively is also $1-p$
+. For $i \neq j$, the event of finding false-negatives of $x_i$ is independent of the event of finding false-negatives of $x_j$. Hence, $\Prob{\epsilon_{fn}} = \left( 1-p \right)^n$. Let $\epsilon_{fn}$ be the event of finding $r$ false-negatives. $\Prob{\epsilon_{fn}} = \Prob{\epsilon_{fn}'}^{r} = \left( 1-p \right)^{nr}$.
 
-Let $\calF_1$ be the event that $x$ is a false-positive(in above attack).
- $$\Prob{\calF_1} = \Prob{h_{1}(x)=i_1 \wedge h_2(x)=i_2 \wedge \cdots \wedge h_k(x) = i_k : x \notin S}.\Prob{x \notin S}.$$
- The probability that $x$ is not one of the $n$ $\lambda$-bit strings is $1-\dfrac{n}{2^\lambda}$, and $ \Prob{h_{1}(x)=i_1 \wedge h_2(x)=i_2 \wedge \cdots \wedge\\ h_k(x) = i_k} = \dfrac{1}{\dbinom{m}{k}-(q-1)}$. It must be noted that the factor $q-1$ is due to lazy sampling of the $k$ positions. Putting together, $\Prob{\calF_1} =  \dfrac{1}{\dbinom{m}{k}-(q-1)} . \Big(1-\dfrac{n}{2^\lambda}\Big)$.  If adversary $A$ makes $q = \dbinom{m}{k}$ queries, it has very high chance of winning(assuming $\lambda$ is large) the correctness game for $r=1$.  Let $q = (r+1) \times q_r$. For $r > 1$, if adversary $A$ makes $q_r = \dbinom{m}{k}$ queries to find a single false-positive, and repeats this for $r$ times, it has high probability of winning the correctness game. The total queries that $A$ makes is $(r+1)\dbinom{m}{k} = O\Big(\dbinom{m}{k}\Big)$.
+Define an adaptive attacker $A$ that has the following behavior. It makes $n$ queries to find $r=1$ false-negatives. It halts if it finds 1 false-negative. Otherwise it does lazy sampling of ~$k$ positions $i_1,i_2,\ldots,i_k$ from $[m]$, xor shares($\lambda$-bit strings) at these positions in ($M$) to get a candidate~$x$.  If $h_{1}(x)=i_1 \wedge h_2(x)=i_2 \wedge \cdots \wedge h_k(x) = i_k$, then either $x \in S$ or~$x$ is a false-positive. If $x$ is not a false-positive, it repeats the attack for a different set of $k$ positions. Assume $A$ stops after finding 1 false-positive. If $A$ make $q_n$ queries to the RO, then $\max{q_n} = \dbinom{m}{k}$. Assume RO returns all $k$ hash values of each query at one go.
 
-% Let $A$ be an adaptive adversary(different from $A$)\acnote{this attacker is similar to the adaptive attackers of previous proofs, where there is no known weakness of the filter in general} attacking $\Pi_{\mathrm{garb}}$, and
-Suppose $A$ also finds false-positives without exploiting the inherent weakness of $\Pi_{\mathrm{garb}}$. For this case, let $D$ be the corresponding  zero-query adversary equivalent of $A$(shown in \Cref{fig:D}). Dong et. al. \cite{dong2013private} show that the upperbound on false-positive probability in a garbled Bloom filter for a zero-query adversary and $r=1$ is $\dfrac{1}{2^\lambda}$.   Using analyses from previous proofs, the probability that $A$ finds $r$ false-positives is upperbounded by  $\dbinom{q}{r}\left(\dfrac{1}{2^\lambda}\right)^r$. 
+Let $\epsilon_{fp}$ be the event that $A$ finds one false-positive. 
+ $$\Prob{\epsilon_{fp}} = \Prob{h_{1}(x)=i_1 \wedge h_2(x)=i_2 \wedge \cdots \wedge h_k(x) = i_k : x \notin S}.\Prob{x \notin S}.$$
+ The probability that $x$ is not one of the $n$ $\lambda$-bit strings is $1-\dfrac{n}{2^\lambda}$, and $ \Prob{h_{1}(x)=i_1 \wedge h_2(x)=i_2 \wedge \cdots \wedge\\ h_k(x) = i_k} = \dfrac{1}{\dbinom{m}{k}-n-(q-1)}$. It must be noted that the factor $q-1$ is due to lazy sampling of the $k$ positions; n is the set of hash indices corresponding to the elements of set, S. Putting together, $\Prob{\epsilon_{fp}} =  \dfrac{1}{\dbinom{m}{k}-n-(q-1)} . \Big(1-\dfrac{n}{2^\lambda}\Big)$. 
 
-Let $\calF$ be the event of finding $r$ false-positives in $\Pi_{\mathrm{garb}}$. From above analysis, we have
-\begin{align*}
-\Prob{\calF} \leq  \max\left(\dfrac{1}{\dbinom{m}{k}-(q-1)}\left(1-\dfrac{n}{2^\lambda}\right), \dbinom{q}{r}\left(\dfrac{1}{2^\lambda}\right)^r \right)
-\end{align*}
+If $\epsilon$ is the event of finding $r$ errors, $\Prob{\epsilon} = \Prob{\epsilon_{fn}} + \Prob{\epsilon_{fp}}$, and hence 
+\[
+\AdvCorrect{\Pi_{\mathrm{garb}},\distr{\calS}{},r}{A}  \geq \left(1 - e^{-n/m^k}\right)^{nr} + \dfrac{1}{\dbinom{m}{k}-n-(q-1)} . \Big(1-\dfrac{n}{2^\lambda}\Big)
+\]
 
-A collison in a garbled Bloom filter occurs when two or more distinct elements in a set have the same set of hash values. A collision results in false-negatives as only one of the elements is captured in the representation, and hence $\Qry$ returns 1 for this element, and 0 for others. Let $\epsilon$ be the probability of finding a false-negative in a garbled Bloom filter. As per Dong et. al. \cite{dong2013private}, the upper bound of $\epsilon$  is loosely same as the upper bound of false-positive probability of the classical Bloom filter. Since, the set $S$ is fixed at the start of the game, $\epsilon$ is more or less a contant.
-
-Let $\calE$ be the event of finding $r$ errors in $\Pi_{\mathrm{garb}}$. Then $\Prob{\calE}$ is sum of the false-positive and false-negative probabilities. Also, $\Prob{\calE} = \AdvCorrect{\Pi_{\mathrm{garb}},\distr{\calS}{},r}{A}$ So, 
-\begin{align*}
-\AdvCorrect{\Pi_{\mathrm{garb}},\distr{\calS}{},r}{A} \leq \epsilon +  \max\left(\dfrac{1}{\dbinom{m}{k}-(q-1)}\left(1-\dfrac{n}{2^\lambda}\right), \dbinom{q}{r}\left(\dfrac{1}{2^\lambda}\right)^r \right)
-\end{align*}
-and,
-\begin{align*}
-\AdvCorrect{\Pi_{\mathrm{garb}},\distr{\calS}{},r}{A} & \geq \epsilon + \left(\dfrac{1}{\dbinom{m}{k}-(q-1)}\right)
-\end{align*}
 
 
 \end{proof}
