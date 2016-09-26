@@ -5,6 +5,7 @@
 \algorithmv{$\Rep(S)$}\\
 $M \gets 0^m$; $K \getsr \calK$\\
 for $x \in S$\\
+\jnote{Fix}\\
 \nudge for $j \in \{1,2,\ldots,k\}$\\
 \nudge\nudge $h_j \gets F_{K}(\langle 1,x \rangle) + j\cdot F_{K}(\langle 2,x \rangle) \bmod m$\\
 \nudge\nudge $M[h_j] \gets 1$\\
@@ -14,6 +15,7 @@ Return $(\pubaux,\privaux)$\\
 \medskip
 \algorithmv{$\Qry(\pubaux,\privaux,q_x)$}\\
 $M\gets\pubaux$, $K \gets \privaux$\\
+\jnote{Fix} \\
 for $j \in \{1,2,\ldots,k\}$\\
 \nudge $h_j \gets F_{K}(\langle 1,x \rangle) + j\cdot F_{K}(\langle 2,x\rangle) \bmod m$\\
 \nudge if $M[h_j] \neq 1$ then Return 0\\

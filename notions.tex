@@ -123,12 +123,8 @@ to see that allowing $q$ such queries can increase $A$'s advantage by at most a 
 $\AdvPrivOW{\Pi,\mathcal{D}}{A} = \Prob{\ExpPrivOW{\Pi,{\cal D}}{A}=1}$ and,
 overloading notation, we write $\AdvPrivOW{\Pi,{\cal D}}{t}$ for the maximum of this value over
 all~$t$-time adversaries.
-Noting that an attacker can trivially succeed with probability
-$2^{-H_\infty({\cal D})}$ by outputting the element most likely to be in~$S$,
-we say a
-set-representation data structure~$\Pi$ is $(t,\epsilon)$-ow-private if for all ${\cal D}$
-we have $\AdvPrivOW{\Pi,{\cal D}}{t} - 2^{-H_\infty({\cal D})} \leq \epsilon$.
-\jnote{Not sure I'm completely happy with the definition.}
+We remark that an attacker can trivially achieve advantage
+$2^{-H_\infty({\cal D})}$ by outputting the element most likely to be in~$S$.
 
 \begin{figure}[hbtp]
 \centering
@@ -176,8 +172,7 @@ $\AdvPrivSS{\Pi,{\sf leak}}{A,\Sim} \bydef
 \Prob{\ExpPrivSSsim{\Pi,{\sf leak}}{A, \Sim}=1} \right|$.
 Informally, a scheme $\Pi$ is secure with respect to some leakage function ${\sf leak}$
 if for all efficient $A$ there is a simulator $\Sim$ such that
-$\AdvPrivSS{\Pi,{\sf leak}}{A,\Sim}$ is small. \jnote{Do we want to
-write a formal $t, \epsilon$-style definition?}
+$\AdvPrivSS{\Pi,{\sf leak}}{A,\Sim}$ is small.
 Intuitively, this means that the public portion
 $\pubaux$ of the representation of a set~$S$ leaks~${\sf leak}(S)$ and nothing more.
 \jnote{The definition
@@ -215,6 +210,8 @@ For a distribution ${\cal D}$
 over subsets of some universe ${\cal X}$, define
 \[\tilde H_\infty({\cal D} \mid {\sf leak}) \bydef -\log \sum_{r \in R} \Pr_{S \getsr {\cal D}}[{\sf leak}(S)=r] \cdot
 \max_{x \in {\cal X}} \Pr_{S \getsr {\cal D}}[x \in S \mid {\sf leak}(S)=r].\]
+
+\jnote{Make theorem statements consistent -- get rid of $(t, \epsilon)$-style.}
 
 \begin{theorem}
 Let $\Pi$ be a set-representation data structure that is $(t, \epsilon)$-semantically secure
