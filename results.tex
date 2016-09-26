@@ -22,14 +22,13 @@ where $t$ depends only on~$n$.
 \item $\Rep_2$ takes as input $n$ and $y_1, \ldots, y_t \in \bits^{\ell_{out}}$, and outputs
 $\pubaux$.
 \item For any $S$, the distribution on $\pubaux$ output by $\Rep(S)$ is identical to the distribution
-on $\pubaux$ computing as follows:
-\begin{enumerate}
-\item $s_1, \ldots, s_t \getsr \Rep_1(S)$;
-\item $K \getsr \calK$ for some fixed number of keys~$p$;
-\item $\pubaux \getsr \Rep_2(n, F_{K}(s_1), \ldots,F_{K}(s_t))$. 
+on $\pubaux$ computing as follows: 
+(1) $s_1, \ldots, s_t \getsr \Rep_1(S)$;
+(2) $K \getsr \calK$;
+(3) $\pubaux \getsr \Rep_2(n, F_{K}(s_1), \ldots,F_{K}(s_t))$. 
 %\item $K_1,K_2,\ldots,K_p \getsr \calK$ for some fixed number of keys~$p$;
-%\item $\pubaux \getsr \Rep_2(n, \{F_{K_j}(s_1), \ldots,F_{K_j}(s_t)\}_{j\in[p]})$. 
-\end{enumerate}
+%\item $\pubaux \getsr \Rep_2(n, \{F_{K_j}(s_1),
+%\ldots,F_{K_j}(s_t)\}_{j\in[p]})$. 
 \end{itemize}
 In this case, we say that $(\Rep_1, \Rep_2, F)$ is the {\sf canonical representation}
 of~$\Rep$. \tsnote{Seems odd to call it this without explaining how
@@ -56,14 +55,12 @@ with respect to leakage function ${\sf leak}(S) = |S|$.
   need to make things uniform.}
 \end{theorem}
 \begin{proof}
-We define the following simulator $\Sim$: on input $n$, define $S^*=\{e_1, \ldots, e_n\}$
-(for distinct elements $e_1, \ldots, e_n$). Then compute
-\begin{enumerate}
-\item $s_1, \ldots, s_t \getsr \Rep_1(S^*)$,
-\item $K \getsr \calK$,
-\item $\pubaux \getsr \Rep_2(|S|, F_K(s_1), \ldots, F_K(s_t))$,
-\end{enumerate}
-and output $\pubaux$.
+We define a simulator $\Sim$ as follows. On input $n$, $\Sim$ fixes a
+set $S^*=\{e_1, \ldots, e_n\}$. In then computes:
+(1) $s_1, \ldots, s_t \getsr \Rep_1(S^*)$;
+(2) $K \getsr \calK$;
+(3) $\pubaux \getsr \Rep_2(|S|, F_K(s_1), \ldots, F_K(s_t))$, and
+finally returns $\pubaux$.
 
 \def\hyb{\mbox{{\sc Hyb}}}
 
