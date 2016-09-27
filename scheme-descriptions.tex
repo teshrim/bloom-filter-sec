@@ -1,11 +1,11 @@
 \begin{figure}[tp]
 \centering
-\hfpages{.45}
+\hfpagess{.525}{.425}
 {
 \algorithmv{$\Rep(S)$}\\
 $M \gets 0^m$; $K \getsr \calK$\\
 for $x \in S$\\
-\jnote{Fix}\\
+\jnote{Fix}\tsnote{Fix what?}\\
 \nudge for $j \in \{1,2,\ldots,k\}$\\
 \nudge\nudge $h_j \gets F_{K}(\langle 1,x \rangle) + j\cdot F_{K}(\langle 2,x \rangle) \bmod m$\\
 \nudge\nudge $M[h_j] \gets 1$\\
@@ -15,7 +15,7 @@ Return $(\pubaux,\privaux)$\\
 \medskip
 \algorithmv{$\Qry(\pubaux,\privaux,q_x)$}\\
 $M\gets\pubaux$, $K \gets \privaux$\\
-\jnote{Fix} \\
+\jnote{Fix}\tsnote{Fix what?} \\
 for $j \in \{1,2,\ldots,k\}$\\
 \nudge $h_j \gets F_{K}(\langle 1,x \rangle) + j\cdot F_{K}(\langle 2,x\rangle) \bmod m$\\
 \nudge if $M[h_j] \neq 1$ then Return 0\\
@@ -51,7 +51,7 @@ Return 1
 \begin{figure}[pt]
 \centering
 \fpage{0.95}{
-\hpagessl{.4}{.55}
+\hfpagess{.4}{.55}
 {
 \algorithmv{$\Rep^H(S)$}\\
 $M \gets 0^m$\\
@@ -111,7 +111,7 @@ Return 0
 
 \begin{figure}
 \centering
-\hfpages{.45}
+\hfpagess{.525}{.425}
 {\algorithmv{$\Rep(S)$}\\
 $\pubaux \gets \emptystring$\\
 $K_1,K_2, \getsr \calK$\\
