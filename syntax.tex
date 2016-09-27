@@ -1,66 +1,41 @@
 \newcommand{\qry}{\mathsf{qry}}
-\section{(Multiset) Data Structures}
+\section{Preliminaries}
 
-\jnote{Make more general.}
+When~$\univ$ is a set, we write $x \getsr \univ$ to denote sampling
+an element uniformly from~$\univ$ and assigning it to~$x$. We extend
+this notation to randomized algorithms, so $x \getsr A(y)$ denotes
+that (randomized) algorithm $A$ is run on input~$y$, and the output
+of the algorithm is assigned to~$x$. Algorithms may be provided
+black-box access to one or more oracles, which we write as
+superscripts, e.g., $F^{O_1,O_2,\ldots}$.
 
-\heading{Preliminaries. } When~$\univ$ is a set and $n>0$ is an
-integer, we let $[\univ]^n$ denote the set of all size-$n$ subsets
-of~$\univ$, and $[[\univ]]^n$ for the set of all multisets
-over~$\univ$ with total multiplicity~$n$. \jnote{I guess we are
-viewing sets as a special case of multisets, so maybe just say
-that.}  We write $x \getsr \univ$ to denote
-sampling an element uniformly from~$\univ$ and assigning it to~$x$,
-and we extend this notation to randomized algorithms. When~$X$ is a
-string over some alphabet~$\Sigma$, we write $|X|$ for the bitlength
-of~$X$, relative to some fixed encoding.  We write $\langle X \rangle$
-to mean the (invertible) encoding of~$X$ as a bitstring, and extend
-this in the natural way to $\langle X,Y,\ldots \rangle$.
-When~$X$ is a multiset, we overload the notation so that~$|X|$ is the total multiplicity
-of~$X$.
+\subsection{Data Structures}
 
+We consider an abstract notion of data structures.
 
-
-Algorithms may be provided black-box access to one or more oracles,
-which we write as superscripts, e.g., $F^{O_1,O_2,\ldots}$.  An \emph{adversary} is a randomized algorithm.
-
-\heading{Data structures.}  We begin by defining a general primitive
-that produces a representation of a given multiset, and provides a
-mechanism to answer a specified collection of questions about that
-multiset. \jnote{I still think we should be more general, and deal
-with objects other than multisets. Actually, I think we should
-either specialize to sets or talk generically about data structures
-for arbitrary objects; talking about multisets seems to make the
-definitions more cumbersome while not adding very much in terms of
-generality.}
 %Informally, the representation should serve as a good
 %approximation of the multiset, at least with respect to the allowed queries.
 \begin{definition}[Data structure] \rm
-Fix a non-empty set~$\univ$, and a collection of (multi)sets~$\calS$
-over $\univ$. A \emph{data structure} (for $\calS$) is a tuple
-$\setprim=(\calQ,\Rep, \Qry)$ where \jnote{I would prefer moving
-$\calQ$ out of the tuple, and instead calling it a ``data structure
-for $\calQ$ over $\calS$.''}\tsnote{But $\Qry$ really is tied to
-$\calQ$, as those are the only queries upon which $\Qry$ is defined to
-operate.  So, if anything, I would support removing $\calQ$ from the
-high-level API, and just explaining what it is as part of the
-description of $\Qry$}:
+Fix sets~${\cal U}, \Gamma$, and $\calQ$, where $\calQ = \{\qry
+\colon {\cal U} \to \Gamma\}$. A \emph{data structure} (supporting
+queries $\calQ$ over universe ${\cal U}$) is a tuple
+$\setprim=(\Rep, \Qry)$ where:
 \begin{itemize}
-\item $\mathcal{Q}=\{\qry \colon \mathcal{S} \to \Gamma\}$ is a set
-    of supported \emph{queries}, where $\Gamma$ is the set of query \emph{answers}.
-\item $\Rep \colon \mathcal{S} \to \bits^*
-    \times \bits^*$ is a randomized \emph{representation
-    algorithm}, taking as input a (multi)set $S \in \mathcal{S}$, and outputting %a \emph{representation} $M \in \Sigma^*$,
+\item $\Rep \colon {\cal U} \to \bits^* \times \bits^*$ is a
+    randomized \emph{representation algorithm}, taking as input
+    an element $S \in \mathcal{U}$,
+    and outputting %a \emph{representation} $M \in \Sigma^*$,
     \emph{public representation data} $\pubaux \in \bits^*$ and
-    \emph{private representation data} $\privaux \in \bits^*$. We write
-    $(\pubaux,\privaux) \getsr \Rep(S)$ as shorthand for this execution.
+    \emph{private representation data} $\privaux \in \bits^*$.
+    We write $(\pubaux,\privaux) \getsr \Rep(S)$ as shorthand
+    for this execution.
 \item $\Qry\colon \bits^* \times \bits^* \times \calQ \to
     \Gamma$ is a deterministic \emph{query-evaluation}
     algorithm, taking as input $\pubaux,\privaux \in \bits^*$
-    and a query $\qry \in \calQ$, and outputting an \emph{answer}
-    $a \in \Gamma$.  We write $a \gets \Qry(\pubaux,\privaux,\qry)$
-    for this execution.
+    and a query $\qry \in \calQ$, and outputting an
+    \emph{answer} $a \in \Gamma$.  We write $a \gets
+    \Qry(\pubaux,\privaux,\qry)$ for this execution. \hfill\dqed
 \end{itemize}
-\hfill\dqed
 \end{definition}
 
 \todo{Insert discussion of syntax, if needed.  If we think it is
@@ -71,11 +46,13 @@ $\Rep$ would allow this.}
 
 
 \begin{definition}[Error probability and rate] \rm
-For a given data structure $\setprim=(\calQ,\Rep, \Qry)$, let
-$\mathrm{Err}(S,\qry,\pubaux,\privaux)$ be a predicate that is true iff
-$\Qry(\pubaux,\privaux, \qry) \neq \qry(S)$.  Then $\Pi$ has \emph{error
-probability} $\epsilon$ if $\max_{S,\qry}\Pr[(\pubaux,\privaux) \getsr
-\Rep(S) : \mathrm{Err}(S,\qry,\pubaux,\privaux)=1 ] \leq \epsilon$.
+For a data structure $\setprim=(\Rep, \Qry)$ supporting queries
+${\cal Q}$ over universe ${\cal U}$, let
+$\mathrm{Err}(S,\qry,\pubaux,\privaux)$ be  true iff
+$\Qry(\pubaux,\privaux, \qry) \neq \qry(S)$.  Then $\Pi$ has
+\emph{error probability} $\epsilon$ if
+$\max_{S,\qry}\Pr[(\pubaux,\privaux) \getsr \Rep(S) :
+\mathrm{Err}(S,\qry,\pubaux,\privaux)=1 ] \leq \epsilon$.
 %
 It has \emph{error rate} $\tilde{\epsilon}$ if
 $\max_{S}\Pr[(\pubaux,\privaux) \getsr \Rep(S);\, \qry \getsr \calQ :
@@ -108,24 +85,25 @@ are fixed, it is not straightforward how to connect~$\epsilon$ to
 events that depend on other sources of randomness.   We illustrate how
 this surfaces with the following example.
 
+\jnote{The following may need to be updated to fit the new syntax.}
 Let~$\Pi$ be a data structure that has error-probability $\epsilon$,
-and consider a correctness-violating attack that asks random
-queries $\qry_1,\qry_2,\ldots,\qry_T$, i.e., uniform samples from~$\calQ$.
+and consider a correctness-violating attack that asks random queries
+$\qry_1,\qry_2,\ldots,\qry_T$, i.e., uniform samples from~$\calQ$.
 Let $\mathrm{Err}_i$ be a random variable indicating the event
-$\Qry(\pubaux,\privaux,\qry_i)\neq \qry_i(S)$.  We know that the probability
-that $\mathrm{Err}_i=1$ is at most~$\epsilon$, and it is tempting to
-model the~$\mathrm{Err}_i$ as i.i.d. Bernoulli trials with success
-probability~$\epsilon$. However, a moment's reflection shows that
-this is not the case.  Concretely, consider the following scheme.
-Fix $|S|=n$ for all $S \in \calS$, where $n \ll |\univ|$. For the
-queries, let $\calQ = \{\qry_x\colon \calS \to \bits \,|\, \forall x
-\in \univ\}$ where $\forall S \in \calS$ the predicate $\qry_x(S)=1
-\Leftrightarrow x \in S$.  Let $\Rep(S)$ pick a random element~$s
-\in S$, and return $M = S \setminus \{s\}$ and $\privaux =
-\emptystring$.  To respond to queries,
-let~$\Qry(\pubaux,\privaux,\qry_x)=1$ iff $x \in M$.  It is easy to see
-that this scheme is $1/n$-correct; for any fixed~$S$, there are
-exactly~$n$ queries~$\qry_x$ that have probability~$1/n$  (over the
+$\Qry(\pubaux,\privaux,\qry_i)\neq \qry_i(S)$.  We know that the
+probability that $\mathrm{Err}_i=1$ is at most~$\epsilon$, and it is
+tempting to model the~$\mathrm{Err}_i$ as i.i.d. Bernoulli trials
+with success probability~$\epsilon$. However, a moment's reflection
+shows that this is not the case. Concretely, consider the following
+scheme. Fix $|S|=n$ for all $S \in \calS$, where $n \ll |\univ|$.
+For the queries, let $\calQ = \{\qry_x\colon \calS \to \bits \,|\,
+\forall x \in \univ\}$ where $\forall S \in \calS$ the predicate
+$\qry_x(S)=1 \Leftrightarrow x \in S$.  Let $\Rep(S)$ pick a random
+element~$s \in S$, and return $M = S \setminus \{s\}$ and $\privaux
+= \emptystring$.  To respond to queries,
+let~$\Qry(\pubaux,\privaux,\qry_x)=1$ iff $x \in M$.  It is easy to
+see that this scheme is $1/n$-correct; for any fixed~$S$, there are
+exactly~$n$ queries~$\qry_x$ that have probability~$1/n$ (over the
 coins of~$\Rep$) of causing a correctness error, and the remaining
 $|\univ|-n$ queries have probability zero of causing an error.
 Moreover, once the coins of~$\Rep$ are fixed, there is exactly
@@ -134,15 +112,15 @@ from~$Q$, for all~$i\in[T]$ we have
 $\Prob{\mathrm{Err}_i=1}=1/|\univ| \ll 1/n = \epsilon$.
 
 
-\heading{Data structures for set-multiplicity queries.} Our
-particular focus will be on data structures that support
-multiplicity queries.
+\heading{Data structures for set-membership queries.} Our particular
+focus will be on data structures that support membership queries.
+\jnote{I changed this from multiplicity to membership.}
 
 \begin{definition} \rm
-A \emph{set-multiplicity data structure} is a data structure with
-$\Gamma=\mathbb{N}$ and $\calQ=\{\qry_x\}_{x \in \univ}$, where
-$\qry_x(S)$ is defined to be the multiplicity of~$x$ in the
-multiset~$S$. \hfill\dqed
+A \emph{set-membership data structure over $\univ$} is a data
+structure with ${\cal U} \subseteq 2^\univ$, $\Gamma=\{0,1\}$, and
+$\calQ=\{\qry_x\}_{x \in \univ}$, where $\qry_x(S)$ is true iff $x
+\in S$. \hfill\dqed
 \end{definition}
 
 \jnote{Clean up the following, because we discuss BFs later.}
