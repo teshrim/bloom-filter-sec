@@ -7,7 +7,7 @@ Fix $r=1$, $k,m,n>0$, and let $\Pi_{\mathrm{garb}}= (\calQ,\Rep, \Qry)$ be the s
 \AdvCorrect{\Pi_{\mathrm{garb}},\distr{\calS}{},r}{A}  \geq   \left(1 - e^{-n/m^k}\right)^{nr} + \dfrac{1}{\dbinom{m}{k}-n-(q-1)} . \Big(1-\dfrac{n}{2^\lambda}\Big)
 \]
 
-The RHS of above expression contains 2 components, $\Prob{\epsilon_{\fn}}$(false-negative probability) and $\Prob{\epsilon_{\fp}}$(false-positive probability). For large values of $m$ and $n$, $\Prob{\epsilon_{\fn}} \approx 0$. On the other hand, $A$ finds one false-positive with $\Prob{\epsilon_{\fp}} \approx 1$ by making $\dbinom{m}{k} - n$ queries at maximum.
+The RHS of above expression contains 2 components, $\Prob{\epsilon_{\fn}}= \left(1 - e^{-n/m^k}\right)^{nr}$ (false-negative probability), and $\Prob{\epsilon_{\fp}}=\dfrac{1}{\dbinom{m}{k}-n-(q-1)} . \Big(1-\dfrac{n}{2^\lambda}\Big)$ (false-positive probability). For large values of $m$ and $n$, $\Prob{\epsilon_{\fn}} \approx 0$. On the other hand, $A$ finds one false-positive with $\Prob{\epsilon_{\fp}} \approx 1$ by making $\dbinom{m}{k} - n$ queries at maximum.
 
 \end{theorem}
 
@@ -19,7 +19,7 @@ Define an adaptive attacker $A$ that has the following behavior. It makes $n$ qu
 
 Let $\epsilon_{\fp}$ be the event that $A$ finds one false-positive. 
  $$\Prob{\epsilon_{\fp}} = \Prob{h_{1}(x)=i_1 \wedge h_2(x)=i_2 \wedge \cdots \wedge h_k(x) = i_k : x \notin S}.\Prob{x \notin S}.$$
- The probability that $x$ is not one of the $n$ $\lambda$-bit strings is $1-\dfrac{n}{2^\lambda}$, and $ \Prob{h_{1}(x)=i_1 \wedge h_2(x)=i_2 \wedge \cdots \wedge\\ h_k(x) = i_k} = \dfrac{1}{\dbinom{m}{k}-n-(q-1)}$. It must be noted that the factor $q-1$ is due to lazy sampling of the $k$ positions; n is the set of hash indices corresponding to the elements of set, S. Putting together, $\Prob{\epsilon_{\fp}} =  \dfrac{1}{\dbinom{m}{k}-n-(q-1)} . \Big(1-\dfrac{n}{2^\lambda}\Big)$. 
+ The probability that $x$ is not one of the $n$ $\lambda$-bit strings is $1-\dfrac{n}{2^\lambda}$, and $ \mathrm{Pr}[h_{1}(x)=i_1$ $\wedge h_2(x)=i_2 \wedge \cdots \wedge h_k(x) = i_k] = \dfrac{1}{\dbinom{m}{k}-n-(q-1)}$. It must be noted that the factor $q-1$ is due to lazy sampling of the $k$ positions; n is the set of hash indices corresponding to the elements of set, S. Putting together, $\Prob{\epsilon_{\fp}} =  \dfrac{1}{\dbinom{m}{k}-n-(q-1)} . \Big(1-\dfrac{n}{2^\lambda}\Big)$. 
 
 If $\epsilon$ is the event of finding $r=1$ error, $\Prob{\epsilon} = \AdvCorrect{\Pi_{\mathrm{garb}},\distr{\calS}{},r}{A} =  \Prob{\epsilon_{\fn}} + \Prob{\epsilon_{\fp}}$($\epsilon_{\fn}$ and $\epsilon_{\fp}$ are mutually independent) and hence 
 \[
