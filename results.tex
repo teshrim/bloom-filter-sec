@@ -273,19 +273,16 @@ On input $n,F_K(s_1),F_K(s_2),\ldots,F_K(s_{2n-1}) , F_K(s_{2n})$, algorithm $\R
 
 
 %%%%%%%%%%%%%%%%% BIGRAM LINEAR-PRF (AKA "NEIDERMAYER")  %%%%%%%%%%%%%%%%%%%%
-\subsection{Bigram Linear-PRF construction}
+\subsection{Bigram Linear-PRF Construction}
 %\heading{Bigram Linear-PRF construction (``Neidermayer''). }
-\heading{Correctness.} 
-\todo{Correctness theorem for this scheme.  Should follow pretty closely the one for ``plain'' linear-PRF.}\tsnote{Actually not sure this is that interesting, but for parallel structure one would want to give it.}
-
-%Next we consider the privacy of this construction, relative to a leakage function that behaves as follows.  On input a set $S=\{x_1,x_2,\ldots,x_n\}$, it computes $B_i \gets \mathsf{bigram}(x_i)$ for each $i \in [n]$.  Then, for all $1 \leq c \leq p$, and all size-$c$ subsets $\{j_1,j_2,\ldots,j_c\} \subseteq p$, it computes $L{j_1,j_2,\ldots,j_c}=|B_{j_1} \cap B_{j_2} \cap \ldots \cap B_{j_c}|$.  That is, it computes all of the $c$-way intersections. It returns $|S|=n$ and all of the $2^p -1$ intersection sizes as the leakage. \todo{Explain why this is plausibly leaked by $\pubaux$ for this construction.} \tsnote{This is exponential in size, so that means a simulator that reads the entire leakage will also be exponential-time in~$p$.  } \tsnote{Should we be considering smaller, but less realistic leakage, like $\mathsf{leak}(S)=S\setminus\{x\}$.}
-
+%\heading{Correctness.} 
+%\todo{Correctness theorem for this scheme.  Should follow pretty closely the one for ``plain'' linear-PRF.}\tsnote{Actually not sure this is that interesting, but for parallel structure one would want to give it.}
 \heading{Privacy. }
-Next we exhibit an efficient SS-privacy attack even when simulator is provided nearly the entire set.  Consider the following leakage function.  On input a set~$S=\{x_1,x_2,\ldots,x_n\}$, it assigns $x'_n \gets x_n[1:|x_n|-1]$ and returns $\mathsf{leak}(S)=\{x_1,x_2,\ldots,x'_n\}$.  
+We only address the privacy of this construction, as the correctness follows immediately from the correctness of the Linear-PRF contruction.  The privacy, however, does not.  Here we exhibit an efficient SS-privacy attack even when simulator is provided nearly the entire set.  Consider the following leakage function.  On input a set~$S=\{x_1,x_2,\ldots,x_n\}$, it assigns $x'_n \gets x_n[1:|x_n|-1]$ and returns $\mathsf{leak}(S)=\{x_1,x_2,\ldots,x'_n\}$.  
 
 \begin{figure}
 \centering
-\fpage{.5}
+\fpage{.55}
 {
 \adversaryv{A}\\
 On input $\emptystring$:\\
@@ -298,41 +295,45 @@ On input $\emptystring$:\\
 On input $\pub \neq \emptystring$:\\
 \nudge $M_1,M_2,M_3 \gets \pub$\\
 \nudge $M_{1,2} \gets M_1 \vee M_2$\\
-\nudge if $z=1 \wedge \left(\mathsf{hamming}(M_{1,2} \wedge M_3) = 4k\right)$ then \\
+\nudge if $z=1 \wedge \left(3k < \mathsf{hamming}(M_{1,2} \wedge M_3) = 4k\right)$ then \\
 \nudge\nudge Return 1 \\
-\nudge if $z=0 \wedge \left(\mathsf{hamming}(M_{1,2} \wedge M_3) = 3k\right)$ then \\
+\nudge if $z=0 \wedge \left(\mathsf{hamming}(M_{1,2} \wedge M_3) \leq 3k\right)$ then \\
 \nudge\nudge Return 1 \\
 \nudge Return 0
 }
-\caption{Adversary for Theorem~\ref{thm:bi-lin-ss}.  The function $\mathsf{hamming}(M)$ returns the hamming weight of~$M$}
+\caption{Adversary for Theorem~\ref{thm:bi-lin-ss}. The function $\mathsf{hamming}(M)$ returns the hamming weight of~$M$.}
 \label{fig:adv-bi-lin-ss}
 \end{figure}
 
 \begin{theorem}\label{thm:bi-lin-ss}
-Let $\Pi_{\bilin}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig: neidermayer}, but instantiated with $F_{K}$ replaced by a random functions~$\rho$.  Let $\leak$ be the leakage function just described.   Let~$\univ=\{\mathrm{a,b,c}\}^*$. Let $n=3$,  $m=3\alpha $ for integer $\alpha >> 1$, and let, $k = \lceil \ln(2) \alpha \rceil$.\tsnote{This value of~$k$ is from the classical analysis for minimizing the FP rate for a Bloom filter, and is set this way for compatibility with classical results.  It isn't used in any essential way in the proof sketch.}  Let~$A$ be the adversary in Figure~\ref{fig:adv-bi-lin-ss}.  Then for any simulator $\Sim$,
-the advantage $\AdvPrivSS{\Pi_{\bilin},\leak}{A,\Sim}$ can be made arbitrarily close to $1/2$ by choice of~$\alpha$.
+Let $\Pi_{\bilin}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig: neidermayer}, but instantiated with $F_{K}$ replaced by a random functions~$\rho$.  Let $\leak$ be the leakage function just described.   Let~$\univ=\{\mathrm{a,b,c}\}^*$. Let $n=3$,  $m=3\alpha $ for integer $\alpha >> 1$, and let, $k = \lceil \ln(2) \alpha \rceil$.\tsnote{This value of~$k$ is from the classical analysis for minimizing the FP rate for a Bloom filter, and is set this way for compatibility with classical results.  It isn't used in any essential way in the proof sketch.}  Let~$A$ be the adversary in Figure~\ref{fig:adv-bi-lin-ss}.  Then for any simulator $\Sim$, the advantage $\AdvPrivSS{\Pi_{\bilin},\leak}{A,\Sim}$ can be made arbitrarily close to $1/2$ by choice of~$\alpha$.
 
 \end{theorem}
 \begin{proof}(Sketch.)
-On input the set~$S$ produced by~$A$, the $\Rep$ algorithm turns $x_1=$'cab', $x_2=$'bab' and $x_3$ into their respective bigram sets: $B_{x_1}=\{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{b}\sqcup\}$, $B_{x_2}=\{\sqcup\mathrm{b},\mathrm{ba},\mathrm{ab}, \mathrm{b}\sqcup \}$; the set $B_{x_3}$ will be either $\{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{ba}, \mathrm{a}\sqcup\}$, or $\{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{bc}, \mathrm{c}\sqcup\}$, each with probability 1/2.  It then produces $\alpha$-bit arrays $M_1, M_2, M_3$ by hashing the corresponding bigram sets using the hash functions $h_j(s)=\rho_1(s)+ j\rho_2(s) \bmod m$.  Note that for sufficiently large~$m$, each of $M_1,M_2$ will contain exactly $4k$ positions set to 1; this is with overwhelming probability (up to collisions in the hash functions for different bigrams within a given bigram set).   Likewise, $M_{1,2}=M_1 \vee M_2$ will have exactly $6k$ positions set to 1, because $B_{x_1}$ and $B_{x_2}$ share $\mathrm{ab}$ and $\mathrm{a}\sqcup$.
+On input the set~$S$ produced by~$A$, the $\Rep$ algorithm turns $x_1=$'cab', $x_2=$'bab' and $x_3$ into their respective bigram sets: $B_{x_1}=\{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{b}\sqcup\}$, $B_{x_2}=\{\sqcup\mathrm{b},\mathrm{ba},\mathrm{ab}, \mathrm{b}\sqcup \}$; the set $B_{x_3}$ will be either $\{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{ba}, \mathrm{a}\sqcup\}$, or $\{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{bc}, \mathrm{c}\sqcup\}$, each with probability 1/2.  It then produces $\alpha$-bit arrays $M_1, M_2, M_3$ by hashing the corresponding bigram sets using the hash functions $h_j(s)=\rho_1(s)+ j\rho_2(s) \bmod m$.  Note that for sufficiently large~$m$, each of $M_1,M_2$ will contain exactly $4k$ positions set to 1; this is with overwhelming probability, up to collisions in the hash functions for different bigrams within a given bigram set.  Likewise, $M_{1,2}=M_1 \vee M_2$ will have exactly $6k$ positions set to 1, because $B_{x_1}$ and $B_{x_2}$ share $\mathrm{ab}$ and $\mathrm{a}\sqcup$.
 
 In the case that $B_{x_3}=\{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{ba}, \mathrm{a}\sqcup\}$, only one of its elements ($\mathrm{a}\sqcup$) is not in either of $B_{x_1},B_{x_2}$.  Hence, the hamming weight of $M_{1,2}\wedge M_3$ will be $4k$.  On the other hand, when $B_{x_3} = \{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{bc}, \mathrm{c}\sqcup\}$, two of its elements ($\mathrm{bc}, \mathrm{c}\sqcup$) are not covered by $B_{x_1},B_{x_2}$.  In this case, the hamming weight of $M_{1,2} \wedge M_3$ will be $3k$.  Thus $\ExpPrivSSreal{\Pi_{\bilin}}{A}=1$ with overwhelming probability.  
 
-On the other hand, the simulator~$\Sim$ is given 'cab','bab','cab' as input.  It can perfectly simulate $M_1,M_2$ by lazily sampling random function~$\rho$ itself.  However, it has no information about the bit~$z$, so at best it can cause~$A$ to output 1 with probabilility~$1/2$.
+On the other hand, the simulator~$\Sim$ is given 'cab','bab','cab' as
+input.  It can perfectly simulate $M_1,M_2$ by lazily sampling random
+function~$\rho$ itself.  However, it has no information about the
+bit~$z$, so at best it can cause~$A$ to output 1 with
+probabilility~$1/2$.  That is $\ExpPrivSSsim{\Pi_{\bilin}}{A,\Sim} \leq 1/2$.
 \end{proof}
 
 \todo{OW privacy proof? Or just some text that says that Neidermayer et al show something stronger~---OW-privacy violation---~albeit with $n=10000, m=10000\alpha$ for an $\alpha$ that I need to look up.}
 
 
 %%%%%%%%%%%%%%%%% Bigram DOMAIN-SEPARATED PRF %%%%%%%%%%%%%%%%%%%%
-
 \subsection{Bigram Domain-Separated PRF-Hash}
-We note that Neidermayer et al. in~\cite{xxx} suggest replacing the linear-PRF hash functions in
-the previous construction with independently keyed PRFs as a way to
-thwart their attacks.  The construction we consider now achieves the
-same end, albeit via explict domain separation rather than separate keys.
-\todo{Privacy proof, at a minimum... if it is actually secure.}
+We note that Neidermayer et al. in~\cite{xxx} suggest replacing the linear-PRF hash functions in the previous construction with independently keyed PRFs as a countermeasure to their attack.  In terms of SS-privacy, however, this change offers no help.  The following theorem is proved via a nearly identical argument as Theorem~\ref{thm:bi-lin-ss}
 
+\begin{theorem}\label{thm:bi-lin-ss}
+Let $\Pi_{\bilin}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig: neidermayer}, but instantiated with $F_{K}$ replaced by a random functions~$\rho$.  Let $\leak$ be the leakage function described just prior to Theorem~\ref{thm:bi-lin-ss}.   Let~$\univ=\{\mathrm{a,b,c}\}^*$. Let $n=3$,  $m=3\alpha $ for integer $\alpha >> 1$, and let, $k = \lceil \ln(2) \alpha \rceil$.\tsnote{This value of~$k$ is from the classical analysis for minimizing the FP rate for a Bloom filter, and is set this way for compatibility with classical results.  It isn't used in any essential way in the proof sketch.}  Let~$A$ be the adversary in Figure~\ref{fig:adv-bi-lin-ss}.  Then for any simulator $\Sim$,
+the advantage $\AdvPrivSS{\Pi_{\mathrm{ds}},\leak}{A,\Sim}$ can be made arbitrarily close to $1/2$ by choice of~$\alpha$.
+\end{theorem}
+
+\todo{OW privacy proof?  Distributional SS privacy proof?}
 
 \begin{verbatim}
 %------------------------------------%
