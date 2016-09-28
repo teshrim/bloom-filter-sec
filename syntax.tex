@@ -43,7 +43,11 @@ as $|\pubaux|+|\privaux|$ and comment that if one wants to compare to
 classical size bounds, a more fine-grained separation of the output of
 $\Rep$ would allow this.}
 
-
+\tsnote{Do we ever use this definition?  I guess it is a mapping of
+  classical notions to our syntax, but I don't know if we use it.
+  Anyway,  it looks a bit weird sitting here on its own.  It made more
+  sense when supported by the intuition-building example, now
+  commented out. }
 \begin{definition}[Error probability and rate] \rm
 For a specific data structure $\setprim=(\Rep, \Qry)$ supporting
 queries ${\cal Q}$ over universe ${\cal U}$, let
@@ -108,7 +112,8 @@ $|\univ|-n$ queries have probability zero of causing an error.
 Moreover, once the coins of~$\Rep$ are fixed, there is exactly
 \emph{one} query that will cause an error.  Thus for random queries
 from~$Q$, for all~$i\in[T]$ we have
-$\Prob{\mathrm{Err}_i=1}=1/|\univ| \ll 1/n = \epsilon$.}
+$\Prob{\mathrm{Err}_i=1}=1/|\univ| \ll 1/n = \epsilon$.
+}
 
 \heading{Data structures for set-membership queries.} An important
 special case is a data structure that supports set-membership
