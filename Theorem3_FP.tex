@@ -28,18 +28,18 @@ if $\err  < r$ then Return 0\\
 Return 1\\
 %
 \oracle{$\TestOracle(\qry_x)$}\\
-if $\qry_x \in \mathcal{C}$ then Return $\bot$\\
-$\calC \gets \calC \cup \{\qry_x\}$\\
-$a \gets \Qry^{\HashOracle}(\pubaux,\privaux,\qry_x)$\\
+if $x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup x$\\
+$a \gets \Qry^{\HashOracle}(\pubaux,\privaux, x)$\\
 if $a \neq \qry_x(S)$ then \\
 \nudge $\err \gets \err + 1$\\
 Return~$a$\\
 %
 \oracle{$\HashOracle(i,\qry_y)$}\\
 $v \getsr [m]$\\
-if $T[i,\qry_y] \neq \undefined$\\
-\nudge $v \gets T[i,\qry_y]$\\
-$T[i,\qry_y] \gets v$\\
+if $T[i,y] \neq \undefined$\\
+\nudge $v \gets T[i,y]$\\
+$T[i,y] \gets v$\\
 Ret $v$
 }
 {
@@ -51,19 +51,19 @@ if $\err  < r$ then Return 0\\
 Return 1\\
 %
 \oracle{$\TestOracle(\qry_x)$}\\
-if $\qry_x \in \mathcal{C}$ then Return $\bot$\\
-$\calC \gets \calC \cup \{\qry_x\}$; $M \gets\pubaux$\\
+if $x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup x$; $M \gets\pubaux$\\
 for $j \in \{1,2,\ldots,k\}$\\
-\nudge $h_j \gets \HashOracle(j,\qry_x)$\\
+\nudge $h_j \gets \HashOracle(j, x)$\\
 \nudge if $M[h_j] \neq 1$ then Return 0\\
 $\err \gets \err + 1$\\
 Return 1\\
 %
 \oracle{$\HashOracle(i,\qry_y)$}\\
 $v \getsr [m]$\\
-if $T[i,\qry_y] \neq \undefined$\\
-\nudge $v \gets T[i,\qry_y]$\\
-$T[i,\qry_y] \gets v$\\
+if $T[i,y] \neq \undefined$\\
+\nudge $v \gets T[i,y]$\\
+$T[i,y] \gets v$\\
 Ret $v$
 }
 }
@@ -78,10 +78,10 @@ if $\err  < r$ then Return 0\\
 Return 1\\ 
 %
 \oracle{$\TestOracle(\qry_x)$}\\
-if $\qry_x \in \mathcal{C}$ then Return $\bot$\\
-$\calC \gets \calC \cup \{\qry_x\}$; $M \gets\pubaux$\\
+if $x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup x$; $M \gets\pubaux$\\
 for $j \in \{1,2,\ldots,k\}$\\
-\nudge $h_j \gets \HashOracle(j,\qry_x)$\\
+\nudge $h_j \gets \HashOracle(j, x)$\\
 \nudge if $M[h_j] \neq 1$\\
 \nudge \nudge Return $(0, (h_1, \ldots, h_j))$\\
 $\err \gets \err +1$\\
@@ -89,9 +89,9 @@ Return~$(1, (h_1, \ldots, h_{k}) )$\\
 %
 \oracle{$\HashOracle(i,\qry_y)$}\\
 $v \getsr [m]$\\
-if $T[i,\qry_y] \neq \undefined$\\
-\nudge $v \gets T[i,\qry_y]$\\
-$T[i,\qry_y] \gets v$\\
+if $T[i,y] \neq \undefined$\\
+\nudge $v \gets T[i,y]$\\
+$T[i,y] \gets v$\\
 Ret $v$
 }
 {
@@ -103,9 +103,9 @@ if $\err  < r$ then Return 0\\
 Return 1\\ 
 %
 \oracle{$\TestOracle(\qry_x)$}\\
-if $\qry_x \in \mathcal{C}$ then Return $\bot$\\
-$\calC \gets \calC \cup \{\qry_x\}$; $M \gets\pubaux$\\
-$(h_1, \ldots, h_{k}) \gets \HashOracle(\qry_x)$\\
+if $x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup x$; $M \gets\pubaux$\\
+$(h_1, \ldots, h_{k}) \gets \HashOracle(x)$\\
 for $j \in \{1,2,\ldots,k\}$\\
 \nudge if $M[h_j] \neq 1$ then \\
 \nudge \nudge Return~$(0, (h_1, \ldots, h_{k}) )$\\
@@ -115,9 +115,9 @@ Return~$(1, (h_1, \ldots, h_{k}) )$\\
 \oracle{$\HashOracle(\qry_y)$}\\
 for $j \in \{1,2,\ldots,k\}$\\
 \nudge $v_j \getsr [m]$\\
-\nudge if $T[j,\qry_y] \neq \undefined$\\
-\nudge \nudge $v_j \gets T[j,\qry_y]$\\
-\nudge $T[j,\qry_y] \gets v_j$\\
+\nudge if $T[j,y] \neq \undefined$\\
+\nudge \nudge $v_j \gets T[j,y]$\\
+\nudge $T[j,y] \gets v_j$\\
 Ret $\left(v_1,\ldots,v_k\right)$
 }
 }
@@ -137,10 +137,10 @@ if $\err  < r$ then Return 0\\
 Return 1\\
 %
 \oracle{$\TestOracle(\qry_x)$}\\
-if $\qry_x \in \mathcal{C}$ then Return $\bot$\\
-$\calC \gets \calC \cup \{\qry_x\}$\\
+if $x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup x$\\
 if $\Ans[x] \neq \undefined$\\
-\nudge $(h_1, \ldots, h_{k}) \gets \HashOracle(\qry_x)$\\
+\nudge $(h_1, \ldots, h_{k}) \gets \HashOracle(x)$\\
 Return $\Ans[x]$\\
 %
 }
@@ -153,13 +153,13 @@ for $j \in \{1,2,\ldots,k\}$\\
 $M \gets\pubaux$\\
 for $j \in \{1,2,\ldots,k\}$\\
 \nudge if $M[v_j] \neq 1$ then \\
-\nudge \nudge $\Ans[\qry_y] \gets (0, (v_1, \ldots, v_{k}) )$\\
+\nudge \nudge $\Ans[y] \gets (0, (v_1, \ldots, v_{k}) )$\\
 \nudge \nudge if $c \in \calI$ then $\bad \gets \true$\\
 \nudge \nudge $\Break$\\
 if $j < k$ then Return $\left(v_1,\ldots,v_k\right)$\\
 if $c \notin \calI$ then $\bad \gets \true$\\
 $\err \gets \err +1$\\
-$\Ans[\qry_y] \gets (1, (v_1, \ldots, v_{k}))$\\
+$\Ans[y] \gets (1, (v_1, \ldots, v_{k}))$\\
 Return $\left(v_1,\ldots,v_k\right)$
 }
 }
