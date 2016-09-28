@@ -464,38 +464,40 @@ the advantage $\AdvPrivSS{\Pi_{\mathrm{ds}},\leak}{A,\Sim}$ can be made arbitrar
 \centering
 \fpage{.525}
 {
-\algorithmv{$\Rep^H(S)$}\\
-$M \gets \mathrm{null}^m$; $\lambda \gets \calK$\\
+\algorithmv{$\Rep(S)$}\\
+$M \gets (\bot)^m$\\
+$K_1,K_2,\ldots, K_k \getsr \calK$\\
 for $x \in S$\\
 \nudge $\finalshare \gets 0^\lambda$; $\emptyslot \gets -1$\\
 \nudge for $j \in \{1,2,\ldots, k\}$\\
-\nudge \nudge $h_j \gets H(j,x)$\\
-\nudge \nudge if $M[h_j] \neq \mathrm{null}$ then\\
+\nudge \nudge $h_j \gets H_{K_j}(x)$\\
+\nudge \nudge if $M[h_j] \neq \bot$ then\\
 \nudge \nudge \nudge $\finalshare \gets \finalshare \xor M[h_j]$\\
 \nudge \nudge else if $\emptyslot = -1$ then\\
 \nudge \nudge \nudge $\emptyslot \gets h_j$\\
 \nudge \nudge else\\
-\nudge \nudge \nudge $M[h_j] \gets \bits^\lambda$\\
+\nudge \nudge \nudge $M[h_j] \getsr \bits^\lambda$\\
 \nudge \nudge \nudge $\finalshare \gets \finalshare \xor M[h_j]$\\
 \nudge $M[\emptyslot] \gets \finalshare \xor x$\\
 for $i \in \{1,2,\ldots, m\}$\\
 \nudge if $M[i] = \undefined$ then\\
-\nudge \nudge  $M[i] \gets \bits^\lambda$\\
-$\pubaux \gets M$; $\privaux \gets \lambda$\\
+\nudge \nudge  $M[i] \getsr \bits^\lambda$\\
+$\pubaux \gets M$; $\privaux \gets $???\\
 
 \medskip
-\algorithmv{$\Qry(\pubaux,\privaux,q_x)$}\\
-$M \gets \pubaux$, $\lambda \gets \privaux$, $x \gets 0^\lambda$\\
+\algorithmv{$\Qry(\pubaux,\privaux,\qry_x)$}\\
+$M \gets \pubaux$, ??? $\gets \privaux$\\
+$x' \gets 0^\lambda$\\
 for $j \in \{1,2,\dots,k\}$\\
-\nudge $h_j \gets H(j,x)$\\
-\nudge $x \gets x \xor M[h_j]$\\
-if $x = q_x$ then Return 1\\
+\nudge $h_j \gets H_{K_j}(x)$\\
+\nudge $x' \gets x' \xor M[h_j]$\\
+if $x' =x $ then Return 1\\
 Return 0
 }
 \caption{ $\Rep$ and $\Qry$ algorithms for garbled Bloom
-  filter $\Pi_{\mathrm{garbled}}$ in the ROM for a hash function $H\colon \mathbb{N} \times \calK
- \times \univ \to [m]$. The query set is $\calQ=\{q_x\colon
-  \univ \to \bits\}$ where $q_x(S)=1 \Leftrightarrow x \in S$.}
+  filter $\Pi_{\mathrm{garbled}}$ in the ROM for a hash function $H\colon \calK \times \mathbb{N} \times 
+ \univ \to [m]$. The query set is $\calQ=\{\qry_x\colon
+  \univ \to \bits\}$ where $\qry_x(S)=1 \Leftrightarrow x \in S$.}
 
 \end{figure}
 
