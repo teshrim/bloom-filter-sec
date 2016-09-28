@@ -209,6 +209,21 @@ of what it means to be canonical.
 To complete the proof, we simply note that $\hyb'_S$ and $\mbox{{\sf Ideal}}_S$
 are computationally indistinguishable, again relying on pseudorandomness of~$F$.
 \end{proof}
+\fixme{ ----The following is left only for cut-and-paste value---- }
+\begin{theorem}\label{thm:ds-ss}
+Fix $k,m,n>0$, and let $\setprim_{\mathrm{ds}}= (\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-ds}.  For any set~$S \in 2^\elts$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ such that, for any adversary~$A$
+\[
+\AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}
+\]
+where~$B$ is constructed from~$A$.  (Both~$B$ and~$\Sim$ are explicitly constructed in the proof of this theorem.)
+\end{theorem}
+\begin{proof}[Proof (sketch). ] \todo{Move this sketch to be a proof
+    of Jon's meta-result. Downgrade theorem to be a corollary of that
+    result, the proof simply being a description of how $\Rep$
+    decomposes into $\Rep_1$ and $\Rep_2$.}
+Adversary~$B^{f}$ simulates the steps of $\ExpPrivSSreal{\setprim_{\mathrm{ds}}}{A}$, using its oracle to simuate~$\Rep(S)$.  When~$f=F_K$ then the simulation is perfect.  When~$f=\rho$ then~$B$ simulates $\ExpPrivSSreal{\overline{\setprim}_{\mathrm{ds}}}{A}$ where $\overline{\Rep}$ effectively uses~$k$ independent random functions as the hash functions.  But the $\pub$ produced by $\overline{\Rep}$ has a distribution that depends only~$|S|=n$, not the specific elements of~$S$, and the other public parameters~$m,k$.  Thus, a simulator~$\Sim$ given only $\leak(S)=|S|$ can produce a correct~$\pub$ as follows: starting with an all-zeros array~$M$ of length~$m$, uniformly sample (with replacement)~$nk$ integers in~$[m]$ and set the resulting positions of~$M$ to 1.
+\end{proof}
+\fixme{ ----The above is left only for cut-and-paste value---- }
 
 %Here is a proof sketch:
 %The simulator, given n=|S|, runs the honest scheme on inputs x_1, ...,
@@ -273,21 +288,6 @@ It suffices to give the decomposition of $\Rep$ in to $\Rep_1$ and $\Rep_2$ as r
 On input a set of distinct elements $S=\{x_1,x_2,\ldots,x_n\}$, algorithm~$\Rep_1$ returns $s_1=\langle 1,x_1 \rangle, s_2=\langle 2,x_1 \rangle, \ldots, s_k\langle k,x_1\rangle, s_{k+1}=\langle 1,x_2\rangle, \ldots, s_{2k}=\langle k,x_2\rangle, \ldots ,s_{kn+1}=\langle 1,x_n\rangle, \ldots, s_{kn}=\langle k,x_n \rangle$.  On input $n,F_K(s_1),\ldots,F_K(s_{kn})$, algorithm $\Rep_2$ simply initializes an all-zero array~$M$ of~$m$-bits, and sets the positions $M[F_K(s_i)]$ to 1.  It returns~$M$ as $\pubaux$.
 \end{proof}
 
-\fixme{ ----The following is left only for cut-and-paste value---- }
-\begin{theorem}\label{thm:ds-ss}
-Fix $k,m,n>0$, and let $\setprim_{\mathrm{ds}}= (\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-ds}.  For any set~$S \in 2^\elts$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ such that, for any adversary~$A$
-\[
-\AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}
-\]
-where~$B$ is constructed from~$A$.  (Both~$B$ and~$\Sim$ are explicitly constructed in the proof of this theorem.)
-\end{theorem}
-\begin{proof}[Proof (sketch). ] \todo{Move this sketch to be a proof
-    of Jon's meta-result. Downgrade theorem to be a corollary of that
-    result, the proof simply being a description of how $\Rep$
-    decomposes into $\Rep_1$ and $\Rep_2$.}
-Adversary~$B^{f}$ simulates the steps of $\ExpPrivSSreal{\setprim_{\mathrm{ds}}}{A}$, using its oracle to simuate~$\Rep(S)$.  When~$f=F_K$ then the simulation is perfect.  When~$f=\rho$ then~$B$ simulates $\ExpPrivSSreal{\overline{\setprim}_{\mathrm{ds}}}{A}$ where $\overline{\Rep}$ effectively uses~$k$ independent random functions as the hash functions.  But the $\pub$ produced by $\overline{\Rep}$ has a distribution that depends only~$|S|=n$, not the specific elements of~$S$, and the other public parameters~$m,k$.  Thus, a simulator~$\Sim$ given only $\leak(S)=|S|$ can produce a correct~$\pub$ as follows: starting with an all-zeros array~$M$ of length~$m$, uniformly sample (with replacement)~$nk$ integers in~$[m]$ and set the resulting positions of~$M$ to 1.
-\end{proof}
-\fixme{ ----The above is left only for cut-and-paste value---- }
 
 %%%%%%%%%%%%%%%%% LINEAR-PRF %%%%%%%%%%%%%%%%%%%%
 \begin{figure}[tp]
