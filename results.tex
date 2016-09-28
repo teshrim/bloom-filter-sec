@@ -407,7 +407,7 @@ We only address the privacy of this construction, as the correctness follows imm
 \centering
 \fpage{.55}
 {
-\adversaryv{A}\\
+\adversaryv{$A$}\\
 On input $\emptystring$:\\
 \nudge $x_1 \gets \mathrm{cab}$\\
 \nudge $x_2 \gets \mathrm{bab}$\\
@@ -499,6 +499,31 @@ Return 0
 
 \end{figure}
 
+
+\begin{figure}
+\centering
+\hfpagess{.45}{.5}
+{
+\adversaryv{$A^{\TestOracle}(\pubaux)$}\\
+$M \gets \pubaux$\\
+for $1 \leq i_1 < i_2 < \cdots < i_k \leq m$\\
+\nudge $x \gets M[i_1] \xor M[i_2] \xor \cdots \xor M[i_k]$\\
+\nudge if $\TestOracle(x)=1$ then Return $\bot$
+}
+{
+\adversaryv{$A^{\TestOracle,H}(\pubaux)$}\\
+$M \gets \pubaux$\\
+for $1 \leq i_1 < i_2 < \cdots < i_k \leq m$\\
+\nudge $x \gets M[i_1] \xor M[i_2] \xor \cdots \xor M[i_k]$\\
+\nudge $x' \gets H(1,x) \xor H(2,x) \xor \cdots \xor H(k,x)$\\
+\nudge if $x=x'$ then\\
+\nudge\nudge $\TestOracle(x)$\\
+\nudge\nudge Return $\bot$\\
+}
+
+\caption{Adversary for Theorem~\ref{thm:xxx}.}
+\label{fig:adv-bi-lin-ss}
+\end{figure}
 
 
 
