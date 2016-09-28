@@ -462,7 +462,7 @@ the advantage $\AdvPrivSS{\Pi_{\mathrm{ds}},\leak}{A,\Sim}$ can be made arbitrar
 \subsection{Garbled Bloom Filter}
 \begin{figure}
 \centering
-\fpage{.525}
+\fpage{.75}
 {
 \algorithmv{$\Rep(S)$}\\
 $M \gets (\bot)^m$\\
@@ -482,11 +482,15 @@ for $x \in S$\\
 for $i \in \{1,2,\ldots, m\}$\\
 \nudge if $M[i] = \undefined$ then\\
 \nudge \nudge  $M[i] \getsr \bits^\lambda$\\
-$\pubaux \gets M$; $\privaux \gets $???\\
+$\pubaux \gets M$; $\privaux \gets \langle K_1,K_2,\ldots,K_k \rangle$ \mbox{ (if secret hash version)}\\
+$\pubaux \gets \langle M,K_1,K_2,\ldots,K_k \rangle$; $\privaux \gets \emptystring$ \mbox{(if public hash version)}\\
 
 \medskip
 \algorithmv{$\Qry(\pubaux,\privaux,\qry_x)$}\\
-$M \gets \pubaux$, ??? $\gets \privaux$\\
+if $\privaux \neq \emptystring$ then\\
+\nudge $M \gets \pubaux$, $K_1,K_2,\ldots,K_k \gets \privaux$\\
+else\\
+\nudge $M,K_1,K_2,\ldots,K_k \gets \pubaux$\\
 $x' \gets 0^\lambda$\\
 for $j \in \{1,2,\dots,k\}$\\
 \nudge $h_j \gets H_{K_j}(x)$\\
@@ -495,7 +499,7 @@ if $x' =x $ then Return 1\\
 Return 0
 }
 \caption{ $\Rep$ and $\Qry$ algorithms for garbled Bloom
-  filter $\Pi_{\mathrm{garbled}}$ in the ROM for a hash function $H\colon \calK \times \mathbb{N} \times 
+  filter $\Pi_{\mathrm{garbled}}$ in the ROM for a hash function $H\colon \calK \times 
  \univ \to [m]$. The query set is $\calQ=\{\qry_x\colon
   \univ \to \bits\}$ where $\qry_x(S)=1 \Leftrightarrow x \in S$.}
 
@@ -513,8 +517,8 @@ for $1 \leq i_1 < i_2 < \cdots < i_k \leq m$\\
 \nudge if $\TestOracle(x)=1$ then Return $\bot$
 }
 {
-\adversaryv{$A^{\TestOracle,H}(\pubaux)$}\\
-$M \gets \pubaux$\\
+\adversaryv{$A^{\TestOracle}(\pubaux)$}\\
+$M,K_1,K_2,\ldots,K_k \gets \pubaux$\\
 for $1 \leq i_1 < i_2 < \cdots < i_k \leq m$\\
 \nudge $x \gets M[i_1] \xor M[i_2] \xor \cdots \xor M[i_k]$\\
 \nudge $x' \gets H(1,x) \xor H(2,x) \xor \cdots \xor H(k,x)$\\
@@ -523,7 +527,7 @@ for $1 \leq i_1 < i_2 < \cdots < i_k \leq m$\\
 \nudge\nudge Return $\bot$\\
 }
 
-\caption{Adversary for Theorem~\ref{thm:xxx}.}
+\caption{Adversary for Theorem~\ref{thm:xxx}.  \textbf{Left:} secret hash case, \textbf{Right:} public hash case.}
 \label{fig:adv-bi-lin-ss}
 \end{figure}
 
