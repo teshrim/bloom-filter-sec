@@ -29,7 +29,7 @@ Return 1
 $M \gets 0^m$; $K \getsr \calK$\\
 for $x \in S$\\
 \nudge for $j \in \{1,2,\ldots,k\}$\\
-\nudge\nudge $h_j \gets F_{K}(j,x) $\\
+\nudge\nudge $h_j \gets F_{K}(\langle j,x \rangle) $\\
 \nudge\nudge $M[h_j] \gets 1$\\
 $\pubaux \gets M$, $\privaux \gets \langle K \rangle$\\
 Return $(\pubaux,\privaux)$\\
@@ -55,7 +55,7 @@ Return 1
 \subsection{Classical Bloom filter in random oracle model (ROM). }
 
 \heading{Correctness. }
-Fix $n,k,m \geq 0$ and let $\mathcal{S}=[\univ]^n$.  Then $\Pi_{\mathrm{Bloom}}= (\Rep, \Qry)$ is defined as in Figure~\ref{fig:bf-and-garbled-bf} (left side).  The following theorem proves correctness for this construction.  Again, we stress that this correctness is with respect to adaptive adversaries, aiming to find $r \geq 1$ errors (in this case, false-positives), and with public hash functions.
+Fix $n,k,m \geq 0$, and fix a universe~$\univ$.  Then $\Pi_{\mathrm{Bloom}}= (\Rep, \Qry)$ is defined as in Figure~\ref{fig:bf-and-lin} (left side).  We define~$\Pi_{\mathrm{Bloom}}$ in the random oracle model, as the traditional analysis of Bloom filter correctness (as a function of $n,k,m$) is done in this model.\footnote{The standard model version would have $\Rep$ choose $H_1,H_2,\ldots,H_k$ from a hash function family, compute $h_j$ using these, and placing their description in $\pubaux$.}  The following theorem proves that the Bloom filter meets our correctness notion in the ROM.  Again, we stress that this correctness is with respect to adaptive adversaries, aiming to find $r \geq 1$ errors (in this case, false-positives).
 The proof appears in Appendix~\ref{sec:thm3_fp}.
 
 \begin{theorem}\label{thm3}\label{thm:bf-correctness}
