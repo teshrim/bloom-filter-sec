@@ -80,14 +80,13 @@ the simulator needs to call the random oracle on the points in~$S$ in order to `
 
 We note that this will be true for \emph{any} data structure that returns an empty $\privaux$, because this implies that $\pubaux$ alone suffices to evaluate $\Qry(\pubaux,\privaux,\cdot)$.  
 
-\begin{theorem}\label{thm3}\label{thm:bf-ow}
-Fix $k,m,n,r>0$, and let $\Pi_{\mathrm{Bloom}}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure just described. For any adversary~$A$ that makes a total of~$q_T$ queries to the $\Test$ oracle, and $q_R$ queries to the RO, and has time-complexity~$O(t)$,
+\begin{theorem}\label{thm3}\label{thm:bf-ow} \todo{Finish typesetting.  Result is on chalkboard.}
+Fix $k,m,n,r>0$, and let $\Pi_{\mathrm{Bloom}}= (\Rep, \Qry)$ be the set-multiplicity data structure just described. Let $\distr{}{}$ be a distribution over subsets of universe~$\univ$, where $\mu = H_\infty(\distr{}{})$.  For any adversary~$A$ that makes $q$~queries to its oracle
 \[
-\AdvCorrect{\Pi_{\mathrm{Bloom}},\distr{\calS}{},r}{A} \leq  {\dbinom{q_T + q_H}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
+\AdvPrivOW{\Pi_{\mathrm{Bloom}},\distr{}{},r}{A} \leq  \frac{(kqn+n)}{2^{\mu}}
 \]
 \end{theorem}
 
-\todo{distributional-SS or OW privacy proof for classic BF in the ROM}
 
 \subsection{Privacy of Secretly Keyed Canonical Data Structures}
 Here we prove a result that can be used to show that a large class of ``canonical''
