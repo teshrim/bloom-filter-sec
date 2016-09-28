@@ -19,13 +19,13 @@ We consider an abstract notion of data structures.
 %Informally, the representation should serve as a good
 %approximation of the multiset, at least with respect to the allowed queries.
 \begin{definition}[Data structure] \rm
-Fix sets~${\cal U}, \Gamma$, and $\calQ = \{\qry \colon {\cal U} \to
+Fix sets~$\univ, \Gamma$, and $\calQ = \{\qry \colon \univ \to
 \Gamma\}$. A \emph{data structure} (supporting queries $\calQ$ over
-universe ${\cal U}$) is a tuple $\setprim=(\Rep, \Qry)$ where:
+universe $\univ$) is a tuple $\setprim=(\Rep, \Qry)$ where:
 \begin{itemize}
-\item $\Rep \colon {\cal U} \to \bits^* \times \bits^*$ is a
+\item $\Rep \colon \univ \to \bits^* \times \bits^*$ is a
     randomized \emph{representation algorithm}, taking as input
-    an element $S \in \mathcal{U}$,
+    an element $S \in \univ$,
     and outputting %a \emph{representation} $M \in \Sigma^*$,
     \emph{public representation data} $\pubaux \in \bits^*$ and
     \emph{private representation data} $\privaux \in \bits^*$.
@@ -53,7 +53,7 @@ $\Rep$ would allow this.}
   commented out. }
 \begin{definition}[Error probability and rate] \rm
 For a specific data structure $\setprim=(\Rep, \Qry)$ supporting
-queries ${\cal Q}$ over universe ${\cal U}$, let
+queries $\calQ$ over universe $\univ$, let
 $\mathrm{Err}(S,\qry,\pubaux,\privaux)$ be  true iff
 $\Qry(\pubaux,\privaux, \qry) \neq \qry(S)$.  Then we say that $\Pi$
 has \emph{error probability}~$\epsilon$ if
@@ -118,18 +118,18 @@ from~$Q$, for all~$i\in[T]$ we have
 $\Prob{\mathrm{Err}_i=1}=1/|\univ| \ll 1/n = \epsilon$.
 }
 
-\heading{Data structures for set-membership queries.} An important
-special case is a data structure that supports set-membership
+%\heading{Data structures for set-membership queries.} 
+An important special case is a data structure that supports set-membership
 queries. \jnote{I changed this from multiplicity to membership.}
 
 \begin{definition} \rm
 A \emph{set-membership data structure over $\univ$} is a data
-structure with ${\cal U} \subseteq 2^\univ$, $\Gamma=\{0,1\}$, and
+structure with $\univ \subseteq 2^\elts$, $\Gamma=\{0,1\}$, and
 $\calQ=\{\qry_x\}_{x \in \univ}$, where $\qry_x(S)$ is true iff $x
 \in S$. \hfill\dqed
 \end{definition}
 
-Note that we do not require ${\cal U} = 2^\univ$ since, e.g., a
+Note that we do not require $\univ = 2^\elts$ since, e.g., a
 set-membership data structure may only be defined for sets up to
 some bounded size.
 
