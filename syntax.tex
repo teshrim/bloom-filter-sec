@@ -55,7 +55,7 @@ $\Rep$ would allow this.}
 For a specific data structure $\setprim=(\Rep, \Qry)$ supporting
 queries $\calQ$ over universe $\univ$, let
 $\mathrm{Err}(S,\qry,\pubaux,\privaux)$ be  true iff
-$\Qry(\pubaux,\privaux, \qry) \neq \qry(S)$.  Then we say that $\Pi$
+$\Qry(\pubaux,\privaux, \qry) \neq \qry(S)$.  Then we say that $\setprim$
 has \emph{error probability}~$\epsilon$ if
 \[\max_{S,\qry}\Pr[(\pubaux,\privaux) \getsr \Rep(S) :
 \mathrm{Err}(S,\qry,\pubaux,\privaux)=1 ] \leq \epsilon.\]
@@ -92,7 +92,7 @@ other sources of randomness.   We illustrate how this surfaces with
 the following example.
 
 \jnote{The following may need to be updated to fit the new syntax.}
-Let~$\Pi$ be a data structure that has error-probability $\epsilon$,
+Let~$\setprim$ be a data structure that has error-probability $\epsilon$,
 and consider a correctness-violating attack that asks random queries
 $\qry_1,\qry_2,\ldots,\qry_T$, i.e., uniform samples from~$\calQ$.
 Let $\mathrm{Err}_i$ be a random variable indicating the event
