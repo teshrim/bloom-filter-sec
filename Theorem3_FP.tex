@@ -1,3 +1,5 @@
+\section{Proof of \Cref{thm3}}
+\label{sec:thm3_fp}
 \begin{proof}[\Cref{thm3}]
 We use a game playing argument to prove this theorem in the ROM. In $\game{0}$, the $\Hash$ does lazy sampling of elements from $[m]$ to mimic a random oracle(RO). For every distinct query, $\Hash$ returns a random value sampled from $[m]$. Here, the adversary $A$, along with $\Rep$ and $\Qry$ are given access to $\Hash$. It can be seen that, $\game{0}$ exactly simulates the correctness game of $\Pi_{\mathrm{Bloom}}$. So, $\AdvCorrect{\Pi_{\mathrm{Bloom}},\distr{\calS}{},r}{A} = \Prob{\game{0}(A) = 1}$.
 
