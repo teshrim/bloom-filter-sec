@@ -32,7 +32,7 @@ set-membership queries. Specifically, we show \ldots
 
 \heading{Comparison to~\cite{naor2015bloom}.} Naor and
 Yogev~\cite{naor2015bloom} recently considered the problem of
-adversarial soundness for (variants of) Bloom filters and, indeed,
+adversarial soundness for Bloom filters and, indeed,
 their worked served as inspiration for our own. Our work extends
 their work significantly in several directions. For starters, we
 consider abstract data structures (rather than only the case of
@@ -61,7 +61,26 @@ to the Naor-Yogev treatment:
     \jnote{Do we? Perhaps we want to explicitly adapt some of
     our definitions to the ROM?}
 \end{itemize}
+\tsnote{I think we can say a bit more here about what they show, and
+  why their presentation is lacking, certainly as a work that anchors
+  an important area of study.  This feels a bit weak, at the moment.
+  For example, at the opening of this section we say they consider
+  ``adversarial soundness for Bloom filters'', but I assert that it
+  isn't clear that their syntax allows them to study Bloom filters at all.}
+We give a more detailed comparison to, and criticism of~\cite{naor2015bloom} in Appendix~\ref{sec:xxx}.
 
+
+\todo{Describe the BF variants we consider, and briefly why they are
+  natural/interesting.}
+\todo{Surface contribution of setting the stage for a bunch of future
+  work: dynamic data-structures (including counting BFs, stable BFs,
+  hierachical BFs, count-min-sketches, etc.); security of common
+  usages of BF and related data structrues (e.g. CDNs and other
+  distributed storage, find more); more generally bringing to the
+  attention of the community the need to give proper cryptographic
+  treatment to data structures (which may not have been conceived with
+  security-critical applications in mind but have been co-opted for
+  them (like BFs).}
 %false-positive error, is a parameter of the Bloom filter.  (The
 %values of~$\epsilon,m,k$, and $|\mathcal{S}|$ are related in a
 %well-known way.) NY recast this soundness condition as a game in

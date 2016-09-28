@@ -59,12 +59,21 @@ Fix $n,k,m \geq 0$, and fix a set $\elts$.  Then the classical Bloom filter set-
 The proof appears in Appendix~\ref{sec:thm3_fp}.
 
 \begin{theorem}\label{thm3}\label{thm:bf-correctness}
-Fix $k,m,n,r>0$, and let $\setprim_{\mathrm{Bloom}}= (\Rep, \Qry)$ be classical Bloom filter set-membership data structure. For any adversary~$A$ that makes a total of~$q_T$ queries to the $\Test$ oracle, and $q_R$ queries to the RO, and has time-complexity~$O(t)$,
+Fix $k,m,n,r>0$, a set~$\elts$, and let $\setprim_{\mathrm{Bloom}}= (\Rep, \Qry)$ be classical Bloom filter (set-membership) data structure. For any adversary~$A$ that makes a total of~$q_T$ queries to the $\Test$ oracle, and $q_R$ queries to the RO, and has time-complexity~$O(t)$,
 \[
 \AdvCorrect{\setprim_{\mathrm{Bloom}},r}{A} \leq  {\dbinom{q_T + q_H}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
 \]
 \end{theorem}
-
+The proof appears in Appendix~\ref{app:xxx}.  We note that Kirsch and Mitzenmacher~\cite{xxx} show
+that the ($r=1$, zero-query) FP-probability for~$\setprim_\mathrm{Bloom}$ is
+always within $O(1/n)$ of $(1-e^{-kn/m})^k$, although the asymptotic
+rate of convergence is faster than~$1/n$.  The multiplicative (``hybrid'') term arises as a result
+of moving from the adaptive to the zero-query setting.  
+Finally, $\dbinom{q_T+q_H}{r} \leq (q_T+q_H)^r$ (with reasonable tightness when~$r$ is small) in 
+which case the final term in the bound behaves as
+$((q_T+q_H) (1-e^{-kn/m})^k + O(q/n) )^r$; loosely, this is the bound one expects for
+trying to find a single FP in each of~$r$ independent``rounds'', each round
+consisting of~$(q_T+q_H)$ attempts.
 %\input{Theorem3_FP}
 
 \heading{Privacy. }
@@ -81,7 +90,7 @@ the simulator needs to call the random oracle on the points in~$S$ in order to `
 We note that this will be true for \emph{any} data structure that returns an empty $\privaux$, because this implies that $\pubaux$ alone suffices to evaluate $\Qry(\pubaux,\privaux,\cdot)$.  
 
 \begin{theorem}\label{thm3}\label{thm:bf-ow} 
-Fix $k,m,n,r>0$, and let $\setprim_{\mathrm{Bloom}}= (\Rep, \Qry)$ be the set-multiplicity data structure just described. Let $\distr{}{}$ be a distribution over subsets of universe~$\univ$, where $\mu = H_\infty(\distr{}{})$.  For any adversary~$A$ that makes $q$~queries to its oracle
+Fix $k,m,n,r>0$, a set~$\elts$, and let $\setprim_{\mathrm{Bloom}}= (\Rep, \Qry)$ be the classical Bloom filter data structure just described. Let $\distr{}{}$ be a distribution over subsets of universe~$\univ=2^\elts$, where $\mu = H_\infty(\distr{}{})$.  For any adversary~$A$ that makes $q$~queries to its oracle
 \[
 \AdvPrivOW{\setprim_{\mathrm{Bloom}},\distr{}{},r}{A} \leq  \frac{(kqn+n)}{2^{\mu}}
 \]
@@ -243,7 +252,7 @@ correct against adaptive adversaries.
 % keys.
 
 \begin{theorem}\label{thm2}\label{thm:ds-correctness}
-Fix $k,m,n,r>0$, and let $\setprim_{\mathrm{ds}}= (\Rep, \Qry)$ be the set-multiplicity data structure in Figure~\ref{fig:lin-and-ds}.  For any adversary~$A$ that makes a total of~$q$ queries to its oracle and has time-complexity~$O(t)$, there exists a prf-adversary ~$B$ (explicitly constructed in the proof of this theorem) such that
+Fix $k,m,n,r>0$, a set~$\elts$, and let $\setprim_{\mathrm{ds}}= (\Rep, \Qry)$ be the set-membership data structure in Figure~\ref{fig:lin-and-ds}.  For any adversary~$A$ that makes a total of~$q$ queries to its oracle and has time-complexity~$O(t)$, there exists a prf-adversary ~$B$ (explicitly constructed in the proof of this theorem) such that
 \[
 \AdvCorrect{\setprim_{\mathrm{ds}},r}{A} \leq  \AdvPRF{F}{B}  + {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
 \]
@@ -253,7 +262,7 @@ Here, $B$ asks $q$ queries, and has time complexity $O(t+qm)$.
 \heading{Privacy. }
 The privacy of $\setprim_{\mathrm{ds}}$ follows directly from our general result, Theorem~\ref{thm:xxx}.
 \begin{theorem}\label{thm:ds-ss}
-Fix $k,m,n>0$, and let $\setprim_{\mathrm{ds}}= (\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-ds}.  For any set~$S$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ and adversary~$B$ such that, for any adversary~$A$
+Fix $k,m,n>0$, a set~$\elts$, and let $\setprim_{\mathrm{ds}}= (\Rep, \Qry)$ be the set-membership data structure described in Figure~\ref{fig:lin-and-ds}.  For any set~$S \in 2^\elts$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ and adversary~$B$ such that, for any adversary~$A$
 \[
 \AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}
 \]
@@ -266,7 +275,7 @@ On input a set of distinct elements $S=\{x_1,x_2,\ldots,x_n\}$, algorithm~$\Rep_
 
 \fixme{ ----The following is left only for cut-and-paste value---- }
 \begin{theorem}\label{thm:ds-ss}
-Fix $k,m,n>0$, and let $\setprim_{\mathrm{ds}}= (\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-ds}.  For any set~$S$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ such that, for any adversary~$A$
+Fix $k,m,n>0$, and let $\setprim_{\mathrm{ds}}= (\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-ds}.  For any set~$S \in 2^\elts$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ such that, for any adversary~$A$
 \[
 \AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}
 \]
@@ -336,7 +345,7 @@ Return 0
 The scheme from Neidermayer et al.\cite{xxx}, $\setprim_{\bilin}$. The $\mathsf{bigram}$
 algorithm takes a string~$x=x_1,x_2,\ldots,x_\ell$ as input, and
 returns the set of bigrams for the left- and right-padded string
-$\sqcup x \sqcup$, i.e. $\{\sqcup x_1, x_1x_2,\ldots,x_\ell\sqcup\}$.
+$\sqcup x \sqcup$, i.e. $\{\sqcup x_1, x_1x_2,\ldots,x_{\ell-1}x_\ell,x_\ell\sqcup\}$.
 }
 \label{fig:lin-and-bi-lin}
 \label{fig:neidermayer}
@@ -355,7 +364,7 @@ Taken together, the results of this section and the next highlight how sensitive
 For now, let $n,k,m \geq 0$.  Then $\setprim_{\mathrm{lin}}= (\Rep, \Qry)$ is defined as in Figure~\ref{fig:lin-and-ds} (left side).  The following result shows, informally, that if~$F$ is a good PRF, then $\setprim_{\mathrm{lin}}$ is correct against adaptive error-finding adversaries.
 
 \begin{theorem}\label{thm1}\label{thm:lin-correctness}
-Fix $k,m,n,r>0$, and let $\setprim_{\mathrm{lin}}= (\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-bin-lin}.  For any adversary~$A$ that makes a total of~$q$ queries to its oracle and has time-complexity~$O(t)$, there exist prf-adversaries~$B_1,B_2$ (explicitly constructed in the proof of this theorem) such that
+Fix $k,m,n,r>0$, a set~$\elts$, and let $\setprim_{\mathrm{lin}}= (\Rep, \Qry)$ be the set-membership data structure described in Figure~\ref{fig:lin-and-bin-lin}.  For any adversary~$A$ that makes a total of~$q$ queries to its oracle and has time-complexity~$O(t)$, there exist prf-adversaries~$B_1,B_2$ (explicitly constructed in the proof of this theorem) such that
 \[
 \AdvCorrect{\setprim_{\mathrm{lin}},r}{A} \leq  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}  +{\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
 \]
@@ -364,17 +373,12 @@ Here, $B_1$ and $B_2$, each ask~$q$ oracle queries and have time complexity~$O(t
 The proof appears in Appendix~\ref{app:xxx}.  We note that Kirsch and Mitzenmacher~\cite{xxx} show
 that the ($r=1$, zero-query) FP-probability for~$\setprim_\mathrm{lin}$ is
 always within $O(1/n)$ of $(1-e^{-kn/m})^k$, although the asymptotic
-rate of convergence is faster than~$1/n$.  The factor of $\dbinom{q}{r}$ arises as a result
-of moving from the adaptive to the zero-query setting.  Finally, $\dbinom{q}{r} \leq q^r$ (with
-reasonable tightness when~$r$ is small) in which case the final term in the bound behaves as
-$(q (1-e^{-kn/m})^k + O(q/n) )^r$; loosely, the bound one expects for
-trying to find a single FP in each of~$r$ independent``rounds'', each round
-consisting of~$q$ attempts.
+rate of convergence is faster than~$1/n$.   As in previous cases, the multiplicative term $\dbinom{q}{r}$ arises when switching from the adaptive to zero-query settings.
 
 \heading{Privacy. }
 The SS-privacy of the linear-PRF hash construction follows directly from~Theorem~\ref{thm:xxx}.
 \begin{theorem}\label{thm:lin-privacy}
-Fix $k,m,n,r>0$, and let $\setprim_{\mathrm{lin}}= (\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-bin-lin}. For any set~$S$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ and an adversary~$B$ such that, for any adversary~$A$
+Fix $k,m,n,r>0$, a set $\elts$, and let $\setprim_{\mathrm{lin}}= (\Rep, \Qry)$ be the set-membership data structure described in Figure~\ref{fig:lin-and-bin-lin}. For any set~$S$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ and an adversary~$B$ such that, for any adversary~$A$
 \[
 \AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}
 \]
@@ -395,11 +399,12 @@ On input $n,F_K(s_1),F_K(s_2),\ldots,F_K(s_{2n-1}) , F_K(s_{2n})$, algorithm $\R
 %\heading{Correctness.} 
 %\todo{Correctness theorem for this scheme.  Should follow pretty closely the one for ``plain'' linear-PRF.}\tsnote{Actually not sure this is that interesting, but for parallel structure one would want to give it.}
 \heading{Privacy. }
-We only address the privacy of this construction, as the correctness follows immediately from the correctness of the Linear-PRF contruction.  The privacy, however, does not.  Here we exhibit an efficient SS-privacy attack even when simulator is provided nearly the entire set.  Consider the following leakage function.  On input a set~$S=\{x_1,x_2,\ldots,x_n\}$, it assigns $x'_n \gets x_n[1:|x_n|-1]$ and returns $\mathsf{leak}(S)=\{x_1,x_2,\ldots,x'_n\}$.  
+Consider the set-membership data structure given in Figure~\ref{fig:lin-and-bi-lin} (right side), which we call the \emph{bigram linear-PRF} construction.  This construction is of practical interest, as it has been suggested as a way to address the privacy-preserving record-linkage problem, in particular for linking common records in medical databases~\cite{neidermayer,xxx}. 
+We only address the privacy of this construction, as the correctness follows immediately from the correctness of the Linear-PRF contruction.  The privacy, however, does not.  Here we exhibit an efficient SS-privacy attack even when simulator is provided nearly the entire set.  Consider the following leakage function.  On input a set~$S=\{x_1,x_2,\ldots,x_n\}$, it assigns $x'_n \gets x_n[1:|x_n|-1]$ and returns $\mathsf{leak}(S)=\{x_1,x_2,\ldots,x'_n\}$.  \todo{OW privacy proof? Or just some text that says that Neidermayer et al show something stronger~---OW-privacy violation---~albeit with $n=10000, m=10000\alpha$ for an $\alpha$ that I need to look up.}
 
 \begin{figure}
 \centering
-\fpage{.55}
+\fpage{.65}
 {
 \adversaryv{$A$}\\
 On input $\emptystring$:\\
@@ -423,8 +428,7 @@ On input $\pub \neq \emptystring$:\\
 \end{figure}
 
 \begin{theorem}\label{thm:bi-lin-ss}
-Let $\setprim_{\bilin}= (\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:neidermayer}, but instantiated with $F_{K}$ replaced by a random functions~$\rho$.  Let $\leak$ be the leakage function just described.   Let~$\univ=\{\mathrm{a,b,c}\}^*$. Let $n=3$,  $m=3\alpha $ for integer $\alpha >> 1$, and let, $k = \lceil \ln(2) \alpha \rceil$.\tsnote{This value of~$k$ is from the classical analysis for minimizing the FP rate for a Bloom filter, and is set this way for compatibility with classical results.  It isn't used in any essential way in the proof sketch.}  Let~$A$ be the adversary in Figure~\ref{fig:adv-bi-lin-ss}.  Then for any simulator $\Sim$, the advantage $\AdvPrivSS{\setprim_{\bilin},\leak}{A,\Sim}$ can be made arbitrarily close to $1/2$ by choice of~$\alpha$.
-
+Let $\setprim_{\bilin}= (\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:neidermayer}, but instantiated with $F_{K}$ replaced by a random functions~$\rho$.  Let $\leak$ be the leakage function just described.   Let~$\elts=\{\mathrm{a,b,c}\}^*$. Let $n=3$,  $m=3\alpha $ for integer $\alpha >> 1$, and let, $k = \lceil \ln(2) \alpha \rceil$.\tsnote{This value of~$k$ is from the classical analysis for minimizing the FP rate for a Bloom filter, and is set this way for compatibility with classical results.  It isn't used in any essential way in the proof sketch.}  Let~$A$ be the adversary in Figure~\ref{fig:adv-bi-lin-ss}.  Then for any simulator $\Sim$, the advantage $\AdvPrivSS{\setprim_{\bilin},\leak}{A,\Sim}$ can be made arbitrarily close to $1/2$ by choice of~$\alpha$.
 \end{theorem}
 \begin{proof}(Sketch.)
 On input the set~$S$ produced by~$A$, the $\Rep$ algorithm turns $x_1=$'cab', $x_2=$'bab' and $x_3$ into their respective bigram sets: $B_{x_1}=\{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{b}\sqcup\}$, $B_{x_2}=\{\sqcup\mathrm{b},\mathrm{ba},\mathrm{ab}, \mathrm{b}\sqcup \}$; the set $B_{x_3}$ will be either $\{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{ba}, \mathrm{a}\sqcup\}$, or $\{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{bc}, \mathrm{c}\sqcup\}$, each with probability 1/2.  It then produces $\alpha$-bit arrays $M_1, M_2, M_3$ by hashing the corresponding bigram sets using the hash functions $h_j(s)=\rho_1(s)+ j\rho_2(s) \bmod m$.  Note that for sufficiently large~$m$, each of $M_1,M_2$ will contain exactly $4k$ positions set to 1; this is with overwhelming probability, up to collisions in the hash functions for different bigrams within a given bigram set.  Likewise, $M_{1,2}=M_1 \vee M_2$ will have exactly $6k$ positions set to 1, because $B_{x_1}$ and $B_{x_2}$ share $\mathrm{ab}$ and $\mathrm{a}\sqcup$.
@@ -438,7 +442,7 @@ bit~$z$, so at best it can cause~$A$ to output 1 with
 probabilility~$1/2$.  That is $\ExpPrivSSsim{\setprim_{\bilin}}{A,\Sim} \leq 1/2$.
 \end{proof}
 
-\todo{OW privacy proof? Or just some text that says that Neidermayer et al show something stronger~---OW-privacy violation---~albeit with $n=10000, m=10000\alpha$ for an $\alpha$ that I need to look up.}
+
 
 
 %%%%%%%%%%%%%%%%% Bigram DOMAIN-SEPARATED PRF %%%%%%%%%%%%%%%%%%%%
@@ -446,7 +450,7 @@ probabilility~$1/2$.  That is $\ExpPrivSSsim{\setprim_{\bilin}}{A,\Sim} \leq 1/2
 We note that Neidermayer et al. in~\cite{xxx} suggest replacing the linear-PRF hash functions in the previous construction with independently keyed PRFs as a countermeasure to their attack.  In terms of SS-privacy, however, this change offers no help.  The following theorem is proved via a nearly identical argument as Theorem~\ref{thm:bi-lin-ss}
 
 \begin{theorem}\label{thm:bi-ds-ss}
-Let $\setprim_{\bilin}= (\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:neidermayer}, but instantiated with $F_{K}$ replaced by a random functions~$\rho$.  Let $\leak$ be the leakage function described just prior to Theorem~\ref{thm:bi-lin-ss}.   Let~$\univ=\{\mathrm{a,b,c}\}^*$. Let $n=3$,  $m=3\alpha $ for integer $\alpha >> 1$, and let, $k = \lceil \ln(2) \alpha \rceil$.\tsnote{This value of~$k$ is from the classical analysis for minimizing the FP rate for a Bloom filter, and is set this way for compatibility with classical results.  It isn't used in any essential way in the proof sketch.}  Let~$A$ be the adversary in Figure~\ref{fig:adv-bi-lin-ss}.  Then for any simulator $\Sim$,
+Let $\setprim_{\bilin}= (\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:neidermayer}, but instantiated with $F_{K}$ replaced by a random functions~$\rho$.  Let $\leak$ be the leakage function described just prior to Theorem~\ref{thm:bi-lin-ss}.   Let~$\elts=\{\mathrm{a,b,c}\}^*$. Let $n=3$,  $m=3\alpha $ for integer $\alpha >> 1$, and let, $k = \lceil \ln(2) \alpha \rceil$.\tsnote{This value of~$k$ is from the classical analysis for minimizing the FP rate for a Bloom filter, and is set this way for compatibility with classical results.  It isn't used in any essential way in the proof sketch.}  Let~$A$ be the adversary in Figure~\ref{fig:adv-bi-lin-ss}.  Then for any simulator $\Sim$,
 the advantage $\AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim}$ can be made arbitrarily close to $1/2$ by choice of~$\alpha$.
 \end{theorem}
 
