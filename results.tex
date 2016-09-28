@@ -319,7 +319,7 @@ for each $x \in S$\\
 \nudge for each $b \in B_x$\\
 \nudge\nudge for $j \in [k]$\\
 \nudge\nudge\nudge $i \gets F_{K}(\langle 1, b\rangle)+j\cdot
-F_{K}(\langle b  \rangle) \bmod m$\\
+F_{K}(\langle 2, b  \rangle) \bmod m$\\
 \nudge\nudge\nudge $M_x[i] \gets 1$\\
 \nudge $\pubaux \gets \langle\pubaux, M_x \rangle$\\
 $\privaux \gets \langle K_1,K_2 \rangle$\\
@@ -331,7 +331,7 @@ $B \gets \mathsf{bigram}(x)$\\
 $\overline{M} \gets 0^m$\\
 for each $b \in B$\\
 \nudge for $j \in [k]$\\
-\nudge\nudge $i \gets F_{K}(\langle 1,b \rangle)+j\cdot F_{K}(\langle2,b \rangle) \bmod m$\\
+\nudge\nudge $i \gets F_{K}(\langle 1,b \rangle)+j\cdot F_{K}(\langle 2,b \rangle) \bmod m$\\
 \nudge\nudge $\overline{M}[i] \gets 1$\\
 if $M \in \pubaux$ then Return 1 \\
 Return 0
