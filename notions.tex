@@ -100,7 +100,7 @@ focus on sets rather than multisets. Before continuing, it will be useful to def
 of guessing an element in a set chosen from some distribution.
 Let ${\cal D}$ be a distribution over subsets of some universe ${\cal X}$. The \emph{point-wise
 min-entropy} of ${\cal D}$ is defined as
-\[H_\infty({\cal D}) \bydef -\log \max_{x \in {\cal X}} \Pr[S \getsr {\cal D} : x \in S].\]
+$H_\infty({\cal D}) \bydef -\log \max_{x \in {\cal X}} \Pr[S \getsr {\cal D} : x \in S]$.
 
 \tsnote{I think we should switch the order of presentation, since we
   use the SS notion much more. }
@@ -236,7 +236,7 @@ over subsets of some universe ${\cal X}$, define
 
 \jnote{Make theorem statements consistent -- get rid of $(t, \epsilon)$-style.}
 
-\begin{theorem}
+\begin{theorem}\todo{rewrite}
 Let $\setprim$ be a set-representation data structure that is $(t, \epsilon)$-semantically secure
 with respect to leakage ${\sf leak}:2^{\cal X} \rightarrow R$.
 Then $\AdvPrivOW{\setprim,\mathcal{D}}{t} \leq 2^{-\tilde H_\infty({\cal D} \mid {\sf leak})} + \epsilon$.

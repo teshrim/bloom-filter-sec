@@ -44,7 +44,7 @@ Return 1
 }
 \caption{{\bf Left:} $\Rep$ and $\Qry$ algorithms for classic Bloom
   filter $\setprim_{\mathrm{Bloom}}$ in the ROM for a hash function $H\colon \mathbb{N} \times
-  \univ \to [m]$. {\bf Right:} $\Rep$ and $\Qry$
+  \elts \to [m]$. {\bf Right:} $\Rep$ and $\Qry$
   algorithms for the domain-separated PRF data structure
   $\setprim_{\mathrm{ds}}$, using function family $F \colon
   \calK \times \elts \to [m]$.  Both constructions have query set is $\calQ=\{q_x\colon
@@ -55,11 +55,11 @@ Return 1
 \subsection{Classical Bloom filter in random oracle model (ROM). }
 
 \heading{Correctness. }
-Fix $n,k,m \geq 0$, and fix a universe~$\univ$.  Then $\setprim_{\mathrm{Bloom}}= (\Rep, \Qry)$ is defined as in Figure~\ref{fig:bf-and-lin} (left side).  We define~$\setprim_{\mathrm{Bloom}}$ in the random oracle model, as the traditional analysis of Bloom filter correctness (as a function of $n,k,m$) is done in this model.\footnote{The standard model version would have $\Rep$ choose $H_1,H_2,\ldots,H_k$ from a hash function family, compute $h_j$ using these, and placing their description in $\pubaux$.}  The following theorem proves that the Bloom filter meets our correctness notion in the ROM.  Again, we stress that this correctness is with respect to adaptive adversaries, aiming to find $r \geq 1$ errors (in this case, false-positives).
+Fix $n,k,m \geq 0$, and fix a set $\elts$.  Then the classical Bloom filter set-membership data structure $\setprim_{\mathrm{Bloom}}= (\Rep, \Qry)$ is defined as in Figure~\ref{fig:bf-and-lin} (left side).  We define~$\setprim_{\mathrm{Bloom}}$ in the random oracle model, as the traditional analysis of Bloom filter correctness (as a function of $n,k,m$) is done in this model.\footnote{The standard model version would have $\Rep$ choose $H_1,H_2,\ldots,H_k$ from a hash function family, compute $h_j$ using these, and placing their description in $\pubaux$.}  The following theorem proves that the Bloom filter meets our correctness notion in the ROM.  Again, we stress that this correctness is with respect to adaptive adversaries, aiming to find $r \geq 1$ errors (in this case, false-positives).
 The proof appears in Appendix~\ref{sec:thm3_fp}.
 
 \begin{theorem}\label{thm3}\label{thm:bf-correctness}
-Fix $k,m,n,r>0$, and let $\setprim_{\mathrm{Bloom}}= (\Rep, \Qry)$ be the set-multiplicity data structure just described. For any adversary~$A$ that makes a total of~$q_T$ queries to the $\Test$ oracle, and $q_R$ queries to the RO, and has time-complexity~$O(t)$,
+Fix $k,m,n,r>0$, and let $\setprim_{\mathrm{Bloom}}= (\Rep, \Qry)$ be classical Bloom filter set-membership data structure. For any adversary~$A$ that makes a total of~$q_T$ queries to the $\Test$ oracle, and $q_R$ queries to the RO, and has time-complexity~$O(t)$,
 \[
 \AdvCorrect{\setprim_{\mathrm{Bloom}},r}{A} \leq  {\dbinom{q_T + q_H}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
 \]
@@ -80,27 +80,26 @@ the simulator needs to call the random oracle on the points in~$S$ in order to `
 
 We note that this will be true for \emph{any} data structure that returns an empty $\privaux$, because this implies that $\pubaux$ alone suffices to evaluate $\Qry(\pubaux,\privaux,\cdot)$.  
 
-\begin{theorem}\label{thm3}\label{thm:bf-ow} \todo{Finish typesetting.  Result is on chalkboard.}
+\begin{theorem}\label{thm3}\label{thm:bf-ow} 
 Fix $k,m,n,r>0$, and let $\setprim_{\mathrm{Bloom}}= (\Rep, \Qry)$ be the set-multiplicity data structure just described. Let $\distr{}{}$ be a distribution over subsets of universe~$\univ$, where $\mu = H_\infty(\distr{}{})$.  For any adversary~$A$ that makes $q$~queries to its oracle
 \[
 \AdvPrivOW{\setprim_{\mathrm{Bloom}},\distr{}{},r}{A} \leq  \frac{(kqn+n)}{2^{\mu}}
 \]
 \end{theorem}
+\todo{Typeset simple proof.  Result is on chalkboard.}
 
-
-\subsection{Privacy of Secretly Keyed Canonical Data Structures}
-Here we prove a result that can be used to show that a large class of ``canonical''
-data structures are semantically secure, with respect to leakage of the size of the set.
+\subsection{Privacy of Secretly-Keyed ``Canonical'' Data Structures}
+Here we prove a result that can be used to show that a large class of canonical
+data structures are SS-secure, with respect to leakage of the size of the set.
 \jnote{It would not be too hard to generalize this to arbitrary data structures over
 arbitrary objects, so long as the number of distinct queries to the PRF made by $\Rep$
 depends only on ${\sf leak}$.}
-
 We first define what we mean by ``canonical.''
 
 %\def\bits{\{0,1\}}
 
 \begin{definition}
-A set-multiplicity data structure $(\Rep, \Qry)$ is {\sf canonical} if
+A data structure $(\Rep, \Qry)$ is {\sf canonical} if
 there exist algorithms $\Rep_1, \Rep_2$, and a function
 $F: \calK \times \bits^{\ell_{in}} \rightarrow \bits^{\ell_{out}}$
 such that the following hold:
@@ -118,8 +117,8 @@ on $\pubaux$ computing as follows:
 %\item $\pubaux \getsr \Rep_2(n, \{F_{K_j}(s_1),
 %\ldots,F_{K_j}(s_t)\}_{j\in[p]})$. 
 \end{itemize}
-In this case, we say that $(\Rep_1, \Rep_2, F)$ is the {\sf canonical representation}
-of~$\Rep$. \tsnote{Seems odd to call it this without explaining how
+We say that $(\Rep_1, \Rep_2, F)$ is the {\sf canonical representation}
+of~$\Rep$. \hfill\dqed \tsnote{Seems odd to call it this without explaining how
   this canonical representation handles $\privaux$, too.  }
 \end{definition}
 %\jnote{Not sure how general to make the above. Need to verify that it is general enough
@@ -133,13 +132,11 @@ of~$\Rep$. \tsnote{Seems odd to call it this without explaining how
 We next show that any canonical data structure in which~$F$ is a pseudorandom function is
 semantically secure with respect to leakage consisting of the size of the set.
 
-\begin{theorem}
-Let $\setprim=(\Rep, \Qry)$ be a canonical set-multiplicity data structure for which $\Rep$ has canonical representation
+\begin{theorem}\todo{Rewrite to match old DS-PRF proof}
+Let $\setprim=(\Rep, \Qry)$ be a canonical data structure for which $\Rep$ has canonical representation
 $(\Rep_1, \Rep_2, F)$. If $F$ is a $(t, \epsilon)$-pseudorandom
 function \tsnote{overloading~$t$}, then $\setprim$ is semantically secure
 with respect to leakage function ${\sf leak}(S) = |S|$.
-\tsnote{We have a mixture of styles of theorem statements, resource-parameterized statements vs.\ ``verbose'' concrete statements.  We
-  need to make things uniform.}
 \end{theorem}
 \begin{proof}
 We define a simulator $\Sim$ as follows. On input $n$, $\Sim$ fixes a
@@ -256,11 +253,10 @@ Here, $B$ asks $q$ queries, and has time complexity $O(t+qm)$.
 \heading{Privacy. }
 The privacy of $\setprim_{\mathrm{ds}}$ follows directly from our general result, Theorem~\ref{thm:xxx}.
 \begin{theorem}\label{thm:ds-ss}
-Fix $k,m,n>0$, and let $\setprim_{\mathrm{ds}}= (\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-ds}.  For any set~$S$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ such that, for any adversary~$A$
+Fix $k,m,n>0$, and let $\setprim_{\mathrm{ds}}= (\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-ds}.  For any set~$S$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ and adversary~$B$ such that, for any adversary~$A$
 \[
 \AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}
 \]
-where~$B$ is constructed from~$A$.  
 %(Both~$B$ and~$\Sim$ are explicitly constructed in the proof of this theorem.)
 \end{theorem}
 \begin{proof}
@@ -378,11 +374,10 @@ consisting of~$q$ attempts.
 \heading{Privacy. }
 The SS-privacy of the linear-PRF hash construction follows directly from~Theorem~\ref{thm:xxx}.
 \begin{theorem}\label{thm:lin-privacy}
-Fix $k,m,n,r>0$, and let $\setprim_{\mathrm{lin}}= (\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-bin-lin}. For any set~$S$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ such that, for any adversary~$A$
+Fix $k,m,n,r>0$, and let $\setprim_{\mathrm{lin}}= (\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-bin-lin}. For any set~$S$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ and an adversary~$B$ such that, for any adversary~$A$
 \[
 \AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}
 \]
-where~$B$ is constructed from~$A$.  
 %(Both~$B$ and~$\Sim$ are explicitly constructed in the proof of this theorem.)
 \end{theorem}
 \begin{proof}
@@ -499,7 +494,7 @@ Return 0
 }
 \caption{ $\Rep$ and $\Qry$ algorithms for garbled Bloom
   filter $\setprim_{\mathrm{garbled}}$ in the ROM for a hash function $H\colon \calK \times 
- \univ \to [m]$. The query set is $\calQ=\{\qry_x\colon
+ \elts \to [m]$. The query set is $\calQ=\{\qry_x\colon
   \univ \to \bits\}$ where $\qry_x(S)=1 \Leftrightarrow x \in S$.}
 
 \end{figure}
