@@ -328,7 +328,7 @@ for each $b \in B$\\
 \nudge for $j \in [k]$\\
 \nudge\nudge $i \gets F_{K}(\langle 1,b \rangle)+j\cdot F_{K}(\langle 2,b \rangle) \bmod m$\\
 \nudge\nudge $\overline{M}[i] \gets 1$\\
-if $M \in \pubaux$ then Return 1 \\
+if $\overline{M} \in \pubaux$ then Return 1 \\
 Return 0
 }
 \caption{{\bf Left:} $\Rep$ and $\Qry$ algorithms for the linear-PRF
@@ -352,10 +352,10 @@ Taken together, the results of this section and the next highlight how sensitive
 
 
 \heading{Correctness. }
-For now, let $n,k,m \geq 0$ and let $\mathcal{S}=[\univ]^n$.  Then $\setprim_{\mathrm{lin}}= (\calQ,\Rep, \Qry)$ is defined as in Figure~\ref{fig:lin-and-ds} (left side).  The following result shows, informally, that if~$F$ is a good PRF, then $\setprim_\mathrm{lin}$ is correct against adaptive error-finding adversaries.
+For now, let $n,k,m \geq 0$.  Then $\setprim_{\mathrm{lin}}= (\Rep, \Qry)$ is defined as in Figure~\ref{fig:lin-and-ds} (left side).  The following result shows, informally, that if~$F$ is a good PRF, then $\setprim_{\mathrm{lin}}$ is correct against adaptive error-finding adversaries.
 
 \begin{theorem}\label{thm1}\label{thm:lin-correctness}
-Fix $k,m,n,r>0$, and let $\setprim_{\mathrm{lin}}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-bin-lin}.  For any adversary~$A$ that makes a total of~$q$ queries to its oracle and has time-complexity~$O(t)$, there exist prf-adversaries~$B_1,B_2$ (explicitly constructed in the proof of this theorem) such that
+Fix $k,m,n,r>0$, and let $\setprim_{\mathrm{lin}}= (\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-bin-lin}.  For any adversary~$A$ that makes a total of~$q$ queries to its oracle and has time-complexity~$O(t)$, there exist prf-adversaries~$B_1,B_2$ (explicitly constructed in the proof of this theorem) such that
 \[
 \AdvCorrect{\setprim_{\mathrm{lin}},r}{A} \leq  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}  +{\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
 \]
