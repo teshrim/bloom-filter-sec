@@ -183,7 +183,7 @@ $\pubaux$ of the representation of a set~$S$ leaks~${\sf leak}(S)$ and nothing m
 as stated does not really work well in the presence of (programmable) random oracles.}
 \jnote{In the current definition there is (intentionally) no bound on the simulator's
 running time.}
-
+\todo{Mention why giving a Test oracle to A doesn't seem to help.}
 \begin{figure}[tp]
 \centering
 \fpage{.6}{
@@ -233,7 +233,8 @@ return $A(\pubaux)$\\
   SS-privacy is unachievable for any leakage other than $\leak(S)=S$?
 It's at least worth a highlighted remark, I think.  Currently it is a
 remark in the classical BF section, but it seems worth ``pulling up''.} \jnote{Yes, agreed.}
-
+\todo{Since we mention what happens with $\privaux=\emptystring$, also
+mention what happens with $\pubaux=\emptystring$ :)}
 \heading{Relationships between the notions.}
 Intuition suggests that semantic security should imply one-wayness. And, indeed, this is
 the case---provided one is careful with the technical details.
