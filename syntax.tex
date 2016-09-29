@@ -7,11 +7,13 @@ this notation to randomized algorithms, so $x \getsr A(y)$ denotes
 that (randomized) algorithm $A$ is run on input~$y$, and the output
 of the algorithm is assigned to~$x$. Algorithms may be provided
 black-box access to one or more oracles, which we write as
-superscripts, e.g., $F^{O_1,O_2,\ldots}$.  We write $\langle
-x,y,\ldots \rangle$ for the encoding of values $x,y,\ldots$ as a
-single bitstring, for some implicit and invertible encoding method.
-When $x$ is a string, we write $x[i]$ for the $i$-th element in that
-string, and $x[i:j]$ for the substring $x[i]x[i+1]\cdots x[j]$.
+superscripts, e.g., $F^{O_1,O_2,\ldots}$.  All algorithms (and, in
+particular, all adversaries) are stateful by default. We write
+$\langle x,y,\ldots \rangle$ for the encoding of values $x,y,\ldots$
+as a single bitstring, for some implicit and invertible encoding
+method. When $x$ is a string, we write $x[i]$ for the $i$-th element
+in that string, and $x[i:j]$ for the substring $x[i]x[i+1]\cdots
+x[j]$.
 
 \subsection{Data Structures}
 
@@ -51,7 +53,10 @@ $\Rep$ would allow this.}
   classical notions to our syntax, but I don't know if we use it.
   Anyway,  it looks a bit weird sitting here on its own.  It made more
   sense when supported by the intuition-building example, now
-  commented out. }
+  commented out. } \jnote{I don't think we do ever use it, but maybe
+  we should? E.g., we can compare the (normal) error probability to
+  the adversarial soundness probability.}
+
 \begin{definition}[Error probability and rate] \rm
 For a specific data structure $\setprim=(\Rep, \Qry)$ supporting
 queries $\calQ$ over universe $\univ$, let
@@ -119,7 +124,7 @@ from~$Q$, for all~$i\in[T]$ we have
 $\Prob{\mathrm{Err}_i=1}=1/|\univ| \ll 1/n = \epsilon$.
 }
 
-%\heading{Data structures for set-membership queries.} 
+%\heading{Data structures for set-membership queries.}
 An important special case is a data structure that supports set-membership
 queries. \jnote{I changed this from multiplicity to membership.}
 

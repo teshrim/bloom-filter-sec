@@ -5,7 +5,11 @@ Following NY, we are interested in defining an adaptive (i.e.,
 adversarial) notion of correctness.
 In addition to correctness, we establish notions of privacy for
 set-multiplicity data structures.
-All adversaries are stateful by default.
+\jnote{I would call it ``soundness'' rather than ``correctness.'' But if you disagree,
+just remove this comment and we'll go with correctness.}
+
+
+
 
 \tsnote{flesh out}
 
@@ -86,9 +90,9 @@ data structure~$\setprim$ is $(t,q,r,\epsilon)$-correct if $\AdvCorrect{\setprim
 
 \todo{Explain that the case of $r=1$ does not necessarily imply anything for $r>1$: can have a scheme
 where finding the first false positive is hard but then the rest are easy; can have
-a scheme where finding one false positive is easy finding more is hard (e.g.,
+a scheme where finding one false positive is easy but finding more is hard (e.g.,
 because there do not exist
-any more).}
+any more). Note that the [NY15] definition does not capture this at all.}
 
 
 
@@ -228,7 +232,7 @@ return $A(\pubaux)$\\
 \todo{A simple theorem that says if $\privaux=\emptystring$ then
   SS-privacy is unachievable for any leakage other than $\leak(S)=S$?
 It's at least worth a highlighted remark, I think.  Currently it is a
-remark in the classical BF section, but it seems worth ``pulling up''.}
+remark in the classical BF section, but it seems worth ``pulling up''.} \jnote{Yes, agreed.}
 
 \heading{Relationships between the notions.}
 Intuition suggests that semantic security should imply one-wayness. And, indeed, this is
