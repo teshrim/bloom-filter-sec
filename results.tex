@@ -325,7 +325,7 @@ Let $\setprim_{\bilin}= (\Rep, \Qry)$ be the set-membership data structure descr
 the advantage $\AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim}$ can be made arbitrarily close to $1/2$ by choice of~$\alpha$.
 \end{theorem}
 
-\todo{OW privacy proof?  Distributional SS privacy proof?}
+\todo{OW privacy proof? [JON]}
 
 %%%%%%%%%%%%%%%%% GARBLED BF  %%%%%%%%%%%%%%%%%%%%
 \subsection{Garbled Bloom Filter}
@@ -375,7 +375,7 @@ Return 0
 \end{figure}
 
 
-\begin{figure}
+\begin{figure}[t]
 \centering
 \fpage{.425}
 {
@@ -395,7 +395,7 @@ for $1 \leq i_1 < i_2 < \cdots < i_k \leq m$\\
 %\nudge if $\TestOracle(x)=1$ then Return $\bot$
 %}
 %\caption{Adversary for Theorem~\ref{thm:xxx}.  \textbf{Left:} public hash case, \textbf{Right:} private hash case.}
-\caption{Adversary for Theorem~\ref{thm:xxx}. }
+\caption{Attack for garbled Bloom filters with public~$M$. }
 \label{fig:adv-gbf}
 \end{figure}
 Dong, Chen and Wen~\cite{xxx} introduce a set-membership data
@@ -456,8 +456,8 @@ Let us consider a practically interesting set of parameters. Say you have a 1000
 filter, $m=1000$, and a 100-element set, $n=100$,  and $k=4$ hash
 functions (a la Squid\cite{squid}).  This results in a false-positive rate of
 approximately 1\% in a classical BF.  There are roughly $2^{35}$
-subsets of four indices to consider, which is reasonable on a laptop
-these days.  Moreover, with $n=100$ the expected
+subsets of four indices to consider, which is reasonable on a
+commodity laptop.  Moreover, with $n=100$ the expected
 number of trials is roughly $2^{28}$.
 Note that the attack is easily extended to find $r>1$ false positives.
 
