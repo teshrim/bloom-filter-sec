@@ -481,7 +481,8 @@ the advantage $\AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim}$ can be made arb
 \subsection{Garbled Bloom Filter}
 \begin{figure}
 \centering
-\hpagess{.45}{.45}
+\fpage{.8}{
+\hpagess{.55}{.45}
 {
 \algorithmv{$\Rep^H(S)$}\\
 $M \gets (\bot)^m$\\
@@ -514,6 +515,7 @@ for $j \in \{1,2,\dots,k\}$\\
 \nudge $x' \gets x' \xor M[h_j]$\\
 if $x' =x $ then Return 1\\
 Return 0
+}
 }
 \caption{ $\Rep$ and $\Qry$ algorithms for garbled Bloom
   filter $\setprim_{\mathrm{garbled}}$ in the ROM.hash function $H\colon \calK \times
@@ -585,21 +587,6 @@ universe of inputs (imagine that $U=\bits^{64}$), even if you know
 that the distribution deviates significantly from uniform. 
 
 \heading{Privacy. }
-The SS-privacy of the garbled Bloom filter construction follows directly from~Theorem~\ref{thm:xxx}.
-\begin{theorem}\label{thm:lin-privacy} \fixme{Fill out the proof}
-Fix $k,m,n,r>0$, a set $\elts$, and let $\setprim_{\mathrm{gbf}}= (\Rep, \Qry)$ be the set-membership data structure (over~$\elts$) described in Figure~\ref{fig:gbf}. For any set~$S \in 2^{\elts}$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ and an adversary~$B$ such that, for any adversary~$A$
-\[
-\AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}
-\]
-%(Both~$B$ and~$\Sim$ are explicitly constructed in the proof of this theorem.)
-\end{theorem}
-\begin{proof}
-It suffices to give the decomposition of $\Rep$ in to $\Rep_1$ and $\Rep_2$ as required by Theorem~\ref{thm:xxx}.
-On input a set of distinct elements
-$S=\{x_1,x_2,\ldots,x_n\}$, algorithm~$\Rep_1$ returns $s_1=\langle 1,x_1 \rangle, s_2=\langle 2,x_1 \rangle, s_3 = \langle 1,x_2\rangle, s_4=\langle 2,x_2 \rangle,\ldots,s_{2n-1}=\langle 1,x_n \rangle, s_{2n}=\langle 2,x_n \rangle$.
-
-On input $n,F_K(s_1),F_K(s_2),\ldots,F_K(s_{2n-1}) , F_K(s_{2n})$, algorithm $\Rep_2$ initializes an all-zero array~$M$ of~$m$-bits, and sets the positions $M[F_K(s_i)+j\cdot F_K(s_{i+1})\bmod m]$ to 1, for each $j \in [k]$.  It returns~$M$ as $\pubaux$.
-\end{proof}
 
 \begin{verbatim}
 %------------------------------------%
