@@ -506,7 +506,7 @@ $\pubaux \gets \emptystring$; $\privaux \gets \langle M\rangle$ \mbox{ (if priva
 $\pubaux \gets \langle M \rangle$; $\privaux \gets \emptystring$ \mbox{(if public~$M$)}\\
 }
 {
-\algorithmv{$\Qry(\pubaux,\privaux,\qry_x)$}\\
+\algorithmv{$\Qry^H(\pubaux,\privaux,\qry_x)$}\\
 if $\privaux \neq \emptystring$ then $M \gets \privaux$\\
 else $M\gets \pubaux$\\
 $x' \gets 0^\lambda$\\
@@ -548,7 +548,6 @@ for $1 \leq i_1 < i_2 < \cdots < i_k \leq m$\\
 \caption{Adversary for Theorem~\ref{thm:xxx}. }
 \label{fig:adv-gbf}
 \end{figure}
-\heading{Correctness.}
 Dong, Chen and Wen~\cite{xxx} introduce a set-membership data
 structure called a \emph{garbled Bloom filter} (GBF).   Modulo some implementation
 details, a GBF is like a classical Bloom filter, but
@@ -569,6 +568,7 @@ privacy with respect to use case that may or may not make the
 representation~$M$ public. The pseudocode in Figure~\ref{fig:gbf}
 covers both possibilities.
 
+\heading{Correctness.}
 We note that~\cite{xxx} provides error-rate analysis, i.e., the
 probability of finding a single false-positive in a non-adaptive
 attack.  When $\lambda$ is the bit-length of the xor-shares, they
