@@ -481,7 +481,7 @@ the advantage $\AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim}$ can be made arb
 \subsection{Garbled Bloom Filter}
 \begin{figure}
 \centering
-\fpage{.75}
+\hpagess{.45}{.45}
 {
 \algorithmv{$\Rep^H(S)$}\\
 $M \gets (\bot)^m$\\
@@ -503,8 +503,8 @@ for $i \in \{1,2,\ldots, m\}$\\
 \nudge \nudge  $M[i] \getsr \bits^\lambda$\\
 $\pubaux \gets \emptystring$; $\privaux \gets \langle M\rangle$ \mbox{ (if private~$M$)}\\
 $\pubaux \gets \langle M \rangle$; $\privaux \gets \emptystring$ \mbox{(if public~$M$)}\\
-
-\medskip
+}
+{
 \algorithmv{$\Qry(\pubaux,\privaux,\qry_x)$}\\
 if $\privaux \neq \emptystring$ then $M \gets \privaux$\\
 else $M\gets \pubaux$\\
@@ -525,25 +525,26 @@ Return 0
 
 \begin{figure}
 \centering
-\hfpagess{.425}{.425}
-{
-\adversaryv{$A^{\TestOracle}(\pubaux)$}\\[1ex]
-$M,K_1,K_2,\ldots,K_k \gets \pubaux$\\
-for $1 \leq i_1 < i_2 < \cdots < i_k \leq m$\\
-\nudge $x \gets M[i_1] \xor M[i_2] \xor \cdots \xor M[i_k]$\\
-\nudge if  $\bigwedge_{j=1}^k H(j,x)=i_j$ then \\
-\nudge\nudge $a\gets\TestOracle(x)$\\
-\nudge\nudge Return $\bot$\\
-}
+\fpage{.425}
 {
 \adversaryv{$A^{\TestOracle}(\pubaux)$}\\[1ex]
 $M \gets \pubaux$\\
 for $1 \leq i_1 < i_2 < \cdots < i_k \leq m$\\
 \nudge $x \gets M[i_1] \xor M[i_2] \xor \cdots \xor M[i_k]$\\
-\nudge if $\TestOracle(x)=1$ then Return $\bot$
+\nudge if  $x \not\in S \wedge \left(\bigwedge_{j=1}^k H(j,x)=i_j \right)$ then \\
+\nudge\nudge $a\gets\TestOracle(x)$\\
+\nudge\nudge Return $\bot$\\
 }
-\caption{Adversary for Theorem~\ref{thm:xxx}.  \textbf{Left:} public hash case, \textbf{Right:} private hash case.}
-\label{fig:adv-bi-lin-ss}
+%{
+%\adversaryv{$A^{\TestOracle}(\pubaux)$}\\[1ex]
+%$M \gets \pubaux$\\
+%for $1 \leq i_1 < i_2 < \cdots < i_k \leq m$\\
+%\nudge $x \gets M[i_1] \xor M[i_2] \xor \cdots \xor M[i_k]$\\
+%\nudge if $\TestOracle(x)=1$ then Return $\bot$
+%}
+%\caption{Adversary for Theorem~\ref{thm:xxx}.  \textbf{Left:} public hash case, \textbf{Right:} private hash case.}
+\caption{Adversary for Theorem~\ref{thm:xxx}. }
+\label{fig:adv-gbf}
 \end{figure}
 \heading{Correctness.}
 Dong, Chen and Wen~\cite{xxx} introduce a set-membership data
