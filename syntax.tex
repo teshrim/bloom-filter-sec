@@ -61,10 +61,10 @@ $\Rep$ would allow this.}
 For a specific data structure $\setprim=(\Rep, \Qry)$ supporting
 queries $\calQ$ over universe $\univ$, let
 $\mathrm{Err}(S,\qry,\pubaux,\privaux)$ be  true iff
-$\Qry(\pubaux,\privaux, \qry) \neq \qry(S)$.  Then we say that $\setprim$
-has \emph{error probability}~$\epsilon$ if
-\[\max_{S,\qry}\Pr[(\pubaux,\privaux) \getsr \Rep(S) :
-\mathrm{Err}(S,\qry,\pubaux,\privaux)=1 ] \leq \epsilon.\]
+$\Qry(\pubaux,\privaux, \qry) \neq \qry(S)$.  Then we say that
+$\setprim$ has \emph{error probability}~$\epsilon$ if
+$\max_{S,\qry}\Pr[(\pubaux,\privaux) \getsr \Rep(S) :
+\mathrm{Err}(S,\qry,\pubaux,\privaux)=1 ] \leq \epsilon$.
 %
 We say it has \emph{error rate} $\tilde{\epsilon}$ if
 \[{\textstyle \max_{S}\Pr[(\pubaux,\privaux) \getsr \Rep(S);\, \qry \getsr \calQ :
