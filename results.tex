@@ -86,7 +86,7 @@ that the ($r=1$, zero-query) FP-probability for~$\setprim_\mathrm{Bloom}$ is
 always within $O(1/n)$ of $(1-e^{-kn/m})^k$, although the asymptotic
 rate of convergence is faster than~$1/n$.  The multiplicative (``hybrid'') term arises as a result
 of moving from the adaptive to the zero-query setting.
-Finally, $\dbinom{q_T+q_H}{r} \leq (q_T+q_H)^r$ (with reasonable tightness when~$r$ is small) in
+Finally, $\binom{q_T+q_H}{r} \leq (q_T+q_H)^r$ (with reasonable tightness when~$r$ is small) in
 which case the final term in the bound behaves as
 $((q_T+q_H) (1-e^{-kn/m})^k + O(q/n) )^r$; loosely, this is the bound one expects for
 trying to find a single FP in each of~$r$ independent``rounds'', each round
@@ -559,32 +559,73 @@ recovers~$x$. We give the pseudocode for the GBF $\Rep$ and $\Qry$
 algorithms in Figure~\ref{fig:gbf}. 
 
 In~\cite{xxx} the GBF is a central piece of a private set-intersection
-scheme
+scheme, in which the client computes a classical BF over its
+set~$S_1$, the server computes a GBF over its set~$S_2$, and then an
+oblivious transfer protocol is carried out, at the end of which the
+client obtains a GBF for $S_1 \cap S_2$ (the server learns nothing).
+The authors note that the GBF is a new set-membership data strucure
+that may be of general interest, so we explore its correctness and
+privacy with respect to use case that may or may not make the
+representation~$M$ public. The pseudocode in Figure~\ref{fig:gbf}
+covers both possibilities.
 
-The authors note that the GBF is of general interest, so we consider
-its correctness and 
+We note that~\cite{xxx} provides error-rate analysis, i.e., the
+probability of finding a single false-positive in a non-adaptive
+attack.  When $\lambda$ is the bit-length of the xor-shares, they
+argue that the error-rate is at most $2^{-\lambda}$, roughly because
+the xor-shares stored in~$M$ are random strings.  (Note that
+  this is independent of~$k,m,n$; although $k>1$ is required for the
+  xor shares.)  However, this analysis implicilty assumes that the potential false-positive string~$x$ is fixed
+\emph{before}~$M$ is determined.  We will see that this carries over
+\tsnote{I think?} to the case in which~$M$ is private (i.e.,
+$\pubaux=\emptystring,\privaux=\langle M \rangle$), but when~$M$ is
+public things are different.
 
-The pseudocode captures
-two version, one in which the 
+Consider the adversary described in Figure~\ref{fig:adv-gbf}.  In one
+round of the for-loop, it pics~$k$ positions $i_1,i_2,\ldots,i_k$, and
+xors the strings at these positions to get a candidate~$x$.   If $x
+\in S$, which the adversary knows in the correctness experiment, then
+it moves on to a new set of positions.  If $x \not\in S$ and 
+$h_{1}(x)=i_1 \wedge h_2(x)=i_2 \wedge \cdots \wedge h_k(x) = i_k$,
+then it \emph{must be} that $x$ is a false-positive.   Indeed, note
+that the probability of this (in the ROM) is precisely the
+false-positive rate of a classical BF using the same $(k,m,n)$ as the GBF.
 
-If the filter and the hash functions are public, there is a naive
-attack that works for some interesting parameters.  Pick~$k$ positions
-$i_1,i_2,\ldots,i_k$, xor strings at these positions to get a
-candidate~$x$.  If $h_{1}(x)=i_1 \wedge h_2(x)=i_2 \wedge \cdots
-\wedge h_k(x) = i_k$ then either $x \in S$ or~$x$ is a
-false-positive. (You don't have to do all~$k$ hashes, you can stop as
-soon as one fails to match the index.) Say you have a 1000-position
-filter ($m=1000$) and a 100-element set ($n=100$), and you are willing
-to tolerate a 1\% FP rate.  Then you'd set $k=4$ (a la Squid).  There
-are roughly $2^{35}$ subsets of 4 indices to consider, which is
-reasonable on a laptop these days.  (Also, since $n=100$ the expected
-number of trials is roughly $2^{28}$.) With the FP rate of 1\%, if you
-find a winner then almost certainly it is in the set.  Granted, this
-attack is naive, but notice that you \emph{cannot} mount it against a
-standard Bloom filter. Also notice that this attack might be
-significantly more efficient than brute force guessing over the
-universe of inputs (imagine that $U=\bits^{64}$), even if you know
-that the distribution deviates significantly from uniform. 
+Now, this adversary will find a false positive, if there is one, but in the worst case it will consider
+$\binom{m}{k} \approx m^k$ $k$-tuples of positions.  If both~$m$
+and~$k$ are large this is infeasible.  In~\cite{xxx} they suggest to
+set~$k=\lambda$, and test with $\lambda=80$.  Making 80 hash calls per
+set-membership query would be laughable in many applications, and a
+$2^{-80}$ false-postive rate would be considered overkill.\footnote{Note
+that, as described in~\cite{xxx}, $\lambda$ must be at least the
+bitlength of the longest element $x \in S$. \tsnote{This could be
+  handled with a slight change to the set membership test, by checking
+if the $\lambda$-bit shares xor to, say, the $\lambda$-bit truncation
+of~$x$.}}
+Let us consider a practically interesting set of parameters. Say you have a 1000-position
+filter, $m=1000$, and a 100-element set, $n=100$,  and $k=4$ hash
+functions (a la Squid\cite{squid}).  This results in a false-positive rate of
+approximately 1\% in a classical BF.  There are roughly $2^{35}$
+subsets of four indices to consider, which is reasonable on a laptop
+these days.  Moreover, with $n=100$ the expected
+number of trials is roughly $2^{28}$.   
+Note that the attack is easily extended to find $r>1$ false positives.
+
+We admit that attack is not particularly sophisticated, yet it might
+be significantly more efficient than brute force guessing over the
+universe of inputs (imagine that $\elts=\bits^{128}$), even if you know
+that the distribution deviates significantly from uniform. Notice,
+too, that you \emph{cannot} mount it against a standard Bloom
+filter.  
+
+
+\todo{Insert correctness theorem for \emph{private}~$M$ in the ROM.}
+\begin{theorem}
+Fix $k,m,n,r,\lambda>0$, a set~$\elts$, and let $\setprim_{\mathrm{gbf}}=(\Rep, \Qry)$ be the garbled Bloom filter (set membership) data structure over~$\elts$. For any adversary~$A$ that makes a total of~$q_T$ queries to the $\Test$ oracle, and $q_R$ queries to the RO, and has time-complexity~$O(t)$,
+\[
+\AdvCorrect{\setprim_{\mathrm{gbf}},r}{A} \leq  [...]
+\]
+\end{theorem}
 
 \heading{Privacy. }
 
