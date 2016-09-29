@@ -7,7 +7,11 @@ this notation to randomized algorithms, so $x \getsr A(y)$ denotes
 that (randomized) algorithm $A$ is run on input~$y$, and the output
 of the algorithm is assigned to~$x$. Algorithms may be provided
 black-box access to one or more oracles, which we write as
-superscripts, e.g., $F^{O_1,O_2,\ldots}$.
+superscripts, e.g., $F^{O_1,O_2,\ldots}$.  We write $\langle
+x,y,\ldots \rangle$ for the encoding of values $x,y,\ldots$ as a
+single bitstring, for some implicit and invertible encoding method.
+When $x$ is a string, we write $x[i]$ for the $i$-th element in that
+string, and $x[i:j]$ for the substring $x[i]x[i+1]\cdots x[j]$.
 
 \subsection{Data Structures}
 
@@ -16,13 +20,13 @@ We consider an abstract notion of data structures.
 %Informally, the representation should serve as a good
 %approximation of the multiset, at least with respect to the allowed queries.
 \begin{definition}[Data structure] \rm
-Fix sets~${\cal U}, \Gamma$, and $\calQ = \{\qry \colon {\cal U} \to
+Fix sets~$\univ, \Gamma$, and $\calQ = \{\qry \colon \univ \to
 \Gamma\}$. A \emph{data structure} (supporting queries $\calQ$ over
-universe ${\cal U}$) is a tuple $\setprim=(\Rep, \Qry)$ where:
+universe $\univ$) is a tuple $\setprim=(\Rep, \Qry)$ where:
 \begin{itemize}
-\item $\Rep \colon {\cal U} \to \bits^* \times \bits^*$ is a
+\item $\Rep \colon \univ \to \bits^* \times \bits^*$ is a
     randomized \emph{representation algorithm}, taking as input
-    an element $S \in \mathcal{U}$,
+    an element $S \in \univ$,
     and outputting %a \emph{representation} $M \in \Sigma^*$,
     \emph{public representation data} $\pubaux \in \bits^*$ and
     \emph{private representation data} $\privaux \in \bits^*$.
@@ -43,12 +47,16 @@ as $|\pubaux|+|\privaux|$ and comment that if one wants to compare to
 classical size bounds, a more fine-grained separation of the output of
 $\Rep$ would allow this.}
 
-
+\tsnote{Do we ever use this next definition?  I guess it is a mapping of
+  classical notions to our syntax, but I don't know if we use it.
+  Anyway,  it looks a bit weird sitting here on its own.  It made more
+  sense when supported by the intuition-building example, now
+  commented out. }
 \begin{definition}[Error probability and rate] \rm
 For a specific data structure $\setprim=(\Rep, \Qry)$ supporting
-queries ${\cal Q}$ over universe ${\cal U}$, let
+queries $\calQ$ over universe $\univ$, let
 $\mathrm{Err}(S,\qry,\pubaux,\privaux)$ be  true iff
-$\Qry(\pubaux,\privaux, \qry) \neq \qry(S)$.  Then we say that $\Pi$
+$\Qry(\pubaux,\privaux, \qry) \neq \qry(S)$.  Then we say that $\setprim$
 has \emph{error probability}~$\epsilon$ if
 \[\max_{S,\qry}\Pr[(\pubaux,\privaux) \getsr \Rep(S) :
 \mathrm{Err}(S,\qry,\pubaux,\privaux)=1 ] \leq \epsilon.\]
@@ -56,7 +64,7 @@ has \emph{error probability}~$\epsilon$ if
 We say it has \emph{error rate} $\tilde{\epsilon}$ if
 \[{\textstyle \max_{S}\Pr[(\pubaux,\privaux) \getsr \Rep(S);\, \qry \getsr \calQ :
 \mathrm{Err}(S,\qry,\pubaux,\privaux)=1]} \leq \tilde{\epsilon}. \]
-%\hfill\dqed
+\hfill\dqed
 \end{definition}
 
 %We will sometimes say that a data structure is
@@ -85,7 +93,7 @@ other sources of randomness.   We illustrate how this surfaces with
 the following example.
 
 \jnote{The following may need to be updated to fit the new syntax.}
-Let~$\Pi$ be a data structure that has error-probability $\epsilon$,
+Let~$\setprim$ be a data structure that has error-probability $\epsilon$,
 and consider a correctness-violating attack that asks random queries
 $\qry_1,\qry_2,\ldots,\qry_T$, i.e., uniform samples from~$\calQ$.
 Let $\mathrm{Err}_i$ be a random variable indicating the event
@@ -108,20 +116,21 @@ $|\univ|-n$ queries have probability zero of causing an error.
 Moreover, once the coins of~$\Rep$ are fixed, there is exactly
 \emph{one} query that will cause an error.  Thus for random queries
 from~$Q$, for all~$i\in[T]$ we have
-$\Prob{\mathrm{Err}_i=1}=1/|\univ| \ll 1/n = \epsilon$.}
+$\Prob{\mathrm{Err}_i=1}=1/|\univ| \ll 1/n = \epsilon$.
+}
 
-\heading{Data structures for set-membership queries.} An important
-special case is a data structure that supports set-membership
+%\heading{Data structures for set-membership queries.} 
+An important special case is a data structure that supports set-membership
 queries. \jnote{I changed this from multiplicity to membership.}
 
 \begin{definition} \rm
-A \emph{set-membership data structure over $\univ$} is a data
-structure with ${\cal U} \subseteq 2^\univ$, $\Gamma=\{0,1\}$, and
+A \emph{set-membership data structure over $\elts$} is a data
+structure with $\univ \subseteq 2^\elts$, $\Gamma=\{0,1\}$, and
 $\calQ=\{\qry_x\}_{x \in \univ}$, where $\qry_x(S)$ is true iff $x
 \in S$. \hfill\dqed
 \end{definition}
 
-Note that we do not require ${\cal U} = 2^\univ$ since, e.g., a
+Note that we do not require $\univ = 2^\elts$ since, e.g., a
 set-membership data structure may only be defined for sets up to
 some bounded size.
 

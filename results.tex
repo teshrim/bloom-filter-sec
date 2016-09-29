@@ -5,7 +5,7 @@
 
 \begin{figure}[tp]
 \centering
-\hfpagess{.4}{.55}
+\hfpagess{.4}{.4}
 {
 \algorithmv{$\Rep^H(S)$}\\
 $M \gets 0^m$\\
@@ -29,7 +29,7 @@ Return 1
 $M \gets 0^m$; $K \getsr \calK$\\
 for $x \in S$\\
 \nudge for $j \in \{1,2,\ldots,k\}$\\
-\nudge\nudge $h_j \gets F_{K}(j,x) $\\
+\nudge\nudge $h_j \gets F_{K}(\langle j,x \rangle) $\\
 \nudge\nudge $M[h_j] \gets 1$\\
 $\pubaux \gets M$, $\privaux \gets \langle K \rangle$\\
 Return $(\pubaux,\privaux)$\\
@@ -43,11 +43,11 @@ for $j \in \{1,2,\ldots,k\}$\\
 Return 1
 }
 \caption{{\bf Left:} $\Rep$ and $\Qry$ algorithms for classic Bloom
-  filter $\Pi_{\mathrm{Bloom}}$ in the ROM for a hash function $H\colon \mathbb{N} \times
-  \univ \to [m]$. {\bf Right:} [[ $\Rep$ and $\Qry$
+  filter $\setprim_{\mathrm{Bloom}}$ in the ROM for a hash function $H\colon \mathbb{N} \times
+  \elts \to [m]$. {\bf Right:} $\Rep$ and $\Qry$
   algorithms for the domain-separated PRF data structure
-  $\Pi_{\mathrm{ds}}$, using function family $F \colon
-  \calK \times \univ \to [m]$.  Both constructions have query set is $\calQ=\{q_x\colon
+  $\setprim_{\mathrm{ds}}$, using function family $F \colon
+  \calK \times \elts \to [m]$.  Both constructions have query set is $\calQ=\{q_x\colon
   \univ \to \bits\}$ where $q_x(S)=1 \Leftrightarrow x \in S$.  }
 \label{fig:bf-and-lin}
 \end{figure}
@@ -55,16 +55,26 @@ Return 1
 \subsection{Classical Bloom filter in random oracle model (ROM). }
 
 \heading{Correctness. }
-Fix $n,k,m \geq 0$ and let $\mathcal{S}=[\univ]^n$.  Then $\Pi_{\mathrm{Bloom}}= (\Rep, \Qry)$ is defined as in Figure~\ref{fig:bf-and-garbled-bf} (left side).  The following theorem proves correctness for this construction.  Again, we stress that this correctness is with respect to adaptive adversaries, aiming to find $r \geq 1$ errors (in this case, false-positives), and with public hash functions.
+Fix $n,k,m \geq 0$, and fix a set $\elts$.  Then the classical Bloom filter set-membership data structure $\setprim_{\mathrm{Bloom}}= (\Rep, \Qry)$ over~$\elts$ is defined as in Figure~\ref{fig:bf-and-lin} (left side).  We define~$\setprim_{\mathrm{Bloom}}$ in the random oracle model, as the traditional analysis of Bloom filter correctness (as a function of $n,k,m$) is done in this model.\footnote{The standard model version would have $\Rep$ choose $H_1,H_2,\ldots,H_k$ from a hash function family, compute $h_j$ using these, and placing their description in $\pubaux$.}  The following theorem proves that the Bloom filter meets our correctness notion in the ROM.  Again, we stress that this correctness is with respect to adaptive adversaries, aiming to find $r \geq 1$ errors (in this case, false-positives).
+The proof appears in Appendix~\ref{sec:thm3_fp}.
 
 \begin{theorem}\label{thm3}\label{thm:bf-correctness}
-Fix $k,m,n,r>0$, and let $\Pi_{\mathrm{Bloom}}= (\Rep, \Qry)$ be the set-multiplicity data structure just described. For any adversary~$A$ that makes a total of~$q_T$ queries to the $\Test$ oracle, and $q_R$ queries to the RO, and has time-complexity~$O(t)$,
+Fix $k,m,n,r>0$, a set~$\elts$, and let $\setprim_{\mathrm{Bloom}}= (\Rep, \Qry)$ be classical Bloom filter (set-membership) data structure over~$\elts$. For any adversary~$A$ that makes a total of~$q_T$ queries to the $\Test$ oracle, and $q_R$ queries to the RO, and has time-complexity~$O(t)$,
 \[
-\AdvCorrect{\Pi_{\mathrm{Bloom}},\distr{\calS}{},r}{A} \leq  {\dbinom{q_T + q_H}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
+\AdvCorrect{\setprim_{\mathrm{Bloom}},r}{A} \leq  {\dbinom{q_T + q_H}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
 \]
 \end{theorem}
-
-\input{Theorem3_FP}
+The proof appears in Appendix~\ref{app:xxx}.  We note that Kirsch and Mitzenmacher~\cite{xxx} show
+that the ($r=1$, zero-query) FP-probability for~$\setprim_\mathrm{Bloom}$ is
+always within $O(1/n)$ of $(1-e^{-kn/m})^k$, although the asymptotic
+rate of convergence is faster than~$1/n$.  The multiplicative (``hybrid'') term arises as a result
+of moving from the adaptive to the zero-query setting.  
+Finally, $\dbinom{q_T+q_H}{r} \leq (q_T+q_H)^r$ (with reasonable tightness when~$r$ is small) in 
+which case the final term in the bound behaves as
+$((q_T+q_H) (1-e^{-kn/m})^k + O(q/n) )^r$; loosely, this is the bound one expects for
+trying to find a single FP in each of~$r$ independent``rounds'', each round
+consisting of~$(q_T+q_H)$ attempts.
+%\input{Theorem3_FP}
 
 \heading{Privacy. }
 Turning to privacy, we observe immediately that the classical BF, in the
@@ -79,28 +89,26 @@ the simulator needs to call the random oracle on the points in~$S$ in order to `
 
 We note that this will be true for \emph{any} data structure that returns an empty $\privaux$, because this implies that $\pubaux$ alone suffices to evaluate $\Qry(\pubaux,\privaux,\cdot)$.  
 
-\begin{theorem}\label{thm3}\label{thm:bf-ow}
-Fix $k,m,n,r>0$, and let $\Pi_{\mathrm{Bloom}}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure just described. For any adversary~$A$ that makes a total of~$q_T$ queries to the $\Test$ oracle, and $q_R$ queries to the RO, and has time-complexity~$O(t)$,
+\begin{theorem}\label{thm3}\label{thm:bf-ow} 
+Fix $k,m,n,r>0$, a set~$\elts$, and let $\setprim_{\mathrm{Bloom}}= (\Rep, \Qry)$ be the classical Bloom filter data structure over~$\elts$. Let $\distr{}{}$ be a distribution over subsets of universe~$\univ=2^\elts$, where $\mu = H_\infty(\distr{}{})$.  For any adversary~$A$ that makes $q$~queries to its oracle
 \[
-\AdvCorrect{\Pi_{\mathrm{Bloom}},\distr{\calS}{},r}{A} \leq  {\dbinom{q_T + q_H}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
+\AdvPrivOW{\setprim_{\mathrm{Bloom}},\distr{}{},r}{A} \leq  \frac{(kqn+n)}{2^{\mu}}
 \]
 \end{theorem}
+\todo{Typeset simple proof.  Result is on chalkboard.}
 
-\todo{distributional-SS or OW privacy proof for classic BF in the ROM}
-
-\subsection{Privacy of Secretly Keyed Canonical Data Structures}
-Here we prove a result that can be used to show that a large class of ``canonical''
-data structures are semantically secure, with respect to leakage of the size of the set.
+\subsection{Privacy of Secretly-Keyed ``Canonical'' Data Structures}
+Here we prove a result that can be used to show that a large class of canonical
+data structures are SS-secure, with respect to leakage of the size of the set.
 \jnote{It would not be too hard to generalize this to arbitrary data structures over
 arbitrary objects, so long as the number of distinct queries to the PRF made by $\Rep$
 depends only on ${\sf leak}$.}
-
 We first define what we mean by ``canonical.''
 
-\def\bits{\{0,1\}}
+%\def\bits{\{0,1\}}
 
 \begin{definition}
-A set-multiplicity data structure $(\Rep, \Qry)$ is {\sf canonical} if
+A data structure $(\Rep, \Qry)$ is {\sf canonical} if
 there exist algorithms $\Rep_1, \Rep_2$, and a function
 $F: \calK \times \bits^{\ell_{in}} \rightarrow \bits^{\ell_{out}}$
 such that the following hold:
@@ -118,12 +126,12 @@ on $\pubaux$ computing as follows:
 %\item $\pubaux \getsr \Rep_2(n, \{F_{K_j}(s_1),
 %\ldots,F_{K_j}(s_t)\}_{j\in[p]})$. 
 \end{itemize}
-In this case, we say that $(\Rep_1, \Rep_2, F)$ is the {\sf canonical representation}
-of~$\Rep$. \tsnote{Seems odd to call it this without explaining how
+We say that $(\Rep_1, \Rep_2, F)$ is the {\sf canonical representation}
+of~$\Rep$. \hfill\dqed \tsnote{Seems odd to call it this without explaining how
   this canonical representation handles $\privaux$, too.  }
 \end{definition}
-\jnote{Not sure how general to make the above. Need to verify that it is general enough
-to prove security of all the constructions we care about.}
+%\jnote{Not sure how general to make the above. Need to verify that it is general enough
+%to prove security of all the constructions we care about.}
 \tsnote{Point out an example or two of the schemes this
   covers.  Domain-separated PRF BF, for example.  I think it covers
   classical BF, too, if $F_K(s)=s$ for all $K \in \calK$, $\Rep_1$
@@ -133,13 +141,11 @@ to prove security of all the constructions we care about.}
 We next show that any canonical data structure in which~$F$ is a pseudorandom function is
 semantically secure with respect to leakage consisting of the size of the set.
 
-\begin{theorem}
-Let $\Pi=(\Rep, \Qry)$ be a canonical set-multiplicity data structure for which $\Rep$ has canonical representation
+\begin{theorem}\todo{Rewrite to match old DS-PRF proof}
+Let $\setprim=(\Rep, \Qry)$ be a canonical data structure for which $\Rep$ has canonical representation
 $(\Rep_1, \Rep_2, F)$. If $F$ is a $(t, \epsilon)$-pseudorandom
-function \tsnote{overloading~$t$}, then $\Pi$ is semantically secure
+function \tsnote{overloading~$t$}, then $\setprim$ is semantically secure
 with respect to leakage function ${\sf leak}(S) = |S|$.
-\tsnote{We have a mixture of styles of theorem statements, resource-parameterized statements vs.\ ``verbose'' concrete statements.  We
-  need to make things uniform.}
 \end{theorem}
 \begin{proof}
 We define a simulator $\Sim$ as follows. On input $n$, $\Sim$ fixes a
@@ -203,6 +209,21 @@ of what it means to be canonical.
 To complete the proof, we simply note that $\hyb'_S$ and $\mbox{{\sf Ideal}}_S$
 are computationally indistinguishable, again relying on pseudorandomness of~$F$.
 \end{proof}
+\fixme{ ----The following is left only for cut-and-paste value---- }
+\begin{theorem}\label{thm:ds-ss}
+Fix $k,m,n>0$, and let $\setprim_{\mathrm{ds}}= (\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-ds}.  For any set~$S \in 2^\elts$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ such that, for any adversary~$A$
+\[
+\AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}
+\]
+where~$B$ is constructed from~$A$.  (Both~$B$ and~$\Sim$ are explicitly constructed in the proof of this theorem.)
+\end{theorem}
+\begin{proof}[Proof (sketch). ] \todo{Move this sketch to be a proof
+    of Jon's meta-result. Downgrade theorem to be a corollary of that
+    result, the proof simply being a description of how $\Rep$
+    decomposes into $\Rep_1$ and $\Rep_2$.}
+Adversary~$B^{f}$ simulates the steps of $\ExpPrivSSreal{\setprim_{\mathrm{ds}}}{A}$, using its oracle to simuate~$\Rep(S)$.  When~$f=F_K$ then the simulation is perfect.  When~$f=\rho$ then~$B$ simulates $\ExpPrivSSreal{\overline{\setprim}_{\mathrm{ds}}}{A}$ where $\overline{\Rep}$ effectively uses~$k$ independent random functions as the hash functions.  But the $\pub$ produced by $\overline{\Rep}$ has a distribution that depends only~$|S|=n$, not the specific elements of~$S$, and the other public parameters~$m,k$.  Thus, a simulator~$\Sim$ given only $\leak(S)=|S|$ can produce a correct~$\pub$ as follows: starting with an all-zeros array~$M$ of length~$m$, uniformly sample (with replacement)~$nk$ integers in~$[m]$ and set the resulting positions of~$M$ to 1.
+\end{proof}
+\fixme{ ----The above is left only for cut-and-paste value---- }
 
 %Here is a proof sketch:
 %The simulator, given n=|S|, runs the honest scheme on inputs x_1, ...,
@@ -232,37 +253,34 @@ are computationally indistinguishable, again relying on pseudorandomness of~$F$.
 \subsection{Domain-separated PRF-Hash}
 %\heading{Construction of PRF with domain separation.}
 \heading{Correctness. }
-Let $\Pi_{\mathrm{ds}}= (\calQ,\Rep, \Qry)$ be a set-multiplicity data
+Let $\setprim_{\mathrm{ds}}= (\Rep, \Qry)$ be the set-membership data
 structure defined on the right-side of Figure~\ref{fig:lin-and-ds}.
 As with the preceding theorem, the following says (informally) that
 if~$F$ is a secure PRF, then this domain-separated PRF construction is
 correct against adaptive adversaries.  
-\tsnote{Not really appropriate to say this next thing; I'll add a new section that addresses bigram DS-PRF hash.}
-We note that Neidermayer et
-al. in~\cite{xxx} suggest replacing the linear-PRF hash functions in
-the previous construction with independently keyed PRFs as a way to
-thwart their attacks.  The construction we consider now achieves the
-same end, albeit via explict domain separation rather than separate
-keys.
+% \tsnote{Not really appropriate to say this next thing; I'll add a new section that addresses bigram DS-PRF hash.}
+% We note that Neidermayer et
+% al. in~\cite{xxx} suggest replacing the linear-PRF hash functions in
+% the previous construction with independently keyed PRFs as a way to
+% thwart their attacks.  The construction we consider now achieves the
+% same end, albeit via explict domain separation rather than separate
+% keys.
 
 \begin{theorem}\label{thm2}\label{thm:ds-correctness}
-Fix $k,m,n,r>0$, and let $\Pi_{\mathrm{ds}}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure in Figure~\ref{fig:lin-and-ds}. Let $\distr{}{}$ be a distribution over~$\mathcal{S}$.  For any adversary~$A$ that makes a total of~$q$ queries to its oracle and has time-complexity~$O(t)$, there exists a prf-adversary ~$B$ (explicitly constructed in the proof of this theorem) such that
+Fix $k,m,n,r>0$, a set~$\elts$, and let $\setprim_{\mathrm{ds}}= (\Rep, \Qry)$ be the set-membership data structure (over~$\elts$) in Figure~\ref{fig:lin-and-ds}.  For any adversary~$A$ that makes a total of~$q$ queries to its oracle and has time-complexity~$O(t)$, there exists a prf-adversary ~$B$ (explicitly constructed in the proof of this theorem) such that
 \[
-\AdvCorrect{\Pi_{\mathrm{ds}},\distr{}{},r}{A} \leq  \AdvPRF{F}{B}  + {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
+\AdvCorrect{\setprim_{\mathrm{ds}},r}{A} \leq  \AdvPRF{F}{B}  + {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
 \]
 Here, $B$ asks $q$ queries, and has time complexity $O(t+qm)$.
 \end{theorem}
 
 \heading{Privacy. }
-The privacy of $\Pi_{\mathrm{ds}}$ follows directly from our general
-result, Theorem~\ref{thm:xxx}.
-
+The privacy of $\setprim_{\mathrm{ds}}$ follows directly from our general result, Theorem~\ref{thm:xxx}.
 \begin{theorem}\label{thm:ds-ss}
-Fix $k,m,n>0$, and let $\Pi_{\mathrm{ds}}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-ds}.  For any set~$S$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ such that, for any adversary~$A$
+Fix $k,m,n>0$, a set~$\elts$, and let $\setprim_{\mathrm{ds}}= (\Rep, \Qry)$ be the set-membership data structure described in Figure~\ref{fig:lin-and-ds}.  For any set~$S \in 2^\elts$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ and adversary~$B$ such that, for any adversary~$A$
 \[
-\AdvPrivSS{\Pi_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}
+\AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}
 \]
-where~$B$ is constructed from~$A$.  
 %(Both~$B$ and~$\Sim$ are explicitly constructed in the proof of this theorem.)
 \end{theorem}
 \begin{proof}
@@ -270,21 +288,6 @@ It suffices to give the decomposition of $\Rep$ in to $\Rep_1$ and $\Rep_2$ as r
 On input a set of distinct elements $S=\{x_1,x_2,\ldots,x_n\}$, algorithm~$\Rep_1$ returns $s_1=\langle 1,x_1 \rangle, s_2=\langle 2,x_1 \rangle, \ldots, s_k\langle k,x_1\rangle, s_{k+1}=\langle 1,x_2\rangle, \ldots, s_{2k}=\langle k,x_2\rangle, \ldots ,s_{kn+1}=\langle 1,x_n\rangle, \ldots, s_{kn}=\langle k,x_n \rangle$.  On input $n,F_K(s_1),\ldots,F_K(s_{kn})$, algorithm $\Rep_2$ simply initializes an all-zero array~$M$ of~$m$-bits, and sets the positions $M[F_K(s_i)]$ to 1.  It returns~$M$ as $\pubaux$.
 \end{proof}
 
-\fixme{ ----The following is left only for cut-and-paste value---- }
-\begin{theorem}\label{thm:ds-ss}
-Fix $k,m,n>0$, and let $\Pi_{\mathrm{ds}}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-ds}.  For any set~$S$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ such that, for any adversary~$A$
-\[
-\AdvPrivSS{\Pi_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}
-\]
-where~$B$ is constructed from~$A$.  (Both~$B$ and~$\Sim$ are explicitly constructed in the proof of this theorem.)
-\end{theorem}
-\begin{proof}[Proof (sketch). ] \todo{Move this sketch to be a proof
-    of Jon's meta-result. Downgrade theorem to be a corollary of that
-    result, the proof simply being a description of how $\Rep$
-    decomposes into $\Rep_1$ and $\Rep_2$.}
-Adversary~$B^{f}$ simulates the steps of $\ExpPrivSSreal{\Pi_{\mathrm{ds}}}{A}$, using its oracle to simuate~$\Rep(S)$.  When~$f=F_K$ then the simulation is perfect.  When~$f=\rho$ then~$B$ simulates $\ExpPrivSSreal{\overline{\Pi}_{\mathrm{ds}}}{A}$ where $\overline{\Rep}$ effectively uses~$k$ independent random functions as the hash functions.  But the $\pub$ produced by $\overline{\Rep}$ has a distribution that depends only~$|S|=n$, not the specific elements of~$S$, and the other public parameters~$m,k$.  Thus, a simulator~$\Sim$ given only $\leak(S)=|S|$ can produce a correct~$\pub$ as follows: starting with an all-zeros array~$M$ of length~$m$, uniformly sample (with replacement)~$nk$ integers in~$[m]$ and set the resulting positions of~$M$ to 1.
-\end{proof}
-\fixme{ ----The above is left only for cut-and-paste value---- }
 
 %%%%%%%%%%%%%%%%% LINEAR-PRF %%%%%%%%%%%%%%%%%%%%
 \begin{figure}[tp]
@@ -320,7 +323,7 @@ for each $x \in S$\\
 \nudge for each $b \in B_x$\\
 \nudge\nudge for $j \in [k]$\\
 \nudge\nudge\nudge $i \gets F_{K}(\langle 1, b\rangle)+j\cdot
-F_{K}(\langle b  \rangle) \bmod m$\\
+F_{K}(\langle 2, b  \rangle) \bmod m$\\
 \nudge\nudge\nudge $M_x[i] \gets 1$\\
 \nudge $\pubaux \gets \langle\pubaux, M_x \rangle$\\
 $\privaux \gets \langle K_1,K_2 \rangle$\\
@@ -332,19 +335,20 @@ $B \gets \mathsf{bigram}(x)$\\
 $\overline{M} \gets 0^m$\\
 for each $b \in B$\\
 \nudge for $j \in [k]$\\
-\nudge\nudge $i \gets F_{K}(\langle 1,b \rangle)+j\cdot F_{K}(\langle2,b \rangle) \bmod m$\\
+\nudge\nudge $i \gets F_{K}(\langle 1,b \rangle)+j\cdot F_{K}(\langle 2,b \rangle) \bmod m$\\
 \nudge\nudge $\overline{M}[i] \gets 1$\\
-if $M \in \pubaux$ then Return 1 \\
+if $\overline{M} \in \pubaux$ then Return 1 \\
 Return 0
 }
 \caption{{\bf Left:} $\Rep$ and $\Qry$ algorithms for the linear-PRF
-  data structure $\Pi_{\mathrm{lin}}$ {\bf Right:}
-The scheme from Neidermayer et al.\cite{xxx}, $\Pi_{\bilin}$. The $\mathsf{bigram}$
+  data structure $\setprim_{\mathrm{lin}}$ {\bf Right:}
+The scheme from Neidermayer et al.\cite{xxx}, $\setprim_{\bilin}$. The $\mathsf{bigram}$
 algorithm takes a string~$x=x_1,x_2,\ldots,x_\ell$ as input, and
 returns the set of bigrams for the left- and right-padded string
-$\sqcup x \sqcup$, i.e. $\{\sqcup x_1, x_1x_2,\ldots,x_\ell\sqcup\}$.
+$\sqcup x \sqcup$, i.e. $\{\sqcup x_1, x_1x_2,\ldots,x_{\ell-1}x_\ell,x_\ell\sqcup\}$.
 }
 \label{fig:lin-and-bi-lin}
+\label{fig:neidermayer}
 \end{figure}
 
 \subsection{Linear PRF-hash Bloom Filter }
@@ -357,33 +361,27 @@ Taken together, the results of this section and the next highlight how sensitive
 
 
 \heading{Correctness. }
-For now, let $n,k,m \geq 0$ and let $\mathcal{S}=[\univ]^n$.  Then $\Pi_{\mathrm{lin}}= (\calQ,\Rep, \Qry)$ is defined as in Figure~\ref{fig:lin-and-ds} (left side).  The following result shows, informally, that if~$F$ is a good PRF, then $\Pi_\mathrm{lin}$ is correct against adaptive error-finding adversaries.
+For now, let $n,k,m \geq 0$.  Then $\setprim_{\mathrm{lin}}= (\Rep, \Qry)$ is defined as in Figure~\ref{fig:lin-and-ds} (left side).  The following result shows, informally, that if~$F$ is a good PRF, then $\setprim_{\mathrm{lin}}$ is correct against adaptive error-finding adversaries.
 
 \begin{theorem}\label{thm1}\label{thm:lin-correctness}
-Fix $k,m,n,r>0$, and let $\Pi_{\mathrm{lin}}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-ds}. Let $\distr{}{}$ be a distribution over~$\mathcal{S}$.  For any adversary~$A$ that makes a total of~$q$ queries to its oracle and has time-complexity~$O(t)$, there exist prf-adversaries~$B_1,B_2$ (explicitly constructed in the proof of this theorem) such that
+Fix $k,m,n,r>0$, a set~$\elts$, and let $\setprim_{\mathrm{lin}}= (\Rep, \Qry)$ be the set-membership data structure (over~$\elts$) described in Figure~\ref{fig:lin-and-bin-lin}.  For any adversary~$A$ that makes a total of~$q$ queries to its oracle and has time-complexity~$O(t)$, there exist prf-adversaries~$B_1,B_2$ (explicitly constructed in the proof of this theorem) such that
 \[
-\AdvCorrect{\Pi_{\mathrm{lin}},\distr{}{},r}{A} \leq  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}  +{\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
+\AdvCorrect{\setprim_{\mathrm{lin}},r}{A} \leq  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}  +{\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
 \]
 Here, $B_1$ and $B_2$, each ask~$q$ oracle queries and have time complexity~$O(t+qm)$.
 \end{theorem}
 The proof appears in Appendix~\ref{app:xxx}.  We note that Kirsch and Mitzenmacher~\cite{xxx} show
-that the ($r=1$, zero-query) FP-probability for~$\Pi_\mathrm{lin}$ is
+that the ($r=1$, zero-query) FP-probability for~$\setprim_\mathrm{lin}$ is
 always within $O(1/n)$ of $(1-e^{-kn/m})^k$, although the asymptotic
-rate of convergence is faster than~$1/n$.  The factor of $\dbinom{q}{r}$ arises as a result
-of moving from the adaptive to the zero-query setting.  Finally, $\dbinom{q}{r} \leq q^r$ (with
-reasonable tightness when~$r$ is small) in which case the final term in the bound behaves as
-$(q (1-e^{-kn/m})^k + O(q/n) )^r$; loosely, the bound one expects for
-trying to find a single FP in each of~$r$ independent``rounds'', each round
-consisting of~$q$ attempts.
+rate of convergence is faster than~$1/n$.   As in previous cases, the multiplicative term $\dbinom{q}{r}$ arises when switching from the adaptive to zero-query settings.
 
 \heading{Privacy. }
 The SS-privacy of the linear-PRF hash construction follows directly from~Theorem~\ref{thm:xxx}.
 \begin{theorem}\label{thm:lin-privacy}
-Fix $k,m,n,r>0$, and let $\Pi_{\mathrm{lin}}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-ds}. For any set~$S$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ such that, for any adversary~$A$
+Fix $k,m,n,r>0$, a set $\elts$, and let $\setprim_{\mathrm{lin}}= (\Rep, \Qry)$ be the set-membership data structure (over~$\elts$) described in Figure~\ref{fig:lin-and-bin-lin}. For any set~$S \in 2^{\elts}$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ and an adversary~$B$ such that, for any adversary~$A$
 \[
-\AdvPrivSS{\Pi_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}
+\AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}
 \]
-where~$B$ is constructed from~$A$.  
 %(Both~$B$ and~$\Sim$ are explicitly constructed in the proof of this theorem.)
 \end{theorem}
 \begin{proof}
@@ -401,13 +399,14 @@ On input $n,F_K(s_1),F_K(s_2),\ldots,F_K(s_{2n-1}) , F_K(s_{2n})$, algorithm $\R
 %\heading{Correctness.} 
 %\todo{Correctness theorem for this scheme.  Should follow pretty closely the one for ``plain'' linear-PRF.}\tsnote{Actually not sure this is that interesting, but for parallel structure one would want to give it.}
 \heading{Privacy. }
-We only address the privacy of this construction, as the correctness follows immediately from the correctness of the Linear-PRF contruction.  The privacy, however, does not.  Here we exhibit an efficient SS-privacy attack even when simulator is provided nearly the entire set.  Consider the following leakage function.  On input a set~$S=\{x_1,x_2,\ldots,x_n\}$, it assigns $x'_n \gets x_n[1:|x_n|-1]$ and returns $\mathsf{leak}(S)=\{x_1,x_2,\ldots,x'_n\}$.  
+Consider the set-membership data structure given in Figure~\ref{fig:lin-and-bi-lin} (right side), which we call the \emph{bigram linear-PRF} construction.  This construction is of practical interest, as it has been suggested as a way to address the privacy-preserving record-linkage problem, in particular for linking common records in medical databases~\cite{neidermayer,xxx}. 
+We only address the privacy of this construction, as the correctness follows immediately from the correctness of the Linear-PRF contruction.  The privacy, however, does not.  Here we exhibit an efficient SS-privacy attack even when simulator is provided nearly the entire set.  Consider the following ``all-but-last'' leakage function.  On input a set~$S=\{x_1,x_2,\ldots,x_n\}$, it assigns $x'_n \gets x_n[1:|x_n|-1]$ and returns $\mathsf{leak_{abl}}(S)=\{x_1,x_2,\ldots,x'_n\}$.  \todo{OW privacy proof? Or just some text that says that Neidermayer et al show something stronger~---OW-privacy violation---~albeit with $n=10000, m=10000\alpha$ for an $\alpha$ that I need to look up.}
 
 \begin{figure}
 \centering
-\fpage{.55}
+\fpage{.65}
 {
-\adversaryv{A}\\
+\adversaryv{$A$}\\
 On input $\emptystring$:\\
 \nudge $x_1 \gets \mathrm{cab}$\\
 \nudge $x_2 \gets \mathrm{bab}$\\
@@ -429,31 +428,30 @@ On input $\pub \neq \emptystring$:\\
 \end{figure}
 
 \begin{theorem}\label{thm:bi-lin-ss}
-Let $\Pi_{\bilin}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig: neidermayer}, but instantiated with $F_{K}$ replaced by a random functions~$\rho$.  Let $\leak$ be the leakage function just described.   Let~$\univ=\{\mathrm{a,b,c}\}^*$. Let $n=3$,  $m=3\alpha $ for integer $\alpha >> 1$, and let, $k = \lceil \ln(2) \alpha \rceil$.\tsnote{This value of~$k$ is from the classical analysis for minimizing the FP rate for a Bloom filter, and is set this way for compatibility with classical results.  It isn't used in any essential way in the proof sketch.}  Let~$A$ be the adversary in Figure~\ref{fig:adv-bi-lin-ss}.  Then for any simulator $\Sim$, the advantage $\AdvPrivSS{\Pi_{\bilin},\leak}{A,\Sim}$ can be made arbitrarily close to $1/2$ by choice of~$\alpha$.
-
+Let $\setprim_{\bilin}= (\Rep, \Qry)$ be the set-membership data structure described in Figure~\ref{fig:neidermayer}, but instantiated with $F_{K}$ replaced by a random functions~$\rho$.  Let $\leak_{\mathsf{abl}}$ be the leakage function just described.   Let~$\elts=\{\mathrm{a,b,c}\}^*$. Let $n=3$,  $m=3\alpha $ for integer $\alpha >> 1$, and let, $k = \lceil \ln(2) \alpha \rceil$.\tsnote{This value of~$k$ is from the classical analysis for minimizing the FP rate for a Bloom filter, and is set this way for compatibility with classical results.  It isn't used in any essential way in the proof sketch.}  Let~$A$ be the adversary in Figure~\ref{fig:adv-bi-lin-ss}.  Then for any simulator $\Sim$, the advantage $\AdvPrivSS{\setprim_{\bilin},\leak_{\mathsf{abl}}}{A,\Sim}$ can be made arbitrarily close to $1/2$ by choice of~$\alpha$.
 \end{theorem}
 \begin{proof}(Sketch.)
 On input the set~$S$ produced by~$A$, the $\Rep$ algorithm turns $x_1=$'cab', $x_2=$'bab' and $x_3$ into their respective bigram sets: $B_{x_1}=\{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{b}\sqcup\}$, $B_{x_2}=\{\sqcup\mathrm{b},\mathrm{ba},\mathrm{ab}, \mathrm{b}\sqcup \}$; the set $B_{x_3}$ will be either $\{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{ba}, \mathrm{a}\sqcup\}$, or $\{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{bc}, \mathrm{c}\sqcup\}$, each with probability 1/2.  It then produces $\alpha$-bit arrays $M_1, M_2, M_3$ by hashing the corresponding bigram sets using the hash functions $h_j(s)=\rho_1(s)+ j\rho_2(s) \bmod m$.  Note that for sufficiently large~$m$, each of $M_1,M_2$ will contain exactly $4k$ positions set to 1; this is with overwhelming probability, up to collisions in the hash functions for different bigrams within a given bigram set.  Likewise, $M_{1,2}=M_1 \vee M_2$ will have exactly $6k$ positions set to 1, because $B_{x_1}$ and $B_{x_2}$ share $\mathrm{ab}$ and $\mathrm{a}\sqcup$.
 
-In the case that $B_{x_3}=\{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{ba}, \mathrm{a}\sqcup\}$, only one of its elements ($\mathrm{a}\sqcup$) is not in either of $B_{x_1},B_{x_2}$.  Hence, the hamming weight of $M_{1,2}\wedge M_3$ will be $4k$.  On the other hand, when $B_{x_3} = \{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{bc}, \mathrm{c}\sqcup\}$, two of its elements ($\mathrm{bc}, \mathrm{c}\sqcup$) are not covered by $B_{x_1},B_{x_2}$.  In this case, the hamming weight of $M_{1,2} \wedge M_3$ will be $3k$.  Thus $\ExpPrivSSreal{\Pi_{\bilin}}{A}=1$ with overwhelming probability.  
+In the case that $B_{x_3}=\{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{ba}, \mathrm{a}\sqcup\}$, only one of its elements ($\mathrm{a}\sqcup$) is not in either of $B_{x_1},B_{x_2}$.  Hence, the hamming weight of $M_{1,2}\wedge M_3$ will be $4k$.  On the other hand, when $B_{x_3} = \{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{bc}, \mathrm{c}\sqcup\}$, two of its elements ($\mathrm{bc}, \mathrm{c}\sqcup$) are not covered by $B_{x_1},B_{x_2}$.  In this case, the hamming weight of $M_{1,2} \wedge M_3$ will be $3k$.  Thus $\ExpPrivSSreal{\setprim_{\bilin}}{A}=1$ with overwhelming probability.  
 
 On the other hand, the simulator~$\Sim$ is given 'cab','bab','cab' as
 input.  It can perfectly simulate $M_1,M_2$ by lazily sampling random
 function~$\rho$ itself.  However, it has no information about the
 bit~$z$, so at best it can cause~$A$ to output 1 with
-probabilility~$1/2$.  That is $\ExpPrivSSsim{\Pi_{\bilin}}{A,\Sim} \leq 1/2$.
+probabilility~$1/2$.  That is $\ExpPrivSSsim{\setprim_{\bilin}}{A,\Sim} \leq 1/2$.
 \end{proof}
 
-\todo{OW privacy proof? Or just some text that says that Neidermayer et al show something stronger~---OW-privacy violation---~albeit with $n=10000, m=10000\alpha$ for an $\alpha$ that I need to look up.}
+
 
 
 %%%%%%%%%%%%%%%%% Bigram DOMAIN-SEPARATED PRF %%%%%%%%%%%%%%%%%%%%
 \subsection{Bigram Domain-Separated PRF-Hash}
 We note that Neidermayer et al. in~\cite{xxx} suggest replacing the linear-PRF hash functions in the previous construction with independently keyed PRFs as a countermeasure to their attack.  In terms of SS-privacy, however, this change offers no help.  The following theorem is proved via a nearly identical argument as Theorem~\ref{thm:bi-lin-ss}
 
-\begin{theorem}\label{thm:bi-lin-ss}
-Let $\Pi_{\bilin}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig: neidermayer}, but instantiated with $F_{K}$ replaced by a random functions~$\rho$.  Let $\leak$ be the leakage function described just prior to Theorem~\ref{thm:bi-lin-ss}.   Let~$\univ=\{\mathrm{a,b,c}\}^*$. Let $n=3$,  $m=3\alpha $ for integer $\alpha >> 1$, and let, $k = \lceil \ln(2) \alpha \rceil$.\tsnote{This value of~$k$ is from the classical analysis for minimizing the FP rate for a Bloom filter, and is set this way for compatibility with classical results.  It isn't used in any essential way in the proof sketch.}  Let~$A$ be the adversary in Figure~\ref{fig:adv-bi-lin-ss}.  Then for any simulator $\Sim$,
-the advantage $\AdvPrivSS{\Pi_{\mathrm{ds}},\leak}{A,\Sim}$ can be made arbitrarily close to $1/2$ by choice of~$\alpha$.
+\begin{theorem}\label{thm:bi-ds-ss}
+Let $\setprim_{\bilin}= (\Rep, \Qry)$ be the set-membership data structure described in Figure~\ref{fig:neidermayer}, but instantiated with $F_{K}$ replaced by a random functions~$\rho$.  Let $\leak$ be the leakage function described just prior to Theorem~\ref{thm:bi-lin-ss}.   Let~$\elts=\{\mathrm{a,b,c}\}^*$. Let $n=3$,  $m=3\alpha $ for integer $\alpha >> 1$, and let, $k = \lceil \ln(2) \alpha \rceil$.\tsnote{This value of~$k$ is from the classical analysis for minimizing the FP rate for a Bloom filter, and is set this way for compatibility with classical results.  It isn't used in any essential way in the proof sketch.}  Let~$A$ be the adversary in Figure~\ref{fig:adv-bi-lin-ss}.  Then for any simulator $\Sim$,
+the advantage $\AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim}$ can be made arbitrarily close to $1/2$ by choice of~$\alpha$.
 \end{theorem}
 
 \todo{OW privacy proof?  Distributional SS privacy proof?}
@@ -462,43 +460,74 @@ the advantage $\AdvPrivSS{\Pi_{\mathrm{ds}},\leak}{A,\Sim}$ can be made arbitrar
 \subsection{Garbled Bloom Filter}
 \begin{figure}
 \centering
-\fpage{.525}
+\fpage{.75}
 {
-\algorithmv{$\Rep^H(S)$}\\
-$M \gets \mathrm{null}^m$; $\lambda \gets \calK$\\
+\algorithmv{$\Rep(S)$}\\
+$M \gets (\bot)^m$\\
+$K_1,K_2,\ldots, K_k \getsr \calK$\\
 for $x \in S$\\
 \nudge $\finalshare \gets 0^\lambda$; $\emptyslot \gets -1$\\
 \nudge for $j \in \{1,2,\ldots, k\}$\\
-\nudge \nudge $h_j \gets H(j,x)$\\
-\nudge \nudge if $M[h_j] \neq \mathrm{null}$ then\\
+\nudge \nudge $h_j \gets H_{K_j}(x)$\\
+\nudge \nudge if $M[h_j] \neq \bot$ then\\
 \nudge \nudge \nudge $\finalshare \gets \finalshare \xor M[h_j]$\\
 \nudge \nudge else if $\emptyslot = -1$ then\\
 \nudge \nudge \nudge $\emptyslot \gets h_j$\\
 \nudge \nudge else\\
-\nudge \nudge \nudge $M[h_j] \gets \bits^\lambda$\\
+\nudge \nudge \nudge $M[h_j] \getsr \bits^\lambda$\\
 \nudge \nudge \nudge $\finalshare \gets \finalshare \xor M[h_j]$\\
 \nudge $M[\emptyslot] \gets \finalshare \xor x$\\
 for $i \in \{1,2,\ldots, m\}$\\
 \nudge if $M[i] = \undefined$ then\\
-\nudge \nudge  $M[i] \gets \bits^\lambda$\\
-$\pubaux \gets M$; $\privaux \gets \lambda$\\
+\nudge \nudge  $M[i] \getsr \bits^\lambda$\\
+$\pubaux \gets M$; $\privaux \gets \langle K_1,K_2,\ldots,K_k \rangle$ \mbox{ (if secret hash version)}\\
+$\pubaux \gets \langle M,K_1,K_2,\ldots,K_k \rangle$; $\privaux \gets \emptystring$ \mbox{(if public hash version)}\\
 
 \medskip
-\algorithmv{$\Qry(\pubaux,\privaux,q_x)$}\\
-$M \gets \pubaux$, $\lambda \gets \privaux$, $x \gets 0^\lambda$\\
+\algorithmv{$\Qry(\pubaux,\privaux,\qry_x)$}\\
+if $\privaux \neq \emptystring$ then\\
+\nudge $M \gets \pubaux$, $K_1,K_2,\ldots,K_k \gets \privaux$\\
+else\\
+\nudge $M,K_1,K_2,\ldots,K_k \gets \pubaux$\\
+$x' \gets 0^\lambda$\\
 for $j \in \{1,2,\dots,k\}$\\
-\nudge $h_j \gets H(j,x)$\\
-\nudge $x \gets x \xor M[h_j]$\\
-if $x = q_x$ then Return 1\\
+\nudge $h_j \gets H_{K_j}(x)$\\
+\nudge $x' \gets x' \xor M[h_j]$\\
+if $x' =x $ then Return 1\\
 Return 0
 }
 \caption{ $\Rep$ and $\Qry$ algorithms for garbled Bloom
-  filter $\Pi_{\mathrm{garbled}}$ in the ROM for a hash function $H\colon \mathbb{N} \times \calK
- \times \univ \to [m]$. The query set is $\calQ=\{q_x\colon
-  \univ \to \bits\}$ where $q_x(S)=1 \Leftrightarrow x \in S$.}
+  filter $\setprim_{\mathrm{garbled}}$ in the ROM for a hash function $H\colon \calK \times 
+ \elts \to [m]$. The query set is $\calQ=\{\qry_x\colon
+  \univ \to \bits\}$ where $\qry_x(S)=1 \Leftrightarrow x \in S$.}
 
 \end{figure}
 
+
+\begin{figure}
+\centering
+\hfpagess{.45}{.5}
+{
+\adversaryv{$A^{\TestOracle}(\pubaux)$}\\
+$M \gets \pubaux$\\
+for $1 \leq i_1 < i_2 < \cdots < i_k \leq m$\\
+\nudge $x \gets M[i_1] \xor M[i_2] \xor \cdots \xor M[i_k]$\\
+\nudge if $\TestOracle(x)=1$ then Return $\bot$
+}
+{
+\adversaryv{$A^{\TestOracle}(\pubaux)$}\\
+$M,K_1,K_2,\ldots,K_k \gets \pubaux$\\
+for $1 \leq i_1 < i_2 < \cdots < i_k \leq m$\\
+\nudge $x \gets M[i_1] \xor M[i_2] \xor \cdots \xor M[i_k]$\\
+\nudge $x' \gets H(1,x) \xor H(2,x) \xor \cdots \xor H(k,x)$\\
+\nudge if $x=x'$ then\\
+\nudge\nudge $\TestOracle(x)$\\
+\nudge\nudge Return $\bot$\\
+}
+
+\caption{Adversary for Theorem~\ref{thm:xxx}.  \textbf{Left:} secret hash case, \textbf{Right:} public hash case.}
+\label{fig:adv-bi-lin-ss}
+\end{figure}
 
 
 

@@ -1,27 +1,28 @@
+%F_{K}(\langle 1,x \rangle) + j\cdot F_{K}(\langle 2,x \rangle) \bmod m
 \begin{proof}[\Cref{thm1}]
-The proof of the theorem will use a game playing argument as shown in \Cref{fig:Game}. $\game{0}(A)$ exactly simulates $\ExpCorrect{\Pi_\mathrm{lin},\distr{\calS}{},r}{A}$ with hash functions $h_j(x) =  F_{K_0}(x) + j\cdot F_{K_1}(x) \bmod m$. So,
+The proof of the theorem will use a game playing argument as shown in \Cref{fig:Game}. $\game{0}(A)$ exactly simulates $\ExpCorrect{\Pi_\mathrm{lin},\distr{\calS}{},r}{A}$ with hash functions $h_j(x) =  F_{K}(\langle 1,x \rangle) + j\cdot F_{K}(\langle 2,x \rangle) \bmod m$. So,
 
 \begin{equation}
 \AdvCorrect{\Pi_{\mathrm{lin}},\distr{\calS}{},r}{A} = \Prob{\game{0}(A)=1}\label{eq:0}
 \end{equation}
 
- In $\game{1}(A)$, $F_{K_1}$ is replaced by a random function, whereas in $\game{2}(A)$, both $F_{K_0}$ and $F_{K_1}$ are replaced by random functions.
+ In $\game{1}(A)$, $F_{K}(\langle 1,\cdot \rangle)$ is replaced by a random function, whereas in $\game{2}(A)$, both $F_{K}(\langle 1,\cdot \rangle)$ and $F_{K}(\langle 2, \cdot \rangle)$ are replaced by random functions.
 
 %\caption{Adversary $B_1, B_2$ simulating $\game{1}(A)$ and $\game{2}(A)$ respectively}\label{fig:BGame1}
 \begin{figure}
 \fpage{0.9}{
 \hpagessl{0.5}{0.5}
 {
-$\adversaryv{B_1^{\calO}}$\\
-$S \getsr \distr{\calS}{}$\\
+$\adversaryv{B_1^{\calO}(S, \pubaux)}$\\
+%$S \getsr A$\\
 $\calC \gets \emptyset$; $\err \gets 0$\\
-$(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
-Run~$A(S, \pubaux)$\\
-When $A$ asks $\TestOracle(q_x)$:\\
-\nudge if $q_x \in \mathcal{C}$ then Return $\bot$\\
-\nudge $\calC \gets \calC \cup \{q_x\}$\\
-\nudge $a \gets \Qry^{\HashOracle}(\pubaux,\privaux,q_x)$\\
-\nudge if $a \neq q_x(S)$ then \\
+%$(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+Run~$A(\pubaux)$\\
+When $A$ asks $\TestOracle(\qry_x)$:\\
+\nudge if $x \in \mathcal{C}$ then Return $\bot$\\
+\nudge $\calC \gets \calC \cup x$\\
+\nudge $a \gets \Qry^{\HashOracle}(\pubaux,\privaux, x)$\\
+\nudge if $a \neq \qry_x(S)$ then \\
 \nudge \nudge $\err \gets \err + 1$\\
 \nudge Return~$a$\\
 When $A$ halts: \\
@@ -29,30 +30,35 @@ When $A$ halts: \\
 \nudge Return 1\\\\
 %
 \oracle{$\HashOracle(x)$}\\
-Return $F_{K_1}(x) + i\cdot \calO(x)$, for $i\in[1,k]$\\
+for $i \in \{1,2,\ldots,k\}$\\
+\nudge $v_i \gets F_{K}(\langle 1,x \rangle) + i \cdot \calO(\langle 2,x \rangle) \bmod m$\\
+Return ${v_1,v_2,\ldots,v_k}$
 }
 {
-$\adversaryv{B_2^{\calO}}$\\
-$S \getsr \distr{\calS}{}$\\
+$\adversaryv{B_2^{\calO}(S, \pubaux)}$\\
+%$S \getsr A$\\
 $\calC \gets \emptyset$; $\err \gets 0$\\
-$(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
-Run~$A(S, \pubaux)$\\
-When $A$ asks $\TestOracle(q_x)$:\\
-\nudge if $q_x \in \mathcal{C}$ then Return $\bot$\\
-\nudge $\calC \gets \calC \cup \{q_x\}$\\
-\nudge $a \gets \Qry^{\HashOracle}(\pubaux,\privaux,q_x)$\\
-\nudge if $a \neq q_x(S)$ then \\
+%$(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+Run~$A(\pubaux)$\\
+When $A$ asks $\TestOracle(\qry_x)$:\\
+\nudge if $x \in \mathcal{C}$ then Return $\bot$\\
+\nudge $\calC \gets \calC \cup x$\\
+\nudge $a \gets \Qry^{\HashOracle}(\pubaux,\privaux, x)$\\
+\nudge if $a \neq \qry_x(S)$ then \\
 \nudge \nudge $\err \gets \err +1$\\
 \nudge Return~$a$\\
 When $A$ halts: \\
 \nudge if $\err  < r$ then Return 0\\
 \nudge Return 1\\\\
+%
 \oracle{$\HashOracle(x)$}\\
 $a \getsr [m]$\\
 if $T[x] \neq \undefined$\\
 \nudge $a \gets T[x]$\\
 $T[x] \gets a$\\
-Return  $\calO(x) + i\cdot a$, for $i\in[1,k]$
+for $i \in \{1,2,\ldots,k\}$\\
+\nudge $v_i \gets \calO(\langle 1,x \rangle) + i\cdot a$\\
+Return ${v_1,v_2,\ldots,v_k}$
 }
 }
 \caption{\Cref{thm1}:Adversary $B_1, B_2$ simulating $\game{1}(A)$ and $\game{2}(A)$ respectively}\label{fig:BGame1}
@@ -144,93 +150,94 @@ which is the bound claimed in the theorem statement. %\hfill \qed
 
 %\caption{Game playing argument}\label{fig:Game}
 \begin{figure}
-\fpage{.9}{
-\hpagessl{.45}{.5}
+\fpage{.99}{
+\hpagessl{.52}{.5}
 {
 \underline{\game{0}(A)}\\
-$S \getsr \distr{\calS}{}$; $\calC \gets \emptyset$; $\err \gets 0$\\
+$K \getsr \calK $\\
+$S \getsr A$; $\calC \gets \emptyset$; $\err \gets 0$\\
 $(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
-$\bot \getsr A^{\TestOracle}(S,\pubaux)$\\
+$\bot \getsr A^{\TestOracle}(\pubaux)$\\
 if $\err  < r$ then Return 0\\
 Return 1\\
 %
-\oracle{$\TestOracle(q_x)$}\\
-if $q_x \in \mathcal{C}$ then Return $\bot$\\
-$\calC \gets \calC \cup \{q_x\}$\\
-$a \gets \Qry^{\HashOracle}(\pubaux,\privaux,q_x)$\\
-if $a \neq q_x(S)$ then $\err \gets \err + 1$\\
+\oracle{$\TestOracle(\qry_x)$}\\
+if $x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup x$\\
+$a \gets \Qry^{\HashOracle}(\pubaux,\privaux, x)$\\
+if $a \neq \qry_x(S)$ then $\err \gets \err + 1$\\
 Return~$a$\\
 %
 \oracle{$\HashOracle(x)$}\\
 for $i = 1$ to $k$\\
-\nudge $h_i(x) = F_{K_1}(x)+i \cdot F_{K_2}(x) \bmod m$\\
+\nudge $h_i(x) = F_{K}(\langle 1,x \rangle) + i\cdot F_{K}(\langle 2,x \rangle) \bmod m$\\
 Ret $\left(h_1(x),\ldots,h_k(x)\right)$
 }
 {
 \underline{\game{1}(A)}\\
-$\rho \getsr \Func{\univ,[m]}$\\
-$S \getsr \distr{\calS}{}$; $\calC \gets \emptyset$; $\err \gets 0$\\
+$K \getsr \calK $, $\rho \getsr \Func{\univ,[m]}$\\
+$S \getsr A$; $\calC \gets \emptyset$; $\err \gets 0$\\
 $(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
-$\bot \getsr A^{\TestOracle}(S,\pubaux)$\\
+$\bot \getsr A^{\TestOracle}(\pubaux)$\\
 if $\err  < r$ then Return 0\\
 Return 1\\
 %
-\oracle{$\TestOracle(q_x)$}\\
-if $q_x \in \mathcal{C}$ then Return $\bot$\\
-$\calC \gets \calC \cup \{q_x\}$\\
-$a \gets \Qry^{\HashOracle}(\pubaux,\privaux,q_x)$\\
-if $a \neq q_x(S)$ then $\err \gets \err + 1$\\
+\oracle{$\TestOracle(\qry_x)$}\\
+if $x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup x$\\
+$a \gets \Qry^{\HashOracle}(\pubaux,\privaux, x)$\\
+if $a \neq \qry_x(S)$ then $\err \gets \err + 1$\\
 Return~$a$\\
 %
 \oracle{$\HashOracle(x)$}\\
 for $i=1$ to $k$\\
-\nudge $h_i(x) = F_{K_1}(x)+i \cdot \rho(x) \bmod m$\\
+\nudge $h_i(x) = F_{K}(\langle 1,x \rangle) + i \cdot \rho(x) \bmod m$\\
 Ret $\left(h_1(x),\ldots,h_k(x)\right)$
 }
 }
-\fpage{.9}{
-\hpagessl{.45}{.5}
+\fpage{.99}{
+\hpagessl{.52}{.5}
 {
 \underline{\game{2}(A)}\\
 $\rho_1,\rho_2 \getsr \Func{\univ,[m]}$\\
-$S \getsr \distr{\calS}{}$; $\calC \gets \emptyset$; $\err \gets 0$\\
+$S \getsr A$; $\calC \gets \emptyset$; $\err \gets 0$\\
 $(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
-$\bot \getsr A^{\TestOracle}(S,\pubaux)$\\
+$\bot \getsr A^{\TestOracle}(\pubaux)$\\
 if $\err  < r$ then Return 0\\
 Return 1\\
 %
-\oracle{$\TestOracle(q_x)$}\\
-if $q_x \in \mathcal{C}$ then Return $\bot$\\
-$\calC \gets \calC \cup \{q_x\}$\\
-$a \gets \Qry^{\HashOracle}(\pubaux,\privaux,q_x)$\\
-if $a \neq q_x(S)$ then $\err \gets \err + 1$\\
+\oracle{$\TestOracle(\qry_x)$}\\
+if $x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup x$\\
+$a \gets \Qry^{\HashOracle}(\pubaux,\privaux, x)$\\
+if $a \neq \qry_x(S)$ then $\err \gets \err + 1$\\
 Return~$a$\\\\
 %
 \oracle{$\HashOracle(x)$}\\
 for $i=1$ to $k$\\
-\nudge $h_i(x) = \rho_1(x)+i \cdot \rho_2(x) \bmod m$\\
+\nudge $h_i(x) = \rho_1(x) + i \cdot \rho_2(x) \bmod m$\\
 Ret $\left(h_1(x),\ldots,h_k(x)\right)$
 }
 {
 \underline{{$\game{3}(A)$},\fbox{$\game{4}(A)$}}\\
 $c\gets 0$, $\bad \gets \false$, $\err \gets 0$;  $\calC \gets \emptyset$\\
-$S \getsr \distr{\calS}{}$; $\mathcal{I}\getsr [\{1,2,\ldots,q\}]^r$\\
+$S \getsr A$; $\mathcal{I}\getsr [\{1,2,\ldots,q\}]^r$\\
 $(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
-$\bot \getsr A^{\TestOracle}(S,\pubaux)$\\
+$\bot \getsr A^{\TestOracle}(\pubaux)$\\
 if $\bad = \true$ then \fbox{Return 0}\\
 if $\err  < r$ then Return 0\\
 Return 1\\
 %
-\oracle{$\TestOracle(q_x)$}\\
-if $q_x \in \mathcal{C}$ then Return $\bot$\\
-$\calC \gets \calC \cup \{q_x\}$\\
+\oracle{$\TestOracle(\qry_x)$}\\
+if $x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup x$\\
 $c \gets c+1$\\
-$v \gets \Qry^{\HashOracle}(\pubaux,\privaux,q_x)$\\
-if $c \in \mathcal{I}$ and $v = q_x(S)$ then \\
+$v \gets \Qry^{\HashOracle}(\pubaux,\privaux, x)$\\
+if $c \in \mathcal{I}$ and $v = \qry_x(S)$ then \\
 \nudge $\bad \gets \true$ \\
-if $c \not\in \mathcal{I}$ and $v \neq q_x(S)$ then \\
+if $c \not\in \mathcal{I}$ and $v \neq \qry_x(S)$ then \\
 \nudge $\bad \gets \true$\\
-if $v \neq q_x(S)$ then $\err \gets \err +1$\\
+if $v \neq \qry_x(S)$ then $\err \gets \err +1$\\
 Return~$v$\\
 %
 \oracle{$\HashOracle(x)$}\\
@@ -247,8 +254,8 @@ Return $\left(v_1,\ldots,v_k\right)$
 %\caption{PRF game}\label{fig:prf}
 \begin{figure}
 \centering
-\fpage{0.45}{
-\hpagess{0.4}{0.35}
+\fpage{0.55}{
+\hpagess{0.5}{0.35}
 {
 $\experimentv{\ExpPRF{F}{B}}$\\
 $K \getsr \calK $\\
@@ -276,10 +283,10 @@ $\adversaryv{D(S, \pubaux)}$\\[4pt]
 $c \gets 0$\\%, $\calX \gets \emptyset$\\
 $\calC \gets \emptyset$; $\err \gets 0$\\
 $\mathcal{I}\getsr [\{1,2,\ldots,q\}]^r$\\
-Run $A(S, \pubaux)$\\
-When $A$ asks $\TestOracle(q_x)$:\\
-\nudge if $q_x \in \mathcal{C}$ then Return $\bot$\\
-\nudge $\calC \gets \calC \cup \{q_x\}$\\
+Run $A(\pubaux)$\\
+When $A$ asks $\TestOracle(\qry_x)$:\\
+\nudge if $x \in \mathcal{C}$ then Return $\bot$\\
+\nudge $\calC \gets \calC \cup x$\\
 \nudge $c \gets c+1$\\
 \nudge $r \gets 0$\\
 \nudge if $c \in \mathcal{I}$\\

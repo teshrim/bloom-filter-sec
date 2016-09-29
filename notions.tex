@@ -47,7 +47,7 @@ random-oracle(s).
 
 
 
-\begin{figure}[htp]
+\begin{figure}[tp]
 \centering
 \fpage{.65}{
 \hpagess{.5}{.45}
@@ -71,7 +71,7 @@ $\mathcal{C} \gets \mathcal{C} \cup \{\qry\}$ \\
 Return~$a$
 }
 }
-\caption{Correctness of~$\Pi$ against an (adaptive) adversary~$A$.}
+\caption{Correctness of~$\setprim$ against an (adaptive) adversary~$A$.}
 \label{fig:correctness}
 \end{figure}
 
@@ -79,10 +79,10 @@ In this experiment we track the time complexity (relative to some
 model of computation) and query complexity (i.e., number of
 queries to $\TestOracle$) of~$A$.
 We define the advantage of adversary~$A$ in the correctness experiment as
-$\AdvCorrect{\Pi,r}{A} = \Prob{\ExpCorrect{\Pi,r}{A}=1}$.
-\tsnote{drop} Overloading notation, we write $\AdvCorrect{\Pi,r}{t,q}$ for the maximum over
+$\AdvCorrect{\setprim,r}{A} = \Prob{\ExpCorrect{\setprim,r}{A}=1}$.
+\tsnote{drop} Overloading notation, we write $\AdvCorrect{\setprim,r}{t,q}$ for the maximum over
 all~$t$-time adversaries that ask at most~$q$ queries. We say a
-data structure~$\Pi$ is $(t,q,r,\epsilon)$-correct if $\AdvCorrect{\Pi,r}{t,q} \leq \epsilon$.
+data structure~$\setprim$ is $(t,q,r,\epsilon)$-correct if $\AdvCorrect{\setprim,r}{t,q} \leq \epsilon$.
 
 \todo{Explain that the case of $r=1$ does not necessarily imply anything for $r>1$: can have a scheme
 where finding the first false positive is hard but then the rest are easy; can have
@@ -91,7 +91,7 @@ because there do not exist
 any more).}
 
 
-\newcommand{\leak}{{\sf leak}}
+
 \subsection{Privacy}
 
 One can also consider the orthogonal notion of \emph{privacy} for a data structure.
@@ -100,7 +100,7 @@ focus on sets rather than multisets. Before continuing, it will be useful to def
 of guessing an element in a set chosen from some distribution.
 Let ${\cal D}$ be a distribution over subsets of some universe ${\cal X}$. The \emph{point-wise
 min-entropy} of ${\cal D}$ is defined as
-\[H_\infty({\cal D}) \bydef -\log \max_{x \in {\cal X}} \Pr[S \getsr {\cal D} : x \in S].\]
+$H_\infty({\cal D}) \bydef -\log \max_{x \in {\cal X}} \Pr[S \getsr {\cal D} : x \in S]$.
 
 \tsnote{I think we should switch the order of presentation, since we
   use the SS notion much more. }
@@ -117,16 +117,16 @@ The relevant experiment begins by first sampling a set $S$ according to a distri
 ${\cal D}$. Then $\Rep(S)$ is run to obtain $\pubaux,\privaux$, and the attacker~$A$ is given
 $\pubaux$. The attacker succeeds if it is able to output an element of~$S$.
 We define the advantage of adversary~$A$ in this experiment\footnote{We
-remark that one could consider augmenting experiment $\ExpPrivOW{\Pi,{\cal D}}{A}$ by additionally
+remark that one could consider augmenting experiment $\ExpPrivOW{\setprim,{\cal D}}{A}$ by additionally
 giving $A$ access to an oracle for testing membership in~$S$. However, it is not hard
 to see that allowing $q$ such queries can increase $A$'s advantage by at most a factor of~$q$.} as
-$\AdvPrivOW{\Pi,\mathcal{D}}{A} = \Prob{\ExpPrivOW{\Pi,{\cal D}}{A}=1}$ and,
-overloading notation, we write $\AdvPrivOW{\Pi,{\cal D}}{t}$ for the maximum of this value over
+$\AdvPrivOW{\setprim,\mathcal{D}}{A} = \Prob{\ExpPrivOW{\setprim,{\cal D}}{A}=1}$ and,
+overloading notation, we write $\AdvPrivOW{\setprim,{\cal D}}{t}$ for the maximum of this value over
 all~$t$-time adversaries.
 We remark that an attacker can trivially achieve advantage
 $2^{-H_\infty({\cal D})}$ by outputting the element most likely to be in~$S$.
 
-\begin{figure}[hbtp]
+\begin{figure}[tp]
 \centering
 \fpage{.25}{
 %\hpagess{.5}{.45}
@@ -167,12 +167,12 @@ by a simulator $\Sim$ that is only given ${\sf leak}(S)$ for some (possibly rand
 function~${\sf leak}$.
 For a given function ${\sf leak}$, adversary $A$, and simulator~$\Sim$,
 we define the advantage
-$\AdvPrivSS{\Pi,{\sf leak}}{A,\Sim} \bydef
-\left| \Prob{\ExpPrivSSreal{\Pi}{A}=1} -
-\Prob{\ExpPrivSSsim{\Pi,{\sf leak}}{A, \Sim}=1} \right|$.
-Informally, a scheme $\Pi$ is secure with respect to some leakage function ${\sf leak}$
+$\AdvPrivSS{\setprim,{\sf leak}}{A,\Sim} \bydef
+\left| \Prob{\ExpPrivSSreal{\setprim}{A}=1} -
+\Prob{\ExpPrivSSsim{\setprim,{\sf leak}}{A, \Sim}=1} \right|$.
+Informally, a scheme $\setprim$ is secure with respect to some leakage function ${\sf leak}$
 if for all efficient $A$ there is a simulator $\Sim$ such that
-$\AdvPrivSS{\Pi,{\sf leak}}{A,\Sim}$ is small.
+$\AdvPrivSS{\setprim,{\sf leak}}{A,\Sim}$ is small.
 Intuitively, this means that the public portion
 $\pubaux$ of the representation of a set~$S$ leaks~${\sf leak}(S)$ and nothing more.
 \jnote{The definition
@@ -180,19 +180,19 @@ as stated does not really work well in the presence of (programmable) random ora
 \jnote{In the current definition there is (intentionally) no bound on the simulator's
 running time.}
 
-\begin{figure}[hbtp]
+\begin{figure}[tp]
 \centering
 \fpage{.6}{
 \hpagess{.5}{.45}
 {
-\experimentv{$\ExpPrivSSreal{\Pi}{A}$}\\
+\experimentv{$\ExpPrivSSreal{\setprim}{A}$}\\
 $S \getsr A$ \\
 $(\pubaux,\privaux) \getsr \Rep(S)$\\
 return $A(\pubaux)$\\
 }
 %
 {
-\experimentv{$\ExpPrivSSsim{\Pi, {\sf leak}}{A, \Sim}$}\\
+\experimentv{$\ExpPrivSSsim{\setprim, {\sf leak}}{A, \Sim}$}\\
 $S \getsr A$\\
 $\pubaux \getsr \Sim({\sf leak}(S))$ \\
 return $A(\pubaux)$\\
@@ -201,30 +201,34 @@ return $A(\pubaux)$\\
 \caption{Experiments for the ``semantic-security'' privacy
   definition.}
 \label{fig:privacy-ss}
+\end{figure}
 
-\end{figure}
-\begin{figure}[hbtp]
-\centering
-\fpage{.6}{
-\hpagess{.5}{.45}
-{
-\experimentv{$\ExpPrivSSreal{\Pi,\distr{}{}}{A}$}\\
-$S \getsr \distr{}{}$ \\
-$(\pubaux,\privaux) \getsr \Rep(S)$\\
-return $A(S,\pubaux)$\\
-}
-%
-{
-\experimentv{$\ExpPrivSSsim{\Pi, {\sf leak}, \distr{}{}}{A, \Sim}$}\\
-$S \getsr \distr{}{}$\\
-$\pubaux \getsr \Sim({\sf leak}(S))$ \\
-return $A(S,\pubaux)$\\
-}
-}
-\caption{Experiments for the ``distibutional semantic-security'' privacy
-  definition.}
-\label{fig:privacy-dss}
-\end{figure}
+%\begin{figure}[hbtp]
+%\centering
+%\fpage{.6}{
+%\hpagess{.5}{.45}
+%{
+%\experimentv{$\ExpPrivSSreal{\setprim,\distr{}{}}{A}$}\\
+%$S \getsr \distr{}{}$ \\
+%$(\pubaux,\privaux) \getsr \Rep(S)$\\
+%return $A(S,\pubaux)$\\
+%}
+%%
+%{
+%\experimentv{$\ExpPrivSSsim{\setprim, {\sf leak}, \distr{}{}}{A, \Sim}$}\\
+%$S \getsr \distr{}{}$\\
+%$\pubaux \getsr \Sim({\sf leak}(S))$ \\
+%return $A(S,\pubaux)$\\
+%}
+%}
+%\caption{Experiments for the ``distibutional semantic-security'' privacy
+%  definition.}
+%\label{fig:privacy-dss}
+%\end{figure}
+\todo{A simple theorem that says if $\privaux=\emptystring$ then
+  SS-privacy is unachievable for any leakage other than $\leak(S)=S$?
+It's at least worth a highlighted remark, I think.  Currently it is a
+remark in the classical BF section, but it seems worth ``pulling up''.}
 
 \heading{Relationships between the notions.}
 Intuition suggests that semantic security should imply one-wayness. And, indeed, this is
@@ -236,25 +240,25 @@ over subsets of some universe ${\cal X}$, define
 
 \jnote{Make theorem statements consistent -- get rid of $(t, \epsilon)$-style.}
 
-\begin{theorem}
-Let $\Pi$ be a set-representation data structure that is $(t, \epsilon)$-semantically secure
+\begin{theorem}\todo{rewrite}
+Let $\setprim$ be a set-representation data structure that is $(t, \epsilon)$-semantically secure
 with respect to leakage ${\sf leak}:2^{\cal X} \rightarrow R$.
-Then $\AdvPrivOW{\Pi,\mathcal{D}}{t} \leq 2^{-\tilde H_\infty({\cal D} \mid {\sf leak})} + \epsilon$.
+Then $\AdvPrivOW{\setprim,\mathcal{D}}{t} \leq 2^{-\tilde H_\infty({\cal D} \mid {\sf leak})} + \epsilon$.
 \end{theorem}
 \begin{proof}
 Fix a distribution ${\cal D}$ and an attacker
-$A$ running in time $t$, and let $\delta \bydef \AdvPrivOW{\Pi,\mathcal{D}}{A}$.
+$A$ running in time $t$, and let $\delta \bydef \AdvPrivOW{\setprim,\mathcal{D}}{A}$.
 Define an attacker $A'$ who behaves as follows: first, it samples a set $S$ according to
 distribution~${\cal D}$. Then, given $\pubaux$, it runs $A(\pubaux)$ to obtain an element~$z$.
 Finally, it outputs~1 if and only if $z \in S$.
 
-It is immediate that $\Pr[\ExpPrivSSreal{\Pi}{A'}=1] = \delta$. Semantic
-security of $\Pi$ implies that there exists a simulator $\Sim$ for which
-$\ExpPrivSSsim{\Pi, {\sf leak}}{A', \Sim} \geq \delta - \epsilon$. However,
+It is immediate that $\Pr[\ExpPrivSSreal{\setprim}{A'}=1] = \delta$. Semantic
+security of $\setprim$ implies that there exists a simulator $\Sim$ for which
+$\ExpPrivSSsim{\setprim, {\sf leak}}{A', \Sim} \geq \delta - \epsilon$. However,
 the only information
 that $\Sim$
 and $A'$ jointly have about the set~$S$ that was sampled is ${\sf leak}(S)$; thus,
-we must have $\ExpPrivSSsim{\Pi, {\sf leak}}{A', \Sim} \leq 2^{-\tilde H_\infty({\cal D} \mid {\sf leak})}$.
+we must have $\ExpPrivSSsim{\setprim, {\sf leak}}{A', \Sim} \leq 2^{-\tilde H_\infty({\cal D} \mid {\sf leak})}$.
 This implies
 $\delta \leq 2^{-\tilde H_\infty({\cal D} \mid {\sf leak})}+\epsilon$ as desired.
 \end{proof}

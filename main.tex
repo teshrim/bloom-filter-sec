@@ -61,6 +61,7 @@
 
 \newcommand{\distr}[2]{\mathcal{D}_{#1}^{#2}}
 \newcommand{\univ}{\calU}
+\newcommand{\elts}{\calX}
 \newcommand{\Perm}[1]{\mathrm{Perm}(#1)}
 \newcommand{\Func}[1]{\mathrm{Func}(#1)}
 \newcommand{\win}{\mathrm{win}}
@@ -77,12 +78,13 @@
 \def\pubaux{{\sf pub}}
 \def\privaux{{\sf priv}}
 \newcommand{\bilin}{\mathrm{bi}\mbox{-}\mathrm{lin}}
+\newcommand{\leak}{{\sf leak}}
 
 %%%%%%%%%%%%%%%%%%%% TITLE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \title{{\bf Security Notions for Abstract Data Structures}}
 %\date{\today}
 \date{}
-%\author{Last updated: \today}
+\author{Last updated: \today}
 \begin{document}
 \maketitle
 
@@ -100,13 +102,14 @@
 \input{results}
 \appendix
 \input{ny-def-comparison}
+\input{Theorem3_FP}
 \input{TheoremGBF_correctness}
 \input{TheoremGBF_correctnessUB}
 \input{Proofs}
-\input{tasks_and_ideas}
 \input{intro-old}
-\input{mutable-filters}
-\input{filters-multi-server}
+\input{tasks_and_ideas}
+%\input{mutable-filters}
+%\input{filters-multi-server}
 
 %%%%%%%%%%%%%%% BIBLIOGRAPHY %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{alpha}
