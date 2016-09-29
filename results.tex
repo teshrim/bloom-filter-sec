@@ -521,7 +521,7 @@ Return 0
   filter $\setprim_{\mathrm{garbled}}$ in the ROM for a hash function $H\colon \calK \times
  \elts \to [m]$. The query set is $\calQ=\{\qry_x\colon
   \univ \to \bits\}$ where $\qry_x(S)=1 \Leftrightarrow x \in S$.}
-
+\label{fig:gbf}
 \end{figure}
 
 
@@ -549,6 +549,29 @@ for $1 \leq i_1 < i_2 < \cdots < i_k \leq m$\\
 \caption{Adversary for Theorem~\ref{thm:xxx}.  \textbf{Left:} secret hash case, \textbf{Right:} public hash case.}
 \label{fig:adv-bi-lin-ss}
 \end{figure}
+\heading{Correctness.}
+Dong, Chen and Wen~\cite{xxx} introduce a set-membership data
+structure called a \emph{garbled Bloom filter}.  We give the
+pseudocode for it in Figure~\ref{fig:gbf} 
+
+If the filter and the hash functions are public, there is a naive
+attack that works for some interesting parameters.  Pick~$k$ positions
+$i_1,i_2,\ldots,i_k$, xor strings at these positions to get a
+candidate~$x$.  If $h_{1}(x)=i_1 \wedge h_2(x)=i_2 \wedge \cdots
+\wedge h_k(x) = i_k$ then either $x \in S$ or~$x$ is a
+false-positive. (You don't have to do all~$k$ hashes, you can stop as
+soon as one fails to match the index.) Say you have a 1000-position
+filter ($m=1000$) and a 100-element set ($n=100$), and you are willing
+to tolerate a 1\% FP rate.  Then you'd set $k=4$ (a la Squid).  There
+are roughly $2^{35}$ subsets of 4 indices to consider, which is
+reasonable on a laptop these days.  (Also, since $n=100$ the expected
+number of trials is roughly $2^{28}$.) With the FP rate of 1\%, if you
+find a winner then almost certainly it is in the set.  Granted, this
+attack is naive, but notice that you \emph{cannot} mount it against a
+standard Bloom filter. Also notice that this attack might be
+significantly more efficient than brute force guessing over the
+universe of inputs (imagine that $U=\bits^{64}$), even if you know
+that the distribution deviates significantly from uniform. 
 
 \heading{Privacy. }
 The SS-privacy of the garbled Bloom filter construction follows directly from~Theorem~\ref{thm:xxx}.
