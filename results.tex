@@ -427,7 +427,7 @@ We only address the privacy of this construction, as the correctness follows imm
 \centering
 \fpage{.65}
 {
-\adversaryv{$A$}\\
+\adversaryv{$A$}\\[1ex]
 On input $\emptystring$:\\
 \nudge $x_1 \gets \mathrm{cab}$\\
 \nudge $x_2 \gets \mathrm{bab}$\\
@@ -483,13 +483,13 @@ the advantage $\AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim}$ can be made arb
 \centering
 \fpage{.75}
 {
-\algorithmv{$\Rep(S)$}\\
+\algorithmv{$\Rep^H(S)$}\\
 $M \gets (\bot)^m$\\
-$K_1,K_2,\ldots, K_k \getsr \calK$\\
+%$K_1,K_2,\ldots, K_k \getsr \calK$\\
 for $x \in S$\\
 \nudge $\finalshare \gets 0^\lambda$; $\emptyslot \gets -1$\\
 \nudge for $j \in \{1,2,\ldots, k\}$\\
-\nudge \nudge $h_j \gets H_{K_j}(x)$\\
+\nudge \nudge $h_j \gets H(j,x)$\\
 \nudge \nudge if $M[h_j] \neq \bot$ then\\
 \nudge \nudge \nudge $\finalshare \gets \finalshare \xor M[h_j]$\\
 \nudge \nudge else if $\emptyslot = -1$ then\\
@@ -501,24 +501,22 @@ for $x \in S$\\
 for $i \in \{1,2,\ldots, m\}$\\
 \nudge if $M[i] = \undefined$ then\\
 \nudge \nudge  $M[i] \getsr \bits^\lambda$\\
-$\pubaux \gets M$; $\privaux \gets \langle K_1,K_2,\ldots,K_k \rangle$ \mbox{ (if secret hash version)}\\
-$\pubaux \gets \langle M,K_1,K_2,\ldots,K_k \rangle$; $\privaux \gets \emptystring$ \mbox{(if public hash version)}\\
+$\pubaux \gets \emptystring$; $\privaux \gets \langle M\rangle$ \mbox{ (if private~$M$)}\\
+$\pubaux \gets \langle M \rangle$; $\privaux \gets \emptystring$ \mbox{(if public~$M$)}\\
 
 \medskip
 \algorithmv{$\Qry(\pubaux,\privaux,\qry_x)$}\\
-if $\privaux \neq \emptystring$ then\\
-\nudge $M \gets \pubaux$, $K_1,K_2,\ldots,K_k \gets \privaux$\\
-else\\
-\nudge $M,K_1,K_2,\ldots,K_k \gets \pubaux$\\
+if $\privaux \neq \emptystring$ then $M \gets \privaux$\\
+else $M\gets \pubaux$\\
 $x' \gets 0^\lambda$\\
 for $j \in \{1,2,\dots,k\}$\\
-\nudge $h_j \gets H_{K_j}(x)$\\
+\nudge $h_j \gets H(j,x)$\\
 \nudge $x' \gets x' \xor M[h_j]$\\
 if $x' =x $ then Return 1\\
 Return 0
 }
 \caption{ $\Rep$ and $\Qry$ algorithms for garbled Bloom
-  filter $\setprim_{\mathrm{garbled}}$ in the ROM for a hash function $H\colon \calK \times
+  filter $\setprim_{\mathrm{garbled}}$ in the ROM.hash function $H\colon \calK \times
  \elts \to [m]$. The query set is $\calQ=\{\qry_x\colon
   \univ \to \bits\}$ where $\qry_x(S)=1 \Leftrightarrow x \in S$.}
 \label{fig:gbf}
@@ -527,32 +525,44 @@ Return 0
 
 \begin{figure}
 \centering
-\hfpagess{.45}{.5}
+\hfpagess{.425}{.425}
 {
-\adversaryv{$A^{\TestOracle}(\pubaux)$}\\
+\adversaryv{$A^{\TestOracle}(\pubaux)$}\\[1ex]
+$M,K_1,K_2,\ldots,K_k \gets \pubaux$\\
+for $1 \leq i_1 < i_2 < \cdots < i_k \leq m$\\
+\nudge $x \gets M[i_1] \xor M[i_2] \xor \cdots \xor M[i_k]$\\
+\nudge if  $\bigwedge_{j=1}^k H(j,x)=i_j$ then \\
+\nudge\nudge $a\gets\TestOracle(x)$\\
+\nudge\nudge Return $\bot$\\
+}
+{
+\adversaryv{$A^{\TestOracle}(\pubaux)$}\\[1ex]
 $M \gets \pubaux$\\
 for $1 \leq i_1 < i_2 < \cdots < i_k \leq m$\\
 \nudge $x \gets M[i_1] \xor M[i_2] \xor \cdots \xor M[i_k]$\\
 \nudge if $\TestOracle(x)=1$ then Return $\bot$
 }
-{
-\adversaryv{$A^{\TestOracle}(\pubaux)$}\\
-$M,K_1,K_2,\ldots,K_k \gets \pubaux$\\
-for $1 \leq i_1 < i_2 < \cdots < i_k \leq m$\\
-\nudge $x \gets M[i_1] \xor M[i_2] \xor \cdots \xor M[i_k]$\\
-\nudge $x' \gets H(1,x) \xor H(2,x) \xor \cdots \xor H(k,x)$\\
-\nudge if $x=x'$ then\\
-\nudge\nudge $\TestOracle(x)$\\
-\nudge\nudge Return $\bot$\\
-}
-
-\caption{Adversary for Theorem~\ref{thm:xxx}.  \textbf{Left:} secret hash case, \textbf{Right:} public hash case.}
+\caption{Adversary for Theorem~\ref{thm:xxx}.  \textbf{Left:} public hash case, \textbf{Right:} private hash case.}
 \label{fig:adv-bi-lin-ss}
 \end{figure}
 \heading{Correctness.}
 Dong, Chen and Wen~\cite{xxx} introduce a set-membership data
-structure called a \emph{garbled Bloom filter}.  We give the
-pseudocode for it in Figure~\ref{fig:gbf} 
+structure called a \emph{garbled Bloom filter} (GBF).   Modulo some implementation
+details, a GBF is like a classical Bloom filter, but
+rather than storing a bit 1 at the indices determined by $H_j(x)$, the
+GBF stores xor-shares of~$x$.  Thus, if $x \in S$, then hashing~$x$
+and xoring together the strings stored at the indicated positions
+recovers~$x$. We give the pseudocode for the GBF $\Rep$ and $\Qry$
+algorithms in Figure~\ref{fig:gbf}. 
+
+In~\cite{xxx} the GBF is a central piece of a private set-intersection
+scheme
+
+The authors note that the GBF is of general interest, so we consider
+its correctness and 
+
+The pseudocode captures
+two version, one in which the 
 
 If the filter and the hash functions are public, there is a naive
 attack that works for some interesting parameters.  Pick~$k$ positions
