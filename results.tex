@@ -114,157 +114,7 @@ Fix $k,m,n,r>0$, a set~$\elts$, and let $\setprim_{\mathrm{Bloom}}= (\Rep, \Qry)
 \end{theorem}
 \todo{Typeset simple proof.  Result is on chalkboard.}
 
-\subsection{Privacy of Secretly-Keyed ``Canonical'' Data Structures}
-\jnote{Maybe this should be moved to Section~3.2?}
 
-Here we prove a result that can be used to show that a large class of canonical
-data structures are SS-secure, with respect to leakage of the size of the set.
-\jnote{It would not be too hard to generalize this to arbitrary data structures over
-arbitrary objects, so long as the number of distinct queries to the PRF made by $\Rep$
-depends only on ${\sf leak}$.}
-We first define what we mean by ``canonical.''
-
-%\def\bits{\{0,1\}}
-
-\begin{definition}
-A data structure $(\Rep, \Qry)$ is {\sf canonical} if
-there exist algorithms $\Rep_1, \Rep_2$, and a function
-$F: \calK \times \bits^{\ell_{in}} \rightarrow \bits^{\ell_{out}}$
-such that the following hold:
-\begin{itemize}
-\item $\Rep_1$ takes as input a set $S=\{x_1,\ldots,x_n\}$ and outputs distinct values $s_1, \ldots, s_t \in \bits^{\ell_{in}}$,
-where $t$ depends only on~$n$.
-\item $\Rep_2$ takes as input $n$ and $y_1, \ldots, y_t \in \bits^{\ell_{out}}$, and outputs
-$\pubaux$.
-\item For any $S$, the distribution on $\pubaux$ output by $\Rep(S)$ is identical to the distribution
-on $\pubaux$ computing as follows:
-(1) $s_1, \ldots, s_t \getsr \Rep_1(S)$;
-(2) $K \getsr \calK$;
-(3) $\pubaux \getsr \Rep_2(n, F_{K}(s_1), \ldots,F_{K}(s_t))$.
-%\item $K_1,K_2,\ldots,K_p \getsr \calK$ for some fixed number of keys~$p$;
-%\item $\pubaux \getsr \Rep_2(n, \{F_{K_j}(s_1),
-%\ldots,F_{K_j}(s_t)\}_{j\in[p]})$.
-\end{itemize}
-We say that $(\Rep_1, \Rep_2, F)$ is the {\sf canonical representation}
-of~$\Rep$. \hfill\dqed \tsnote{Seems odd to call it this without explaining how
-  this canonical representation handles $\privaux$, too.} \jnote{It
-  doesn't matter what priv is.}
-\end{definition}
-%\jnote{Not sure how general to make the above. Need to verify that it is general enough
-%to prove security of all the constructions we care about.}
-\tsnote{Point out an example or two of the schemes this
-  covers.  Domain-separated PRF BF, for example.  I think it covers
-  classical BF, too, if $F_K(s)=s$ for all $K \in \calK$, $\Rep_1$
-  simply returns the elements of~$S$, and $\Rep_2$ actually picks hash
-  functions and does the hashing. (Although the following theorem does
-  not work in this case, of course.) It does not cover Neidermayer because there's no guarantee of distinct $s_1,\ldots,s_t$. }
-  \jnote{I say we state the general theorem in Section~3.2 and just
-  promise that applications will come in Section~4.}
-We next show that any canonical data structure in which~$F$ is a pseudorandom function is
-semantically secure with respect to leakage consisting of the size of the set.
-
-\begin{theorem}\todo{Rewrite to match old DS-PRF proof}
-Let $\setprim=(\Rep, \Qry)$ be a canonical data structure for which $\Rep$ has canonical representation
-$(\Rep_1, \Rep_2, F)$. If $F$ is a $(t, \epsilon)$-pseudorandom
-function \tsnote{overloading~$t$}, then $\setprim$ is semantically secure
-with respect to leakage function ${\sf leak}(S) = |S|$.
-\end{theorem}
-\begin{proof}
-We define a simulator $\Sim$ as follows. On input $n$, $\Sim$ fixes
-a set $S^*=\{e_1, \ldots, e_n\}$. In then computes: (1)~$s_1,
-\ldots, s_t \getsr \Rep_1(S^*)$; (2)~$K \getsr \calK$; (3)~$\pubaux
-\getsr \Rep_2(|S|, F_K(s_1), \ldots, F_K(s_t))$, and finally returns
-$\pubaux$.
-
-\def\hyb{\mbox{{\sc Hyb}}}
-
-For a given set $S$, define distribution $\mbox{{\sc Real}}_S$ as
-\[ \{ (\pubaux, \privaux) \getsr \Rep(S) : \pubaux\},\]
-and define distribution $\mbox{{\sf Ideal}}_S$ as
-\[ \{ \pubaux \getsr \Sim(|S|) : \pubaux \}.\]
-Our goal is to show that $\mbox{{\sc Real}}_S$ and $\mbox{{\sf Ideal}}_S$ are computationally
-indistinguishable for any set~$S$. \jnote{I'm not quite sure how to elegantly do a proof
-like this in the concrete setting.}\tsnote{I think you just follow the
-sketch that I typeset for the Domain-Separated PRF scheme. (I'll embed
-notes below, too.) The bound will be exactly what is there, shoudl be able to just cut-and-paste,
-basically.  All that's needed, I think, is to do resource accounting
-for $\Sim$ and the PRF-adversary~$B$.}
-To do so, first note that we can express $\mbox{{\sc Real}}_S$ as the outcome of
-the following experiment: \tsnote{I'd call this ``Game $G0$''...}
-\begin{enumerate}
-\item $s_1, \ldots, s_t \getsr \Rep_1(S)$.
-\item $K \getsr \bits^n$.
-\item $\pubaux \getsr \Rep_2(|S|, F_k(s_1), \ldots, F_k(s_t))$.
-\item Return $\pubaux$.
-\end{enumerate}
-
-Now, consider a hybrid distribution $\hyb_S$ computed as follows:
-\tsnote{...and this ``Game $G1$''...}
-\begin{enumerate}
-\item $s_1, \ldots, s_t \getsr \Rep_1(S)$.
-\item $y_1, \ldots, y_t \leftarrow \bits^{\ell_{out}}$
-\item $\pubaux \getsr \Rep_2(|S|, y_1, \ldots, y_t)$.
-\item Return $\pubaux$.
-\end{enumerate}
-It follows immediately from the fact that $F$ is a pseudorandom function (and efficiency
-of $\Rep_2$) that $\hyb_S$ is computationally indistinguishable from $\mbox{{\sc Real}}_S$.
-\tsnote{...and then it's clear that the difference between the
-  probability of $G0 \outputs 1$ and $G1 \outputs 1$ is exactly the
-  PRF advantage of~$B$, who simply uses it's oracle to simulate calls
-  to $F_K$ prior to running $\Rep_2$...}
-Next, consider the following distribution $\hyb'_S$:
-\begin{enumerate}
-\item $S^* := \{e_1, \ldots, e_n\}$, where $n = |S|$.
-\item $s_1, \ldots, s_{t^*} \getsr \Rep_1(S^*)$.
-\item $y_1, \ldots, y_{t^*} \leftarrow \bits^{\ell_{out}}$
-\item $\pubaux \getsr \Rep_2(|S|, y_1, \ldots, y_{t^*})$.
-\item Return $\pubaux$.
-\end{enumerate}
-We claim that $\hyb'_S$ is identically distributed to $\hyb_S$. The follows immediately from the
-observation that the distribution on $t$ (in $\hyb_S$) is identical to the distribution on~$t^*$
-(in $\hyb'_S$) by definition
-of what it means to be canonical.
-\tsnote{...and it is clear that the distriubtion of everything is the
-  same as in Game $G1$, so we are done. }
-
-To complete the proof, we simply note that $\hyb'_S$ and $\mbox{{\sf Ideal}}_S$
-are computationally indistinguishable, again relying on pseudorandomness of~$F$.
-\end{proof}
-\fixme{ ----The following is left only for cut-and-paste value---- }
-\begin{theorem}\label{thm:ds-ss}
-Fix $k,m,n>0$, and let $\setprim_{\mathrm{ds}}= (\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-ds}.  For any set~$S \in 2^\elts$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ such that, for any adversary~$A$
-\[
-\AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}
-\]
-where~$B$ is constructed from~$A$.  (Both~$B$ and~$\Sim$ are explicitly constructed in the proof of this theorem.)
-\end{theorem}
-\begin{proof}[Proof (sketch). ] \todo{Move this sketch to be a proof
-    of Jon's meta-result. Downgrade theorem to be a corollary of that
-    result, the proof simply being a description of how $\Rep$
-    decomposes into $\Rep_1$ and $\Rep_2$.}
-Adversary~$B^{f}$ simulates the steps of $\ExpPrivSSreal{\setprim_{\mathrm{ds}}}{A}$, using its oracle to simuate~$\Rep(S)$.  When~$f=F_K$ then the simulation is perfect.  When~$f=\rho$ then~$B$ simulates $\ExpPrivSSreal{\overline{\setprim}_{\mathrm{ds}}}{A}$ where $\overline{\Rep}$ effectively uses~$k$ independent random functions as the hash functions.  But the $\pub$ produced by $\overline{\Rep}$ has a distribution that depends only~$|S|=n$, not the specific elements of~$S$, and the other public parameters~$m,k$.  Thus, a simulator~$\Sim$ given only $\leak(S)=|S|$ can produce a correct~$\pub$ as follows: starting with an all-zeros array~$M$ of length~$m$, uniformly sample (with replacement)~$nk$ integers in~$[m]$ and set the resulting positions of~$M$ to 1.
-\end{proof}
-\fixme{ ----The above is left only for cut-and-paste value---- }
-
-%Here is a proof sketch:
-%The simulator, given n=|S|, runs the honest scheme on inputs x_1, ...,
-%x_n and outputs the public portion of the result.
-%
-%To see that this is indistinguishable from the real public portion on
-%the actual set S, consider the following hybrids:
-%H0: The real pub produced from the real set S={s_1, ..., s_n}
-%H1: Run the representation algorithm on S, but using random functions
-%in place of PRFs, and output pub.
-%H2: Run the representation algorithm on {x_1, ..., x_n}, still using
-%random functions in place of PRFs, and output pub. The claim is that
-%this is identically distributed to H1. The main observation is that
-%since we are using random functions, the inputs to the random
-%functions don't matter, subject to the technical condition that the
-%number of distinct inputs to the random functions does not change.
-%(Here is where we rely on the fact that |S|=n is known, as well as an
-%appropriate definition of "natural.")
-%H3: Run the representation algorithm on {x_1, ..., x_n}, using the
-%real Rep (with PRFs).
 
 %\jnote{Organize by scheme, not by security notions.}
 
@@ -555,7 +405,7 @@ rather than storing a bit 1 at the indices determined by $H_j(x)$, the
 GBF stores xor-shares of~$x$.  Thus, if $x \in S$, then hashing~$x$
 and xoring together the strings stored at the indicated positions
 recovers~$x$. We give the pseudocode for the GBF $\Rep$ and $\Qry$
-algorithms in Figure~\ref{fig:gbf}. 
+algorithms in Figure~\ref{fig:gbf}.
 
 In~\cite{xxx} the GBF is a central piece of a private set-intersection
 scheme, in which the client computes a classical BF over its
@@ -585,7 +435,7 @@ Consider the adversary described in Figure~\ref{fig:adv-gbf}.  In one
 round of the for-loop, it pics~$k$ positions $i_1,i_2,\ldots,i_k$, and
 xors the strings at these positions to get a candidate~$x$.   If $x
 \in S$, which the adversary knows in the correctness experiment, then
-it moves on to a new set of positions.  If $x \not\in S$ and 
+it moves on to a new set of positions.  If $x \not\in S$ and
 $h_{1}(x)=i_1 \wedge h_2(x)=i_2 \wedge \cdots \wedge h_k(x) = i_k$,
 then it \emph{must be} that $x$ is a false-positive.   Indeed, note
 that the probability of this (in the ROM) is precisely the
@@ -608,7 +458,7 @@ functions (a la Squid\cite{squid}).  This results in a false-positive rate of
 approximately 1\% in a classical BF.  There are roughly $2^{35}$
 subsets of four indices to consider, which is reasonable on a laptop
 these days.  Moreover, with $n=100$ the expected
-number of trials is roughly $2^{28}$.   
+number of trials is roughly $2^{28}$.
 Note that the attack is easily extended to find $r>1$ false positives.
 
 We admit that attack is not particularly sophisticated, yet it might
@@ -616,7 +466,7 @@ be significantly more efficient than brute force guessing over the
 universe of inputs (imagine that $\elts=\bits^{128}$), even if you know
 that the distribution deviates significantly from uniform. Notice,
 too, that you \emph{cannot} mount it against a standard Bloom
-filter.  
+filter.
 
 Switching now to the case of a \emph{private}~$M$ GBF, we have the following correctness bound.
 \todo{Insert correctness theorem for \emph{private}~$M$ in the ROM.}

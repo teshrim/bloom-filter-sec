@@ -274,3 +274,133 @@ $\delta \leq 2^{-\tilde H_\infty({\cal D} \mid {\sf leak})}+\epsilon$ as desired
 %  the example I gave earlier, i.e. $M=S\setminus\{x\}$ for random $x
 %  \in S$.} \jnote{Since we can set $\pubaux$ to be the emptystring, I think
 %  it is trivial to see that privacy does not imply correctness.}
+
+\heading{Privacy of ``canonical'' data structures. }
+Here we prove a result that can be used to show that a large class of canonical
+data structures are SS-secure, with respect to leakage of the size of the set.
+\jnote{It would not be too hard to generalize this to arbitrary data structures over
+arbitrary objects, so long as the number of distinct queries to the PRF made by $\Rep$
+depends only on ${\sf leak}$.}
+We first define what we mean by ``canonical.''
+
+%\def\bits{\{0,1\}}
+
+\begin{definition}
+A data structure $(\Rep, \Qry)$ is {\sf canonical} if
+there exist algorithms $\Rep_1, \Rep_2$, and a function
+$F: \calK \times \bits^{\ell_{in}} \rightarrow \bits^{\ell_{out}}$
+such that the following hold:
+\begin{itemize}
+\item $\Rep_1$ takes as input a set $S=\{x_1,\ldots,x_n\}$ and outputs distinct values $s_1, \ldots, s_t \in \bits^{\ell_{in}}$,
+where $t$ depends only on~$n$.
+\item $\Rep_2$ takes as input $n$ and $y_1, \ldots, y_t \in \bits^{\ell_{out}}$, and outputs
+$\pubaux$.
+\item For any $S$, the distribution on $\pubaux$ output by $\Rep(S)$ is identical to the distribution
+on $\pubaux$ computing as follows:
+(1) $s_1, \ldots, s_t \getsr \Rep_1(S)$;
+(2) $K \getsr \calK$;
+(3) $\pubaux \getsr \Rep_2(n, F_{K}(s_1), \ldots,F_{K}(s_t))$.
+%\item $K_1,K_2,\ldots,K_p \getsr \calK$ for some fixed number of keys~$p$;
+%\item $\pubaux \getsr \Rep_2(n, \{F_{K_j}(s_1),
+%\ldots,F_{K_j}(s_t)\}_{j\in[p]})$.
+\end{itemize}
+We say that $(\Rep_1, \Rep_2, F)$ is the {\sf canonical representation}
+of~$\Rep$. \hfill\dqed \tsnote{Seems odd to call it this without explaining how
+  this canonical representation handles $\privaux$, too.} \jnote{It
+  doesn't matter what priv is.}
+\end{definition}
+%\jnote{Not sure how general to make the above. Need to verify that it is general enough
+%to prove security of all the constructions we care about.}
+\tsnote{Point out an example or two of the schemes this
+  covers.  Domain-separated PRF BF, for example.  I think it covers
+  classical BF, too, if $F_K(s)=s$ for all $K \in \calK$, $\Rep_1$
+  simply returns the elements of~$S$, and $\Rep_2$ actually picks hash
+  functions and does the hashing. (Although the following theorem does
+  not work in this case, of course.) It does not cover Neidermayer because there's no guarantee of distinct $s_1,\ldots,s_t$. }
+  \jnote{I say we state the general theorem in Section~3.2 and just
+  promise that applications will come in Section~4.}
+We next show that any canonical data structure in which~$F$ is a pseudorandom function is
+semantically secure with respect to leakage consisting of the size of the set.
+
+\begin{theorem}\todo{Rewrite to match old DS-PRF proof}
+Let $\setprim=(\Rep, \Qry)$ be a canonical data structure for which $\Rep$ has canonical representation
+$(\Rep_1, \Rep_2, F)$. If $F$ is a $(t, \epsilon)$-pseudorandom
+function \tsnote{overloading~$t$}, then $\setprim$ is semantically secure
+with respect to leakage function ${\sf leak}(S) = |S|$.
+\end{theorem}
+\begin{proof}
+We define a simulator $\Sim$ as follows. On input $n$, $\Sim$ fixes
+a set $S^*=\{e_1, \ldots, e_n\}$. In then computes: (1)~$s_1,
+\ldots, s_t \getsr \Rep_1(S^*)$; (2)~$K \getsr \calK$; (3)~$\pubaux
+\getsr \Rep_2(|S|, F_K(s_1), \ldots, F_K(s_t))$, and finally returns
+$\pubaux$.
+
+\def\hyb{\mbox{{\sc Hyb}}}
+
+For a given set $S$, define distribution $\mbox{{\sc Real}}_S$ as
+\[ \{ (\pubaux, \privaux) \getsr \Rep(S) : \pubaux\},\]
+and define distribution $\mbox{{\sf Ideal}}_S$ as
+\[ \{ \pubaux \getsr \Sim(|S|) : \pubaux \}.\]
+Our goal is to show that $\mbox{{\sc Real}}_S$ and $\mbox{{\sf Ideal}}_S$ are computationally
+indistinguishable for any set~$S$. \jnote{I'm not quite sure how to elegantly do a proof
+like this in the concrete setting.}\tsnote{I think you just follow the
+sketch that I typeset for the Domain-Separated PRF scheme. (I'll embed
+notes below, too.) The bound will be exactly what is there, shoudl be able to just cut-and-paste,
+basically.  All that's needed, I think, is to do resource accounting
+for $\Sim$ and the PRF-adversary~$B$.}
+To do so, first note that we can express $\mbox{{\sc Real}}_S$ as the outcome of
+the following experiment: \tsnote{I'd call this ``Game $G0$''...}
+\begin{enumerate}
+\item $s_1, \ldots, s_t \getsr \Rep_1(S)$.
+\item $K \getsr \bits^n$.
+\item $\pubaux \getsr \Rep_2(|S|, F_k(s_1), \ldots, F_k(s_t))$.
+\item Return $\pubaux$.
+\end{enumerate}
+
+Now, consider a hybrid distribution $\hyb_S$ computed as follows:
+\tsnote{...and this ``Game $G1$''...}
+\begin{enumerate}
+\item $s_1, \ldots, s_t \getsr \Rep_1(S)$.
+\item $y_1, \ldots, y_t \leftarrow \bits^{\ell_{out}}$
+\item $\pubaux \getsr \Rep_2(|S|, y_1, \ldots, y_t)$.
+\item Return $\pubaux$.
+\end{enumerate}
+It follows immediately from the fact that $F$ is a pseudorandom function (and efficiency
+of $\Rep_2$) that $\hyb_S$ is computationally indistinguishable from $\mbox{{\sc Real}}_S$.
+\tsnote{...and then it's clear that the difference between the
+  probability of $G0 \outputs 1$ and $G1 \outputs 1$ is exactly the
+  PRF advantage of~$B$, who simply uses it's oracle to simulate calls
+  to $F_K$ prior to running $\Rep_2$...}
+Next, consider the following distribution $\hyb'_S$:
+\begin{enumerate}
+\item $S^* := \{e_1, \ldots, e_n\}$, where $n = |S|$.
+\item $s_1, \ldots, s_{t^*} \getsr \Rep_1(S^*)$.
+\item $y_1, \ldots, y_{t^*} \leftarrow \bits^{\ell_{out}}$
+\item $\pubaux \getsr \Rep_2(|S|, y_1, \ldots, y_{t^*})$.
+\item Return $\pubaux$.
+\end{enumerate}
+We claim that $\hyb'_S$ is identically distributed to $\hyb_S$. The follows immediately from the
+observation that the distribution on $t$ (in $\hyb_S$) is identical to the distribution on~$t^*$
+(in $\hyb'_S$) by definition
+of what it means to be canonical.
+\tsnote{...and it is clear that the distribution of everything is the
+  same as in Game $G1$, so we are done. }
+
+To complete the proof, we simply note that $\hyb'_S$ and $\mbox{{\sf Ideal}}_S$
+are computationally indistinguishable, again relying on pseudorandomness of~$F$.
+\end{proof}
+\fixme{ ----The following is left only for cut-and-paste value---- }
+\begin{theorem}\label{thm:ds-ss}
+Fix $k,m,n>0$, and let $\setprim_{\mathrm{ds}}= (\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-ds}.  For any set~$S \in 2^\elts$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ such that, for any adversary~$A$
+\[
+\AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}
+\]
+where~$B$ is constructed from~$A$.  (Both~$B$ and~$\Sim$ are explicitly constructed in the proof of this theorem.)
+\end{theorem}
+\begin{proof}[Proof (sketch). ] \todo{Move this sketch to be a proof
+    of Jon's meta-result. Downgrade theorem to be a corollary of that
+    result, the proof simply being a description of how $\Rep$
+    decomposes into $\Rep_1$ and $\Rep_2$.}
+Adversary~$B^{f}$ simulates the steps of $\ExpPrivSSreal{\setprim_{\mathrm{ds}}}{A}$, using its oracle to simuate~$\Rep(S)$.  When~$f=F_K$ then the simulation is perfect.  When~$f=\rho$ then~$B$ simulates $\ExpPrivSSreal{\overline{\setprim}_{\mathrm{ds}}}{A}$ where $\overline{\Rep}$ effectively uses~$k$ independent random functions as the hash functions.  But the $\pub$ produced by $\overline{\Rep}$ has a distribution that depends only~$|S|=n$, not the specific elements of~$S$, and the other public parameters~$m,k$.  Thus, a simulator~$\Sim$ given only $\leak(S)=|S|$ can produce a correct~$\pub$ as follows: starting with an all-zeros array~$M$ of length~$m$, uniformly sample (with replacement)~$nk$ integers in~$[m]$ and set the resulting positions of~$M$ to 1.
+\end{proof}
+\fixme{ ----The above is left only for cut-and-paste value---- }
