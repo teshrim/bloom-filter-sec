@@ -71,7 +71,9 @@ description in $\pubaux$.}
 filter meets our correctness notion in the ROM.  Again, we stress
 that this correctness is with respect to adaptive adversaries,
 aiming to find $r \geq 1$ errors (in this case, false-positives).
-The proof appears in Appendix~\ref{sec:thm3_fp}.
+The proof appears in Appendix~\ref{sec:thm3_fp}. \jnote{We seem to
+have plenty of space, so maybe start moving things from the appendix
+to the main body?}
 
 \begin{theorem}\label{thm3}\label{thm:bf-correctness}
 Fix $k,m,n,r>0$, a set~$\elts$, and let $\setprim_{\mathrm{Bloom}}= (\Rep, \Qry)$ be classical Bloom filter (set-membership) data structure over~$\elts$. For any adversary~$A$ that makes a total of~$q_T$ queries to the $\Test$ oracle, and $q_R$ queries to the RO, and has time-complexity~$O(t)$,
