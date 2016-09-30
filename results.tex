@@ -499,9 +499,9 @@ Fix $k,m,n,r,\lambda>0$, and let $\setprim_{\mathrm{gbf}}=(\Rep, \Qry)$ be the p
 We observe immediately that when~$\pubaux=\langle M \rangle$ the GBF cannot be SS-private (in the ROM) because $\privaux=\emptystring$.  In fact, the correctness attack given above suggests a one-wayness attack in the ROM, too; see the right half of Figure~\ref{fig:adv-gbf}.   The naive attack would simply output the most probable element in the support of the distribution $\distr{}{}$ used in the one-wayness experiment to sample~$S$.  But when~$M$ and the hash functions are available to the attacker, it can carry out set-membership tests for itself.  Thus the adversary on the right of Figure~\ref{fig:adv-gbf} tries the~$q-1$ most probable points, in order, halting with its output as soon as the set-membership test is successful.  If none of these points are yield a successful test, then the next most probable point is output.  It is not hard to conclude the following theorem.
 
 \begin{theorem}
-Fix $k,m,n,r,\lambda>0$, and let $\setprim_{\mathrm{gbf}}=(\Rep, \Qry)$ be the public~$M$ garbled Bloom filter, in the random-oracle model for~$H$.  Then 
+Fix $k,m,n,r,\lambda>0$, and let $\setprim_{\mathrm{gbf}}=(\Rep, \Qry)$ be the public~$M$ garbled Bloom filter, in the random-oracle model for~$H$.  Then \fixme{This probability might not be correct... verify when less tired.}
 \[
-\AdvPrivOW{\setprim_{\mathrm{gbf}},\distr{}{}}{A_{\mathrm{ow}}} \geq 1 - \left(1-\frac{1}{2^{\mu}} \right)^{q} \geq 1 - e^{-q/2^\mu}
+\AdvPrivOW{\setprim_{\mathrm{gbf}},\distr{}{}}{A_{\mathrm{ow}}} \geq 1 - \left(1-\frac{1}{2^{\mu}} \right)^{nq} \geq 1 - e^{-nq/2^\mu}
 \]
  where $\mu = H_\infty(\distr{}{})$ is the pointwise min-entropy of~$\distr{}{}$, and $A_{\mathrm{ow}}$ makes $kq$ random-oracle queries.
 \end{theorem}
