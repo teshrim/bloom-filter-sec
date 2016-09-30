@@ -325,7 +325,7 @@ Let $\setprim_{\bilin}= (\Rep, \Qry)$ be the set-membership data structure descr
 the advantage $\AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim}$ can be made arbitrarily close to $1/2$ by choice of~$\alpha$.
 \end{theorem}
 
-\todo{OW privacy proof? [JON]}
+\todo{OW privacy proof? Attack? [JON]}
 
 %%%%%%%%%%%%%%%%% GARBLED BF  %%%%%%%%%%%%%%%%%%%%
 \subsection{Garbled Bloom Filter}
@@ -487,8 +487,8 @@ oracle calls) to online set-membership (i.e., $\TestOracle$) queries.
 
 Switching now to the case of a \emph{private}~$M$ GBF, i.e., $\pubaux=\emptystring, \privaux=\langle M \rangle$, we have the
 following correctness bound.
-\fixme{Insert correctness theorem for \emph{private}~$M$ in the ROM.}
-\begin{theorem}
+
+\begin{theorem}\fixme{FINISH! (Animesh?)}
 Fix $k,m,n,r,\lambda>0$, and let $\setprim_{\mathrm{gbf}}=(\Rep, \Qry)$ be the private~$M$ garbled Bloom filter. For any adversary~$A$ that makes a total of~$q_T$ queries to the $\Test$ oracle, and $q_R$ queries to the RO, and has time-complexity~$O(t)$,
 \[
 \AdvCorrect{\setprim_{\mathrm{gbf}},r}{A} \leq  [...]
@@ -501,14 +501,12 @@ We observe immediately that when~$\pubaux=\langle M \rangle$ the GBF cannot be S
 \begin{theorem}
 Fix $k,m,n,r,\lambda>0$, and let $\setprim_{\mathrm{gbf}}=(\Rep, \Qry)$ be the public~$M$ garbled Bloom filter, in the random-oracle model for~$H$.  Then 
 \[
-\AdvPrivOW{\setprim_{\mathrm{gbf}},\distr{}{}}{A_{\mathrm{ow}}} \geq 1 - (1-1/2^{\mu})^{q}
+\AdvPrivOW{\setprim_{\mathrm{gbf}},\distr{}{}}{A_{\mathrm{ow}}} \geq 1 - \left(1-\frac{1}{2^{\mu}} \right)^{q} \geq 1 - e^{-q/2^\mu}
 \]
  where $\mu = H_\infty(\distr{}{})$ is the pointwise min-entropy of~$\distr{}{}$, and $A_{\mathrm{ow}}$ makes $kq$ random-oracle queries.
 \end{theorem}
-%\begin{eqnarray*}
-%\AdvPrivOW{\setprim_{\mathrm{gbf}},\distr{}{}}{A_{\mathrm{ow}}} &=& 1 - \Prob{X_1 \not\in S \wedge X_2 \not\in S \wedge \cdots \wedge X_{q+1}\not\in S} \\
-%&=& 1 - \prod_{i=1}^{q+1} \Prob{X_i \not\in S \,|\, X_{i-1} \not\in S \wedge \cdots X_1 \not\in S}\Prob{X_1 \not\in S}\\
-%\end{eqnarray*}
+
+\todo{If time:  would be great to have an upperbound on onewayness for this construction!}
 
 
 If instantiated with hash functions $H_j(x) = F_K(\langle j,x \rangle)$ and $\privaux = \langle K \rangle$, the SS-privacy of the GBF follows directly from~Theorem~\ref{thm:xxx}.
