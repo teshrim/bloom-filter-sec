@@ -76,7 +76,11 @@ have plenty of space, so maybe start moving things from the appendix
 to the main body?}
 
 \begin{theorem}\label{thm3}\label{thm:bf-correctness}
-Fix $k,m,n,r>0$, a set~$\elts$, and let $\setprim_{\mathrm{Bloom}}= (\Rep, \Qry)$ be classical Bloom filter (set-membership) data structure over~$\elts$. For any adversary~$A$ that makes a total of~$q_T$ queries to the $\Test$ oracle, and $q_R$ queries to the RO, and has time-complexity~$O(t)$,
+Fix $k,m,n,r>0$ and a set~$\elts$, and let
+$\setprim_{\mathrm{Bloom}}= (\Rep, \Qry)$ be the classical Bloom
+filter (set-membership) data structure over~$\elts$. For any
+adversary~$A$ that makes a total of~$q_T$ queries to the $\Test$
+oracle, and $q_R$ queries to the RO, and has time-complexity~$O(t)$,
 \[
 \AdvCorrect{\setprim_{\mathrm{Bloom}},r}{A} \leq  {\dbinom{q_T + q_H}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
 \]
@@ -137,14 +141,18 @@ return 0\\
 
 %%%%%%%%%%%%%%%%% DOMAIN-SEPARATED PRF %%%%%%%%%%%%%%%%%%%%
 
-\subsection{Domain-separated PRF-Hash}
+\subsection{Domain-Separated PRF-Hash}
+\jnote{Give English-language description of scheme before turning to
+analysis of correctness.}
+
 %\heading{Construction of PRF with domain separation.}
-\heading{Correctness. }
-Let $\setprim_{\mathrm{ds}}= (\Rep, \Qry)$ be the set-membership data
-structure defined on the right-side of Figure~\ref{fig:bf-and-ds}.
-As with the preceding theorem, the following says (informally) that
-if~$F$ is a secure PRF, then this domain-separated PRF construction is
-correct against adaptive adversaries.
+\heading{Correctness. } Let $\setprim_{\mathrm{ds}}= (\Rep, \Qry)$
+be the set-membership data structure defined on the right-hand side
+of Figure~\ref{fig:lin-and-ds}. As in the preceding theorem, the
+following says (informally) that if~$F$ is a secure PRF, then this
+domain-separated PRF construction is correct against adaptive
+adversaries.
+
 % \tsnote{Not really appropriate to say this next thing; I'll add a new section that addresses bigram DS-PRF hash.}
 % We note that Neidermayer et
 % al. in~\cite{xxx} suggest replacing the linear-PRF hash functions in
@@ -267,7 +275,7 @@ Here, $B_1$ and $B_2$, each ask~$q$ oracle queries and have time complexity~$O(t
 Again, Kirsch and Mitzenmacher~\cite{kirsch2006less} show
 that the ($r=1$, zero-query) error-probability for~$\setprim_\mathrm{lin}$ is
 always within $O(1/n)$ of $(1-e^{-kn/m})^k$, although the asymptotic
-rate of convergence is faster than~$1/n$.   
+rate of convergence is faster than~$1/n$.
 the multiplicative term $\binom{q}{r}$ arises when switching from the adaptive to zero-query settings.
 \input{lin-correctness}
 
@@ -325,7 +333,20 @@ On input $\pub \neq \emptystring$:\\
 \end{figure}
 
 \begin{theorem}[{\rm SS-privacy of bigram linear-PRF}]\label{thm:bi-lin-ss}
-Let $\setprim_{\bilin}= (\Rep, \Qry)$ be the set-membership data structure described in Figure~\ref{fig:neidermayer}, but instantiated with $F_{K}$ replaced by a random functions~$\rho$.  Let $\leak_{\mathsf{abl}}$ be the leakage function just described.   Let~$\elts=\{\mathrm{a,b,c}\}^*$. Let $n=3$,  $m=3\alpha $ for integer $\alpha >> 1$, and let, $k = \lceil \ln(2) \alpha \rceil$.\tsnote{This value of~$k$ is from the classical analysis for minimizing the FP rate for a Bloom filter, and is set this way for compatibility with classical results.  It isn't used in any essential way in the proof sketch.}  Let~$A$ be the adversary in Figure~\ref{fig:adv-bi-lin-ss}.  Then for any simulator $\Sim$, the advantage $\AdvPrivSS{\setprim_{\bilin},\leak_{\mathsf{abl}}}{A,\Sim}$ can be made arbitrarily close to $1/2$ by choice of~$\alpha$.
+Let $\setprim_{\bilin}= (\Rep, \Qry)$ be the set-membership data
+structure described in Figure~\ref{fig:neidermayer}, but with
+$F_{K}$ replaced by a random function~$\rho$. Let
+$\leak_{\mathsf{abl}}$ be the leakage function just described.
+Let~$\elts=\{\mathrm{a,b,c}\}^*$. Let $n=3$,  $m=3\alpha $ for
+integer $\alpha >> 1$, and let, $k = \lceil \ln(2) \alpha
+\rceil$.\tsnote{This value of~$k$ is from the classical analysis for
+minimizing the FP rate for a Bloom filter, and is set this way for
+compatibility with classical results.  It isn't used in any
+essential way in the proof sketch.}  Let~$A$ be the adversary in
+Figure~\ref{fig:adv-bi-lin-ss}.  Then for any simulator $\Sim$, the
+advantage
+$\AdvPrivSS{\setprim_{\bilin},\leak_{\mathsf{abl}}}{A,\Sim}$ can be
+made arbitrarily close to $1/2$ by choice of~$\alpha$.
 \end{theorem}
 \begin{proof}\tsnote{still a bit sketchy but believable}
 On input the set~$S$ produced by~$A$, the $\Rep$ algorithm turns $x_1=$'cab', $x_2=$'bab' and $x_3$ into their respective bigram sets: $B_{x_1}=\{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{b}\sqcup\}$, $B_{x_2}=\{\sqcup\mathrm{b},\mathrm{ba},\mathrm{ab}, \mathrm{b}\sqcup \}$; the set $B_{x_3}$ will be either $\{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{ba}, \mathrm{a}\sqcup\}$, or $\{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{bc}, \mathrm{c}\sqcup\}$, each with probability 1/2.  It then produces $\alpha$-bit arrays $M_1, M_2, M_3$ by hashing the corresponding bigram sets using the hash functions $h_j(s)=\rho_1(s)+ j\rho_2(s) \bmod m$.  Note that for sufficiently large~$m$, each of $M_1,M_2$ will contain exactly $4k$ positions set to 1; this is with overwhelming probability, up to collisions in the hash functions for different bigrams within a given bigram set.  Likewise, $M_{1,2}=M_1 \vee M_2$ will have exactly $6k$ positions set to 1, because $B_{x_1}$ and $B_{x_2}$ share $\mathrm{ab}$ and $\mathrm{a}\sqcup$.
@@ -501,7 +522,7 @@ number of trials is roughly $2^{28}$.
 Note that the attack is easily extended to find $r>1$ false positives.
 
 We admit that attack is not particularly sophisticated, yet it might
-be significantly more efficient than brute force guessing.  When $k,m,n$ are as in the example just given, and $\elts=\bits^{128}$, 
+be significantly more efficient than brute force guessing.  When $k,m,n$ are as in the example just given, and $\elts=\bits^{128}$,
 this attack will be considerably faster even if the attacker knows that the distribution deviates significantly from uniform.   Note that in the ROM, the order in which $k$-tuples are considered is largely irrelevant, especially when $2^\lambda \gg \binom{m}{k}$.
 %Notice,too, that you \emph{cannot} mount it against a standard Bloom filter.
 
