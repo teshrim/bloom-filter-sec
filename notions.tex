@@ -55,7 +55,10 @@ The definition can be lifted to the random-oracle model by providing
 all algorithms (namely, $\Rep,\Qry$, and the adversary~$A$) with access to the
 random oracle. \fixme{I think we should *not* allow $S$ to depend on
   the RO.  That's like letting $S$ depend on $\pub$ in the standard
-  model, but $\pub$ hasn't been fixed yet.  }
+  model, but $\pub$ hasn't been fixed yet.  } \jnote{I disagree. Plus if you do that, then
+  you put the simulator at an unfair disadvantage. (Consider a scheme that always appends
+  $H(0)$ to $\pubaux$, for every~$S$. The simulator will never be able to simulate that---even
+  if you give it~$S$!---simply because it can't guess~$H(0)$).}
 
 %\jnote{I changed $\TestOracle$ so that it outputs $(a, q(S))$ rather
 %than $(a,\mathrm{err})$. Note that the latter can be computed from the former,
@@ -263,7 +266,7 @@ as $\AdvPrivOW{\setprim,\mathcal{D}}{A} = \Prob{\ExpPrivOW{\setprim,{\cal D}}{A}
 %all~$t$-time adversaries.
 The definition can be lifted to the random-oracle model by providing
 all algorithms (namely, $\Rep,\Qry$, and the adversary~$A$) with access to the
-random oracle. 
+random oracle.
 
 \begin{figure}[tbh]
 \centering
@@ -343,7 +346,7 @@ observed information ${\sf leak}(S)$ about the set in question.
 Let $\setprim$ be a set-membership data structure. For any distribution ${\cal D}$ and
 attacker~$A$, there is an attacker $A'$ running in about the same time with
 \[\AdvPrivOW{\setprim,\mathcal{D}}{A} \leq \AdvPrivSS{\setprim,{\sf
-    leak}}{A'} + 2^{-\tilde H_\infty({\cal D} \mid {\sf leak})}.\] 
+    leak}}{A'} + 2^{-\tilde H_\infty({\cal D} \mid {\sf leak})}.\]
 %Let $\setprim$ be a set-representation data structure that is $(t, \epsilon)$-semantically secure
 %with respect to leakage ${\sf leak}:2^{\cal X} \rightarrow R$.
 %Then $\AdvPrivOW{\setprim,\mathcal{D}}{t} \leq 2^{-\tilde H_\infty({\cal D} \mid {\sf leak})} + \epsilon$.
@@ -432,7 +435,7 @@ semantically secure with respect to leakage consisting of the size of the set.
 \jnote{Need notation for the advantage in the PRF
   experiment.}\tsnote{Currently typeset in an appendix}
 
-\begin{theorem}
+\begin{theorem}\label{thm:priv-ss}
 Let $\setprim=(\Rep, \Qry)$ be a canonical data structure for which $\Rep$
 has canonical representation
 $(\Rep_1, \Rep_2, F)$. Then for ${\sf leak}(S) = |S|$ and
@@ -451,7 +454,7 @@ and returns $\pubaux
 
 Note that we can express $\Prob{\ExpPrivSSreal{\setprim}{A}=1}$ as the probability that $A$
 outputs~1 in
-the following experiment~$G0$: 
+the following experiment~$G0$:
 %\jnote{BTW, in class when I do this stuff I usually
 %say ``game'' and then correct myself and say ``\ldots but if you want to get funded,
 %call it an experiment.'' (Some light humor while you work.)}
