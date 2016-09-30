@@ -391,12 +391,12 @@ for $\ell=1$ to $\binom{m}{k}$\\
 {
 \adversaryv{$A_{\mathrm{ow}}^{H}(\pubaux)$}\\[1ex]
 $M \gets \pubaux$\\
-for $x \in X_1,X_2,\ldots,X_q$\\
+for $x \in X_1,X_2,\ldots,X_{q-1}$\\
 \nudge for $j=1$ to $k$ \\
 \nudge \nudge \nudge $i_j \gets H(j,x)$\\
 \nudge $x' \gets M[i_1] \xor M[i_2] \xor \cdots \xor M[i_k]$\\
 \nudge if $x' = x$ then Return $x$\\
-Return~$X_{q+1}$
+Return~$X_{q}$
 }
 %{
 %\adversaryv{$A^{\TestOracle}(\pubaux)$}\\[1ex]
@@ -407,7 +407,7 @@ Return~$X_{q+1}$
 %}
 %\caption{Adversary for Theorem~\ref{thm:xxx}.  \textbf{Left:} public hash case, \textbf{Right:} private hash case.}
 \caption{{\bf Left:} Correctness attack for garbled Bloom filters with public~$M$.  The sequence $\mathcal{I}_1,\mathcal{I}_2,\ldots$ is some implicit enumeration of~$k$-tuples of indices over $[m]$.
-{\bf Right:} One-wayness attack for garbled Bloom filters with public~$M$.  The sequence $X_1,X_2,\ldots,X_q,X_{q+1}$ are the $q+1$ most probable points in the support of~$\distr{}{}$ in decreasing order.  }
+{\bf Right:} One-wayness attack for garbled Bloom filters with public~$M$.  The sequence $X_1,X_2,\ldots,X_q,$ are the~$q$ most probable points in the support of~$\distr{}{}$ in decreasing order.  }
 \label{fig:adv-gbf}
 \end{figure}
 Dong, Chen and Wen~\cite{xxx} introduce a set-membership data
@@ -496,14 +496,19 @@ Fix $k,m,n,r,\lambda>0$, and let $\setprim_{\mathrm{gbf}}=(\Rep, \Qry)$ be the p
 \end{theorem}
 
 \heading{Privacy. }
-We observe immediately that when~$\pubaux=\langle M \rangle$ the GBF cannot be SS-private (in the ROM) because $\privaux=\emptystring$.  In fact, the correctness attack given above suggests a one-wayness attack in the ROM, too; see the right half of Figure~\ref{fig:adv-gbf}.   The naive attack would simply output the most probable element in the support of the distribution $\distr{}{}$ used in the one-wayness experiment to sample~$S$.  But when~$M$ and the hash functions are available to the attacker, it can carry out set-membership tests for itself.  Thus the adversary on the right of Figure~\ref{fig:adv-gbf} tries the~$q$ most probable points, in order, halting with its output as soon as the set-membership test is successful.  If none of these points are yield a successful test, then the next most probable point is output.  The probabilty that $A_{ow}$ fails to win the one-wayness experiment is 
-\begin{eqnarray*}
-\AdvPrivOW{\setprim_{\mathrm{gbf}},\distr{}{}}{A_{\mathrm{ow}}} &= 1 - \Prob{X_1 \not\in S \wedge X_2 \not\in S \wedge \cdots \wedge X_{q+1}\not\in S} \\
-& = 1 - \prod_{i=1}^{q+1} \Prob{X_i \not\in S \,|\, X_{i-1} \not\in S \wedge \cdots X_1 \not\in S}\Prob{X_1 \not\in S}\\
-\end{eqnarray*}
+We observe immediately that when~$\pubaux=\langle M \rangle$ the GBF cannot be SS-private (in the ROM) because $\privaux=\emptystring$.  In fact, the correctness attack given above suggests a one-wayness attack in the ROM, too; see the right half of Figure~\ref{fig:adv-gbf}.   The naive attack would simply output the most probable element in the support of the distribution $\distr{}{}$ used in the one-wayness experiment to sample~$S$.  But when~$M$ and the hash functions are available to the attacker, it can carry out set-membership tests for itself.  Thus the adversary on the right of Figure~\ref{fig:adv-gbf} tries the~$q-1$ most probable points, in order, halting with its output as soon as the set-membership test is successful.  If none of these points are yield a successful test, then the next most probable point is output.  It is not hard to conclude the following theorem.
 
- Thus the efficacy of the attack depends on the false positive rate. \todo{Either work out a proof for this case, or punt and make the attack more formal.}
-
+\begin{theorem}
+Fix $k,m,n,r,\lambda>0$, and let $\setprim_{\mathrm{gbf}}=(\Rep, \Qry)$ be the public~$M$ garbled Bloom filter, in the random-oracle model for~$H$.  Then 
+\[
+\AdvPrivOW{\setprim_{\mathrm{gbf}},\distr{}{}}{A_{\mathrm{ow}}} \geq 1 - (1-1/2^{\mu})^{q}
+\]
+ where $\mu = H_\infty(\distr{}{})$ is the pointwise min-entropy of~$\distr{}{}$, and $A_{\mathrm{ow}}$ makes $kq$ random-oracle queries.
+\end{theorem}
+%\begin{eqnarray*}
+%\AdvPrivOW{\setprim_{\mathrm{gbf}},\distr{}{}}{A_{\mathrm{ow}}} &=& 1 - \Prob{X_1 \not\in S \wedge X_2 \not\in S \wedge \cdots \wedge X_{q+1}\not\in S} \\
+%&=& 1 - \prod_{i=1}^{q+1} \Prob{X_i \not\in S \,|\, X_{i-1} \not\in S \wedge \cdots X_1 \not\in S}\Prob{X_1 \not\in S}\\
+%\end{eqnarray*}
 
 
 If instantiated with hash functions $H_j(x) = F_K(\langle j,x \rangle)$ and $\privaux = \langle K \rangle$, the SS-privacy of the GBF follows directly from~Theorem~\ref{thm:xxx}.
