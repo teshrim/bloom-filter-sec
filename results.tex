@@ -377,15 +377,26 @@ Return 0
 
 \begin{figure}[t]
 \centering
-\fpage{.425}
+\hfpagess{.45}{.45}
 {
-\adversaryv{$A^{\TestOracle}(\pubaux)$}\\[1ex]
-$M \gets \pubaux$\\
-for $1 \leq i_1 < i_2 < \cdots < i_k \leq m$\\
+\adversaryv{$A^{\TestOracle,H}(\pubaux)$}\\[1ex]
+$M \gets \pubaux$; $L \gets \binom{m}{k}$
+for $\ell=1$ to $L$\\
+$i_1,i_2,\ldots,i_k \gets \mathcal{I}_L$\\
 \nudge $x \gets M[i_1] \xor M[i_2] \xor \cdots \xor M[i_k]$\\
 \nudge if  $x \not\in S \wedge \left(\bigwedge_{j=1}^k H(j,x)=i_j \right)$ then \\
 \nudge\nudge $a\gets\TestOracle(x)$\\
 \nudge\nudge Return $\bot$\\
+}
+{
+\adversaryv{$A^{H}(\pubaux)$}\\[1ex]
+$M \gets \pubaux$
+for $x \in X_1,X_2,\ldots,X_q$\\
+\nudge for $j=1$ to $k$ \\
+\nudge \nudge $i_j \gets H(j,x)$
+\nudge $x' \gets M[i_1] \xor M[i_2] \xor \cdots \xor M[i_k]$\\
+\nudge if $x' = x$ then Return $x$\\
+Return~$X_q$
 }
 %{
 %\adversaryv{$A^{\TestOracle}(\pubaux)$}\\[1ex]
@@ -395,7 +406,7 @@ for $1 \leq i_1 < i_2 < \cdots < i_k \leq m$\\
 %\nudge if $\TestOracle(x)=1$ then Return $\bot$
 %}
 %\caption{Adversary for Theorem~\ref{thm:xxx}.  \textbf{Left:} public hash case, \textbf{Right:} private hash case.}
-\caption{Correctness attack for garbled Bloom filters with public~$M$. }
+\caption{Correctness attack for garbled Bloom filters with public~$M$.  The sequence $\mathcal{I}_1,\mathcal{I}_2,\ldots,\mathcal{I}_L$ is some implicit enumeration of~$k$-tuples of indices over $[m]$.   }
 \label{fig:adv-gbf}
 \end{figure}
 Dong, Chen and Wen~\cite{xxx} introduce a set-membership data
@@ -462,11 +473,9 @@ number of trials is roughly $2^{28}$.
 Note that the attack is easily extended to find $r>1$ false positives.
 
 We admit that attack is not particularly sophisticated, yet it might
-be significantly more efficient than brute force guessing over the
-universe of inputs (imagine that $\elts=\bits^{128}$), even if you know
-that the distribution deviates significantly from uniform. Notice,
-too, that you \emph{cannot} mount it against a standard Bloom
-filter.
+be significantly more efficient than brute force guessing.  When $k,m,n$ are as in the example just given, and $\elts=\bits^{128}$, 
+this attack will be considerably faster even if the attacker knows that the distribution deviates significantly from uniform.   Note that in the ROM, the order in which $k$-tuples are considered is largely irrelevant, especially when $2^\lambda \gg \binom{m}{k}$.
+%Notice,too, that you \emph{cannot} mount it against a standard Bloom filter.
 
 Finally, we observe that a similar version of the correctness attack
 works outside of the ROM, say, when we hash via $H(j,x)=F_K(\langle
@@ -486,29 +495,29 @@ Fix $k,m,n,r,\lambda>0$, and let $\setprim_{\mathrm{gbf}}=(\Rep, \Qry)$ be the p
 \end{theorem}
 
 \heading{Privacy. }
-We observe immediately that when~$\pubaux=\langle M \rangle$ the GBF cannot be SS-private (in the ROM) because $\privaux=\emptystring$.  In fact, it is easy to see that the correctness attack just given works as a privacy attack, too, with small modifications.  In particular, the attacker cannot check that the reconstructed $x \not\in S$, nor query a~$\TestOracle$.  Thus the efficacy of the attack depends on the false positive rate. \todo{Either work out a proof for this case, or punt and make the attack more formal.}
+We observe immediately that when~$\pubaux=\langle M \rangle$ the GBF cannot be SS-private (in the ROM) because $\privaux=\emptystring$.  In fact, it is easy to see that the correctness attack given in Figure~\ref{fig:adv-gbf} works as a one-wayness attack, too, with small modifications: remove the check for $x \not\in S$, and the call to $\TestOracle$.  To maximize the efficiency of the attack
+
+ Thus the efficacy of the attack depends on the false positive rate. \todo{Either work out a proof for this case, or punt and make the attack more formal.}
 
 
 
 If instantiated with hash functions $H_j(x) = F_K(\langle j,x \rangle)$ and $\privaux = \langle K \rangle$, the SS-privacy of the GBF follows directly from~Theorem~\ref{thm:xxx}.
-\begin{theorem}\label{thm:lin-privacy}
-Fix $k,m,n,r,\lambda>0$ and a function family~$F\colon \calK \times \bits^* \to [m]$.  Let $\setprim_{\mathrm{gbf}}= (\Rep, \Qry)$ be the garbled Bloom filter with hash functions $H_j(x)=F_K(\langle j,x \rangle)$ and $\privaux=langle K \rangle$.  For any set~$S$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ and an adversary~$B$ such that, for any adversary~$A$
+\begin{theorem}\label{thm:gbf-prf-privacy}
+Fix $k,m,n,r,\lambda>0$ and a function family~$F\colon \calK \times \bits^* \to [m]$.  Let $\setprim_{\mathrm{gbf\mbox{-}prf}}= (\Rep, \Qry)$ be the garbled Bloom filter with hash functions $H_j(x)=F_K(\langle j,x \rangle)$ and $\privaux=\langle K \rangle$.  For any set~$S$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ and an adversary~$B$ such that, for any adversary~$A$
 \[
-\AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}
+\AdvPrivSS{\setprim_{\mathrm{gbf\mbox{-}prf}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}
 \]
 %(Both~$B$ and~$\Sim$ are explicitly constructed in the proof of this theorem.)
 \end{theorem}
 \begin{proof}
 It suffices to give the decomposition of $\Rep$ in to $\Rep_1$ and $\Rep_2$ as required by Theorem~\ref{thm:xxx}.
-On input a set of distinct elements \fixme{ANIMESH: make this correct}
-$S=\{x_1,x_2,\ldots,x_n\}$, algorithm~$\Rep_1$ returns $s_1=\langle 1,x_1 \rangle, s_2=\langle 2,x_1 \rangle, s_3 = \langle 1,x_2\rangle, s_4=\langle 2,x_2 \rangle,\ldots,s_{2n-1}=\langle 1,x_n \rangle, s_{2n}=\langle 2,x_n \rangle$.
-
-On input $n,F_K(s_1),F_K(s_2),\ldots,F_K(s_{2n-1}) , F_K(s_{2n})$, algorithm $\Rep_2$ initializes an all-zero array~$M$ of~$m$-bits, and sets the positions $M[F_K(s_i)+j\cdot F_K(s_{i+1})\bmod m]$ to 1, for each $j \in [k]$.  It returns~$M$ as $\pubaux$.
+On input a set of distinct elements $S=\{x_1,x_2,\ldots,x_n\}$, algorithm~$\Rep_1$ returns $s_1=\langle 1,x_1 \rangle, s_2=\langle 2,x_1 \rangle, \ldots, s_k\langle k,x_1\rangle, s_{k+1}=\langle 1,x_2\rangle, \ldots, s_{2k}=\langle k,x_2\rangle, \ldots ,s_{kn+1}=\langle 1,x_n\rangle, \ldots, s_{kn}=\langle k,x_n \rangle$.  On input $n,F_K(s_1),\ldots,F_K(s_{kn})$, algorithm $\Rep_2$ carries out the pseudocode of~$\Rep$ in Figure~\ref{fig:gbf}, making use of $F_K(s_1),\ldots,F_K(s_{kn})$ in the obvious way.  It returns~$M$ as $\pubaux$.
 \end{proof}
 
 
+\ignore{
 \begin{verbatim}
-%------------------------------------%
+%----- LEFT HERE FOR REMINDERS, AND FOR MENTIONING OPEN PROBLEMS IN INTRO-------------------------------%
 \end{verbatim}
 
 \todo{Below are two lists of things that we should show.}
@@ -540,3 +549,4 @@ of Theorem~2, but taking into account adversary's oracle queries.} [DONE]
 \item Prove privacy bounds of other suggestions, such as the record-level BF from Durham et al.?  This would be a nice pairing with the Neidermayer et al.\ results \tsnote{No time.}
 
 \end{itemize}
+}
