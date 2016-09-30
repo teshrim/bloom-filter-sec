@@ -2,7 +2,9 @@
 \newcommand{\rhoK}{\rho(\langle j,x \rangle)}
 \newcommand{\OK}{\calO(\langle j,x \rangle)}
 
-\begin{proof}[\Cref{thm2}]
+\begin{proof}[Theorem~\ref{thm:xxx}]
+\fixme{Animesh: remove these Cref things and replace with references
+  like I have them in the text.}
 We use a game playing argument (shown in \Cref{fig:2TGame}) similar to \Cref{thm1} to prove this theorem. In \game{0}, adversary attacks the correctness game with  hash functions $h_j(x) = \FK $, and hence exactly simulates $\ExpCorrect{\setprim_{\mathrm{ds}},r}{A}$.
 \begin{equation}
 \AdvCorrect{\setprim_{\mathrm{ds}},r}{A} = \Prob{\game{0}(A)=1}\label{eq:2T0}
@@ -43,7 +45,7 @@ To summarize, we have
 which is the bound claimed in the theorem statement. %\hfill \qed
 
 %\caption{Game playing argument}\label{fig:Game}
-\begin{figure}
+\begin{figure}[tp]
 \fpage{.9}{
 \hpagessl{.45}{.5}
 {
@@ -122,6 +124,8 @@ Return $\left(v_1,\ldots,v_k\right)$
 }
 }
 \caption{\Cref{thm2}: Game playing argument}\label{fig:2TGame}
+\fixme{Animesh: remove Crefs, fix captions to look like the classical
+  BF games captions}
 \end{figure}
 
 %\caption{PRF adversary $B$ simulating $\game{1}(A)$ and $\game{2}(A)$
@@ -148,7 +152,9 @@ When $A$ halts: \\
 \oracle{$\HashOracle(x)$}\\
 \nudge Return $\OK$, for $j\in[1,k]$\\
 }
-\caption{\Cref{thm2}: PRF adversary $B$ simulating $\game{1}(A)$ and $\game{2}(A)$} \label{fig:2TD}
+\caption{\Cref{thm2}: PRF adversary $B$ simulating $\game{1}(A)$ and
+  $\game{2}(A)$} \label{fig:2TD}
+\fixme{Animesh: remove Crefs, make caption refer to correct theorem}
 \end{figure}	
 
 
