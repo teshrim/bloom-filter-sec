@@ -162,14 +162,16 @@ $(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
 $\bot \getsr A^{\TestOracle}(\pubaux)$\\
 if $\err  < r$ then Return 0\\
 Return 1\\
-%
+
+\medskip
 \oracle{$\TestOracle(\qry_x)$}\\
 if $x \in \mathcal{C}$ then Return $\bot$\\
 $\calC \gets \calC \cup x$\\
 $a \gets \Qry^{\HashOracle}(\pubaux,\privaux, x)$\\
 if $a \neq \qry_x(S)$ then $\err \gets \err + 1$\\
 Return~$a$\\
-%
+
+\medskip
 \oracle{$\HashOracle(x)$}\\
 for $i = 1$ to $k$\\
 \nudge $h_i(x) = F_{K}(\langle 1,x \rangle) + i\cdot F_{K}(\langle 2,x \rangle) \bmod m$\\
@@ -183,14 +185,16 @@ $(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
 $\bot \getsr A^{\TestOracle}(\pubaux)$\\
 if $\err  < r$ then Return 0\\
 Return 1\\
-%
+
+\medskip
 \oracle{$\TestOracle(\qry_x)$}\\
 if $x \in \mathcal{C}$ then Return $\bot$\\
 $\calC \gets \calC \cup x$\\
 $a \gets \Qry^{\HashOracle}(\pubaux,\privaux, x)$\\
 if $a \neq \qry_x(S)$ then $\err \gets \err + 1$\\
 Return~$a$\\
-%
+
+\medskip
 \oracle{$\HashOracle(x)$}\\
 for $i=1$ to $k$\\
 \nudge $h_i(x) = F_{K}(\langle 1,x \rangle) + i \cdot \rho(x) \bmod m$\\
@@ -207,14 +211,16 @@ $(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
 $\bot \getsr A^{\TestOracle}(\pubaux)$\\
 if $\err  < r$ then Return 0\\
 Return 1\\
-%
+
+
 \oracle{$\TestOracle(\qry_x)$}\\
 if $x \in \mathcal{C}$ then Return $\bot$\\
 $\calC \gets \calC \cup x$\\
 $a \gets \Qry^{\HashOracle}(\pubaux,\privaux, x)$\\
 if $a \neq \qry_x(S)$ then $\err \gets \err + 1$\\
-Return~$a$\\\\
-%
+Return~$a$\\
+
+\medskip
 \oracle{$\HashOracle(x)$}\\
 for $i=1$ to $k$\\
 \nudge $h_i(x) = \rho_1(x) + i \cdot \rho_2(x) \bmod m$\\
@@ -229,7 +235,8 @@ $\bot \getsr A^{\TestOracle}(\pubaux)$\\
 if $\bad = \true$ then \fbox{Return 0}\\
 if $\err  < r$ then Return 0\\
 Return 1\\
-%
+
+\medskip
 \oracle{$\TestOracle(\qry_x)$}\\
 if $x \in \mathcal{C}$ then Return $\bot$\\
 $\calC \gets \calC \cup x$\\
@@ -241,7 +248,8 @@ if $c \not\in \mathcal{I}$ and $v \neq \qry_x(S)$ then \\
 \nudge $\bad \gets \true$\\
 if $v \neq \qry_x(S)$ then $\err \gets \err +1$\\
 Return~$v$\\
-%
+
+\medskip
 \oracle{$\HashOracle(x)$}\\
 $a,b \getsr [m]$\\
 for $i = 1$ to~$k$\\
