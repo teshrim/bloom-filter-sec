@@ -274,7 +274,7 @@ On input $n,F_K(s_1),F_K(s_2),\ldots,F_K(s_{2n-1}) , F_K(s_{2n})$, algorithm $\R
 Consider the set-membership data structure given in Figure~\ref{fig:lin-and-bi-lin} (right side), which we call the \emph{bigram linear-PRF} construction.  This construction is of practical interest, as it has been suggested as a way to address the privacy-preserving record-linkage problem, in particular for linking common records in medical databases~\cite{neidermayer,xxx}.
 We only address the privacy of this construction, as the correctness follows immediately from the correctness of the Linear-PRF contruction.  The privacy, however, does not.  Here we exhibit an efficient SS-privacy attack even when simulator is provided nearly the entire set.  Consider the following ``all-but-last'' leakage function.  On input a set~$S=\{x_1,x_2,\ldots,x_n\}$, it assigns $x'_n \gets x_n[1:|x_n|-1]$ and returns $\mathsf{leak_{abl}}(S)=\{x_1,x_2,\ldots,x'_n\}$.  \todo{OW privacy proof? Or just some text that says that Niedermeyer et al show something stronger~---OW-privacy violation---~albeit with $n=10000, m=10000\alpha$ for an $\alpha$ that I need to look up.}
 
-\begin{figure}
+\begin{figure}[tp]
 \centering
 \fpage{.65}
 {
@@ -319,7 +319,7 @@ probabilility~$1/2$.  That is $\ExpPrivSSsim{\setprim_{\bilin}}{A,\Sim} \leq 1/2
 
 %%%%%%%%%%%%%%%%% Bigram DOMAIN-SEPARATED PRF %%%%%%%%%%%%%%%%%%%%
 \subsection{Bigram Domain-Separated PRF-Hash}
-We note that Niedermeyer et al. in~\cite{xxx} suggest replacing the linear-PRF hash functions in the previous construction with independently keyed PRFs as a countermeasure to their attack.  In terms of SS-privacy, however, this change offers no help.  The following theorem is proved via a nearly identical argument as Theorem~\ref{thm:bi-lin-ss}
+We note that Niedermeyer et al. in~\cite{xxx} suggest replacing the linear-PRF hash functions in the previous construction with independently keyed PRFs as a countermeasure to their attack.  In terms of SS-privacy, however, this change offers no help.  The following theorem is proved via a nearly identical argument as Theorem~\ref{thm:bi-lin-ss}.
 
 \begin{theorem}[{\rm SS-privacy of bigram DS PRF-hash}]\label{thm:bi-ds-ss}
 Let $\setprim_{\bilin}= (\Rep, \Qry)$ be the set-membership data structure described in Figure~\ref{fig:niedermeyer}, but instantiated with $F_{K}$ replaced by a random functions~$\rho$.  Let $\leak$ be the leakage function described just prior to Theorem~\ref{thm:bi-lin-ss}.   Let~$\elts=\{\mathrm{a,b,c}\}^*$. Let $n=3$,  $m=3\alpha $ for integer $\alpha >> 1$, and let, $k = \lceil \ln(2) \alpha \rceil$.\tsnote{This value of~$k$ is from the classical analysis for minimizing the FP rate for a Bloom filter, and is set this way for compatibility with classical results.  It isn't used in any essential way in the proof sketch.}  Let~$A$ be the adversary in Figure~\ref{fig:adv-bi-lin-ss}.  Then for any simulator $\Sim$,
@@ -330,7 +330,7 @@ the advantage $\AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim}$ can be made arb
 
 %%%%%%%%%%%%%%%%% GARBLED BF  %%%%%%%%%%%%%%%%%%%%
 \subsection{Garbled Bloom Filter}
-\begin{figure}
+\begin{figure}[tp]
 \centering
 \fpage{.8}{
 \hpagess{.55}{.45}
@@ -376,7 +376,7 @@ Return 0
 \end{figure}
 
 
-\begin{figure}[t]
+\begin{figure}[tp]
 \centering
 \hfpagess{.45}{.45}
 {

@@ -1,5 +1,5 @@
 %F_{K}(\langle 1,x \rangle) + j\cdot F_{K}(\langle 2,x \rangle) \bmod m
-\begin{proof}[\Cref{thm1}]
+\begin{proof}[Theorem~\ref{thm:xxx}]
 The proof of the theorem will use a game playing argument as shown in \Cref{fig:Game}. $\game{0}(A)$ exactly simulates $\ExpCorrect{\setprim_\mathrm{lin},r}{A}$ with hash functions $h_j(x) =  F_{K}(\langle 1,x \rangle) + j\cdot F_{K}(\langle 2,x \rangle) \bmod m$. So,
 
 \begin{equation}
@@ -9,7 +9,7 @@ The proof of the theorem will use a game playing argument as shown in \Cref{fig:
  In $\game{1}(A)$, $F_{K}(\langle 1,\cdot \rangle)$ is replaced by a random function, whereas in $\game{2}(A)$, both $F_{K}(\langle 1,\cdot \rangle)$ and $F_{K}(\langle 2, \cdot \rangle)$ are replaced by random functions.
 
 %\caption{Adversary $B_1, B_2$ simulating $\game{1}(A)$ and $\game{2}(A)$ respectively}\label{fig:BGame1}
-\begin{figure}
+\begin{figure}[tp]
 \fpage{0.9}{
 \hpagessl{0.5}{0.5}
 {
@@ -61,7 +61,8 @@ for $i \in \{1,2,\ldots,k\}$\\
 Return ${v_1,v_2,\ldots,v_k}$
 }
 }
-\caption{\Cref{thm1}:Adversary $B_1, B_2$ simulating $\game{1}(A)$ and $\game{2}(A)$ respectively}\label{fig:BGame1}
+\caption{Adversary $B_1, B_2$ simulating $\game{1}(A)$ and $\game{2}(A)$ respectively}\label{fig:BGame1}
+\fixme{fix caption and Crefs}
 \end{figure}
 
 The PRF security notion is shown in \Cref{fig:prf}. Let
@@ -149,7 +150,7 @@ To summarize, we have
 which is the bound claimed in the theorem statement. %\hfill \qed
 
 %\caption{Game playing argument}\label{fig:Game}
-\begin{figure}
+\begin{figure}[tp]
 \fpage{.99}{
 \hpagessl{.52}{.5}
 {
@@ -248,11 +249,12 @@ Return $\left(v_1,\ldots,v_k\right)$
 }
 }
 \caption{\Cref{thm1}: Game playing argument}\label{fig:Game}
+\fixme{fix caption and Crefs}
 \end{figure}
 
 
 %\caption{PRF game}\label{fig:prf}
-\begin{figure}
+\begin{figure}[tp]
 \centering
 \fpage{0.55}{
 \hpagess{0.5}{0.35}
@@ -297,6 +299,7 @@ When $A$ halts:\\
 \nudge Return $\bot$
 }
 \caption{Zero-query adversary $D$} \label{fig:D}
+\fixme{For what theorem?}
 \end{figure}	
 
 \end{proof}
