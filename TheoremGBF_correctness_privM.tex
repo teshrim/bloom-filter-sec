@@ -1,0 +1,155 @@
+%\begin{theorem}\label{thm:gbf-correctness-privM}
+%Fix $k,m,n,r,\lambda>0$, and let $\setprim_{\mathrm{gbf}}=(\Rep, \Qry)$ be the private~$M$ garbled Bloom filter. For any adversary~$A$ that makes a total of~$q_T$ queries to the $\Test$ oracle, and $q_R$ queries to the RO, and has time-complexity~$O(t)$,
+%\[
+%\AdvCorrect{\setprim_{\mathrm{garb}},r}{A} \leq  {\dbinom{q_T}{r}} \left( \dfrac{1}{2^{\lambda}} \right)^r\,.
+%\]
+%\end{theorem}
+\begin{proof}[\Cref{thm:gbf-correctness-privM}]
+We use a game playing argument to prove this theorem. Here, $\Rep$, $\Qry$ and $A$ are given access to $\Hash$ which uses lazy sampling to mimic a RO. $\game{0}$, exactly simulates the correctness game of a garbled Bloom filter for private $M$. Assuming $A$ does not make any pointless queries, the $\Hash$ returns random values sampled from $[m]$ in $\game{1}$. In order to account for queries to RO in $\Test$, the latter returns the $k$ hash values for each query along with the answer. It should be noted that the $\Qry$ oracle returns xor of shares at $k$ random positions in this game. 
+
+In $\game{2}$, the $\Test$ does what $\Qry$ is supposed to do. It picks $k$-subset of random indices, xor them to get the estimated final share, and checks whether the final share is equal to the queried element. Finally, it returns the $k$ hash values along with the answer and the \textbf{final share}. Since, prescribed value of $\lambda$ is 80 or 256, there is a very high probability that the final share is a random string(one or more shares that were xor-ed were random shares), and hence the adversary gains very little advantage in knowing the value of the final share. In $\game{3}$, $\Test$ picks up a random $\lambda$-bit string as the final share. The adversary wins if it finds $r$ queries which are same as the received final shares.
+
+$\game{4}$ is identical to \game{3}, except $\bad$ is set to $\true$ if queries indexed by $r$-set $\calI$ fail to be false-positives, or queries indexed by set $\calI$ are false-positives. In $\game{4}$, $\bad$ does not affect the output of the game; $\game{5}$ on the other hand returns 0 if $\bad$ is set to $\true$. The probability of winning $\game{1}$, $\game{2}$, $\game{3}$, and $\game{4}$ are equal. Dong et al. \cite{Dong} showed that the false-positive probability is upper bounded by $2^{-\lambda}$ in case of a zero-query adversary, and $r=1$.  Using results and analyses of previous proofs, $\Prob{\game{5}(A)=1} = \dfrac{1}{\dbinom{q_T}{r}}\Prob{\game{4}(A)=1}$, and $\Prob{\game{5}(A) = 1} = \left( \dfrac{1}{2^{\lambda}} \right)^r$.
+
+To summarize,
+\[
+\AdvCorrect{\setprim_{\mathrm{garb}},r}{A} \leq  {\dbinom{q_T}{r}} \left( \dfrac{1}{2^{\lambda}} \right)^r\,
+\]
+
+\begin{figure}
+\fpage{.99}{
+\hpagessl{.55}{.5}
+{
+\underline{\game{0}(A)}\\
+$S \getsr A$; $\calC \gets \emptyset$; $\err \gets 0$\\
+$(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+$\bot \getsr A^{\TestOracle}(\pubaux)$\\
+if $\err  < r$ then Return 0\\
+Return 1\\
+
+\oracle{$\TestOracle(\qry_x)$}\\
+if $x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup x$\\
+$a \gets \Qry^{\HashOracle}(\pubaux,\privaux, x)$\\
+if $a \neq \qry_x(S)$ then \\
+\nudge $\err \gets \err + 1$\\
+Return~$a$\\
+
+\oracle{$\HashOracle(\qry_y)$}\\
+for $j \in \{1,2,\ldots,k\}$\\
+\nudge $v_j \getsr [m]$\\
+\nudge if $T[j,y] \neq \undefined$\\
+\nudge \nudge $v_j \gets T[j,y]$\\
+\nudge $T[j,y] \gets v_j$\\
+Ret $\left(v_1,\ldots,v_k\right)$
+}
+{
+\underline{$\game{1}(A)$}\\
+$S \getsr A$; $\calC \gets \emptyset$; $\err \gets 0$\\
+$(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+$\bot \getsr A^{\TestOracle}(\pubaux)$\\
+if $\err  < r$ then Return 0\\
+Return 1\\
+
+\oracle{$\TestOracle(\qry_x)$}\\
+if $x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup x$\\
+$(h_1,\ldots,h_k \getsr [m]$\\
+$a \gets \Qry^{\HashOracle}(\pubaux,\privaux, x)$\\
+if $a \neq \qry_x(S)$ then \\
+\nudge $\err \gets \err + 1$\\
+Return~$a, h_1,\ldots,h_k $\\
+
+\oracle{$\HashOracle(\qry_y)$}\\
+$(v_1,\ldots,v_k \getsr [m]$\\
+Ret $\left(v_1,\ldots,v_k\right)$
+}
+}
+\fpage{.99}{
+\hpagessl{.55}{.5}
+{
+\underline{$\game{2}(A)$}\\
+$S \getsr A$; $\calC \gets \emptyset$; $\err \gets 0$\\
+$(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+$\bot \getsr A^{\TestOracle}(\pubaux)$\\
+if $\err  < r$ then Return 0\\
+Return 1\\
+
+\oracle{$\TestOracle(\qry_x)$}\\
+if $x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup x$\\
+$M \gets \privaux$\\
+$(h_1, \ldots, h_{k}) \gets \HashOracle(x)$\\
+$\finalshare \gets M[h_1(x)] \xor \ldots M[h_k(x)]$\\
+$a \gets \Qry^{\HashOracle}(\pubaux,\privaux, x)$\\
+if $a \neq \qry_x(S)$ then \\
+\nudge $\err \gets \err + 1$\\
+Return~$a, \finalshare, h_1, \ldots, h_{k}$\\
+
+\oracle{$\HashOracle(\qry_y)$}\\
+$(v_1,\ldots,v_k \getsr [m]$\\
+Ret $\left(v_1,\ldots,v_k\right)$
+}
+{
+\underline{$\game{3}(A)$}\\
+$S \getsr A$; $\calC \gets \emptyset$; $\err \gets 0$\\
+$(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+$\bot \getsr A^{\TestOracle}(\pubaux)$\\
+if $\err  < r$ then Return 0\\
+Return 1\\ 
+
+\oracle{$\TestOracle(\qry_x)$}\\
+if $x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup x$\\
+$h_1,\ldots,h_k \gets \HashOracle(x)$\\
+$\finalshare \getsr \bits^{\lambda}$\\
+$a \gets \Qry^{\HashOracle}(\pubaux,\privaux, x)$\\
+if $a \neq \qry_x(S)$ then \\
+\nudge $\err \gets \err + 1$\\
+Return~$(a, \finalshare, h_1,\ldots,h_k)$\\
+
+\oracle{$\HashOracle(\qry_y)$}\\
+$(v_1,\ldots,v_k \getsr [m]$\\
+Ret $\left(v_1,\ldots,v_k\right)$
+}
+}
+\caption{\Cref{thm:gbf-correctness-privM}: Game playing argument}\label{fig:GBFprivMGame}
+\end{figure}
+
+\begin{figure}
+\fpage{.99}{
+\hpagessl{.45}{.55}
+{
+\underline{\game{4}(A)\fbox{\game{5}(A)}}\\
+$c\gets 0$, $\bad \gets \false$, $\err \gets 0$;  $\calC \gets \emptyset$\\
+$S \getsr A$; $\mathcal{I}\getsr [\{1,2,\ldots,q\}]^r$\\
+$(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+$\bot \getsr A^{\TestOracle}(\pubaux)$\\
+if $\bad = \true$ then \fbox{Return 0}\\
+if $\err  < r$ then Return 0\\
+Return 1\\\\
+
+\oracle{$\HashOracle(\qry_y)$}\\
+$(v_1,\ldots,v_k \getsr [m]$\\
+Ret $\left(v_1,\ldots,v_k\right)$
+}
+{
+\oracle{$\TestOracle(\qry_x)$}\\
+$c \gets c + 1$\\
+if $x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup x$\\
+$M \gets \privaux$\\
+$(h_1, \ldots, h_{k}) \gets \HashOracle(x)$\\
+$\finalshare \gets M[h_1(x)] \xor \ldots M[h_k(x)]$\\
+$a \gets \Qry^{\HashOracle}(\pubaux,\privaux, x)$\\
+if $a \neq \qry_x(S)$ then \\
+\nudge $\err \gets \err + 1$\\
+\nudge if $c \notin \calI$ then $\bad \gets \true$\\
+else if $c \in \calI$ then $\bad \gets \true$\\
+Return~$a, \finalshare, h_1, \ldots, h_{k}$\\
+}
+}
+\caption{\Cref{thm:gbf-correctness-privM}: $\game{4}$ and $\game{5}$ of game playing argument}\label{fig:GBFprivMGame1}
+\end{figure}
+
+\end{proof}
