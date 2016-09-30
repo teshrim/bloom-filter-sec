@@ -2,16 +2,17 @@
 \section{Security Notions}
 \label{sec:security-notions}
 Following NY, we are interested in defining an adaptive (i.e.,
-adversarial) notion of correctness. \jnote{I would call it ``soundness'' rather than ``correctness.'' But if you disagree,
-just remove this comment and we'll go with correctness.}
+adversarial) notion of correctness.
 In addition to correctness, we establish notions of privacy for
-set-membership data structures.
+set-multiplicity data structures.
 
 
 
+\fixme{Do we say that all notions can be extended to the ROM by giving
+all all algorithms to a RO~$H$?  Is this true for the SS-privacy
+notion?  (It seems to make sense elsewhere.)}
 
-
-\tsnote{flesh out}
+\todo{flesh out opening text}
 
 \subsection{Correctness Against Adaptive Adversaries}
 
@@ -97,8 +98,9 @@ Return~$a$
 \label{fig:correctness}
 \end{figure}
 
-In the experiment we track the time complexity (relative to some
-model of computation) and query complexity (i.e., number of
+
+In this experiment we track the time complexity~$t$ (relative to some
+model of computation) and query complexity~$q$ (i.e., number of
 queries to $\TestOracle$) of~$A$.
 We define the advantage of adversary~$A$ in this experiment as
 $\AdvCorrect{\setprim,r}{A} = \Prob{\ExpCorrect{\setprim,r}{A}=1}$.
@@ -139,6 +141,10 @@ definition and a variant of the Naor-Yogev definition adapted to our syntax.
 %over universe~$\univ$, and for which $\AdvCorrect{\setprim',1}{t,q} > 0$.
 %\end{proof}
 
+
+%\tsnote{drop} Overloading notation, we write $\AdvCorrect{\setprim,r}{t,q}$ for the maximum over
+%all~$t$-time adversaries that ask at most~$q$ queries. We say a
+%data structure~$\setprim$ is $(t,q,r,\epsilon)$-correct if $\AdvCorrect{\setprim,r}{t,q} \leq \epsilon$.
 
 
 
@@ -330,11 +336,15 @@ observed information ${\sf leak}(S)$ about the set in question.
 
 \begin{theorem}
 Let $\setprim$ be a set-membership data structure. For any distribution ${\cal D}$ and
-attacker~$A$, there is an attacker $A'$ running in about the same time with %JK
+attacker~$A$, there is an attacker $A'$ running in about the same time with
 \[\AdvPrivOW{\setprim,\mathcal{D}}{A} \leq \AdvPrivSS{\setprim,{\sf leak}}{A'} + 2^{-\tilde H_\infty({\cal D} \mid {\sf leak})}.\]
 %Let $\setprim$ be a set-representation data structure that is $(t, \epsilon)$-semantically secure
 %with respect to leakage ${\sf leak}:2^{\cal X} \rightarrow R$.
 %Then $\AdvPrivOW{\setprim,\mathcal{D}}{t} \leq 2^{-\tilde H_\infty({\cal D} \mid {\sf leak})} + \epsilon$.
+\begin{theorem}\todo{rewrite}
+Let $\setprim$ be a set-representation data structure that is $(t, \epsilon)$-semantically secure
+with respect to leakage ${\sf leak}:2^{\cal X} \rightarrow R$.
+Then $\AdvPrivOW{\setprim,\mathcal{D}}{t} \leq 2^{-\tilde H_\infty({\cal D} \mid {\sf leak})} + \epsilon$.
 \end{theorem}
 \begin{proof}
 %Fix a  and an attacker
@@ -371,9 +381,9 @@ data structures satisfy our simulation-based notion of security
 all such data structures of a certain type are private. We refer to such data structures
 as ``canonical,'' a term we define next.
 
-\jnote{It would not be too hard to generalize this to arbitrary data structures over
-arbitrary objects, so long as the number of distinct queries to the PRF made by $\Rep$
-depends only on ${\sf leak}$.}
+%\jnote{It would not be too hard to generalize this to arbitrary data structures over
+%arbitrary objects, so long as the number of distinct queries to the PRF made by $\Rep$
+%depends only on ${\sf leak}$.}
 
 
 %\def\bits{\{0,1\}}
@@ -411,6 +421,17 @@ of algorithm~$\Rep$. \hfill\dqed
 %  not work in this case, of course.) It does not cover Neidermayer because there's no guarantee of distinct $s_1,\ldots,s_t$. }
 %  \jnote{I say we state the general theorem in Section~3.2 and just
 %  promise that applications will come in Section~4.}
+We say that $(\Rep_1, \Rep_2, F)$ is the {\sf canonical representation}
+of~$\Rep$. \hfill\dqed
+\end{definition}
+%\tsnote{Point out an example or two of the schemes this
+%  covers.  Domain-separated PRF BF, for example.  I think it covers
+%  classical BF, too, if $F_K(s)=s$ for all $K \in \calK$, $\Rep_1$
+%  simply returns the elements of~$S$, and $\Rep_2$ actually picks hash
+%  functions and does the hashing. (Although the following theorem does
+%  not work in this case, of course.) It does not cover Neidermayer because there's no guarantee of distinct $s_1,\ldots,s_t$. }
+%  \jnote{I say we state the general theorem in Section~3.2 and just
+%  promise that applications will come in Section~4.}\tsnote{Yes.}
 We next show that any canonical data structure in which~$F$ is a pseudorandom function is
 semantically secure with respect to leakage consisting of the size of the set.
 \jnote{Need notation for the advantage in the PRF experiment.}
@@ -419,7 +440,7 @@ semantically secure with respect to leakage consisting of the size of the set.
 Let $\setprim=(\Rep, \Qry)$ be a canonical data structure for which $\Rep$
 has canonical representation
 $(\Rep_1, \Rep_2, F)$. Then
-\[\AdvPrivSS{\setprim,{\sf leak}}{A} \leq 
+\[\AdvPrivSS{\setprim,{\sf leak}}{A} \leq
 
 For ${\sf leak}(S) = |S|$,
 
