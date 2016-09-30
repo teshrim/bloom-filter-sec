@@ -6,12 +6,18 @@ adversarial) notion of correctness.
 In addition to correctness, we establish notions of privacy for
 set-multiplicity data structures.
 \jnote{I would call it ``soundness'' rather than ``correctness.'' But if you disagree,
-just remove this comment and we'll go with correctness.}
+just remove this comment and we'll go with correctness.}\tsnote{I
+think stick with correctness, since that's the what's used in NY and
+in classical literature on BFs.  Or something entirely different, but
+I don't know what.  But using ``soundness'' would seem to overload yet
+another term, no?}
 
 
+\fixme{Do we say that all notions can be extended to the ROM by giving
+all all algorithms to a RO~$H$?  Is this true for the SS-privacy
+notion?  (It seems to make sense elsewhere.)}
 
-
-\tsnote{flesh out}
+\todo{flesh out opening text}
 
 \subsection{Correctness Against Adaptive Adversaries}
 
@@ -79,16 +85,16 @@ Return~$a$
 \label{fig:correctness}
 \end{figure}
 
-In this experiment we track the time complexity (relative to some
-model of computation) and query complexity (i.e., number of
+In this experiment we track the time complexity~$t$ (relative to some
+model of computation) and query complexity~$q$ (i.e., number of
 queries to $\TestOracle$) of~$A$.
 We define the advantage of adversary~$A$ in the correctness experiment as
 $\AdvCorrect{\setprim,r}{A} = \Prob{\ExpCorrect{\setprim,r}{A}=1}$.
-\tsnote{drop} Overloading notation, we write $\AdvCorrect{\setprim,r}{t,q}$ for the maximum over
-all~$t$-time adversaries that ask at most~$q$ queries. We say a
-data structure~$\setprim$ is $(t,q,r,\epsilon)$-correct if $\AdvCorrect{\setprim,r}{t,q} \leq \epsilon$.
+%\tsnote{drop} Overloading notation, we write $\AdvCorrect{\setprim,r}{t,q}$ for the maximum over
+%all~$t$-time adversaries that ask at most~$q$ queries. We say a
+%data structure~$\setprim$ is $(t,q,r,\epsilon)$-correct if $\AdvCorrect{\setprim,r}{t,q} \leq \epsilon$.
 
-\todo{Explain that the case of $r=1$ does not necessarily imply anything for $r>1$: can have a scheme
+\todo{[JON] Explain that the case of $r=1$ does not necessarily imply anything for $r>1$: can have a scheme
 where finding the first false positive is hard but then the rest are easy; can have
 a scheme where finding one false positive is easy but finding more is hard (e.g.,
 because there do not exist

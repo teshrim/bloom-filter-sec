@@ -395,7 +395,7 @@ for $1 \leq i_1 < i_2 < \cdots < i_k \leq m$\\
 %\nudge if $\TestOracle(x)=1$ then Return $\bot$
 %}
 %\caption{Adversary for Theorem~\ref{thm:xxx}.  \textbf{Left:} public hash case, \textbf{Right:} private hash case.}
-\caption{Attack for garbled Bloom filters with public~$M$. }
+\caption{Correctness attack for garbled Bloom filters with public~$M$. }
 \label{fig:adv-gbf}
 \end{figure}
 Dong, Chen and Wen~\cite{xxx} introduce a set-membership data
@@ -487,8 +487,7 @@ Fix $k,m,n,r,\lambda>0$, and let $\setprim_{\mathrm{gbf}}=(\Rep, \Qry)$ be the p
 \end{theorem}
 
 \heading{Privacy. }
-We observe immediately that when~$\pubaux=\langle M \rangle$ the GBF
-cannot be SS-private (in the ROM) because $\privaux=\emptystring$.
+We observe immediately that when~$\pubaux=\langle M \rangle$ the GBF cannot be SS-private (in the ROM) because $\privaux=\emptystring$.  In fact, it is easy to see that the correctness attack just given works as a privacy attack, too, with small modifications.  In particular, the attacker cannot check that the reconstructed $x \not\in S$.  
 
 \todo{Public M, ROM (no, empty priv)}\tsnote{one-wayness suffers the same
   attack as correctness, I think?}
