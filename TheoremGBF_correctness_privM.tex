@@ -4,8 +4,10 @@
 %\AdvCorrect{\setprim_{\mathrm{garb}},r}{A} \leq  {\dbinom{q_T}{r}} \left( \dfrac{1}{2^{\lambda}} \right)^r\,.
 %\]
 %\end{theorem}
-\begin{proof}[\Cref{thm:gbf-correctness-privM}]
-We use a game playing argument to prove this theorem. Here, $\Rep$, $\Qry$ and $A$ are given access to $\Hash$ which uses lazy sampling to mimic a RO. $\game{0}$, exactly simulates the correctness game of a garbled Bloom filter for private $M$. Assuming $A$ does not make any pointless queries, the $\Hash$ returns random values sampled from $[m]$ in $\game{1}$. In order to account for queries to RO in $\Test$, the latter returns the $k$ hash values for each query along with the answer. It should be noted that the $\Qry$ oracle returns xor of shares at $k$ random positions in this game. 
+\begin{proof}[Theorem~\ref{thm:gbf-correctness-privM}]
+We use a game playing argument to prove this theorem. Here, $\Rep$, $\Qry$ and $A$ are given access to $\Hash$ which uses lazy sampling to mimic a RO. Game $\game{0}$ exactly simulates the correctness game of a private-$M$ garbled Bloom filter in the ROM. \tsnote{No, the hash oracle is different because it returns~$k$ values at once.}
+
+Game~$\game{1}$ is equivalent to game~$\game{0}$ under the assumption that~$A$ does not make any pointless random-oracle queries, the $\Hash$ returns random values sampled from $[m]$ in $\game{1}$. In order to account for queries to RO in $\Test$, the latter returns the $k$ hash values for each query along with the answer. It should be noted that the $\Qry$ oracle returns xor of shares at $k$ random positions in this game. \tsnote{No, $\Qry$ just returns the answer~$a$.}
 
 In $\game{2}$, the $\Test$ does what $\Qry$ is supposed to do. It picks $k$-subset of random indices, xor them to get the estimated final share, and checks whether the final share is equal to the queried element. Finally, it returns the $k$ hash values along with the answer and the \textbf{final share}. Since, prescribed value of $\lambda$ is 80 or 256, there is a very high probability that the final share is a random string(one or more shares that were xor-ed were random shares), and hence the adversary gains very little advantage in knowing the value of the final share. In $\game{3}$, $\Test$ picks up a random $\lambda$-bit string as the final share. The adversary wins if it finds $r$ queries which are same as the received final shares.
 
@@ -20,7 +22,7 @@ To summarize,
 \fpage{.99}{
 \hpagessl{.55}{.5}
 {
-\underline{\game{0}(A)}\\
+\underline{$\game{0}(A)$}\\
 $S \getsr A$; $\calC \gets \emptyset$; $\err \gets 0$\\
 $(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
 $\bot \getsr A^{\TestOracle}(\pubaux)$\\
@@ -54,14 +56,14 @@ Return 1\\
 \oracle{$\TestOracle(\qry_x)$}\\
 if $x \in \mathcal{C}$ then Return $\bot$\\
 $\calC \gets \calC \cup x$\\
-$(h_1,\ldots,h_k \getsr [m]$\\
 $a \gets \Qry^{\HashOracle}(\pubaux,\privaux, x)$\\
 if $a \neq \qry_x(S)$ then \\
 \nudge $\err \gets \err + 1$\\
+$h_1,\ldots,h_k \gets \HashOracle(\qry_x)$\\
 Return~$a, h_1,\ldots,h_k $\\
 
 \oracle{$\HashOracle(\qry_y)$}\\
-$(v_1,\ldots,v_k \getsr [m]$\\
+$v_1,\ldots,v_k \getsr [m]$\\
 Ret $\left(v_1,\ldots,v_k\right)$
 }
 }
@@ -87,7 +89,7 @@ if $a \neq \qry_x(S)$ then \\
 Return~$a, \finalshare, h_1, \ldots, h_{k}$\\
 
 \oracle{$\HashOracle(\qry_y)$}\\
-$(v_1,\ldots,v_k \getsr [m]$\\
+$v_1,\ldots,v_k \getsr [m]$\\
 Ret $\left(v_1,\ldots,v_k\right)$
 }
 {
@@ -109,7 +111,7 @@ if $a \neq \qry_x(S)$ then \\
 Return~$(a, \finalshare, h_1,\ldots,h_k)$\\
 
 \oracle{$\HashOracle(\qry_y)$}\\
-$(v_1,\ldots,v_k \getsr [m]$\\
+$v_1,\ldots,v_k \getsr [m]$\\
 Ret $\left(v_1,\ldots,v_k\right)$
 }
 }
