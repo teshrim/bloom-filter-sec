@@ -13,6 +13,7 @@ In $\game{2}$, the $\Test$ does what $\Qry$ is supposed to do. It picks $k$-subs
 
 $\game{4}$ is identical to \game{3}, except $\bad$ is set to $\true$ if queries indexed by $r$-set $\calI$ fail to be false-positives, or queries indexed by set $\calI$ are false-positives. In $\game{4}$, $\bad$ does not affect the output of the game; $\game{5}$ on the other hand returns 0 if $\bad$ is set to $\true$. The probability of winning $\game{1}$, $\game{2}$, $\game{3}$, and $\game{4}$ are equal. Dong et al. \cite{Dong} showed that the false-positive probability is upper bounded by $2^{-\lambda}$ in case of a zero-query adversary, and $r=1$.  Using results and analyses of previous proofs, $\Prob{\game{5}(A)=1} = \dfrac{1}{\dbinom{q_T}{r}}\Prob{\game{4}(A)=1}$, and $\Prob{\game{5}(A) = 1} = \left( \dfrac{1}{2^{\lambda}} \right)^r$.
 
+
 To summarize,
 \[
 \AdvCorrect{\setprim_{\mathrm{garb}},r}{A} \leq  {\dbinom{q_T}{r}} \left( \dfrac{1}{2^{\lambda}} \right)^r\,
