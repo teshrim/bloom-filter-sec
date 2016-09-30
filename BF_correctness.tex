@@ -20,7 +20,7 @@ which is the bound claimed in the theorem statement.
 \fpage{.9}{
 \hpagessl{.45}{.5}
 {
-\underline{\game{0}(A)}\\
+\underline{$\game{0}(A)$}\\
 $S \getsr A$; $\calC \gets \emptyset$; $\err \gets 0$\\
 $(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
 $\bot \getsr A^{\TestOracle,\HashOracle}(\pubaux)$\\
@@ -54,7 +54,7 @@ Return 1\\
 if $x \in \mathcal{C}$ then Return $\bot$\\
 $\calC \gets \calC \cup x$; $M \gets\pubaux$\\
 for $j \in \{1,2,\ldots,k\}$\\
-\nudge $h_j \gets \HashOracle(j, x)$\\
+\nudge $h_j \gets \HashOracle(j, \qry_x)$\\
 \nudge if $M[h_j] \neq 1$ then Return 0\\
 $\err \gets \err + 1$\\
 Return 1\\
@@ -81,7 +81,7 @@ Return 1\\
 if $x \in \mathcal{C}$ then Return $\bot$\\
 $\calC \gets \calC \cup x$; $M \gets\pubaux$\\
 for $j \in \{1,2,\ldots,k\}$\\
-\nudge $h_j \gets \HashOracle(j, x)$\\
+\nudge $h_j \gets \HashOracle(j, \qry_x)$\\
 \nudge if $M[h_j] \neq 1$\\
 \nudge \nudge Return $(0, (h_1, \ldots, h_j))$\\
 $\err \gets \err +1$\\
@@ -105,7 +105,7 @@ Return 1\\
 \oracle{$\TestOracle(\qry_x)$}\\
 if $x \in \mathcal{C}$ then Return $\bot$\\
 $\calC \gets \calC \cup x$; $M \gets\pubaux$\\
-$(h_1, \ldots, h_{k}) \gets \HashOracle(x)$\\
+$(h_1, \ldots, h_{k}) \gets \HashOracle(\qry_x)$\\
 for $j \in \{1,2,\ldots,k\}$\\
 \nudge if $M[h_j] \neq 1$ then \\
 \nudge \nudge Return~$(0, (h_1, \ldots, h_{k}) )$\\
@@ -142,7 +142,7 @@ Return 1\\
 if $x \in \mathcal{C}$ then Return $\bot$\\
 $\calC \gets \calC \cup x$\\
 if $\Ans[x] \neq \undefined$\\
-\nudge $(h_1, \ldots, h_{k}) \gets \HashOracle(x)$\\
+\nudge $(h_1, \ldots, h_{k}) \gets \HashOracle(\qry_x)$\\
 Return $\Ans[x]$\\
 %
 }
