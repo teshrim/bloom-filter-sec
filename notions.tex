@@ -434,77 +434,78 @@ $A'$ running in about the same time for which
 \begin{proof}
 We define a simulator $\Sim$ as follows. On input $n$, $\Sim$ fixes
 a set $S^*=\{e_1, \ldots, e_n\}$. It then computes $s_1,
-\ldots, s_t \getsr \Rep_1(S^*)$, chooses a uniform key
-$K \getsr \calK$, runs $\pubaux
-\getsr \Rep_2(|S|, F_K(s_1), \ldots, F_K(s_t))$, and finally returns
-$\pubaux$.
+\ldots, s_t \getsr \Rep_1(S^*)$, chooses uniform values $y_1, \ldots, y_t \getsr \bool^{\ell_{out}}$,
+and returns $\pubaux
+\getsr \Rep_2(|S|, y_1, \ldots, y_t)$.
 
 \def\hyb{\mbox{{\sc Hyb}}}
 
-For a given set $S$, define distribution $\mbox{{\sc Real}}_S$ as
-\[ \{ (\pubaux, \privaux) \getsr \Rep(S) : \pubaux\},\]
-and define distribution $\mbox{{\sf Ideal}}_S$ as
-\[ \{ \pubaux \getsr \Sim(|S|) : \pubaux \}.\]
-Our goal is to show that $\mbox{{\sc Real}}_S$ and $\mbox{{\sf Ideal}}_S$ are computationally
-indistinguishable for any set~$S$. \jnote{I'm not quite sure how to elegantly do a proof
-like this in the concrete setting.}\tsnote{I think you just follow the
-sketch that I typeset for the Domain-Separated PRF scheme. (I'll embed
-notes below, too.) The bound will be exactly what is there, shoudl be able to just cut-and-paste,
-basically.  All that's needed, I think, is to do resource accounting
-for $\Sim$ and the PRF-adversary~$B$.}
-To do so, first note that we can express $\mbox{{\sc Real}}_S$ as the outcome of
-the following experiment: \tsnote{I'd call this ``Game $G0$''...}
+Note that we can express $\Prob{\ExpPrivSSreal{\setprim}{A}=1}$ as the probability that $A$
+outputs~1 in
+the following experiment~$G0$: \jnote{BTW, in class when I do this stuff I usually
+say ``game'' and then correct myself and say ``\ldots but if you want to get funded,
+call it an experiment.'' (Some light humor while you work.)}
 \begin{enumerate}
+\item $S \getsr A$.
 \item $s_1, \ldots, s_t \getsr \Rep_1(S)$.
 \item $K \getsr \bits^n$.
 \item $\pubaux \getsr \Rep_2(|S|, F_k(s_1), \ldots, F_k(s_t))$.
-\item Return $\pubaux$.
+\item Return $A(\pubaux)$.
 \end{enumerate}
 
-Now, consider a hybrid distribution $\hyb_S$ computed as follows:
-\tsnote{...and this ``Game $G1$''...}
+Now, consider an experiment $G1$ in which computation is done as follows:
 \begin{enumerate}
+\item $S \getsr A$.
 \item $s_1, \ldots, s_t \getsr \Rep_1(S)$.
 \item $y_1, \ldots, y_t \leftarrow \bits^{\ell_{out}}$
 \item $\pubaux \getsr \Rep_2(|S|, y_1, \ldots, y_t)$.
-\item Return $\pubaux$.
+\item Return $A(\pubaux)$.
 \end{enumerate}
-It follows immediately from the fact that $F$ is a pseudorandom function (and efficiency
-of $\Rep_2$) that $\hyb_S$ is computationally indistinguishable from $\mbox{{\sc Real}}_S$.
-\tsnote{...and then it's clear that the difference between the
-  probability of $G0 \outputs 1$ and $G1 \outputs 1$ is exactly the
-  PRF advantage of~$B$, who simply uses it's oracle to simulate calls
-  to $F_K$ prior to running $\Rep_2$...}
-Next, consider the following distribution $\hyb'_S$:
+It is immediate that the difference between the probability that $A$ outputs~1 in
+$G1$ and the probability that it outputs~1 in
+$G0$ is bounded by ${\sf Adv}_F^{\rm PRF}(A')$, where $A'$ performs the
+obvious simulation.
+
+Next, consider the following experiment $G2$:
 \begin{enumerate}
+\item $S \getsr A$.
 \item $S^* := \{e_1, \ldots, e_n\}$, where $n = |S|$.
 \item $s_1, \ldots, s_{t^*} \getsr \Rep_1(S^*)$.
 \item $y_1, \ldots, y_{t^*} \leftarrow \bits^{\ell_{out}}$
 \item $\pubaux \getsr \Rep_2(|S|, y_1, \ldots, y_{t^*})$.
-\item Return $\pubaux$.
+\item Return $A(\pubaux)$.
 \end{enumerate}
-We claim that $\hyb'_S$ is identically distributed to $\hyb_S$. The follows immediately from the
-observation that the distribution on $t$ (in $\hyb_S$) is identical to the distribution on~$t^*$
-(in $\hyb'_S$) by definition
-of what it means to be canonical.
-\tsnote{...and it is clear that the distribution of everything is the
-  same as in Game $G1$, so we are done. }
+We claim that the probability with which $A$ outputs~1 in $G2$ is \emph{identical} to the
+probability with which it outputs~1 in $G1$.
+The follows immediately from the
+observation that the distribution on $t$ (in $G1$) is identical to the distribution on~$t^*$
+(in $G2$) by definition
+of what it means to be canonical, and it is clear that the distributions of everything
+else are the same as well.
 
-To complete the proof, we simply note that $\hyb'_S$ and $\mbox{{\sf Ideal}}_S$
-are computationally indistinguishable, again relying on pseudorandomness of~$F$.
+One can observe that $G2$ is identical to the following experiment:
+\begin{enumerate}
+\item $S \getsr A$.
+\item $\pubaux \getsr \Sim(|S|)$.
+\item Return $A(\pubaux)$.
+\end{enumerate}
+Moreover, the probability with which $A$ outputs~1 in this experiment is
+precisely $\Prob{\ExpPrivSSsim{\setprim,{\sf leak}}{A, \Sim}=1}$.
+This completes the proof.
 \end{proof}
-\fixme{ ----The following is left only for cut-and-paste value---- }
-\begin{theorem}\label{thm:ds-ss}
-Fix $k,m,n>0$, and let $\setprim_{\mathrm{ds}}= (\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-ds}.  For any set~$S \in 2^\elts$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ such that, for any adversary~$A$
-\[
-\AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}
-\]
-where~$B$ is constructed from~$A$.  (Both~$B$ and~$\Sim$ are explicitly constructed in the proof of this theorem.)
-\end{theorem}
-\begin{proof}[Proof (sketch). ] \todo{Move this sketch to be a proof
-    of Jon's meta-result. Downgrade theorem to be a corollary of that
-    result, the proof simply being a description of how $\Rep$
-    decomposes into $\Rep_1$ and $\Rep_2$.}
-Adversary~$B^{f}$ simulates the steps of $\ExpPrivSSreal{\setprim_{\mathrm{ds}}}{A}$, using its oracle to simuate~$\Rep(S)$.  When~$f=F_K$ then the simulation is perfect.  When~$f=\rho$ then~$B$ simulates $\ExpPrivSSreal{\overline{\setprim}_{\mathrm{ds}}}{A}$ where $\overline{\Rep}$ effectively uses~$k$ independent random functions as the hash functions.  But the $\pub$ produced by $\overline{\Rep}$ has a distribution that depends only~$|S|=n$, not the specific elements of~$S$, and the other public parameters~$m,k$.  Thus, a simulator~$\Sim$ given only $\leak(S)=|S|$ can produce a correct~$\pub$ as follows: starting with an all-zeros array~$M$ of length~$m$, uniformly sample (with replacement)~$nk$ integers in~$[m]$ and set the resulting positions of~$M$ to 1.
-\end{proof}
-\fixme{ ----The above is left only for cut-and-paste value---- }
+
+%\fixme{ ----The following is left only for cut-and-paste value---- }
+%\begin{theorem}\label{thm:ds-ss}
+%Fix $k,m,n>0$, and let $\setprim_{\mathrm{ds}}= (\Rep, \Qry)$ be the set-multiplicity data structure described in Figure~\ref{fig:lin-and-ds}.  For any set~$S \in 2^\elts$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ such that, for any adversary~$A$
+%\[
+%\AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}
+%\]
+%where~$B$ is constructed from~$A$.  (Both~$B$ and~$\Sim$ are explicitly constructed in the proof of this theorem.)
+%\end{theorem}
+%\begin{proof}[Proof (sketch). ] \todo{Move this sketch to be a proof
+%    of Jon's meta-result. Downgrade theorem to be a corollary of that
+%    result, the proof simply being a description of how $\Rep$
+%    decomposes into $\Rep_1$ and $\Rep_2$.}
+%Adversary~$B^{f}$ simulates the steps of $\ExpPrivSSreal{\setprim_{\mathrm{ds}}}{A}$, using its oracle to simuate~$\Rep(S)$.  When~$f=F_K$ then the simulation is perfect.  When~$f=\rho$ then~$B$ simulates $\ExpPrivSSreal{\overline{\setprim}_{\mathrm{ds}}}{A}$ where $\overline{\Rep}$ effectively uses~$k$ independent random functions as the hash functions.  But the $\pub$ produced by $\overline{\Rep}$ has a distribution that depends only~$|S|=n$, not the specific elements of~$S$, and the other public parameters~$m,k$.  Thus, a simulator~$\Sim$ given only $\leak(S)=|S|$ can produce a correct~$\pub$ as follows: starting with an all-zeros array~$M$ of length~$m$, uniformly sample (with replacement)~$nk$ integers in~$[m]$ and set the resulting positions of~$M$ to 1.
+%\end{proof}
+%\fixme{ ----The above is left only for cut-and-paste value---- }
