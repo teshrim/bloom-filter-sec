@@ -1,6 +1,6 @@
 \section{Proof of Theorem~\ref{thm:bf-correctness}}
 \label{sec:thm3_fp}
-\begin{proof}[\ref{thm:thm:bf-correctness}]
+\begin{proof}[\ref{thm:bf-correctness}]
 We use a game playing argument to prove this theorem in the ROM. In $\game{0}$, the $\Hash$ does lazy sampling of elements from $[m]$ to mimic a random oracle(RO). For every distinct query, $\Hash$ returns a random value sampled from $[m]$. Here, the adversary $A$, along with $\Rep$ and $\Qry$ are given access to $\Hash$. It can be seen that, $\game{0}$ exactly simulates the correctness game of $\setprim_{\mathrm{Bloom}}$. So, $\AdvCorrect{\setprim_{\mathrm{Bloom}},r}{A} = \Prob{\game{0}(A) = 1}$.
 
 $\game{1}$ is exactly same as $\game{0}$ except the $\Qry$ oracle is replaced by the code of $\Qry$, whereas in $\game{2}$, the $\Test$ oracle returns the hash values back to the adversary along with output of the $\Qry$ oracle. $\game{3}$ on the other hand, returns all the $k$ hash values for any query. This results in adversary getting $(k-1)$ hash values for free as we charge the adversary for a single query. Since $k$ is likely to be very small compared to the number of queries the adversary makes, this would not affect the analysis in any significant manner. Also, in real world, RO will be a hash function; hence the adversary can perform local computations to get the hash values. It can be easily seen that the output of all the games will be same. So, $\Prob{\game{0}(A) = 1} = \Prob{\game{1}(A) = 1} = \Prob{\game{2}(A) = 1} = \Prob{\game{3}(A) = 1}$. 
