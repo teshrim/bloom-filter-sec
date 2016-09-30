@@ -52,13 +52,13 @@ returns $\Qry(\pubaux,\privaux,\qry)$ to $A$ and also increments
 a counter if this result is incorrect (and if $\qry$ is new).  The adversary succeeds if it
 manages to cause at least~$r>0$ such errors among its queries.
 The definition can be lifted to the random-oracle model by providing
-all algorithms (namely, $\Rep,\Qry$, and the adversary~$A$) with access to the
-random oracle. \fixme{I think we should *not* allow $S$ to depend on
-  the RO.  That's like letting $S$ depend on $\pub$ in the standard
-  model, but $\pub$ hasn't been fixed yet.  } \jnote{I disagree. Plus if you do that, then
-  you put the simulator at an unfair disadvantage. (Consider a scheme that always appends
-  $H(0)$ to $\pubaux$, for every~$S$. The simulator will never be able to simulate that---even
-  if you give it~$S$!---simply because it can't guess~$H(0)$).}
+algorithms $\Rep,\Qry$ with access to the
+random oracle, and providing $A$ with such access as well in the
+second stage of its execution. (We do not provide $A$ with access to
+the random oracle during the first stage when it selects~$S$, as that set
+should have no dependence on the random oracle.) \jnote{In ``practice'' wouldn't someone
+just use SHA as their random oracle, hence providing an attacker with the ability
+to make $S$ depend on the random oracle? This point needs to be justified a bit.}
 
 %\jnote{I changed $\TestOracle$ so that it outputs $(a, q(S))$ rather
 %than $(a,\mathrm{err})$. Note that the latter can be computed from the former,
