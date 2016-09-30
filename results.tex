@@ -380,9 +380,9 @@ Return 0
 \hfpagess{.45}{.45}
 {
 \adversaryv{$A^{\TestOracle,H}(\pubaux)$}\\[1ex]
-$M \gets \pubaux$; $L \gets \binom{m}{k}$
-for $\ell=1$ to $L$\\
-$i_1,i_2,\ldots,i_k \gets \mathcal{I}_L$\\
+$M \gets \pubaux$\\
+for $\ell=1$ to $\binom{m}{k}$\\
+\nudge $i_1,i_2,\ldots,i_k \gets \mathcal{I}_\ell$\\
 \nudge $x \gets M[i_1] \xor M[i_2] \xor \cdots \xor M[i_k]$\\
 \nudge if  $x \not\in S \wedge \left(\bigwedge_{j=1}^k H(j,x)=i_j \right)$ then \\
 \nudge\nudge $a\gets\TestOracle(x)$\\
@@ -390,13 +390,13 @@ $i_1,i_2,\ldots,i_k \gets \mathcal{I}_L$\\
 }
 {
 \adversaryv{$A^{H}(\pubaux)$}\\[1ex]
-$M \gets \pubaux$
+$M \gets \pubaux$\\
 for $x \in X_1,X_2,\ldots,X_q$\\
 \nudge for $j=1$ to $k$ \\
-\nudge \nudge $i_j \gets H(j,x)$
+\nudge \nudge \nudge $i_j \gets H(j,x)$\\
 \nudge $x' \gets M[i_1] \xor M[i_2] \xor \cdots \xor M[i_k]$\\
 \nudge if $x' = x$ then Return $x$\\
-Return~$X_q$
+Return~$X_{q+1}$
 }
 %{
 %\adversaryv{$A^{\TestOracle}(\pubaux)$}\\[1ex]
@@ -406,7 +406,8 @@ Return~$X_q$
 %\nudge if $\TestOracle(x)=1$ then Return $\bot$
 %}
 %\caption{Adversary for Theorem~\ref{thm:xxx}.  \textbf{Left:} public hash case, \textbf{Right:} private hash case.}
-\caption{Correctness attack for garbled Bloom filters with public~$M$.  The sequence $\mathcal{I}_1,\mathcal{I}_2,\ldots,\mathcal{I}_L$ is some implicit enumeration of~$k$-tuples of indices over $[m]$.   }
+\caption{{\bf Left:} Correctness attack for garbled Bloom filters with public~$M$.  The sequence $\mathcal{I}_1,\mathcal{I}_2,\ldots$ is some implicit enumeration of~$k$-tuples of indices over $[m]$.
+{\bf Right:} One-wayness attack for garbled Bloom filters with public~$M$.  The sequence $X_1,X_2,\ldots,X_q,X_{q+1}$ are the $q+1$ most probable points in the support of~$\distr{}{}$ in decreasing order.  }
 \label{fig:adv-gbf}
 \end{figure}
 Dong, Chen and Wen~\cite{xxx} introduce a set-membership data
