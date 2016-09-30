@@ -113,7 +113,23 @@ Fix $k,m,n,r>0$, a set~$\elts$, and let $\setprim_{\mathrm{Bloom}}= (\Rep, \Qry)
 \]
 \end{theorem}
 \todo{Typeset simple proof.  Result is on chalkboard.}
+\begin{proof}
+\begin{figure}[tp]
+\hfpagess{.45}{.45}
+{\underline{\game{0}($A$)}\\
+$S \getsr \distr{}{}$\\
+$(\pubaux,\privaux) \getsr \Rep(S)$\\
+$z \getsr A(\pubaux)$\\
+if $z \in S$ then return 1\\
+return 0\\
 
+\medskip
+\oracle{$\HashOracle(\qry_x)$}\\
+}
+{
+}
+\end{figure}
+\end{proof}
 
 
 %\jnote{Organize by scheme, not by security notions.}
