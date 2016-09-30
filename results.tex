@@ -501,7 +501,7 @@ We observe immediately that when~$\pubaux=\langle M \rangle$ the GBF cannot be S
 \begin{theorem}
 Fix $k,m,n,r,\lambda>0$, and let $\setprim_{\mathrm{gbf}}=(\Rep, \Qry)$ be the public~$M$ garbled Bloom filter, in the random-oracle model for~$H$.  Then \fixme{This probability might not be correct... verify when less tired.}
 \[
-\AdvPrivOW{\setprim_{\mathrm{gbf}},\distr{}{}}{A_{\mathrm{ow}}} \geq 1 - \left(1-\frac{1}{2^{\mu}} \right)^{nq} \geq 1 - e^{-nq/2^\mu}
+\AdvPrivOW{\setprim_{\mathrm{gbf}},\distr{}{}}{A_{\mathrm{ow}}} \geq 1 - \left(1-\frac{n}{2^{\mu}} \right)^{q} \geq 1 - e^{-nq/2^\mu}
 \]
  where $\mu = H_\infty(\distr{}{})$ is the pointwise min-entropy of~$\distr{}{}$, and $A_{\mathrm{ow}}$ makes $kq$ random-oracle queries.
 \end{theorem}
