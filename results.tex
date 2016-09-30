@@ -516,7 +516,7 @@ oracle calls) to online set-membership (i.e., $\TestOracle$) queries.
 Switching now to the case of a \emph{private}-$M$ GBF, i.e., $\pubaux=\emptystring, \privaux=\langle M \rangle$, we have the
 following correctness bound.
 
-\begin{theorem}[{\rm Correctness of private-$M$ GBF in the ROM}]\fixme{FINISH! (Animesh?)}
+\begin{theorem}[{\rm Correctness of private-$M$ GBF in the ROM}]\fixme{FINISH! (Animesh?)}\label{thm:gbf-correctness}
 Fix $k,m,n,r,\lambda>0$, and let $\setprim_{\mathrm{gbf}}=(\Rep, \Qry)$ be the private-$M$ garbled Bloom filter. For any adversary~$A$ that makes a total of~$q_T$ queries to the $\Test$ oracle, and $q_R$ queries to the RO, and has time-complexity~$O(t)$,
 \[
 \AdvCorrect{\setprim_{\mathrm{gbf}},r}{A} \leq  {\dbinom{q_T}{r}} \left( \dfrac{1}{2^{\lambda}} \right)^r\,.
