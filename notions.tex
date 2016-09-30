@@ -3,14 +3,13 @@
 \label{sec:security-notions}
 Following NY, we are interested in defining an adaptive (i.e.,
 adversarial) notion of correctness.
-In addition to correctness, we establish notions of privacy for
-set-multiplicity data structures.
+In addition to correctness, we establish notions of privacy for data structures.
 
 
 
-\fixme{Do we say that all notions can be extended to the ROM by giving
-all all algorithms to a RO~$H$?  Is this true for the SS-privacy
-notion?  (It seems to make sense elsewhere.)} \jnote{I think there are subtleties for the SS notion.}
+%\fixme{Do we say that all notions can be extended to the ROM by giving
+%all all algorithms to a RO~$H$?  Is this true for the SS-privacy
+%notion?  (It seems to make sense elsewhere.)} \jnote{I think there are subtleties for the SS notion.}
 
 \todo{flesh out opening text}
 
@@ -54,7 +53,9 @@ a counter if this result is incorrect (and if $\qry$ is new).  The adversary suc
 manages to cause at least~$r>0$ such errors among its queries.
 The definition can be lifted to the random-oracle model by providing
 all algorithms (namely, $\Rep,\Qry$, and the adversary~$A$) with access to the
-random oracle.
+random oracle. \fixme{I think we should *not* allow $S$ to depend on
+  the RO.  That's like letting $S$ depend on $\pub$ in the standard
+  model, but $\pub$ hasn't been fixed yet.  }
 
 %\jnote{I changed $\TestOracle$ so that it outputs $(a, q(S))$ rather
 %than $(a,\mathrm{err})$. Note that the latter can be computed from the former,
@@ -262,7 +263,7 @@ as $\AdvPrivOW{\setprim,\mathcal{D}}{A} = \Prob{\ExpPrivOW{\setprim,{\cal D}}{A}
 %all~$t$-time adversaries.
 The definition can be lifted to the random-oracle model by providing
 all algorithms (namely, $\Rep,\Qry$, and the adversary~$A$) with access to the
-random oracle.
+random oracle. 
 
 \begin{figure}[tbh]
 \centering

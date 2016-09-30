@@ -23,7 +23,7 @@ which is the bound claimed in the theorem statement.
 \underline{\game{0}(A)}\\
 $S \getsr A$; $\calC \gets \emptyset$; $\err \gets 0$\\
 $(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
-$\bot \getsr A^{\TestOracle}(\pubaux)$\\
+$\bot \getsr A^{\TestOracle,\HashOracle}(\pubaux)$\\
 if $\err  < r$ then Return 0\\
 Return 1\\
 %
@@ -46,7 +46,7 @@ Ret $v$
 \underline{$\game{1}(A)$}\\
 $S \getsr A$; $\calC \gets \emptyset$; $\err \gets 0$\\
 $(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
-$\bot \getsr A^{\TestOracle}(\pubaux)$\\
+$\bot \getsr A^{\TestOracle,\HashOracle}(\pubaux)$\\
 if $\err  < r$ then Return 0\\
 Return 1\\
 %
@@ -73,7 +73,7 @@ Ret $v$
 \underline{$\game{2}(A)$}\\
 $S \getsr A$; $\calC \gets \emptyset$; $\err \gets 0$\\
 $(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
-$\bot \getsr A^{\TestOracle}(\pubaux)$\\
+$\bot \getsr A^{\TestOracle,\HashOracle}(\pubaux)$\\
 if $\err  < r$ then Return 0\\
 Return 1\\ 
 %
@@ -98,7 +98,7 @@ Ret $v$
 \underline{$\game{3}(A)$}\\
 $S \getsr A$; $\calC \gets \emptyset$; $\err \gets 0$\\
 $(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
-$\bot \getsr A^{\TestOracle}(\pubaux)$\\
+$\bot \getsr A^{\TestOracle,\HashOracle}(\pubaux)$\\
 if $\err  < r$ then Return 0\\
 Return 1\\ 
 %
@@ -133,7 +133,7 @@ proof of Theorem~\ref{thm:bf-correctness}.}
 $c\gets 0$, $\bad \gets \false$, $\err \gets 0$;  $\calC \gets \emptyset$\\
 $S \getsr A$; $\mathcal{I}\getsr [\{1,2,\ldots,q\}]^r$\\
 $(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
-$\bot \getsr A^{\TestOracle}(\pubaux)$\\
+$\bot \getsr A^{\TestOracle,\HashOracle}(\pubaux)$\\
 if $\bad = \true$ then \fbox{Return 0}\\
 if $\err  < r$ then Return 0\\
 Return 1\\

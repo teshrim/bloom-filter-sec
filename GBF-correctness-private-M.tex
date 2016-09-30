@@ -1,9 +1,15 @@
 %\section{Proof of Theorem~\ref{thm:bf-correctness}}
 %\label{sec:thm3_fp}
-\begin{proof}[Theorem~\ref{thm:bf-correctness}]
-We use a game playing argument, please refer to Figures~\ref{fig:bf-correctness-games1} and~\ref{fig:bf-correctness-games2}. In $\game{0}$, the $\Hash$ does lazy sampling of elements from $[m]$ to mimic a random oracle(RO). For every distinct query, $\Hash$ returns a random value sampled from $[m]$. Here, the adversary $A$, along with $\Rep$ and $\Qry$ are given access to $\Hash$. It can be seen that, $\game{0}$ exactly simulates the correctness game of $\setprim_{\mathrm{Bloom}}$. So, $\AdvCorrect{\setprim_{\mathrm{Bloom}},r}{A} = \Prob{\game{0}(A) = 1}$.
+\begin{proof}[Theorem~\ref{thm:gbf-correctness}]
+We use a game playing argument, please refer to Figures~\ref{fig:gbf-correctness-games1} and~\ref{gfig:bf-correctness-games2}. In game $\game{0}$, the $\Hash$ oracle performs lazy sampling of elements from $[m]$ to mimic a random oracle (RO). For every distinct query, $\Hash$ returns a random value sampled from $[m]$. It can be seen that, game $\game{0}$ exactly simulates the correctness game of $\setprim_{\mathrm{gbf}}$.  So, $\AdvCorrect{\setprim_{\mathrm{gbf}},r}{A} = \Prob{\game{0}(A) = 1}$.
 
-$\game{1}$ is exactly same as $\game{0}$ except the $\Qry$ oracle is replaced by the code of $\Qry$, whereas in $\game{2}$, the $\Test$ oracle returns the hash values back to the adversary along with output of the $\Qry$ oracle. $\game{3}$ on the other hand, returns all the $k$ hash values for any query. This results in adversary getting $(k-1)$ hash values for free as we charge the adversary for a single query. Since $k$ is likely to be very small compared to the number of queries the adversary makes, this would not affect the analysis in any significant manner. Also, in real world, RO will be a hash function; hence the adversary can perform local computations to get the hash values. It can be easily seen that the output of all the games will be same. So, $\Prob{\game{0}(A) = 1} = \Prob{\game{1}(A) = 1} = \Prob{\game{2}(A) = 1} = \Prob{\game{3}(A) = 1}$. 
+Game $\game{1}$ is exactly same as game $\game{0}$ except the $\Qry$ call (inside the $\TestOracle$ oracle) is replaced by the code of $\Qry$.  Hence, $\Prob{\game{0}(A) = 1} = \Prob{\game{1}(A) = 1}$.
+
+In game $\game{2}$, the $\Test$ oracle is altered to return the hash values~$h_1,h_2,\ldots, h_k$ in addition to the result of executing the code of $\Qry$.  As this only provides additional information to the adversary, $\Prob{\game{1}(A) = 1} \leq \Prob{\game{2}(A) = 1}$.
+
+In $\game{3}$, we modify the $\HashOracle$ oracle so that on query~$\qry_x$ it returns all of the~$k$ values that previously would have required calls $\HashOracle(1,\qry_y),\HashOracle(2,\qry_y),\ldots,\HashOracle(k,\qry_y)$.  This results in adversary getting $(k-1)$ hash values ``for free'', as we charge the adversary only for a single query.  We alter the $\TestOracle$ oracle accordingly, so that it makes a single call $\Hash(\qry_x)$ rather than~$k$ such calls.
+
+%tom here
 
 In $\game{4}$, assuming $A$ does not make any pointless queries, $\Hash$ returns $k$ random values (for each query) sampled from $[m]$. Also, we offload all of $\Test$'s computations to $\Hash$, which now maintains an $\Ans$ table to compute and save answers for each query.  For any query, $\qry$, the $\Test$ oracle returns answer stored at $\Ans[\qry]$. We also introduce the $\bad$ flag in this game. Like in the earlier proofs,  $\bad$ is set to true, if queries indexed by the r-set $\calI$ fail to be false positives, or the other queries are false-positives. $\bad$ in fact does not affect the output of $\Hash$ or the game. So, $\Prob{\game{4}(A) = 1} = \Prob{\game{3}(A) = 1}$. 
 
@@ -13,7 +19,7 @@ For $r=1$, $\game{5}$ exactly simulates the classical Bloom filter. Since, $\Has
 
 To summarize, 
 \[
-\AdvCorrect{\setprim_{\mathrm{Bloom}},r}{A} \leq  {\dbinom{q_T + q_H}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
+\AdvCorrect{\setprim_{\mathrm{gbf}},r}{A} \leq  {\dbinom{q_T + q_H}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
 \]
 which is the bound claimed in the theorem statement.
 \begin{figure}[tp]
@@ -23,14 +29,14 @@ which is the bound claimed in the theorem statement.
 \underline{$\game{0}(A)$}\\
 $S \getsr A$; $\calC \gets \emptyset$; $\err \gets 0$\\
 $(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
-$\bot \getsr A^{\TestOracle}(\pubaux)$\\
+$\bot \getsr A^{\TestOracle,\HashOracle}(\pubaux)$\\
 if $\err  < r$ then Return 0\\
 Return 1\\
 
 \oracle{$\TestOracle(\qry_x)$}\\
 if $x \in \mathcal{C}$ then Return $\bot$\\
 $\calC \gets \calC \cup x$\\
-$a \gets \Qry^{\HashOracle}(\pubaux,\privaux, x)$\\
+$a \gets \Qry^{\HashOracle,\HashOracle}(\pubaux,\privaux, x)$\\
 if $a \neq \qry_x(S)$ then \\
 \nudge $\err \gets \err + 1$\\
 Return~$a$\\
@@ -46,7 +52,7 @@ Ret $v$
 \underline{$\game{1}(A)$}\\
 $S \getsr A$; $\calC \gets \emptyset$; $\err \gets 0$\\
 $(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
-$\bot \getsr A^{\TestOracle}(\pubaux)$\\
+$\bot \getsr A^{\TestOracle,\HashOracle}(\pubaux)$\\
 if $\err  < r$ then Return 0\\
 Return 1\\
 
@@ -54,7 +60,7 @@ Return 1\\
 if $x \in \mathcal{C}$ then Return $\bot$\\
 $\calC \gets \calC \cup x$; $M \gets\privaux$\\
 for $j \in \{1,2,\ldots,k\}$\\
-\nudge $h_j \gets \HashOracle(j, x)$\\
+\nudge $h_j \gets \HashOracle(j, \qry_x)$\\
 $x' \gets M[h_1] \xor M[h_2] \xor \ldots \xor M[h_k]$\\
 if $x' \neq x$ then Return 0\\
 $\err \gets \err + 1$\\
@@ -74,7 +80,7 @@ Ret $v$
 \underline{$\game{2}(A)$}\\
 $S \getsr A$; $\calC \gets \emptyset$; $\err \gets 0$\\
 $(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
-$\bot \getsr A^{\TestOracle}(\pubaux)$\\
+$\bot \getsr A^{\TestOracle,\HashOracle}(\pubaux)$\\
 if $\err  < r$ then Return 0\\
 Return 1\\ 
 
@@ -82,7 +88,7 @@ Return 1\\
 if $x \in \mathcal{C}$ then Return $\bot$\\
 $\calC \gets \calC \cup x$; $M \gets\privaux$\\
 for $j \in \{1,2,\ldots,k\}$\\
-\nudge $h_j \gets \HashOracle(j, x)$\\
+\nudge $h_j \gets \HashOracle(j, \qry_x)$\\
 $x' \gets M[h_1] \xor M[h_2] \xor \ldots \xor M[h_k]$\\
 if $x' \neq x$ then Return $(0, (h_1, \ldots, h_j))$ \\
 $\err \gets \err + 1$\\
@@ -99,14 +105,14 @@ Ret $v$
 \underline{$\game{3}(A)$}\\
 $S \getsr A$; $\calC \gets \emptyset$; $\err \gets 0$\\
 $(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
-$\bot \getsr A^{\TestOracle}(\pubaux)$\\
+$\bot \getsr A^{\TestOracle,\HashOracle}(\pubaux)$\\
 if $\err  < r$ then Return 0\\
 Return 1\\ 
 
 \oracle{$\TestOracle(\qry_x)$}\\
 if $x \in \mathcal{C}$ then Return $\bot$\\
 $\calC \gets \calC \cup x$; $M \gets\privaux$\\
-$(h_1, \ldots, h_{k}) \gets \HashOracle(x)$\\
+$(h_1, \ldots, h_{k}) \gets \HashOracle(\qry_x)$\\
 $x' \gets M[h_1] \xor M[h_2] \xor \ldots \xor M[h_k]$\\
 if $x' \neq x$ then Return $(0, (h_1, \ldots, h_j))$ \\
 $\err \gets \err + 1$\\
@@ -144,7 +150,7 @@ Return 1\\
 if $x \in \mathcal{C}$ then Return $\bot$\\
 $\calC \gets \calC \cup x$\\
 if $\Ans[x] \neq \undefined$\\
-\nudge $(h_1, \ldots, h_{k}) \gets \HashOracle(x)$\\
+\nudge $(h_1, \ldots, h_{k}) \gets \HashOracle(\qry_x)$\\
 Return $\Ans[x]$\\
 
 }
