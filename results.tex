@@ -475,26 +475,37 @@ however, the work switches from offline hash evaluations (i.e., random
 oracle calls) to online set-membership (i.e., $\TestOracle$) queries.
 
 
-Switching now to the case of a \emph{private}~$M$ GBF, we have the
+Switching now to the case of a \emph{private}~$M$ GBF, i.e., $\pubaux=\emptystring, \privaux=\langle M \rangle$, we have the
 following correctness bound.
-
-\todo{Insert correctness theorem for \emph{private}~$M$ in the ROM.}
+\fixme{Insert correctness theorem for \emph{private}~$M$ in the ROM.}
 \begin{theorem}
-Fix $k,m,n,r,\lambda>0$, and let $\setprim_{\mathrm{gbf}}=(\Rep, \Qry)$ be the private~$M$ GBF. For any adversary~$A$ that makes a total of~$q_T$ queries to the $\Test$ oracle, and $q_R$ queries to the RO, and has time-complexity~$O(t)$,
+Fix $k,m,n,r,\lambda>0$, and let $\setprim_{\mathrm{gbf}}=(\Rep, \Qry)$ be the private~$M$ garbled Bloom filter. For any adversary~$A$ that makes a total of~$q_T$ queries to the $\Test$ oracle, and $q_R$ queries to the RO, and has time-complexity~$O(t)$,
 \[
 \AdvCorrect{\setprim_{\mathrm{gbf}},r}{A} \leq  [...]
 \]
 \end{theorem}
 
 \heading{Privacy. }
-We observe immediately that when~$\pubaux=\langle M \rangle$ the GBF cannot be SS-private (in the ROM) because $\privaux=\emptystring$.  In fact, it is easy to see that the correctness attack just given works as a privacy attack, too, with small modifications.  In particular, the attacker cannot check that the reconstructed $x \not\in S$.  
+We observe immediately that when~$\pubaux=\langle M \rangle$ the GBF cannot be SS-private (in the ROM) because $\privaux=\emptystring$.  In fact, it is easy to see that the correctness attack just given works as a privacy attack, too, with small modifications.  In particular, the attacker cannot check that the reconstructed $x \not\in S$, nor query a~$\TestOracle$.  Thus the efficacy of the attack depends on the false positive rate. \todo{Either work out a proof for this case, or punt and make the attack more formal.}
 
-\todo{Public M, ROM (no, empty priv)}\tsnote{one-wayness suffers the same
-  attack as correctness, I think?}
 
-\todo{Public M, PRF hash (follows from meta-theorem)}
 
-\todo{Private M (trivial!)}
+If instantiated with hash functions $H_j(x) = F_K(\langle j,x \rangle)$ and $\privaux = \langle K \rangle$, the SS-privacy of the GBF follows directly from~Theorem~\ref{thm:xxx}.
+\begin{theorem}\label{thm:lin-privacy}
+Fix $k,m,n,r,\lambda>0$ and a function family~$F\colon \calK \times \bits^* \to [m]$.  Let $\setprim_{\mathrm{gbf}}= (\Rep, \Qry)$ be the garbled Bloom filter with hash functions $H_j(x)=F_K(\langle j,x \rangle)$ and $\privaux=langle K \rangle$.  For any set~$S$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ and an adversary~$B$ such that, for any adversary~$A$
+\[
+\AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}
+\]
+%(Both~$B$ and~$\Sim$ are explicitly constructed in the proof of this theorem.)
+\end{theorem}
+\begin{proof}
+It suffices to give the decomposition of $\Rep$ in to $\Rep_1$ and $\Rep_2$ as required by Theorem~\ref{thm:xxx}.
+On input a set of distinct elements \fixme{ANIMESH: make this correct}
+$S=\{x_1,x_2,\ldots,x_n\}$, algorithm~$\Rep_1$ returns $s_1=\langle 1,x_1 \rangle, s_2=\langle 2,x_1 \rangle, s_3 = \langle 1,x_2\rangle, s_4=\langle 2,x_2 \rangle,\ldots,s_{2n-1}=\langle 1,x_n \rangle, s_{2n}=\langle 2,x_n \rangle$.
+
+On input $n,F_K(s_1),F_K(s_2),\ldots,F_K(s_{2n-1}) , F_K(s_{2n})$, algorithm $\Rep_2$ initializes an all-zero array~$M$ of~$m$-bits, and sets the positions $M[F_K(s_i)+j\cdot F_K(s_{i+1})\bmod m]$ to 1, for each $j \in [k]$.  It returns~$M$ as $\pubaux$.
+\end{proof}
+
 
 \begin{verbatim}
 %------------------------------------%
