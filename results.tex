@@ -106,7 +106,7 @@ the simulator needs to call the random oracle on the points in~$S$ in order to `
 
 We note that this will be true for \emph{any} data structure that returns an empty $\privaux$, because this implies that $\pubaux$ alone suffices to evaluate $\Qry(\pubaux,\privaux,\cdot)$.
 
-\begin{theorem}\label{thm3}\label{thm:bf-ow}
+\begin{theorem}[{\rm OW-privacy of classic BF in the ROM}]\label{thm3}\label{thm:bf-ow}
 Fix $k,m,n,r>0$, a set~$\elts$, and let $\setprim_{\mathrm{Bloom}}= (\Rep, \Qry)$ be the classical Bloom filter data structure over~$\elts$. Let $\distr{}{}$ be a distribution over subsets of universe~$\univ=2^\elts$, where $\mu = H_\infty(\distr{}{})$.  For any adversary~$A$ that makes $q$~queries to its oracle
 \[
 \AdvPrivOW{\setprim_{\mathrm{Bloom}},\distr{}{},r}{A} \leq  \frac{(kqn+n)}{2^{\mu}}
@@ -137,7 +137,7 @@ correct against adaptive adversaries.
 % same end, albeit via explict domain separation rather than separate
 % keys.
 
-\begin{theorem}\label{thm2}\label{thm:ds-correctness}
+\begin{theorem}[{\rm Correctness of DS-PRF}]\label{thm2}\label{thm:ds-correctness}
 Fix $k,m,n,r>0$, a set~$\elts$, and let $\setprim_{\mathrm{ds}}= (\Rep, \Qry)$ be the set-membership data structure (over~$\elts$) in Figure~\ref{fig:lin-and-ds}.  For any adversary~$A$ that makes a total of~$q$ queries to its oracle and has time-complexity~$O(t)$, there exists a prf-adversary ~$B$ (explicitly constructed in the proof of this theorem) such that
 \[
 \AdvCorrect{\setprim_{\mathrm{ds}},r}{A} \leq  \AdvPRF{F}{B}  + {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
@@ -147,7 +147,7 @@ Here, $B$ asks $q$ queries, and has time complexity $O(t+qm)$.
 
 \heading{Privacy. }
 The privacy of $\setprim_{\mathrm{ds}}$ follows directly from our general result, Theorem~\ref{thm:xxx}.
-\begin{theorem}\label{thm:ds-ss}
+\begin{theorem}[\rm{SS-privacy of DS PRF}]\label{thm:ds-ss}
 Fix $k,m,n>0$, a set~$\elts$, and let $\setprim_{\mathrm{ds}}= (\Rep, \Qry)$ be the set-membership data structure described in Figure~\ref{fig:lin-and-ds}.  For any set~$S \in 2^\elts$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ and adversary~$B$ such that, for any adversary~$A$
 \[
 \AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}
@@ -234,7 +234,7 @@ Taken together, the results of this section and the next highlight how sensitive
 \heading{Correctness. }
 For now, let $n,k,m \geq 0$.  Then $\setprim_{\mathrm{lin}}= (\Rep, \Qry)$ is defined as in Figure~\ref{fig:lin-and-ds} (left side).  The following result shows, informally, that if~$F$ is a good PRF, then $\setprim_{\mathrm{lin}}$ is correct against adaptive error-finding adversaries.
 
-\begin{theorem}\label{thm1}\label{thm:lin-correctness}
+\begin{theorem}[{\rm Correctness of linear-PRF}]\label{thm1}\label{thm:lin-correctness}
 Fix $k,m,n,r>0$, a set~$\elts$, and let $\setprim_{\mathrm{lin}}= (\Rep, \Qry)$ be the set-membership data structure (over~$\elts$) described in Figure~\ref{fig:lin-and-bin-lin}.  For any adversary~$A$ that makes a total of~$q$ queries to its oracle and has time-complexity~$O(t)$, there exist prf-adversaries~$B_1,B_2$ (explicitly constructed in the proof of this theorem) such that
 \[
 \AdvCorrect{\setprim_{\mathrm{lin}},r}{A} \leq  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}  +{\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
@@ -248,7 +248,7 @@ rate of convergence is faster than~$1/n$.   As in previous cases, the multiplica
 
 \heading{Privacy. }
 The SS-privacy of the linear-PRF hash construction follows directly from~Theorem~\ref{thm:xxx}.
-\begin{theorem}\label{thm:lin-privacy}
+\begin{theorem}[{\rm SS-privacy of linear-PRF}]\label{thm:lin-privacy}
 Fix $k,m,n,r>0$, a set $\elts$, and let $\setprim_{\mathrm{lin}}= (\Rep, \Qry)$ be the set-membership data structure (over~$\elts$) described in Figure~\ref{fig:lin-and-bin-lin}. For any set~$S \in 2^{\elts}$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ and an adversary~$B$ such that, for any adversary~$A$
 \[
 \AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}
@@ -298,10 +298,10 @@ On input $\pub \neq \emptystring$:\\
 \label{fig:adv-bi-lin-ss}
 \end{figure}
 
-\begin{theorem}\label{thm:bi-lin-ss}
+\begin{theorem}[{\rm SS-privacy of bigram linear-PRF}]\label{thm:bi-lin-ss}
 Let $\setprim_{\bilin}= (\Rep, \Qry)$ be the set-membership data structure described in Figure~\ref{fig:neidermayer}, but instantiated with $F_{K}$ replaced by a random functions~$\rho$.  Let $\leak_{\mathsf{abl}}$ be the leakage function just described.   Let~$\elts=\{\mathrm{a,b,c}\}^*$. Let $n=3$,  $m=3\alpha $ for integer $\alpha >> 1$, and let, $k = \lceil \ln(2) \alpha \rceil$.\tsnote{This value of~$k$ is from the classical analysis for minimizing the FP rate for a Bloom filter, and is set this way for compatibility with classical results.  It isn't used in any essential way in the proof sketch.}  Let~$A$ be the adversary in Figure~\ref{fig:adv-bi-lin-ss}.  Then for any simulator $\Sim$, the advantage $\AdvPrivSS{\setprim_{\bilin},\leak_{\mathsf{abl}}}{A,\Sim}$ can be made arbitrarily close to $1/2$ by choice of~$\alpha$.
 \end{theorem}
-\begin{proof}(Sketch.)
+\begin{proof}\tsnote{still a bit sketchy but believable}
 On input the set~$S$ produced by~$A$, the $\Rep$ algorithm turns $x_1=$'cab', $x_2=$'bab' and $x_3$ into their respective bigram sets: $B_{x_1}=\{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{b}\sqcup\}$, $B_{x_2}=\{\sqcup\mathrm{b},\mathrm{ba},\mathrm{ab}, \mathrm{b}\sqcup \}$; the set $B_{x_3}$ will be either $\{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{ba}, \mathrm{a}\sqcup\}$, or $\{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{bc}, \mathrm{c}\sqcup\}$, each with probability 1/2.  It then produces $\alpha$-bit arrays $M_1, M_2, M_3$ by hashing the corresponding bigram sets using the hash functions $h_j(s)=\rho_1(s)+ j\rho_2(s) \bmod m$.  Note that for sufficiently large~$m$, each of $M_1,M_2$ will contain exactly $4k$ positions set to 1; this is with overwhelming probability, up to collisions in the hash functions for different bigrams within a given bigram set.  Likewise, $M_{1,2}=M_1 \vee M_2$ will have exactly $6k$ positions set to 1, because $B_{x_1}$ and $B_{x_2}$ share $\mathrm{ab}$ and $\mathrm{a}\sqcup$.
 
 In the case that $B_{x_3}=\{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{ba}, \mathrm{a}\sqcup\}$, only one of its elements ($\mathrm{a}\sqcup$) is not in either of $B_{x_1},B_{x_2}$.  Hence, the hamming weight of $M_{1,2}\wedge M_3$ will be $4k$.  On the other hand, when $B_{x_3} = \{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{bc}, \mathrm{c}\sqcup\}$, two of its elements ($\mathrm{bc}, \mathrm{c}\sqcup$) are not covered by $B_{x_1},B_{x_2}$.  In this case, the hamming weight of $M_{1,2} \wedge M_3$ will be $3k$.  Thus $\ExpPrivSSreal{\setprim_{\bilin}}{A}=1$ with overwhelming probability.
@@ -320,7 +320,7 @@ probabilility~$1/2$.  That is $\ExpPrivSSsim{\setprim_{\bilin}}{A,\Sim} \leq 1/2
 \subsection{Bigram Domain-Separated PRF-Hash}
 We note that Neidermayer et al. in~\cite{xxx} suggest replacing the linear-PRF hash functions in the previous construction with independently keyed PRFs as a countermeasure to their attack.  In terms of SS-privacy, however, this change offers no help.  The following theorem is proved via a nearly identical argument as Theorem~\ref{thm:bi-lin-ss}
 
-\begin{theorem}\label{thm:bi-ds-ss}
+\begin{theorem}[{\rm SS-privacy of bigram DS PRF-hash}]\label{thm:bi-ds-ss}
 Let $\setprim_{\bilin}= (\Rep, \Qry)$ be the set-membership data structure described in Figure~\ref{fig:neidermayer}, but instantiated with $F_{K}$ replaced by a random functions~$\rho$.  Let $\leak$ be the leakage function described just prior to Theorem~\ref{thm:bi-lin-ss}.   Let~$\elts=\{\mathrm{a,b,c}\}^*$. Let $n=3$,  $m=3\alpha $ for integer $\alpha >> 1$, and let, $k = \lceil \ln(2) \alpha \rceil$.\tsnote{This value of~$k$ is from the classical analysis for minimizing the FP rate for a Bloom filter, and is set this way for compatibility with classical results.  It isn't used in any essential way in the proof sketch.}  Let~$A$ be the adversary in Figure~\ref{fig:adv-bi-lin-ss}.  Then for any simulator $\Sim$,
 the advantage $\AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim}$ can be made arbitrarily close to $1/2$ by choice of~$\alpha$.
 \end{theorem}
@@ -480,16 +480,17 @@ this attack will be considerably faster even if the attacker knows that the dist
 
 Finally, we observe that a similar version of the correctness attack
 works outside of the ROM, say, when we hash via $H(j,x)=F_K(\langle
-j,x \rangle)$ and assume~$F_K$ is a secure PRF.  Here, $\privaux=K$.  Now,
+j,x \rangle)$ and assume~$F_K$ is a secure PRF.  Here,
+$\privaux=\langle K \rangle$.  Now,
 however, the work switches from offline hash evaluations (i.e., random
 oracle calls) to online set-membership (i.e., $\TestOracle$) queries.
 
 
-Switching now to the case of a \emph{private}~$M$ GBF, i.e., $\pubaux=\emptystring, \privaux=\langle M \rangle$, we have the
+Switching now to the case of a \emph{private}-$M$ GBF, i.e., $\pubaux=\emptystring, \privaux=\langle M \rangle$, we have the
 following correctness bound.
 
-\begin{theorem}\fixme{FINISH! (Animesh?)}
-Fix $k,m,n,r,\lambda>0$, and let $\setprim_{\mathrm{gbf}}=(\Rep, \Qry)$ be the private~$M$ garbled Bloom filter. For any adversary~$A$ that makes a total of~$q_T$ queries to the $\Test$ oracle, and $q_R$ queries to the RO, and has time-complexity~$O(t)$,
+\begin{theorem}[{\rm Correctness of private-$M$ GBF in the ROM}]\fixme{FINISH! (Animesh?)}
+Fix $k,m,n,r,\lambda>0$, and let $\setprim_{\mathrm{gbf}}=(\Rep, \Qry)$ be the private-$M$ garbled Bloom filter. For any adversary~$A$ that makes a total of~$q_T$ queries to the $\Test$ oracle, and $q_R$ queries to the RO, and has time-complexity~$O(t)$,
 \[
 \AdvCorrect{\setprim_{\mathrm{gbf}},r}{A} \leq  {\dbinom{q_T}{r}} \left( \dfrac{1}{2^{\lambda}} \right)^r\,.
 \]
@@ -498,19 +499,19 @@ Fix $k,m,n,r,\lambda>0$, and let $\setprim_{\mathrm{gbf}}=(\Rep, \Qry)$ be the p
 \heading{Privacy. }
 We observe immediately that when~$\pubaux=\langle M \rangle$ the GBF cannot be SS-private (in the ROM) because $\privaux=\emptystring$.  In fact, the correctness attack given above suggests a one-wayness attack in the ROM, too; see the right half of Figure~\ref{fig:adv-gbf}.   The naive attack would simply output the most probable element in the support of the distribution $\distr{}{}$ used in the one-wayness experiment to sample~$S$.  But when~$M$ and the hash functions are available to the attacker, it can carry out set-membership tests for itself.  Thus the adversary on the right of Figure~\ref{fig:adv-gbf} tries the~$q-1$ most probable points, in order, halting with its output as soon as the set-membership test is successful.  If none of these points are yield a successful test, then the next most probable point is output.  It is not hard to conclude the following theorem.
 
-\begin{theorem}
-Fix $k,m,n,r,\lambda>0$, and let $\setprim_{\mathrm{gbf}}=(\Rep, \Qry)$ be the public~$M$ garbled Bloom filter, in the random-oracle model for~$H$.  Then \fixme{This probability might not be correct... verify when less tired.}
+\begin{theorem}[{\rm OW-privacy of public-$M$ GBF}]
+Fix $k,m,n,r,\lambda>0$, and let $\setprim_{\mathrm{gbf}}=(\Rep, \Qry)$ be the public-$M$ garbled Bloom filter, in the random-oracle model for~$H$.  Then \fixme{This probability might not be correct... verify when less tired.}
 \[
 \AdvPrivOW{\setprim_{\mathrm{gbf}},\distr{}{}}{A_{\mathrm{ow}}} \geq 1 - \left(1-\frac{n}{2^{\mu}} \right)^{q} \geq 1 - e^{-nq/2^\mu}
 \]
  where $\mu = H_\infty(\distr{}{})$ is the pointwise min-entropy of~$\distr{}{}$, and $A_{\mathrm{ow}}$ makes $kq$ random-oracle queries.
 \end{theorem}
-
-\todo{If time:  would be great to have an upperbound on onewayness for this construction!}
-
+\noindent
+We conjecture that this is the optimal attack on the GBF in this setting.
 
 If instantiated with hash functions $H_j(x) = F_K(\langle j,x \rangle)$ and $\privaux = \langle K \rangle$, the SS-privacy of the GBF follows directly from~Theorem~\ref{thm:xxx}.
-\begin{theorem}\label{thm:gbf-prf-privacy}
+\begin{theorem}[{\rm SS-privacy of GBF with secret hash functions}]
+\label{thm:gbf-prf-privacy}
 Fix $k,m,n,r,\lambda>0$ and a function family~$F\colon \calK \times \bits^* \to [m]$.  Let $\setprim_{\mathrm{gbf\mbox{-}prf}}= (\Rep, \Qry)$ be the garbled Bloom filter with hash functions $H_j(x)=F_K(\langle j,x \rangle)$ and $\privaux=\langle K \rangle$.  For any set~$S$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ and an adversary~$B$ such that, for any adversary~$A$
 \[
 \AdvPrivSS{\setprim_{\mathrm{gbf\mbox{-}prf}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}
