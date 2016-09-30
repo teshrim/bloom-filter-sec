@@ -1,6 +1,6 @@
 %F_{K}(\langle 1,x \rangle) + j\cdot F_{K}(\langle 2,x \rangle) \bmod m
-\begin{proof}[Theorem~\ref{thm:xxx}]
-The proof of the theorem will use a game playing argument as shown in \Cref{fig:Game}. $\game{0}(A)$ exactly simulates $\ExpCorrect{\setprim_\mathrm{lin},r}{A}$ with hash functions $h_j(x) =  F_{K}(\langle 1,x \rangle) + j\cdot F_{K}(\langle 2,x \rangle) \bmod m$. So,
+\begin{proof}[Theorem~\ref{thm:lin-correctness}]
+The proof of the theorem will use a game playing argument as shown in  Figure~\ref{fig:lin-correctness-games}. $\game{0}(A)$ exactly simulates $\ExpCorrect{\setprim_\mathrm{lin},r}{A}$ with hash functions $h_j(x) =  F_{K}(\langle 1,x \rangle) + j\cdot F_{K}(\langle 2,x \rangle) \bmod m$. So,
 
 \begin{equation}
 \AdvCorrect{\setprim_{\mathrm{lin}},r}{A} = \Prob{\game{0}(A)=1}\label{eq:0}
@@ -8,7 +8,7 @@ The proof of the theorem will use a game playing argument as shown in \Cref{fig:
 
  In $\game{1}(A)$, $F_{K}(\langle 1,\cdot \rangle)$ is replaced by a random function, whereas in $\game{2}(A)$, both $F_{K}(\langle 1,\cdot \rangle)$ and $F_{K}(\langle 2, \cdot \rangle)$ are replaced by random functions.
 
-%\caption{Adversary $B_1, B_2$ simulating $\game{1}(A)$ and $\game{2}(A)$ respectively}\label{fig:BGame1}
+%\caption{Adversary $B_1, B_2$ simulating $\game{1}(A)$ and $\game{2}(A)$ respectively}\label{fig:lin-correctness-adv}
 \begin{figure}[tp]
 \fpage{0.9}{
 \hpagessl{0.5}{0.5}
@@ -61,12 +61,13 @@ for $i \in \{1,2,\ldots,k\}$\\
 Return ${v_1,v_2,\ldots,v_k}$
 }
 }
-\caption{Adversary $B_1, B_2$ simulating $\game{1}(A)$ and $\game{2}(A)$ respectively}\label{fig:BGame1}
+\caption{Adversary $B_1, B_2$ simulating $\game{1}(A)$ and $\game{2}(A)$ respectively for the
+proof of Theorem~\ref{thm:lin-correctness}.}\label{fig:lin-correctness-adv}
 \fixme{fix caption and Crefs}
 \end{figure}
 
-The PRF security notion is shown in \Cref{fig:prf}. Let
-prf-adversaries $B_1, B_2$ be as shown in \Cref{fig:BGame1}.
+The PRF security notion is shown in Figure~\ref{fig:prf}. Let
+prf-adversaries $B_1, B_2$ be as shown in Figure~\ref{fig:lin-correctness-adv}.
 Adversary~$B_1$ is constructed so that, if its challenge bit~$b=1$,
 then it exactly simulates $\game{0}$ for~$A$; if $b=0$, it
 simulates~$\game{1}$.  Similarly, adversary~$B_2$ simulates~$\game{1}$
@@ -104,7 +105,7 @@ by~$\game{3}$. Thus we have $\Prob{\game{2}(A)=1} =
 \]
 
 We note that $\game{3}$ and $\game{4}$ are
-``identical-untill-$\bad$''~\cite{BeRo-gameplaying}.  In particular,
+``identical-untill-$\bad$''~\cite{bellare2004game}.  In particular,
 in $\game{4}$, $A$ returns 0 when $\game{3}$ would have returned 1 (i.e.,
 the adversary outputs~$r$ false-positives, but $\bad=\true$).  
 Moreover,  $\game{4}(A)$ returning 1 implies that $\bad$ is never set to $\true$. Therefore,
@@ -135,10 +136,10 @@ $1/\binom{q}{r}$, and we have
 Recall that adversary~$A$ wins $\ExpCorrect{\setprim_{\mathrm{lin}},r}{}$ by finding~$r$ false positives. We can assume, without loss of generality,  that~$A$ halts immediately upon finding its $r$-th false positive. % We can also assume that every point in $\calZ$ has already been queried to $\Test$.  This latter assumption is not without loss, but can be  easily enforced (in the original security definitions) by counting as part of the number of queries~$q$, the points in $\mathcal{Z}$. 
 %
 %Under these assumptions,
-So, if $\game{4}(A)=1$, then there is a zero-query adversary~$D$ that finds~$r$ false positives against $\tilde{\setprim}_{\mathrm{lin}}$, which is $\setprim_{\mathrm{lin}}$ but with $F_{K_1}$ and $F_{K_2}$ replaced by random functions $\rho_1$ and $\rho_2$, respectively.  We give this~$D$ in \Cref{fig:D}. Intuitively, adversary~$D$ guesses which~$r$ of~$A$'s queries will be false positives; it simulates the~$\Test$ oracle by returning 1 on the guessed queries, and 0 otherwise; and it halts after finding $r$ FP's. It must be noted that, by the no-pointless queries assumption and the fact that the hash functions in $D$ are instantiated with random functions, $\pubaux$ is information theoretically independent of elements not in $S$. Thus we have
+So, if $\game{4}(A)=1$, then there is a zero-query adversary~$D$ that finds~$r$ false positives against $\tilde{\setprim}_{\mathrm{lin}}$, which is $\setprim_{\mathrm{lin}}$ but with $F_{K_1}$ and $F_{K_2}$ replaced by random functions $\rho_1$ and $\rho_2$, respectively.  We give this~$D$ in Figure~\ref{fig:lin-correctness-zq-adv}. Intuitively, adversary~$D$ guesses which~$r$ of~$A$'s queries will be false positives; it simulates the~$\Test$ oracle by returning 1 on the guessed queries, and 0 otherwise; and it halts after finding $r$ FP's. It must be noted that, by the no-pointless queries assumption and the fact that the hash functions in $D$ are instantiated with random functions, $\pubaux$ is information theoretically independent of elements not in $S$. Thus we have
 $\Prob{\game{4}(A)=1} =\Prob{\ExpCorrect{\tilde{\setprim}_{\mathrm{lin}},r}{D} = 1}$.
 
-Note that $\tilde{\setprim}_{\mathrm{lin}}$ is the scheme that is analyzed in the classical Bloom filter literature ---the hash functions are modeled as independent random functions, and the parameters $k,m,n$  are set to achieve a target maximum false-positive probability (or rate).  Kirsch and Mitzenmacher~\cite{KM} show that the upperbound on false-positive probability for a zero-query adversary and $r=1$ is $\left( (1-e^{-kn/m})^k + O(1/n) \right)$.  For $r>1$, we observe that~$A$'s queries $x_1,x_2,\ldots,x_q$ are distinct and not elements of the original set~$S$, since we assume no pointless queries. Let $\calF_i$ be the event that~$x_i(i \in \mathcal{I})$ is a false positive.  Since $\game{4}$ (equivalently $\tilde{\setprim}_{\mathrm{lin}}$) use independent random functions, the events $\calF_1,\calF_2,\ldots,\calF_r$ are independent. 
+Note that $\tilde{\setprim}_{\mathrm{lin}}$ is the scheme that is analyzed in the classical Bloom filter literature ---the hash functions are modeled as independent random functions, and the parameters $k,m,n$  are set to achieve a target maximum false-positive probability (or rate).  Kirsch and Mitzenmacher~\cite{kirsch2006less} show that the upperbound on false-positive probability for a zero-query adversary and $r=1$ is $\left( (1-e^{-kn/m})^k + O(1/n) \right)$.  For $r>1$, we observe that~$A$'s queries $x_1,x_2,\ldots,x_q$ are distinct and not elements of the original set~$S$, since we assume no pointless queries. Let $\calF_i$ be the event that~$x_i(i \in \mathcal{I})$ is a false positive.  Since $\game{4}$ (equivalently $\tilde{\setprim}_{\mathrm{lin}}$) use independent random functions, the events $\calF_1,\calF_2,\ldots,\calF_r$ are independent. 
 \[
 \Prob{\ExpCorrect{\tilde{\setprim}_{\mathrm{lin}},r}{D} = 1}\leq \left( (1-e^{-kn/m})^k + O(1/n) \right)^r 
 \]
@@ -248,7 +249,9 @@ for $i = 1$ to~$k$\\
 Return $\left(v_1,\ldots,v_k\right)$
 }
 }
-\caption{\Cref{thm1}: Game playing argument}\label{fig:Game}
+\caption{Games $\game{0}$-$\game{4}$ for the
+proof of Theorem~\ref{thm:lin-correctness}.}
+\label{fig:lin-correctness-games}
 \fixme{fix caption and Crefs}
 \end{figure}
 
@@ -298,7 +301,7 @@ When $A$ asks $\TestOracle(\qry_x)$:\\
 When $A$ halts:\\
 \nudge Return $\bot$
 }
-\caption{Zero-query adversary $D$} \label{fig:D}
+\caption{Zero-query adversary $D$ for Theorem~\ref{thm:lin-correctness}.} \label{fig:lin-correctness-zq-adv}
 \fixme{For what theorem?}
 \end{figure}	
 
