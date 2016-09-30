@@ -144,7 +144,12 @@ Fix $k,m,n,r>0$, a set~$\elts$, and let $\setprim_{\mathrm{ds}}= (\Rep, \Qry)$ b
 \]
 Here, $B$ asks $q$ queries, and has time complexity $O(t+qm)$.
 \end{theorem}
-\todo{some form of proof ---at least a proof sketch in the text--- needs to appear here!}
+We note that Kirsch and Mitzenmacher~\cite{xxx} show
+that the ($r=1$, zero-query) error-probability for~$\setprim_\mathrm{ds}$ is
+always within $O(1/n)$ of $(1-e^{-kn/m})^k$, although the asymptotic
+rate of convergence is faster than~$1/n$.   As before, the multiplicative term $\dbinom{q}{r}$ arises when switching from the adaptive to zero-query settings.
+\input{ds-correctness}
+
 
 \heading{Privacy. }
 The privacy of $\setprim_{\mathrm{ds}}$ follows directly from our general result, Theorem~\ref{thm:xxx}.
@@ -242,10 +247,13 @@ Fix $k,m,n,r>0$, a set~$\elts$, and let $\setprim_{\mathrm{lin}}= (\Rep, \Qry)$ 
 \]
 Here, $B_1$ and $B_2$, each ask~$q$ oracle queries and have time complexity~$O(t+qm)$.
 \end{theorem}
-The proof appears in Appendix~\ref{app:xxx}.  We note that Kirsch and Mitzenmacher~\cite{xxx} show
+Again, Kirsch and Mitzenmacher~\cite{xxx} show
 that the ($r=1$, zero-query) error-probability for~$\setprim_\mathrm{lin}$ is
 always within $O(1/n)$ of $(1-e^{-kn/m})^k$, although the asymptotic
-rate of convergence is faster than~$1/n$.   As in previous cases, the multiplicative term $\dbinom{q}{r}$ arises when switching from the adaptive to zero-query settings.
+rate of convergence is faster than~$1/n$.   
+the multiplicative term $\dbinom{q}{r}$ arises when switching from the adaptive to zero-query settings.
+\input{lin-correctness}
+
 
 \heading{Privacy. }
 The SS-privacy of the linear-PRF hash construction follows directly from~Theorem~\ref{thm:xxx}.
