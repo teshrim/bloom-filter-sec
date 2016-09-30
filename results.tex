@@ -82,14 +82,14 @@ Fix $k,m,n,r>0$, a set~$\elts$, and let $\setprim_{\mathrm{Bloom}}= (\Rep, \Qry)
 \]
 \end{theorem}
 We note that Kirsch and Mitzenmacher~\cite{xxx} show
-that the ($r=1$, zero-query) FP-probability for~$\setprim_\mathrm{Bloom}$ is
+that the ($r=1$, zero-query) error-probability for~$\setprim_\mathrm{Bloom}$ is
 always within $O(1/n)$ of $(1-e^{-kn/m})^k$, although the asymptotic
 rate of convergence is faster than~$1/n$.  The multiplicative (``hybrid'') term arises as a result
 of moving from the adaptive to the zero-query setting.
 Finally, $\binom{q_T+q_H}{r} \leq (q_T+q_H)^r$ (with reasonable tightness when~$r$ is small) in
 which case the final term in the bound behaves as
 $((q_T+q_H) (1-e^{-kn/m})^k + O(q/n) )^r$; loosely, this is the bound one expects for
-trying to find a single FP in each of~$r$ independent``rounds'', each round
+trying to find a single correctness error (in this case, a false positive) in each of~$r$ independent``rounds'', each round
 consisting of~$(q_T+q_H)$ attempts.
 \input{BF_correctness}
 
@@ -243,7 +243,7 @@ Fix $k,m,n,r>0$, a set~$\elts$, and let $\setprim_{\mathrm{lin}}= (\Rep, \Qry)$ 
 Here, $B_1$ and $B_2$, each ask~$q$ oracle queries and have time complexity~$O(t+qm)$.
 \end{theorem}
 The proof appears in Appendix~\ref{app:xxx}.  We note that Kirsch and Mitzenmacher~\cite{xxx} show
-that the ($r=1$, zero-query) FP-probability for~$\setprim_\mathrm{lin}$ is
+that the ($r=1$, zero-query) error-probability for~$\setprim_\mathrm{lin}$ is
 always within $O(1/n)$ of $(1-e^{-kn/m})^k$, although the asymptotic
 rate of convergence is faster than~$1/n$.   As in previous cases, the multiplicative term $\dbinom{q}{r}$ arises when switching from the adaptive to zero-query settings.
 
