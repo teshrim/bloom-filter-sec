@@ -79,7 +79,8 @@
 \def\privaux{{\sf priv}}
 \newcommand{\bilin}{\mathrm{bi}\mbox{-}\mathrm{lin}}
 \newcommand{\leak}{{\sf leak}}
-
+\renewcommand{\qed}{$\blacksquare$}
+\renewcommand{\dqed}{$\Diamond$}
 %%%%%%%%%%%%%%%%%%%% TITLE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \title{{\bf Security Notions for Abstract Data Structures}}
 %\date{\today}
@@ -100,20 +101,23 @@
 \input{notions}
 %\input{relations}
 \input{results}
-\appendix
-\input{ny-def-comparison}
-\input{Theorem3_FP}
-\input{TheoremGBF_correctness_privM}
-\input{TheoremGBF_correctness}
-\input{TheoremGBF_correctnessUB}
-\input{Proofs}
-\input{intro-old}
-\input{tasks_and_ideas}
-%\input{mutable-filters}
-%\input{filters-multi-server}
+
 
 %%%%%%%%%%%%%%% BIBLIOGRAPHY %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{alpha}
 \bibliography{main}
+
+%%%%%%%%%%%%%%% APPENDICES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\appendix
+\input{ny-def-comparison}
+%\input{BF_correctness}
+\input{TheoremGBF_correctness_privM}
+\input{TheoremGBF_correctness}
+\input{TheoremGBF_correctnessUB}
+%\input{Proofs}
+\input{intro-old}
+\input{tasks_and_ideas}
+%\input{mutable-filters}
+%\input{filters-multi-server}
 
 \end{document}

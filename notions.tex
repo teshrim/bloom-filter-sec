@@ -341,7 +341,8 @@ observed information ${\sf leak}(S)$ about the set in question.
 \begin{theorem}
 Let $\setprim$ be a set-membership data structure. For any distribution ${\cal D}$ and
 attacker~$A$, there is an attacker $A'$ running in about the same time with
-\[\AdvPrivOW{\setprim,\mathcal{D}}{A} \leq \AdvPrivSS{\setprim,{\sf leak}}{A'} + 2^{-\tilde H_\infty({\cal D} \mid {\sf leak})}.\]
+\[\AdvPrivOW{\setprim,\mathcal{D}}{A} \leq \AdvPrivSS{\setprim,{\sf
+    leak}}{A'} + 2^{-\tilde H_\infty({\cal D} \mid {\sf leak})}.\] 
 %Let $\setprim$ be a set-representation data structure that is $(t, \epsilon)$-semantically secure
 %with respect to leakage ${\sf leak}:2^{\cal X} \rightarrow R$.
 %Then $\AdvPrivOW{\setprim,\mathcal{D}}{t} \leq 2^{-\tilde H_\infty({\cal D} \mid {\sf leak})} + \epsilon$.
@@ -361,7 +362,7 @@ and $A'$ jointly have in the ideal world
 about the set~$S$ that was sampled is ${\sf leak}(S)$; thus,
 \[\Prob{\ExpPrivSSsim{\setprim,{\sf leak}}{A', \Sim}=1} \leq
 2^{-\tilde H_\infty({\cal D} \mid {\sf leak})}.\]
-The theorem follows.
+The theorem follows. \hfill\qed
 \end{proof}
 
 
@@ -427,15 +428,16 @@ of algorithm~$\Rep$. \hfill\dqed
 
 We next show that any canonical data structure in which~$F$ is a pseudorandom function is
 semantically secure with respect to leakage consisting of the size of the set.
-\jnote{Need notation for the advantage in the PRF experiment.}
+\jnote{Need notation for the advantage in the PRF
+  experiment.}\tsnote{Currently typeset in an appendix}
 
 \begin{theorem}
 Let $\setprim=(\Rep, \Qry)$ be a canonical data structure for which $\Rep$
 has canonical representation
 $(\Rep_1, \Rep_2, F)$. Then for ${\sf leak}(S) = |S|$ and
 any attacker $A$, there is an attacker
-$A'$ running in about the same time for which
-\[\AdvPrivSS{\setprim,{\sf leak}}{A} \leq {\sf Adv}_F^{\rm PRF}(A'). \]
+$B$ running in about the same time for which
+\[\AdvPrivSS{\setprim,{\sf leak}}{A} \leq {\sf Adv}_F^{\rm PRF}(B). \]
 \end{theorem}
 \begin{proof}
 We define a simulator $\Sim$ as follows. On input $n$, $\Sim$ fixes
@@ -448,9 +450,10 @@ and returns $\pubaux
 
 Note that we can express $\Prob{\ExpPrivSSreal{\setprim}{A}=1}$ as the probability that $A$
 outputs~1 in
-the following experiment~$G0$: \jnote{BTW, in class when I do this stuff I usually
-say ``game'' and then correct myself and say ``\ldots but if you want to get funded,
-call it an experiment.'' (Some light humor while you work.)}
+the following experiment~$G0$: 
+%\jnote{BTW, in class when I do this stuff I usually
+%say ``game'' and then correct myself and say ``\ldots but if you want to get funded,
+%call it an experiment.'' (Some light humor while you work.)}
 \begin{enumerate}
 \item $S \getsr A$.
 \item $s_1, \ldots, s_t \getsr \Rep_1(S)$.
@@ -469,7 +472,7 @@ Now, consider an experiment $G1$ in which computation is done as follows:
 \end{enumerate}
 It is immediate that the difference between the probability that $A$ outputs~1 in
 $G1$ and the probability that it outputs~1 in
-$G0$ is bounded by ${\sf Adv}_F^{\rm PRF}(A')$, where $A'$ performs the
+$G0$ is bounded by $\AdvPRF{F}{B}$, where $B$ performs the
 obvious simulation.
 
 Next, consider the following experiment $G2$:
@@ -497,7 +500,7 @@ One can observe that $G2$ is identical to the following experiment:
 \end{enumerate}
 Moreover, the probability with which $A$ outputs~1 in this experiment is
 precisely $\Prob{\ExpPrivSSsim{\setprim,{\sf leak}}{A, \Sim}=1}$.
-This completes the proof.
+This completes the proof. \hfill\qed
 \end{proof}
 
 %\fixme{ ----The following is left only for cut-and-paste value---- }
