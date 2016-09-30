@@ -199,17 +199,17 @@ On input a set of distinct elements $S=\{x_1,x_2,\ldots,x_n\}$, algorithm~$\Rep_
 \algorithmv{$\Rep(S)$}\\
 $M \gets 0^m$; $K \getsr \calK$\\
 for $x \in S$\\
-\jnote{Fix}\tsnote{Fix what?}\\
+%\jnote{Fix}\tsnote{Fix what?}\\
 \nudge for $j \in \{1,2,\ldots,k\}$\\
 \nudge\nudge $h_j \gets F_{K}(\langle 1,x \rangle) + j\cdot F_{K}(\langle 2,x \rangle) \bmod m$\\
 \nudge\nudge $M[h_j] \gets 1$\\
-$\pubaux \gets M$, $\privaux \gets \langle K \rangle$\\
-Return $(\pubaux,\privaux)$\\
+%$\pubaux \gets M$, $\privaux \gets \langle K \rangle$\\
+Return $(\pubaux=M,\privaux=K)$\\
 
 \medskip
-\algorithmv{$\Qry(\pubaux,\privaux,q_x)$}\\
-$M\gets\pubaux$, $K \gets \privaux$\\
-\jnote{Fix}\tsnote{Fix what?} \\
+\algorithmv{$\Qry(\pubaux=M,\privaux=K,q_x)$}\\
+%$M\gets\pubaux$, $K \gets \privaux$\\
+%\jnote{Fix}\tsnote{Fix what?} \\
 for $j \in \{1,2,\ldots,k\}$\\
 \nudge $h_j \gets F_{K}(\langle 1,x \rangle) + j\cdot F_{K}(\langle 2,x\rangle) \bmod m$\\
 \nudge if $M[h_j] \neq 1$ then Return 0\\
@@ -244,12 +244,14 @@ Return 0
 }
 \caption{{\bf Left:} $\Rep$ and $\Qry$ algorithms for the linear-PRF
   data structure $\setprim_{\mathrm{lin}}$ {\bf Right:}
-The scheme from Niedermeyer et al.\cite{xxx}, $\setprim_{\bilin}$. The $\mathsf{bigram}$
-algorithm takes a string~$x=x_1,x_2,\ldots,x_\ell$ as input, and
-returns the set of bigrams for the left- and right-padded string
-$\sqcup x \sqcup$, i.e. $\{\sqcup x_1, x_1x_2,\ldots,x_{\ell-1}x_\ell,x_\ell\sqcup\}$.
-}
-\label{fig:lin-and-bi-lin}
+The scheme from Niedermeyer et al.\cite{xxx}, $\setprim_{\bilin}$.
+The $\mathsf{bigram}$ algorithm takes a
+string~$x=x_1,x_2,\ldots,x_\ell$ as input, and returns the set of
+bigrams for the left- and right-padded string $\sqcup x \sqcup$,
+i.e. $\{\sqcup x_1, x_1x_2,\ldots,x_{\ell-1}x_\ell,x_\ell\sqcup\}$.
+\jnote{I would emphasize that $F_K(\cdot)$ is computed only twice
+per inner loop (which is the whole point of this scheme) by moving
+that computation outside the loop.}} \label{fig:lin-and-bi-lin}
 \label{fig:niedermeyer}
 \end{figure}
 
@@ -365,14 +367,130 @@ probabilility~$1/2$.  That is $\ExpPrivSSsim{\setprim_{\bilin}}{A,\Sim} \leq 1/2
 
 %%%%%%%%%%%%%%%%% Bigram DOMAIN-SEPARATED PRF %%%%%%%%%%%%%%%%%%%%
 \subsection{Bigram Domain-Separated PRF-Hash}
-We note that Niedermeyer et al. in~\cite{niedermeyer2014cryptanalysis} suggest replacing the linear-PRF hash functions in the previous construction with independently keyed PRFs as a countermeasure to their attack.  In terms of SS-privacy, however, this change offers no help.  The following theorem is proved via a nearly identical argument as Theorem~\ref{thm:bi-lin-ss}.
+
+\begin{figure}
+\centering
+\fpage{0.5}{
+\algorithmv{$\Rep(S)$}\\
+$\pubaux \gets \emptystring$, $K \getsr \calK$\\
+for each $x \in S$\\
+\nudge $M_x \gets 0^m$\\
+\nudge $B_x \gets \mathsf{bigram}(x)$\\
+\nudge for each $b \in B_x$\\
+\nudge\nudge for $j \in [k]$\\
+\nudge\nudge\nudge $i \gets F_{K}(\langle j, b\rangle) \bmod m$\\
+\nudge\nudge\nudge $M_x[i] \gets 1$\\
+\nudge $\pubaux \gets \langle\pubaux, M_x \rangle$\\
+$\privaux \gets K$\\
+Return $(\pubaux,\privaux)$\\
+
+\medskip
+\algorithmv{$\Qry(\pubaux,\privaux,q_x)$}\\
+$B \gets \mathsf{bigram}(x)$\\
+$\overline{M} \gets 0^m$\\
+for each $b \in B$\\
+\nudge for $j \in [k]$\\
+\nudge\nudge $i \gets F_{K}(\langle j,b \rangle) \bmod m$\\
+\nudge\nudge $\overline{M}[i] \gets 1$\\
+if $\overline{M} \in \pubaux$ then Return 1 \\
+Return 0} \caption{Bigram domain-separated PRF-hash.}
+\label{fig:DS-bigram}
+\end{figure}
+
+
+Niedermeyer et al.~\cite{niedermeyer2014cryptanalysis} suggest
+replacing the linear-PRF hash functions in the previous construction
+with independently keyed PRFs as a countermeasure to their attack.
+In terms of SS-privacy, however, this change offers no help.  The
+following theorem is proved via a nearly identical argument as
+Theorem~\ref{thm:bi-lin-ss}.
 
 \begin{theorem}[{\rm SS-privacy of bigram DS PRF-hash}]\label{thm:bi-ds-ss}
-Let $\setprim_{\bilin}= (\Rep, \Qry)$ be the set-membership data structure described in Figure~\ref{fig:lin-and-bi-lin}, but instantiated with $F_{K}$ replaced by a random functions~$\rho$.  Let $\leak$ be the leakage function described just prior to Theorem~\ref{thm:bi-lin-ss}.   Let~$\elts=\{\mathrm{a,b,c}\}^*$. Let $n=3$,  $m=3\alpha $ for integer $\alpha >> 1$, and let, $k = \lceil \ln(2) \alpha \rceil$.\tsnote{This value of~$k$ is from the classical analysis for minimizing the FP rate for a Bloom filter, and is set this way for compatibility with classical results.  It isn't used in any essential way in the proof sketch.}  Let~$A$ be the adversary in Figure~\ref{fig:adv-bi-lin-ss}.  Then for any simulator $\Sim$,
-the advantage $\AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim}$ can be made arbitrarily close to $1/2$ by choice of~$\alpha$.
+Let $\setprim_{\bilin}= (\Rep, \Qry)$ be the set-membership data
+structure described in Figure~\ref{fig:DS-bigram}. Let $\leak$ be
+the leakage function described just prior to
+Theorem~\ref{thm:bi-lin-ss}. Let~$\elts=\{\mathrm{a,b,c}\}^*$. Let
+$n=3$,  $m=3\alpha $ for integer $\alpha >> 1$, and let $k = \lceil
+\ln(2) \alpha \rceil$.\tsnote{This value of~$k$ is from the
+classical analysis for minimizing the FP rate for a Bloom filter,
+and is set this way for compatibility with classical results.  It
+isn't used in any essential way in the proof sketch.}  Let~$A$ be
+the adversary in Figure~\ref{fig:adv-bi-lin-ss}.  Then for any
+simulator $\Sim$, the advantage
+$\AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim}$ can be made
+arbitrarily close to $1/2$ by choice of~$\alpha$.
 \end{theorem}
 
-\todo{OW privacy proof? Attack? [JON]}
+On the other hand, we can show that this data structure \emph{is}
+semantically secure with respect to a different leakage function,
+namely, one that leaks the sizes of the intersections of the various
+bigram sets. Specifically, for a set $S$ define ${\sf leak}_\cap(S)$
+via the following algorithm:
+
+\begin{figure}[h]
+\centering
+\fpage{0.5}{
+\algorithmv{${\sf leak}_\cap(S)$}\\
+$L \gets \emptystring$\\
+for each $x \in S$\\
+\nudge $B_x \gets \mathsf{bigram}(x)$\\
+for each $S' \subseteq S$\\
+\nudge $L \gets \left\langle L, \; \left| \bigcap_{x \in S'} B_x \right| \right\rangle$\\
+Return $L$}
+%\caption{Bigram domain-separated PRF-hash.}
+\end{figure}
+
+\begin{theorem} %\label{thm:priv-ss}
+Let $\Pi$ be the set-representation data structure in
+Figure~\ref{fig:DS-bigram}. Then for any attacker $A$, there is an
+attacker $B$ \jnote{How do we describe the number of PRF queries $B$
+makes? Same problem as in Theorem~\ref{thm:priv-ss}.} for which
+\[\AdvPrivSS{\setprim,{\sf leak}_\cap}{A} \leq {\sf Adv}_F^{\rm PRF}(B). \]
+\end{theorem}
+\begin{proof}
+The proof follows the same high-level ideas as in the proof of
+Theorem~\ref{fig:DS-bigram}, based on the observation that ${\sf
+leak}_\cap(S)$ suffices to determine the overlap in calls to the
+pseudorandom function~$F$.
+
+Our simulator $\Sim$, on input $L = \{n_{S'}\}_{S' \subseteq S}$,
+proceeds as follows. Let $N = n_S$ denote the size of~$S$. The
+simulator constructs $N$ sets $B_1, \ldots, B_N \subset \{e_1,
+\ldots, e_{N'}\}$ of ``dummy elements'' $e_1, \ldots, e_{N'}$ (with
+$N' \leq N$), such that the sizes of the intersections of the
+$\{B_i\}$ are exactly that given by~$L$. (This can be done via a
+deterministic, incremental algorithm in which $\Sim$ first populates
+$B_1$ with $n_{\{x_1\}}$ dummy elements,and always populates the
+next set $B_i$ with old/new dummy elements as needed to maintain the
+correct intersection sizes.) It then chooses uniform values
+$y_{1,1}, \ldots, y_{1,k}, \ldots, y_{N',1}, \ldots, y_{N',k} \getsr
+\bool^{\ell_{out}}$ and computes
+
+\begin{figure}[h]
+\centering
+\fpage{0.5}{
+$\pubaux \gets \emptystring$\\
+for each $x \in [N]$\\
+\nudge for each $b \in [N']$\\
+\nudge \nudge if $e_b \in B_i$\\
+\nudge\nudge\nudge for $j \in [k]$\\
+\nudge\nudge\nudge\nudge $i \gets y_{b,j} \bmod m$\\
+\nudge\nudge\nudge\nudge $M_x[i] \gets 1$\\
+\nudge $\pubaux \gets \langle\pubaux, M_x \rangle$\\
+Return $\pubaux$
+}
+\end{figure}
+
+The proof that this provides a good simulation is identical to that
+of Theorem~\ref{fig:DS-bigram}. \hfill\qed
+\end{proof}
+
+We remark that the running time of the simulator is exponential in
+the size $|S|$ of the set, so the above is not entirely satisfactory
+unless $S$ is small. Nevertheless, it does convey the intuition that
+the \emph{only} information leaked by the data structure is the
+sizes of the various intersections of the~$\{B_x\}$ sets.
+
 
 %%%%%%%%%%%%%%%%% GARBLED BF  %%%%%%%%%%%%%%%%%%%%
 \subsection{Garbled Bloom Filter}

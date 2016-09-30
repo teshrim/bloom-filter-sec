@@ -440,7 +440,8 @@ Let $\setprim=(\Rep, \Qry)$ be a canonical data structure for which $\Rep$
 has canonical representation
 $(\Rep_1, \Rep_2, F)$. Then for ${\sf leak}(S) = |S|$ and
 any attacker $A$, there is an attacker
-$B$ running in about the same time for which
+$B$ \jnote{How do we describe the number of PRF queries $B$ makes? Note that it makes
+exactly $t$ queries, but $t$ depends on $|S|$ in a non-specified manner.} for which
 \[\AdvPrivSS{\setprim,{\sf leak}}{A} \leq {\sf Adv}_F^{\rm PRF}(B). \]
 \end{theorem}
 \begin{proof}
