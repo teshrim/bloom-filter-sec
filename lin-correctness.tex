@@ -27,8 +27,9 @@ When $A$ asks $\TestOracle(\qry_x)$:\\
 \nudge Return~$a$\\
 When $A$ halts: \\
 \nudge if $\err  < r$ then Return 0\\
-\nudge Return 1\\\\
-%
+\nudge Return 1\\
+
+\medskip
 \oracle{$\HashOracle(x)$}\\
 for $i \in \{1,2,\ldots,k\}$\\
 \nudge $v_i \gets F_{K}(\langle 1,x \rangle) + i \cdot \calO(\langle 2,x \rangle) \bmod m$\\
@@ -49,8 +50,9 @@ When $A$ asks $\TestOracle(\qry_x)$:\\
 \nudge Return~$a$\\
 When $A$ halts: \\
 \nudge if $\err  < r$ then Return 0\\
-\nudge Return 1\\\\
-%
+\nudge Return 1
+
+\medskip
 \oracle{$\HashOracle(x)$}\\
 $a \getsr [m]$\\
 if $T[x] \neq \undefined$\\
@@ -286,32 +288,6 @@ Return $\rho(x)$\\
 }
 \caption{PRF security notion}\label{fig:prf}
 \end{figure}
-
-%\caption{Non-adaptive adversary $D$ simulating $\game{4}(A)$} \label{fig:D}
-\begin{figure}
-\centering
-\fpage{0.35}
-{
-$\adversaryv{D(S, \pubaux)}$\\[4pt]
-$c \gets 0$\\%, $\calX \gets \emptyset$\\
-$\calC \gets \emptyset$; $\err \gets 0$\\
-$\mathcal{I}\getsr [\{1,2,\ldots,q\}]^r$\\
-Run $A(\pubaux)$\\
-When $A$ asks $\TestOracle(\qry_x)$:\\
-\nudge if $x \in \mathcal{C}$ then Return $\bot$\\
-\nudge $\calC \gets \calC \cup x$\\
-\nudge $c \gets c+1$\\
-\nudge $r \gets 0$\\
-\nudge if $c \in \mathcal{I}$\\
-\nudge \nudge $r \gets 1$\\
-\nudge \nudge $\err \gets \err + 1$\\
-\nudge Return $r$\\
-When $A$ halts:\\
-\nudge Return $\bot$
-}
-\caption{Zero-query adversary $D$ for Theorem~\ref{thm:lin-correctness}.} \label{fig:lin-correctness-zq-adv}
-\fixme{For what theorem?}
-\end{figure}	
 
 \end{proof}
 
