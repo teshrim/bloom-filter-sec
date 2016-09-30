@@ -2,11 +2,11 @@
 \section{Security Notions}
 \label{sec:security-notions}
 Following NY, we are interested in defining an adaptive (i.e.,
-adversarial) notion of correctness.
-In addition to correctness, we establish notions of privacy for
-set-multiplicity data structures.
-\jnote{I would call it ``soundness'' rather than ``correctness.'' But if you disagree,
+adversarial) notion of correctness. \jnote{I would call it ``soundness'' rather than ``correctness.'' But if you disagree,
 just remove this comment and we'll go with correctness.}
+In addition to correctness, we establish notions of privacy for
+set-membership data structures.
+
 
 
 
@@ -15,9 +15,27 @@ just remove this comment and we'll go with correctness.}
 
 \subsection{Correctness Against Adaptive Adversaries}
 
-First, the adversary $A$ outputs a set $S$ from among those supported by
-the data structure. Then,
-$\Rep(S)$ is run to generate $(\pubaux,\privaux)$.
+\jnote{Entirely general, only specializing to set-membership data structures when needed.}
+
+We first define a notion of correctness for a data structure~$\Pi$. Our definition
+considers an adversary $A$ who may have full information about the data~$S$ being stored (and, indeed,
+may even choose~$S$) but does not know or control the randomness used by the representation
+algorithm~$\Rep$. Nevertheless, $A$ may learn some partial information about that randomness from
+two sources: first, $A$ is given the public portion of the representation output
+by~$\Rep$; second, we allow $A$ to adaptively query the $\Qry$ algorithm on inputs
+of its choice.
+
+In contrast to the style of definition considered by Naor and Yogev (and in addition
+to other differences between our definitions as discussed in the Introduction), we consider
+a more fine-grained definition parameterized by a value~$r$. The goal of the attacker
+is to find $r$ (distinct) points on which the generated representation errs.
+Implications of this choice are discussed further below.
+
+Formally, our definition is specified by an experiment called $\ExpCorrect{\setprim,r}{A}$
+given in Figure~\ref{fig:correctness}.
+Following an initialization step,
+the experiment begins by having the attacker $A$ outputs data $S \in \univ$.
+Then, $\Rep(S)$ is run to generate a representation $(\pubaux,\privaux)$ for that data.
 %\jnote{I thought we were going to let
 %the adversary choose~$S$?} \tsnote{Email discussion. At this point,
 %I'm happy just making~$S$ part of the experiment ``name'', the
@@ -30,14 +48,14 @@ $\Rep(S)$ is run to generate $(\pubaux,\privaux)$.
 %\jnote{OK, I think I would just change the definitions so that the attacker
 %chooses $S$.}
 %(Unless stated otherwise, we assume security holds for all distributions and thus for all sets $S$.)
-Adversary~$A$ is given~$\pubaux$~as input; it is also
+The adversary~$A$ is given~$\pubaux$, and is also
 provided with access to an oracle~$\TestOracle$ that, on input a query~$\qry \in \calQ$,
-returns $\Qry(\pubaux,\privaux,q)$ and increments
-a counter if this result is in error.  The adversary wins if it
+returns $\Qry(\pubaux,\privaux,\qry)$ to $A$ and also increments
+a counter if this result is incorrect (and if $\qry$ is new).  The adversary succeeds if it
 manages to cause at least~$r>0$ such errors among its queries.
-The notion can be lifted to the random-oracle model by providing
-$\Rep,\Qry$ and the adversary~$A$ with oracle access to the
-random-oracle(s).
+The definition can be lifted to the random-oracle model by providing
+all algorithms (namely, $\Rep,\Qry$, and the adversary~$A$) with access to the
+random oracle.
 
 %\jnote{I changed $\TestOracle$ so that it outputs $(a, q(S))$ rather
 %than $(a,\mathrm{err})$. Note that the latter can be computed from the former,
@@ -51,14 +69,14 @@ random-oracle(s).
 
 
 
-\begin{figure}[tp]
+\begin{figure}[bt]
 \centering
 \fpage{.65}{
 \hpagess{.5}{.45}
 {
 \experimentv{$\ExpCorrect{\setprim,r}{A}$}\\
-$S \getsr A$\\
 $\mathcal{C} \gets \emptyset$; $\mathrm{err}\gets 0$\\
+$S \getsr A$\\
 $(\pubaux,\privaux) \getsr \Rep(S)$\\
 $\perp \getsr A^{\TestOracle}(\pubaux)$\\
 if $\mathrm{err} < r$ then Return 0\\
@@ -79,58 +97,164 @@ Return~$a$
 \label{fig:correctness}
 \end{figure}
 
-In this experiment we track the time complexity (relative to some
+In the experiment we track the time complexity (relative to some
 model of computation) and query complexity (i.e., number of
 queries to $\TestOracle$) of~$A$.
-We define the advantage of adversary~$A$ in the correctness experiment as
+We define the advantage of adversary~$A$ in this experiment as
 $\AdvCorrect{\setprim,r}{A} = \Prob{\ExpCorrect{\setprim,r}{A}=1}$.
-\tsnote{drop} Overloading notation, we write $\AdvCorrect{\setprim,r}{t,q}$ for the maximum over
-all~$t$-time adversaries that ask at most~$q$ queries. We say a
-data structure~$\setprim$ is $(t,q,r,\epsilon)$-correct if $\AdvCorrect{\setprim,r}{t,q} \leq \epsilon$.
+We write $\AdvCorrect{\setprim,r}{t,q}$ for the maximum of this value, taken over
+all~$t$-time adversaries that ask at most~$q$ queries.
+%We say a
+%data structure~$\setprim$ is $(t,q,r,\epsilon)$-correct if $\AdvCorrect{\setprim,r}{t,q} \leq \epsilon$.
 
-\todo{Explain that the case of $r=1$ does not necessarily imply anything for $r>1$: can have a scheme
-where finding the first false positive is hard but then the rest are easy; can have
-a scheme where finding one false positive is easy but finding more is hard (e.g.,
-because there do not exist
-any more). Note that the [NY15] definition does not capture this at all.}
+\heading{The effect of $r$. }
+We observe that there is no definitive relation between
+values of $\AdvCorrect{\setprim,r}{t,q}$ for different values of~$r$ (beyond
+the trivial observation that the advantage can only possibly decrease as $r$ increases.)
+In particular, for any $r$ it is not hard to construct a data structure
+for which
+\[0 < \AdvCorrect{\setprim,1}{t,q} = \AdvCorrect{\setprim,r}{t,q}.\]
+(Consider a data structure in which finding the first query $\qry$ that causes an error
+is ``hard,'' but for which---having found $\qry$---it is easy to find
+many correlated queries that also cause errors.)
+At the other extreme, for any $r$ there also exists a data structure
+with $\AdvCorrect{\setprim,r}{t,r}=1$ but  $\AdvCorrect{\setprim,r+1}{t,\infty}=0$;
+any data structure that always ensures that there are exactly $r$ (easy to find)
+queries that cause an error will~do. \jnote{Not sure if it is worthwhile being more formal.}
+We remark that the Naor-Yogev definition does not capture such distinctions
+at all.
+
+In Appendix~\ref{sec:compare-defs} we provide further comparison between our
+definition and a variant of the Naor-Yogev definition adapted to our syntax.
+
+\def\bool{\{0,1\}}
+
+%\begin{theorem}
+%For any $r$, there is a data structure $\setprim$ for which
+%\[0 < \AdvCorrect{\setprim,1}{t,q} = \AdvCorrect{\setprim,r}{t,q}.\]
+%\end{theorem}
+%\begin{proof}
+%Let $\Pi'=(\Rep', \Qry')$ be a data structure supporting boolean
+%queries $\{\qry : \univ \rightarrow \bool\}$
+%over universe~$\univ$, and for which $\AdvCorrect{\setprim',1}{t,q} > 0$.
+%\end{proof}
+
+
 
 
 
 \subsection{Privacy}
 
-One can also consider the orthogonal notion of \emph{privacy} for a data structure.
-We specialize to the case of set-membership data structures, and
-focus on sets rather than multisets. Before continuing, it will be useful to define a notion that captures the difficulty
-of guessing an element in a set chosen from some distribution.
-Let ${\cal D}$ be a distribution over subsets of some universe ${\cal X}$. The \emph{point-wise
-min-entropy} of ${\cal D}$ is defined as
-$H_\infty({\cal D}) \bydef -\log \max_{x \in {\cal X}} \Pr[S \getsr {\cal D} : x \in S]$.
+We also initiate a consideration of the orthogonal notion of \emph{privacy} for a data structure.
+We introduce two notions of privacy: a simulation-based, ``semantic-security''-style
+definition that is, in some sense, the strongest notion of privacy one could hope for.
+We also consider the weaker definition of ``one-wayness,'' specialized to the case
+of set-membership data structures, which requires that the public portion
+of the representation of some set should not allow an attacker to deduce any element of that set
+(better than what the attacker could have done without the public representation).
+This may suffice for many practical applications.
 
-\tsnote{I think we should switch the order of presentation, since we
-  use the SS notion much more. }
-We formalize two types of privacy notions. The first captures
-a ``one-wayness'' property that (informally) requires that
-the public representation of a set~$S$ does not make it any easier for an attacker
-to learn elements of~$S$.  The second definition
-captures a flavor of semantic security, essentially requiring that $\pub$ does
-not leak any information about the set~$S$ it represents beyond
-what is captured by some explicit leakage function.
+\subsubsection{A Simulation-Based Definition }
 
+\jnote{I like ``simulation-based security'' rather than ``semantic security.''}
+
+Our simulation-based definition is given in
+Figure~\ref{fig:privacy-ss}.
+In this definition we compare the probabilities with which an attacker $A$ outputs~1
+in two experiments: one ``real'' and one ``simulated.''
+In the real experiment (ss-rep-1), $A$ outputs data $S$  and is given the
+public information $\pubaux$ that results from running $\Rep(S)$.
+%\footnote{We do not give $A$ an oracle for issuing queries;
+%since $A$ knows the set~$S$, such an oracle would be superfluous.
+%\jnote{Interestingly,
+%if we provided a query oracle in the real world and an oracle that returns the correct
+%answer in the simulated world, then the definition seems to imply
+%correctness also.}}
+In the simulated experiment (ss-rep-0), $A$ outputs $S$ and is given $\pubaux$ output
+by a simulator $\Sim$ that is only given ${\sf leak}(S)$ for a (possibly randomized)
+function~${\sf leak}$. (This leakage function is meant to capture what is leaked
+by the public representation in the real world.)
+For a given function ${\sf leak}$ and adversary $A$,
+define
+\begin{eqnarray*}
+\lefteqn{\AdvPrivSS{\setprim,{\sf leak}}{A}} \\
+& \bydef & \min_{\Sim} \left\{
+\left| \Prob{\ExpPrivSSreal{\setprim}{A}=1} -
+\Prob{\ExpPrivSSsim{\setprim,{\sf leak}}{A, \Sim}=1} \right|\right\}.\end{eqnarray*}
+Informally, a scheme $\setprim$ is secure with respect to some leakage function ${\sf leak}$
+if for all efficient $A$ there is a simulator $\Sim$ such that
+$\AdvPrivSS{\setprim,{\sf leak}}{A}$ is small.
+Intuitively, this means that the public portion
+$\pubaux$ of the representation of a set~$S$ leaks~${\sf leak}(S)$ and nothing more.
+
+\begin{figure}[tb]
+\centering
+\fpage{.6}{
+\hpagess{.5}{.45}
+{
+\experimentv{$\ExpPrivSSreal{\setprim}{A}$}\\
+$S \getsr A$ \\
+$(\pubaux,\privaux) \getsr \Rep(S)$\\
+return $A(\pubaux)$\\
+}
+%
+{
+\experimentv{$\ExpPrivSSsim{\setprim, {\sf leak}}{A, \Sim}$}\\
+$S \getsr A$\\
+$\pubaux \getsr \Sim({\sf leak}(S))$ \\
+return $A(\pubaux)$\\
+}
+}
+\caption{Experiments for the ``semantic-security'' privacy
+  definition.}
+\label{fig:privacy-ss}
+\end{figure}
+
+
+\heading{Remarks on the definition. }
+For completeness, we include here a few observations about the definition.
+First, our definition does not place any limits on the simulator $\Sim$, and indeed
+the simulator may be unbounded. This is only potentially a concern in settings
+where $\leak(S)$ allows reconstruction of (information about) $S$ in an information-theoretic
+sense, but not in a computationally efficient fashion. Since this setting does not arise
+in this paper, allowing unbounded-time simulators is suitable for our purposes. Nevertheless,
+in some applications (and in an asymptotic-security treatment) one may also want to limit consideration
+to simulators running in some bounded time.
+
+Second, we observe that our definition could be extended by also giving $A$ access to a $\Qry$
+oracle in the real world (as in the correctness experiment), while possibly modifying the
+ideal world as well. But note that
+$A$ knows $S$ and so can compute answers $\qry(S)$ on its own (i.e., without a $\Qry$ oracle);
+thus, the only way the $\Qry$ oracle can possibly help $A$ is if $A$ finds queries
+that lead to an error.
+We have chosen not to provide $A$ with
+access to a $\Qry$ oracle so as to cleanly separate considerations
+of correctness and privacy.
+
+Finally, it is worth noting that the ``minimal'' leakage we consider in this work
+is leakage of the size of the data. (I.e., when $S$ is a set then we would
+consider ${\sf leak}(S)=|S|$ as minimal leakage.) This is by analogy with encryption.
+which generally leaks the length of the message being encrypted.
+
+
+\subsubsection{``One-wayness''}
+
+Here we specialize to the case of set-membership data structures.
 Our one-wayness notion is defined in Figure~\ref{fig:privacy-ow}.
 The relevant experiment begins by first sampling a set $S$ according to a distribution
 ${\cal D}$. Then $\Rep(S)$ is run to obtain $\pubaux,\privaux$, and the attacker~$A$ is given
 $\pubaux$. The attacker succeeds if it is able to output an element of~$S$.
-We define the advantage of adversary~$A$ in this experiment\footnote{We
-remark that one could consider augmenting experiment $\ExpPrivOW{\setprim,{\cal D}}{A}$ by additionally
-giving $A$ access to an oracle for testing membership in~$S$. However, it is not hard
-to see that allowing $q$ such queries can increase $A$'s advantage by at most a factor of~$q$.} as
-$\AdvPrivOW{\setprim,\mathcal{D}}{A} = \Prob{\ExpPrivOW{\setprim,{\cal D}}{A}=1}$ and,
-overloading notation, we write $\AdvPrivOW{\setprim,{\cal D}}{t}$ for the maximum of this value over
-all~$t$-time adversaries.
-We remark that an attacker can trivially achieve advantage
-$2^{-H_\infty({\cal D})}$ by outputting the element most likely to be in~$S$.
+We define the advantage of adversary~$A$ in this experiment
+%\footnote{We
+%remark that one could consider augmenting experiment $\ExpPrivOW{\setprim,{\cal D}}{A}$ by additionally
+%giving $A$ access to an oracle for testing membership in~$S$. However, it is not hard
+%to see that allowing $q$ such queries can increase $A$'s advantage by at most a factor of~$q$.}
+as $\AdvPrivOW{\setprim,\mathcal{D}}{A} = \Prob{\ExpPrivOW{\setprim,{\cal D}}{A}=1}$.
+% and,
+%overloading notation, we write $\AdvPrivOW{\setprim,{\cal D}}{t}$ for the maximum of this value over
+%all~$t$-time adversaries.
 
-\begin{figure}[tp]
+\begin{figure}[tbh]
 \centering
 \fpage{.25}{
 %\hpagess{.5}{.45}
@@ -153,59 +277,17 @@ return 0
 \end{figure}
 
 
-Our semantic-security definition is based on the simulation paradigm (see Figure~\ref{fig:privacy-ss}).
-\jnote{Here it would not be hard to write the definition for general data structures, not
-specifically set-multiplicity data structures.}
-In this definition we compare the probabilities with which an attacker $A$ outputs~1
-in two experiments: one ``real'' and one ``simulated.''
-In the real experiment (ss-rep-1), $A$ outputs a set $S$  and is given the
-public information $\pubaux$ that results from running $\Rep(S)$.
-%\footnote{We do not give $A$ an oracle for issuing queries;
-%since $A$ knows the set~$S$, such an oracle would be superfluous.
-%\jnote{Interestingly,
-%if we provided a query oracle in the real world and an oracle that returns the correct
-%answer in the simulated world, then the definition seems to imply
-%correctness also.}}
-In the simulated experiment (ss-rep-0), $A$ outputs $S$ and is given $\pubaux$ output
-by a simulator $\Sim$ that is only given ${\sf leak}(S)$ for some (possibly randomized)
-function~${\sf leak}$.
-For a given function ${\sf leak}$, adversary $A$, and simulator~$\Sim$,
-we define the advantage
-$\AdvPrivSS{\setprim,{\sf leak}}{A,\Sim} \bydef
-\left| \Prob{\ExpPrivSSreal{\setprim}{A}=1} -
-\Prob{\ExpPrivSSsim{\setprim,{\sf leak}}{A, \Sim}=1} \right|$.
-Informally, a scheme $\setprim$ is secure with respect to some leakage function ${\sf leak}$
-if for all efficient $A$ there is a simulator $\Sim$ such that
-$\AdvPrivSS{\setprim,{\sf leak}}{A,\Sim}$ is small.
-Intuitively, this means that the public portion
-$\pubaux$ of the representation of a set~$S$ leaks~${\sf leak}(S)$ and nothing more.
-\jnote{The definition
-as stated does not really work well in the presence of (programmable) random oracles.}
-\jnote{In the current definition there is (intentionally) no bound on the simulator's
-running time.}
-\todo{Mention why giving a Test oracle to A doesn't seem to help.}
-\begin{figure}[tp]
-\centering
-\fpage{.6}{
-\hpagess{.5}{.45}
-{
-\experimentv{$\ExpPrivSSreal{\setprim}{A}$}\\
-$S \getsr A$ \\
-$(\pubaux,\privaux) \getsr \Rep(S)$\\
-return $A(\pubaux)$\\
-}
-%
-{
-\experimentv{$\ExpPrivSSsim{\setprim, {\sf leak}}{A, \Sim}$}\\
-$S \getsr A$\\
-$\pubaux \getsr \Sim({\sf leak}(S))$ \\
-return $A(\pubaux)$\\
-}
-}
-\caption{Experiments for the ``semantic-security'' privacy
-  definition.}
-\label{fig:privacy-ss}
-\end{figure}
+Before continuing, it will be useful to define a notion that captures the difficulty
+of guessing an element in a set chosen from some distribution.
+Let ${\cal D}$ be a distribution over subsets of some universe ${\cal X}$. The \emph{point-wise
+min-entropy} of ${\cal D}$ is defined as
+$H_\infty({\cal D}) \bydef -\log \max_{x \in {\cal X}} \Pr[S \getsr {\cal D} : x \in S]$.
+Note that an attacker can trivially achieve advantage
+$\AdvPrivOW{\setprim,\mathcal{D}}{A}=2^{-H_\infty({\cal D})}$ by outputting the element most likely to be in~$S$,
+so an attack is only interesting if it performs better than this.
+
+
+
 
 %\begin{figure}[hbtp]
 %\centering
@@ -235,37 +317,41 @@ It's at least worth a highlighted remark, I think.  Currently it is a
 remark in the classical BF section, but it seems worth ``pulling up''.} \jnote{Yes, agreed.}
 \todo{Since we mention what happens with $\privaux=\emptystring$, also
 mention what happens with $\pubaux=\emptystring$ :)}
+
 \heading{Relationships between the notions.}
 Intuition suggests that semantic security should imply one-wayness. And, indeed, this is
 the case---provided one is careful with the technical details.
 For a distribution ${\cal D}$
 over subsets of some universe ${\cal X}$, define
 \[\tilde H_\infty({\cal D} \mid {\sf leak}) \bydef -\log \sum_{r \in R} \Pr_{S \getsr {\cal D}}[{\sf leak}(S)=r] \cdot
-\max_{x \in {\cal X}} \Pr_{S \getsr {\cal D}}[x \in S \mid {\sf leak}(S)=r].\]
+\max_{x \in {\cal X}} \Pr_{S \getsr {\cal D}}[x \in S \mid {\sf leak}(S)=r];\]
+this merely extends the notion of pointwise min-entropy to condition on some
+observed information ${\sf leak}(S)$ about the set in question.
 
-\jnote{Make theorem statements consistent -- get rid of $(t, \epsilon)$-style.}
-
-\begin{theorem}\todo{rewrite}
-Let $\setprim$ be a set-representation data structure that is $(t, \epsilon)$-semantically secure
-with respect to leakage ${\sf leak}:2^{\cal X} \rightarrow R$.
-Then $\AdvPrivOW{\setprim,\mathcal{D}}{t} \leq 2^{-\tilde H_\infty({\cal D} \mid {\sf leak})} + \epsilon$.
+\begin{theorem}
+Let $\setprim$ be a set-membership data structure. For any distribution ${\cal D}$ and
+attacker~$A$, there is an attacker $A'$ running in about the same time with %JK
+\[\AdvPrivOW{\setprim,\mathcal{D}}{A} \leq \AdvPrivSS{\setprim,{\sf leak}}{A'} + 2^{-\tilde H_\infty({\cal D} \mid {\sf leak})}.\]
+%Let $\setprim$ be a set-representation data structure that is $(t, \epsilon)$-semantically secure
+%with respect to leakage ${\sf leak}:2^{\cal X} \rightarrow R$.
+%Then $\AdvPrivOW{\setprim,\mathcal{D}}{t} \leq 2^{-\tilde H_\infty({\cal D} \mid {\sf leak})} + \epsilon$.
 \end{theorem}
 \begin{proof}
-Fix a distribution ${\cal D}$ and an attacker
-$A$ running in time $t$, and let $\delta \bydef \AdvPrivOW{\setprim,\mathcal{D}}{A}$.
-Define an attacker $A'$ who behaves as follows: first, it samples a set $S$ according to
+%Fix a  and an attacker
+%$A$ running in time $t$, and let $\delta \bydef \AdvPrivOW{\setprim,\mathcal{D}}{A}$.
+Define $A'$ as follows: first, it samples a set $S$ according to
 distribution~${\cal D}$. Then, given $\pubaux$, it runs $A(\pubaux)$ to obtain an element~$z$.
 Finally, it outputs~1 if and only if $z \in S$.
 
-It is immediate that $\Pr[\ExpPrivSSreal{\setprim}{A'}=1] = \delta$. Semantic
-security of $\setprim$ implies that there exists a simulator $\Sim$ for which
-$\ExpPrivSSsim{\setprim, {\sf leak}}{A', \Sim} \geq \delta - \epsilon$. However,
+It is immediate that $\Pr[\ExpPrivSSreal{\setprim}{A'}=1] = \AdvPrivOW{\setprim,\mathcal{D}}{A}$.
+But for any simulator $\Sim$,
 the only information
 that $\Sim$
-and $A'$ jointly have about the set~$S$ that was sampled is ${\sf leak}(S)$; thus,
-we must have $\ExpPrivSSsim{\setprim, {\sf leak}}{A', \Sim} \leq 2^{-\tilde H_\infty({\cal D} \mid {\sf leak})}$.
-This implies
-$\delta \leq 2^{-\tilde H_\infty({\cal D} \mid {\sf leak})}+\epsilon$ as desired.
+and $A'$ jointly have in the ideal world
+about the set~$S$ that was sampled is ${\sf leak}(S)$; thus,
+\[\Prob{\ExpPrivSSsim{\setprim,{\sf leak}}{A, \Sim}=1} \leq
+2^{-\tilde H_\infty({\cal D} \mid {\sf leak})}.\]
+The theorem follows.
 \end{proof}
 
 %\todo{SS$\Rightarrow$OW?
@@ -276,58 +362,72 @@ $\delta \leq 2^{-\tilde H_\infty({\cal D} \mid {\sf leak})}+\epsilon$ as desired
 %  \in S$.} \jnote{Since we can set $\pubaux$ to be the emptystring, I think
 %  it is trivial to see that privacy does not imply correctness.}
 
-\heading{Privacy of ``canonical'' data structures. }
-Here we prove a result that can be used to show that a large class of canonical
-data structures are SS-secure, with respect to leakage of the size of the set.
+\subsubsection{Privacy of ``Canonical'' Data Structures }
+Here we prove a result that will be used in the next section
+to show that a large class of
+set-membership
+data structures satisfy our simulation-based notion of security
+(with respect to leakage of the size of the set). Specifically, we prove that
+all such data structures of a certain type are private. We refer to such data structures
+as ``canonical,'' a term we define next.
+
 \jnote{It would not be too hard to generalize this to arbitrary data structures over
 arbitrary objects, so long as the number of distinct queries to the PRF made by $\Rep$
 depends only on ${\sf leak}$.}
-We first define what we mean by ``canonical.''
+
 
 %\def\bits{\{0,1\}}
 
 \begin{definition}
-A data structure $(\Rep, \Qry)$ is {\sf canonical} if
+A set-membership data structure $(\Rep, \Qry)$ is {\sf canonical} if
 there exist algorithms $\Rep_1, \Rep_2$, and a function
 $F: \calK \times \bits^{\ell_{in}} \rightarrow \bits^{\ell_{out}}$
 such that the following hold:
 \begin{itemize}
-\item $\Rep_1$ takes as input a set $S=\{x_1,\ldots,x_n\}$ and outputs distinct values $s_1, \ldots, s_t \in \bits^{\ell_{in}}$,
-where $t$ depends only on~$n$.
-\item $\Rep_2$ takes as input $n$ and $y_1, \ldots, y_t \in \bits^{\ell_{out}}$, and outputs
+\item $\Rep_1$ takes as input a set $S$ and outputs distinct values $s_1, \ldots, s_t \in \bits^{\ell_{in}}$,
+where $t$ depends only on~$|S|$.
+\item $\Rep_2$ takes as input $|S|$ and $y_1, \ldots, y_t \in \bits^{\ell_{out}}$, and outputs
 $\pubaux$.
 \item For any $S$, the distribution on $\pubaux$ output by $\Rep(S)$ is identical to the distribution
 on $\pubaux$ computing as follows:
 (1) $s_1, \ldots, s_t \getsr \Rep_1(S)$;
 (2) $K \getsr \calK$;
-(3) $\pubaux \getsr \Rep_2(n, F_{K}(s_1), \ldots,F_{K}(s_t))$.
+(3) $\pubaux \getsr \Rep_2(|S|, F_{K}(s_1), \ldots,F_{K}(s_t))$.
 %\item $K_1,K_2,\ldots,K_p \getsr \calK$ for some fixed number of keys~$p$;
 %\item $\pubaux \getsr \Rep_2(n, \{F_{K_j}(s_1),
 %\ldots,F_{K_j}(s_t)\}_{j\in[p]})$.
 \end{itemize}
-We say that $(\Rep_1, \Rep_2, F)$ is the {\sf canonical representation}
-of~$\Rep$. \hfill\dqed \tsnote{Seems odd to call it this without explaining how
-  this canonical representation handles $\privaux$, too.} \jnote{It
-  doesn't matter what priv is.}
+We call $(\Rep_1, \Rep_2, F)$ the {\sf canonical representation}
+of algorithm~$\Rep$. \hfill\dqed
 \end{definition}
+
 %\jnote{Not sure how general to make the above. Need to verify that it is general enough
 %to prove security of all the constructions we care about.}
-\tsnote{Point out an example or two of the schemes this
-  covers.  Domain-separated PRF BF, for example.  I think it covers
-  classical BF, too, if $F_K(s)=s$ for all $K \in \calK$, $\Rep_1$
-  simply returns the elements of~$S$, and $\Rep_2$ actually picks hash
-  functions and does the hashing. (Although the following theorem does
-  not work in this case, of course.) It does not cover Neidermayer because there's no guarantee of distinct $s_1,\ldots,s_t$. }
-  \jnote{I say we state the general theorem in Section~3.2 and just
-  promise that applications will come in Section~4.}
+%\tsnote{Point out an example or two of the schemes this
+%  covers.  Domain-separated PRF BF, for example.  I think it covers
+%  classical BF, too, if $F_K(s)=s$ for all $K \in \calK$, $\Rep_1$
+%  simply returns the elements of~$S$, and $\Rep_2$ actually picks hash
+%  functions and does the hashing. (Although the following theorem does
+%  not work in this case, of course.) It does not cover Neidermayer because there's no guarantee of distinct $s_1,\ldots,s_t$. }
+%  \jnote{I say we state the general theorem in Section~3.2 and just
+%  promise that applications will come in Section~4.}
 We next show that any canonical data structure in which~$F$ is a pseudorandom function is
 semantically secure with respect to leakage consisting of the size of the set.
+\jnote{Need notation for the advantage in the PRF experiment.}
 
-\begin{theorem}\todo{Rewrite to match old DS-PRF proof}
-Let $\setprim=(\Rep, \Qry)$ be a canonical data structure for which $\Rep$ has canonical representation
-$(\Rep_1, \Rep_2, F)$. If $F$ is a $(t, \epsilon)$-pseudorandom
+\begin{theorem}
+Let $\setprim=(\Rep, \Qry)$ be a canonical data structure for which $\Rep$
+has canonical representation
+$(\Rep_1, \Rep_2, F)$. Then
+\[\AdvPrivSS{\setprim,{\sf leak}}{A} \leq 
+
+For ${\sf leak}(S) = |S|$,
+
+If $F$ is a $(t, \epsilon)$-pseudorandom
 function \tsnote{overloading~$t$}, then $\setprim$ is semantically secure
-with respect to leakage function ${\sf leak}(S) = |S|$.
+with respect to leakage function
+
+.
 \end{theorem}
 \begin{proof}
 We define a simulator $\Sim$ as follows. On input $n$, $\Sim$ fixes
