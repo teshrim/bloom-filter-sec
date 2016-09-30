@@ -435,8 +435,8 @@ Let $\setprim=(\Rep, \Qry)$ be a canonical data structure for which $\Rep$
 has canonical representation
 $(\Rep_1, \Rep_2, F)$. Then for ${\sf leak}(S) = |S|$ and
 any attacker $A$, there is an attacker
-$A'$ running in about the same time for which
-\[\AdvPrivSS{\setprim,{\sf leak}}{A} \leq {\sf Adv}_F^{\rm PRF}(A'). \]
+$B$ running in about the same time for which
+\[\AdvPrivSS{\setprim,{\sf leak}}{A} \leq {\sf Adv}_F^{\rm PRF}(B). \]
 \end{theorem}
 \begin{proof}
 We define a simulator $\Sim$ as follows. On input $n$, $\Sim$ fixes
@@ -471,7 +471,7 @@ Now, consider an experiment $G1$ in which computation is done as follows:
 \end{enumerate}
 It is immediate that the difference between the probability that $A$ outputs~1 in
 $G1$ and the probability that it outputs~1 in
-$G0$ is bounded by $\AdvPRF{F}{A'}$, where $A'$ performs the
+$G0$ is bounded by $\AdvPRF{F}{B}$, where $B$ performs the
 obvious simulation.
 
 Next, consider the following experiment $G2$:

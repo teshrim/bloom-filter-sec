@@ -81,6 +81,7 @@ Fix $k,m,n,r>0$, a set~$\elts$, and let $\setprim_{\mathrm{Bloom}}= (\Rep, \Qry)
 \AdvCorrect{\setprim_{\mathrm{Bloom}},r}{A} \leq  {\dbinom{q_T + q_H}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
 \]
 \end{theorem}
+\todo{move proof back in-line.}
 The proof appears in Appendix~\ref{app:xxx}.  We note that Kirsch and Mitzenmacher~\cite{xxx} show
 that the ($r=1$, zero-query) FP-probability for~$\setprim_\mathrm{Bloom}$ is
 always within $O(1/n)$ of $(1-e^{-kn/m})^k$, although the asymptotic
@@ -109,7 +110,7 @@ We note that this will be true for \emph{any} data structure that returns an emp
 \begin{theorem}[{\rm OW-privacy of classic BF in the ROM}]\label{thm3}\label{thm:bf-ow}
 Fix $k,m,n,r>0$, a set~$\elts$, and let $\setprim_{\mathrm{Bloom}}= (\Rep, \Qry)$ be the classical Bloom filter data structure over~$\elts$. Let $\distr{}{}$ be a distribution over subsets of universe~$\univ=2^\elts$, where $\mu = H_\infty(\distr{}{})$.  For any adversary~$A$ that makes $q$~queries to its oracle
 \[
-\AdvPrivOW{\setprim_{\mathrm{Bloom}},\distr{}{},r}{A} \leq  \frac{(kqn+n)}{2^{\mu}}
+\AdvPrivOW{\setprim_{\mathrm{Bloom}},\distr{}{},r}{A} \leq  \frac{(kqn+n)}{2^{\mu}}\;.
 \]
 \end{theorem}
 \todo{Typeset simple proof.  Result is on chalkboard.}
@@ -144,19 +145,20 @@ Fix $k,m,n,r>0$, a set~$\elts$, and let $\setprim_{\mathrm{ds}}= (\Rep, \Qry)$ b
 \]
 Here, $B$ asks $q$ queries, and has time complexity $O(t+qm)$.
 \end{theorem}
+\todo{some form of proof ---at least a proof sketch in the text--- needs to appear here!}
 
 \heading{Privacy. }
 The privacy of $\setprim_{\mathrm{ds}}$ follows directly from our general result, Theorem~\ref{thm:xxx}.
 \begin{theorem}[\rm{SS-privacy of DS PRF}]\label{thm:ds-ss}
 Fix $k,m,n>0$, a set~$\elts$, and let $\setprim_{\mathrm{ds}}= (\Rep, \Qry)$ be the set-membership data structure described in Figure~\ref{fig:lin-and-ds}.  For any set~$S \in 2^\elts$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ and adversary~$B$ such that, for any adversary~$A$
 \[
-\AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}
+\AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}\;.
 \]
 %(Both~$B$ and~$\Sim$ are explicitly constructed in the proof of this theorem.)
 \end{theorem}
 \begin{proof}
 It suffices to give the decomposition of $\Rep$ in to $\Rep_1$ and $\Rep_2$ as required by Theorem~\ref{thm:xxx}.
-On input a set of distinct elements $S=\{x_1,x_2,\ldots,x_n\}$, algorithm~$\Rep_1$ returns $s_1=\langle 1,x_1 \rangle, s_2=\langle 2,x_1 \rangle, \ldots, s_k\langle k,x_1\rangle, s_{k+1}=\langle 1,x_2\rangle, \ldots, s_{2k}=\langle k,x_2\rangle, \ldots ,s_{kn+1}=\langle 1,x_n\rangle, \ldots, s_{kn}=\langle k,x_n \rangle$.  On input $n,F_K(s_1),\ldots,F_K(s_{kn})$, algorithm $\Rep_2$ simply initializes an all-zero array~$M$ of~$m$-bits, and sets the positions $M[F_K(s_i)]$ to 1.  It returns~$M$ as $\pubaux$.
+On input a set of distinct elements $S=\{x_1,x_2,\ldots,x_n\}$, algorithm~$\Rep_1$ returns $s_1=\langle 1,x_1 \rangle, s_2=\langle 2,x_1 \rangle, \ldots, s_k\langle k,x_1\rangle, s_{k+1}=\langle 1,x_2\rangle, \ldots,\linebreak s_{2k}=\langle k,x_2\rangle, \ldots ,s_{kn+1}=\langle 1,x_n\rangle, \ldots, s_{kn}=\langle k,x_n \rangle$.  On input $n,F_K(s_1),\ldots,\linebreak F_K(s_{kn})$, algorithm $\Rep_2$ simply initializes an all-zero array~$M$ of~$m$-bits, and sets the positions $M[F_K(s_i)]$ to 1.  It returns~$M$ as $\pubaux$. \hfill\qed
 \end{proof}
 
 
@@ -251,16 +253,16 @@ The SS-privacy of the linear-PRF hash construction follows directly from~Theorem
 \begin{theorem}[{\rm SS-privacy of linear-PRF}]\label{thm:lin-privacy}
 Fix $k,m,n,r>0$, a set $\elts$, and let $\setprim_{\mathrm{lin}}= (\Rep, \Qry)$ be the set-membership data structure (over~$\elts$) described in Figure~\ref{fig:lin-and-bin-lin}. For any set~$S \in 2^{\elts}$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ and an adversary~$B$ such that, for any adversary~$A$
 \[
-\AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}
+\AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}\;.
 \]
 %(Both~$B$ and~$\Sim$ are explicitly constructed in the proof of this theorem.)
 \end{theorem}
 \begin{proof}
 It suffices to give the decomposition of $\Rep$ in to $\Rep_1$ and $\Rep_2$ as required by Theorem~\ref{thm:xxx}.
 On input a set of distinct elements
-$S=\{x_1,x_2,\ldots,x_n\}$, algorithm~$\Rep_1$ returns $s_1=\langle 1,x_1 \rangle, s_2=\langle 2,x_1 \rangle, s_3 = \langle 1,x_2\rangle, s_4=\langle 2,x_2 \rangle,\ldots,s_{2n-1}=\langle 1,x_n \rangle, s_{2n}=\langle 2,x_n \rangle$.
+$S=\{x_1,x_2,\ldots,x_n\}$, algorithm~$\Rep_1$ returns $s_1=\langle 1,x_1 \rangle, s_2=\langle 2,x_1 \rangle, s_3 = \langle 1,x_2\rangle, s_4=\langle 2,x_2 \rangle,\ldots,\linebreak s_{2n-1}=\langle 1,x_n \rangle, s_{2n}=\langle 2,x_n \rangle$.
 
-On input $n,F_K(s_1),F_K(s_2),\ldots,F_K(s_{2n-1}) , F_K(s_{2n})$, algorithm $\Rep_2$ initializes an all-zero array~$M$ of~$m$-bits, and sets the positions $M[F_K(s_i)+j\cdot F_K(s_{i+1})\bmod m]$ to 1, for each $j \in [k]$.  It returns~$M$ as $\pubaux$.
+On input $n,F_K(s_1),F_K(s_2),\ldots,F_K(s_{2n-1}) , F_K(s_{2n})$, algorithm $\Rep_2$ initializes an all-zero array~$M$ of~$m$-bits, and sets the positions $M[F_K(s_i)+j\cdot F_K(s_{i+1})\bmod m]$ to 1, for each $j \in [k]$.  It returns~$M$ as $\pubaux$. \hfill\qed
 \end{proof}
 
 
@@ -310,7 +312,7 @@ On the other hand, the simulator~$\Sim$ is given 'cab','bab','cab' as
 input.  It can perfectly simulate $M_1,M_2$ by lazily sampling random
 function~$\rho$ itself.  However, it has no information about the
 bit~$z$, so at best it can cause~$A$ to output 1 with
-probabilility~$1/2$.  That is $\ExpPrivSSsim{\setprim_{\bilin}}{A,\Sim} \leq 1/2$.
+probabilility~$1/2$.  That is $\ExpPrivSSsim{\setprim_{\bilin}}{A,\Sim} \leq 1/2$. \hfill\qed
 \end{proof}
 
 
@@ -457,8 +459,9 @@ Now, this adversary will find a false positive, if there is one, but in the wors
 $\binom{m}{k} \approx m^k$ $k$-tuples of positions.  If both~$m$
 and~$k$ are large this is infeasible.  In~\cite{xxx} they suggest to
 set~$k=\lambda$, and test with $\lambda=80$.  Making 80 hash calls per
-set-membership query would be laughable in many applications, and a
-$2^{-80}$ false-postive rate would be considered overkill.\footnote{Note
+set-membership query would be prohibitive in many applications, and a
+$2^{-80}$ false-postive rate would be typically considered overkill in
+practice.\footnote{Note
 that, as described in~\cite{xxx}, $\lambda$ must be at least the
 bitlength of the longest element $x \in S$. \tsnote{This could be
   handled with a slight change to the set membership test, by checking
@@ -514,13 +517,13 @@ If instantiated with hash functions $H_j(x) = F_K(\langle j,x \rangle)$ and $\pr
 \label{thm:gbf-prf-privacy}
 Fix $k,m,n,r,\lambda>0$ and a function family~$F\colon \calK \times \bits^* \to [m]$.  Let $\setprim_{\mathrm{gbf\mbox{-}prf}}= (\Rep, \Qry)$ be the garbled Bloom filter with hash functions $H_j(x)=F_K(\langle j,x \rangle)$ and $\privaux=\langle K \rangle$.  For any set~$S$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ and an adversary~$B$ such that, for any adversary~$A$
 \[
-\AdvPrivSS{\setprim_{\mathrm{gbf\mbox{-}prf}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}
+\AdvPrivSS{\setprim_{\mathrm{gbf\mbox{-}prf}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}\;.
 \]
 %(Both~$B$ and~$\Sim$ are explicitly constructed in the proof of this theorem.)
 \end{theorem}
 \begin{proof}
 It suffices to give the decomposition of $\Rep$ in to $\Rep_1$ and $\Rep_2$ as required by Theorem~\ref{thm:xxx}.
-On input a set of distinct elements $S=\{x_1,x_2,\ldots,x_n\}$, algorithm~$\Rep_1$ returns $s_1=\langle 1,x_1 \rangle, s_2=\langle 2,x_1 \rangle, \ldots, s_k\langle k,x_1\rangle, s_{k+1}=\langle 1,x_2\rangle, \ldots, s_{2k}=\langle k,x_2\rangle, \ldots ,s_{kn+1}=\langle 1,x_n\rangle, \ldots, s_{kn}=\langle k,x_n \rangle$.  On input $n,F_K(s_1),\ldots,F_K(s_{kn})$, algorithm $\Rep_2$ carries out the pseudocode of~$\Rep$ in Figure~\ref{fig:gbf}, making use of $F_K(s_1),\ldots,F_K(s_{kn})$ in the obvious way.  It returns~$M$ as $\pubaux$.
+On input a set of distinct elements $S=\{x_1,x_2,\ldots,x_n\}$, algorithm~$\Rep_1$ returns $s_1=\langle 1,x_1 \rangle, s_2=\langle 2,x_1 \rangle, \ldots, s_k\langle k,x_1\rangle, s_{k+1}=\langle 1,x_2\rangle, \ldots,\linebreak s_{2k}=\langle k,x_2\rangle, \ldots ,s_{kn+1}=\langle 1,x_n\rangle, \ldots, s_{kn}=\langle k,x_n \rangle$.  On input $n,F_K(s_1),\ldots,\linebreak F_K(s_{kn})$, algorithm $\Rep_2$ carries out the pseudocode of~$\Rep$ in Figure~\ref{fig:gbf}, making use of $F_K(s_1),\ldots,F_K(s_{kn})$ in the obvious way.  It returns~$M$ as $\pubaux$.\hfill\qed
 \end{proof}
 
 
