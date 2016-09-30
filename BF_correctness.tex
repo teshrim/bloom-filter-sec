@@ -1,4 +1,4 @@
-\section{Proof of Theorem~\ref{thm:thm:bf-correctness}
+\section{Proof of Theorem~\ref{thm:thm:bf-correctness}}
 \label{sec:thm3_fp}
 \begin{proof}[\ref{thm:thm:bf-correctness}]
 We use a game playing argument to prove this theorem in the ROM. In $\game{0}$, the $\Hash$ does lazy sampling of elements from $[m]$ to mimic a random oracle(RO). For every distinct query, $\Hash$ returns a random value sampled from $[m]$. Here, the adversary $A$, along with $\Rep$ and $\Qry$ are given access to $\Hash$. It can be seen that, $\game{0}$ exactly simulates the correctness game of $\setprim_{\mathrm{Bloom}}$. So, $\AdvCorrect{\setprim_{\mathrm{Bloom}},r}{A} = \Prob{\game{0}(A) = 1}$.
