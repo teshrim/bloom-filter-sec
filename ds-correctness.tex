@@ -33,7 +33,7 @@ Let $D$ be a zero-query adversary (shown in \Cref{fig:D}) that finds ~$r$ false 
 \AdvCorrect{\tilde{\setprim}_{\mathrm{ds}},r}{D} = \Prob{\game{3}(A) = 1}\label{eq:2T8}
 \end{equation*}
 
-Note that like $\tilde{\setprim}_{\mathrm{lin}}$, $\tilde{\setprim}_{\mathrm{ds}}$ is the scheme that is analyzed in the classical Bloom filter literature. So, for a zero-query adversary $D$ and $r=1$, the upper bound on false-positive probability of a classical Bloom filter applies to $\tilde{\setprim}_{\mathrm{ds}}$ as well. For $r > 1$, based on the assumption that $A$ makes no pointless queries, the queries made by $A$ are distinct and not elements of the original set $S$. Also, since $\game{3}$ uses independent random functions, the event of getting a false positive is independent of the index of the query. So,
+Note that like $\tilde{\setprim}_{\mathrm{ds}}$ is the scheme that is analyzed in the classical Bloom filter literature. So, for a zero-query adversary $D$ and $r=1$, the upper bound on false-positive probability of a classical Bloom filter applies to $\tilde{\setprim}_{\mathrm{ds}}$ as well. For $r > 1$, based on the assumption that $A$ makes no pointless queries, the queries made by $A$ are distinct and not elements of the original set $S$. Also, since $\game{3}$ uses independent random functions, the event of getting a false positive is independent of the index of the query. So,
 \begin{equation*}
 \AdvCorrect{\tilde{\setprim}_{\mathrm{ds}},r}{D} =   {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r
 \end{equation*}

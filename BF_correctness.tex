@@ -131,7 +131,7 @@ proof of Theorem~\ref{thm:bf-correctness}.}
 {
 \underline{\game{4}(A)\fbox{\game{5}(A)}}\\
 $c\gets 0$, $\bad \gets \false$, $\err \gets 0$;  $\calC \gets \emptyset$\\
-$S \getsr A$; $\mathcal{I}\getsr [\{1,2,\ldots,q\}]^r$\\
+$S \getsr A$; $\mathcal{I}\getsr [\{1,2,\ldots,q_T+q_H\}]^r$\\
 $(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
 $\bot \getsr A^{\TestOracle,\HashOracle}(\pubaux)$\\
 if $\bad = \true$ then \fbox{Return 0}\\
@@ -141,7 +141,7 @@ Return 1\\
 \oracle{$\TestOracle(\qry_x)$}\\
 if $x \in \mathcal{C}$ then Return $\bot$\\
 $\calC \gets \calC \cup x$\\
-if $\Ans[x] \neq \undefined$\\
+if $\Ans[x] = \undefined$\\
 \nudge $(h_1, \ldots, h_{k}) \gets \HashOracle(\qry_x)$\\
 Return $\Ans[x]$\\
 %
