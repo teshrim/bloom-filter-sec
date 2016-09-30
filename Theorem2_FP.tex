@@ -3,9 +3,9 @@
 \newcommand{\OK}{\calO(\langle j,x \rangle)}
 
 \begin{proof}[\Cref{thm2}]
-We use a game playing argument (shown in \Cref{fig:2TGame}) similar to \Cref{thm1} to prove this theorem. In \game{0}, adversary attacks the correctness game with  hash functions $h_j(x) = \FK $, and hence exactly simulates $\ExpCorrect{\Pi_{\mathrm{ds}},\distr{\calS}{},r}{A}$.
+We use a game playing argument (shown in \Cref{fig:2TGame}) similar to \Cref{thm1} to prove this theorem. In \game{0}, adversary attacks the correctness game with  hash functions $h_j(x) = \FK $, and hence exactly simulates $\ExpCorrect{\setprim_{\mathrm{ds}},r}{A}$.
 \begin{equation}
-\AdvCorrect{\Pi_{\mathrm{ds}},\distr{\calS}{},r}{A} = \Prob{\game{0}(A)=1}\label{eq:2T0}
+\AdvCorrect{\setprim_{\mathrm{ds}},r}{A} = \Prob{\game{0}(A)=1}\label{eq:2T0}
 \end{equation}
 
 Let $B$ be a prf-adversary as shown in \Cref{fig:2TD}. Based on its challenge bit $b$, it exactly simulates $\game{0}$ or $\game{1}$. So,
@@ -20,25 +20,25 @@ By a standard conditioning of PRF advantage, we have
 \Prob{\game{0}(A)=1} = \AdvPRF{F}{B} + \Prob{\game{1}(A)=1}%\label{eq:13}
 \end{equation*}
 
-In $\game{1}$, $A$ attacks a different filter $\tilde{\Pi}_\mathrm{ds}$, in which $F_K$ is replaced by a random function. $\game{2}$ and $\game{3}$ on the other hand use lazy sampling in $\Hash$ to select random values from $[m]$. It can be observed that, except  $\Hash$, $\game{2}$ and $\game{3}$ are identical to $\game{3}$ and $\game{4}$ of previous theorem. Since, $\Hash$ in all of these games returns random values, the analyses and intermediate results of \Cref{thm1} apply to this theorem as well. Therefore,
+In $\game{1}$, $A$ attacks a different filter $\tilde{\setprim}_\mathrm{ds}$, in which $F_K$ is replaced by a random function. $\game{2}$ and $\game{3}$ on the other hand use lazy sampling in $\Hash$ to select random values from $[m]$. It can be observed that, except  $\Hash$, $\game{2}$ and $\game{3}$ are identical to $\game{3}$ and $\game{4}$ of previous theorem. Since, $\Hash$ in all of these games returns random values, the analyses and intermediate results of \Cref{thm1} apply to this theorem as well. Therefore,
 \begin{align*}
 \Prob{\game{1}(A)=1} = \Prob{\game{2}(A)=1}\\
 \Prob{\game{3}(A)=1} = \frac{1}{\dbinom{q}{r}}\Prob{\game{2}(A)=1}
 \end{align*}
 
-Let $D$ be a zero-query adversary (shown in \Cref{fig:D}) that finds ~$r$ false positives against $\tilde{\Pi}_{\mathrm{ds}}$. Using explanations from previous theorem, if $A$ wins $\game{3}$, then $D$ wins $\ExpCorrect{\tilde{\Pi}_{\mathrm{ds}},\distr{\calS}{},r}{\cdot}$ game. So, 
+Let $D$ be a zero-query adversary (shown in \Cref{fig:D}) that finds ~$r$ false positives against $\tilde{\setprim}_{\mathrm{ds}}$. Using explanations from previous theorem, if $A$ wins $\game{3}$, then $D$ wins $\ExpCorrect{\tilde{\setprim}_{\mathrm{ds}},r}{\cdot}$ game. So, 
 \begin{equation*}
-\AdvCorrect{\tilde{\Pi}_{\mathrm{ds}},\distr{\calS}{},r}{D} = \Prob{\game{3}(A) = 1}\label{eq:2T8}
+\AdvCorrect{\tilde{\setprim}_{\mathrm{ds}},r}{D} = \Prob{\game{3}(A) = 1}\label{eq:2T8}
 \end{equation*}
 
-Note that like $\tilde{\Pi}_{\mathrm{lin}}$, $\tilde{\Pi}_{\mathrm{ds}}$ is the scheme that is analyzed in the classical Bloom filter literature. So, for a zero-query adversary $D$ and $r=1$, the upper bound on false-positive probability of a classical Bloom filter applies to $\tilde{\Pi}_{\mathrm{ds}}$ as well. For $r > 1$, based on the assumption that $A$ makes no pointless queries, the queries made by $A$ are distinct and not elements of the original set $S$. Also, since $\game{3}$ uses independent random functions, the event of getting a false positive is independent of the index of the query. So,
+Note that like $\tilde{\setprim}_{\mathrm{lin}}$, $\tilde{\setprim}_{\mathrm{ds}}$ is the scheme that is analyzed in the classical Bloom filter literature. So, for a zero-query adversary $D$ and $r=1$, the upper bound on false-positive probability of a classical Bloom filter applies to $\tilde{\setprim}_{\mathrm{ds}}$ as well. For $r > 1$, based on the assumption that $A$ makes no pointless queries, the queries made by $A$ are distinct and not elements of the original set $S$. Also, since $\game{3}$ uses independent random functions, the event of getting a false positive is independent of the index of the query. So,
 \begin{equation*}
-\AdvCorrect{\tilde{\Pi}_{\mathrm{ds}},\distr{\calS}{},r}{D} =   {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r
+\AdvCorrect{\tilde{\setprim}_{\mathrm{ds}},r}{D} =   {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r
 \end{equation*}
 \noindent
 To summarize, we have
 \[
-\AdvCorrect{\Pi_{\mathrm{ds}},\distr{\calS}{},r}{A} \leq  \AdvPRF{F}{B}  + {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r
+\AdvCorrect{\setprim_{\mathrm{ds}},r}{A} \leq  \AdvPRF{F}{B}  + {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r
 \]
 which is the bound claimed in the theorem statement. %\hfill \qed
 
