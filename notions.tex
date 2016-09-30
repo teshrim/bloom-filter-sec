@@ -185,6 +185,9 @@ define
 & \bydef & \min_{\Sim} \left\{
 \left| \Prob{\ExpPrivSSreal{\setprim}{A}=1} -
 \Prob{\ExpPrivSSsim{\setprim,{\sf leak}}{A, \Sim}=1} \right|\right\}.\end{eqnarray*}
+The definition can be lifted to the random-oracle model by providing
+all algorithms with access to the
+random oracle.
 Informally, a scheme $\setprim$ is secure with respect to some leakage function ${\sf leak}$
 if for all efficient $A$ there is a simulator $\Sim$ such that
 $\AdvPrivSS{\setprim,{\sf leak}}{A}$ is small.
@@ -257,6 +260,9 @@ as $\AdvPrivOW{\setprim,\mathcal{D}}{A} = \Prob{\ExpPrivOW{\setprim,{\cal D}}{A}
 % and,
 %overloading notation, we write $\AdvPrivOW{\setprim,{\cal D}}{t}$ for the maximum of this value over
 %all~$t$-time adversaries.
+The definition can be lifted to the random-oracle model by providing
+all algorithms (namely, $\Rep,\Qry$, and the adversary~$A$) with access to the
+random oracle.
 
 \begin{figure}[tbh]
 \centering
