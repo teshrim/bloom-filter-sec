@@ -243,7 +243,15 @@ Both schemes use a function family $F\colon \calK \times \bits^* \to [m]$.
 %\heading{Linear-PRF construction. }
 The domain-separated PRF-hash requires~$k$ PRF evaluations per set-membership query, and this may be unattractive in certain use cases.  Kirsch and Mitzenmacher~\cite{kirsch2006less} have shown that two PRF evaluations suffices, defining the hash functions to be $h_i(x)=F_K(\langle 1,x \rangle) + j\cdot F_K(\langle 2,x \rangle) \bmod m$, where~$m$ is the bit-length of the Bloom filter.\footnote{Actually, they define $h_i(x)=F_{K_1}(x)  + j\cdot F_{K_2}(x) \bmod m$, using distinct keys instead of domain-separation, but the constructions are equivalent with respect to security.} We call this the \emph{linear PRF-hash} Bloom Filter.  In this section, we show that this scheme is both correct and private with respect to our SS notion.
 
-Looking ahead to the next section, we will analyze a closely related construction, which was attacked by Niedermeyer et al.~\cite{niedermeyer2014cryptanalysis} in the context of private medical-record linkage.  It uses the same linear-PRF hash functions, but has a $\Rep$ algorithm that that does not ensure that the hash functions are called on \emph{distinct} values.  We show that this is \emph{not} private with respect to our SS notion for a leakage function that leaks nearly the entire set~$S$. \todo{It would be better, perhaps, to show that it is not OW secure, since this implies it isn't SS secure, and OW security is what Niedermeyer et al. violate.}
+Looking ahead to the next section, we will analyze a closely related
+construction, which was attacked by Niedermeyer et
+al.~\cite{niedermeyer2014cryptanalysis} in the context of private
+medical-record linkage.  It uses the same linear-PRF hash functions,
+but has a $\Rep$ algorithm that that does not ensure that the hash
+functions are called on \emph{distinct} values.  We show that this is
+\emph{not} private with respect to our SS notion for a leakage
+function that leaks nearly the entire set~$S$. 
+%\todo{It would be better, perhaps, to show that it is not OW secure, since this implies it isn't SS secure, and OW security is what Niedermeyer et al. violate.}
 
 Taken together, the results of this section and the next highlight how sensitive the privacy of linear PRF-hash constructions is to usage.
 
