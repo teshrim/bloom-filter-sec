@@ -47,7 +47,7 @@ $(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
 $\bot \getsr A^{\TestOracle,\HashOracle}(\pubaux)$\\
 if $\err  < r$ then Return 0\\
 Return 1\\
-%
+
 \oracle{$\TestOracle(\qry_x)$}\\
 if $x \in \mathcal{C}$ then Return $\bot$\\
 $\calC \gets \calC \cup x$\\
@@ -55,7 +55,7 @@ $a \gets \Qry^{\HashOracle}(\pubaux,\privaux, x)$\\
 if $a \neq \qry_x(S)$ then \\
 \nudge $\err \gets \err + 1$\\
 Return~$a$\\
-%
+
 \oracle{$\HashOracle(i,\qry_y)$}\\
 $v \getsr [m]$\\
 if $T[i,y] \neq \undefined$\\
@@ -70,7 +70,7 @@ $(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
 $\bot \getsr A^{\TestOracle,\HashOracle}(\pubaux)$\\
 if $\err  < r$ then Return 0\\
 Return 1\\
-%
+
 \oracle{$\TestOracle(\qry_x)$}\\
 if $x \in \mathcal{C}$ then Return $\bot$\\
 $\calC \gets \calC \cup x$; $M \gets\pubaux$\\
@@ -79,7 +79,7 @@ for $j \in \{1,2,\ldots,k\}$\\
 \nudge if $M[h_j] \neq 1$ then Return 0\\
 $\err \gets \err + 1$\\
 Return 1\\
-%
+
 \oracle{$\HashOracle(i,\qry_y)$}\\
 $v \getsr [m]$\\
 if $T[i,y] \neq \undefined$\\
@@ -97,7 +97,7 @@ $(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
 $\bot \getsr A^{\TestOracle,\HashOracle}(\pubaux)$\\
 if $\err  < r$ then Return 0\\
 Return 1\\ 
-%
+
 \oracle{$\TestOracle(\qry_x)$}\\
 if $x \in \mathcal{C}$ then Return $\bot$\\
 $\calC \gets \calC \cup x$; $M \gets\pubaux$\\
@@ -107,7 +107,7 @@ for $j \in \{1,2,\ldots,k\}$\\
 \nudge \nudge Return $(0, (h_1, \ldots, h_j))$\\
 $\err \gets \err +1$\\
 Return~$(1, (h_1, \ldots, h_{k}) )$\\
-%
+
 \oracle{$\HashOracle(i,\qry_y)$}\\
 $v \getsr [m]$\\
 if $T[i,y] \neq \undefined$\\
@@ -122,7 +122,7 @@ $(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
 $\bot \getsr A^{\TestOracle,\HashOracle}(\pubaux)$\\
 if $\err  < r$ then Return 0\\
 Return 1\\ 
-%
+
 \oracle{$\TestOracle(\qry_x)$}\\
 if $x \in \mathcal{C}$ then Return $\bot$\\
 $\calC \gets \calC \cup x$; $M \gets\pubaux$\\
@@ -132,7 +132,7 @@ for $j \in \{1,2,\ldots,k\}$\\
 \nudge \nudge Return~$(0, (h_1, \ldots, h_{k}) )$\\
 $\err \gets \err +1$\\
 Return~$(1, (h_1, \ldots, h_{k}) )$\\
-%
+
 \oracle{$\HashOracle(\qry_y)$}\\
 for $j \in \{1,2,\ldots,k\}$\\
 \nudge $v_j \getsr [m]$\\
@@ -150,12 +150,12 @@ proof of Theorem~\ref{thm:bf-correctness}.}
 \fpage{.9}{
 \hpagessl{.45}{.5}
 {
-\underline{$\game{4}(A)$\fbox{$\game{5}(A)$}}\\
-$c\gets 0$, $\bad \gets \false$, $\err \gets 0$;  $\calC \gets \emptyset$\\
-$S \getsr A$; $\mathcal{I}\getsr [\{1,2,\ldots,q_T+q_H\}]^r$\\
+\underline{$\game{4}(A)$} \\ %\fbox{$\game{5}(A)$}}\\
+$S \getsr A$; $\err \gets 0$;  $\calC \gets \emptyset$\\
+%$\mathcal{I}\getsr [\{1,2,\ldots,q_T+q_H\}]^r$\\
 $(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
 $\bot \getsr A^{\TestOracle,\HashOracle}(\pubaux)$\\
-if $\bad = \true$ then \fbox{Return 0}\\
+%if $\bad = \true$ then \fbox{Return 0}\\
 if $\err  < r$ then Return 0\\
 Return 1\\
 %
@@ -182,11 +182,11 @@ $M \gets\pubaux$\\
 for $j \in \{1,2,\ldots,k\}$\\
 \nudge if $M[v_j] \neq 1$ then \\
 \nudge \nudge $\Ans[y] \gets (0, (v_1, \ldots, v_{k}) )$\\
-\nudge \nudge if $c \in \calI$ then $\bad \gets \true$\\
+%\nudge \nudge if $c \in \calI$ then $\bad \gets \true$\\
 \nudge \nudge $\Break$\\
 if $j < k$ then Return $\left(v_1,\ldots,v_k\right)$\\
-if $c \notin \calI$ then $\bad \gets \true$\\
-$\err \gets \err +1$\\
+%if $c \notin \calI$ then $\bad \gets \true$\\
+if $y \not\in S$ then $\err \gets \err +1$\\
 $\Ans[y] \gets (1, (v_1, \ldots, v_{k}))$\\
 Return $\left(v_1,\ldots,v_k\right)$
 }
