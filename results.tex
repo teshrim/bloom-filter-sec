@@ -265,7 +265,7 @@ rate of convergence is faster than~$1/n$.
 the multiplicative term $\binom{q}{r}$ arises when switching from the adaptive to zero-query settings.
 The proof will appear in the full version, but we note that it very
 closely follows the proof of correctness for the DS PRF-hash
-construction, Theorem~\ref{thm:ds-correctness}
+construction, Theorem~\ref{thm:ds-correctness}.
 %\input{lin-correctness}
 
 
@@ -298,7 +298,14 @@ On input $n,F_K(s_1),F_K(s_2),\ldots,F_K(s_{2n-1}) , F_K(s_{2n})$, algorithm $\R
 %\todo{Correctness theorem for this scheme.  Should follow pretty closely the one for ``plain'' linear-PRF.}\tsnote{Actually not sure this is that interesting, but for parallel structure one would want to give it.}
 \heading{Privacy. }
 Consider the set-membership data structure given in Figure~\ref{fig:lin-and-bi-lin} (right side), which we call the \emph{bigram linear-PRF} construction.  This construction is of practical interest, as it has been suggested as a way to address the privacy-preserving record-linkage problem, in particular for linking common records in medical databases~\cite{niedermeyer2014cryptanalysis,schnell2011novel}.
-We only address the privacy of this construction, as the correctness follows immediately from the correctness of the Linear-PRF construction.  The privacy, however, does not.  Here we exhibit an efficient SS-privacy attack even when simulator is provided nearly the entire set.  Consider the following ``all-but-last'' leakage function.  On input a set~$S=\{x_1,x_2,\ldots,x_n\}$, it assigns $x'_n \gets x_n[1:|x_n|-1]$ and returns $\mathsf{leak_{abl}}(S)=\{x_1,x_2,\ldots,x'_n\}$.  \todo{OW privacy proof? Or just some text that says that Niedermeyer et al. show something stronger~---OW-privacy violation---~albeit with $n=10000, m=10000\alpha$ for an $\alpha$ that I need to look up.}
+We only address the privacy of this construction, as the correctness
+follows immediately from the correctness of the Linear-PRF
+construction.  The privacy, however, does not.  Here we exhibit an
+efficient SS-privacy attack even when simulator is provided nearly the
+entire set.  Consider the following ``all-but-last'' leakage function.
+On input a set~$S=\{x_1,x_2,\ldots,x_n\}$, it assigns $x'_n \gets
+x_n[1:|x_n|-1]$ and returns
+$\mathsf{leak_{abl}}(S)=\{x_1,x_2,\ldots,x'_n\}$.
 
 \begin{figure}[tp]
 \centering
@@ -605,7 +612,7 @@ the xor-shares stored in~$M$ are random strings.  (Note that
   this is independent of~$k,m,n$; although $k>1$ is required for the
   xor shares.)  However, this analysis implicitly assumes that the potential false-positive string~$x$ is fixed
 \emph{before}~$M$ is determined.  We will see that this carries over
-\tsnote{I think?} to the case in which~$M$ is private (i.e.,
+ to the case in which~$M$ is private (i.e.,
 $\pubaux=\emptystring,\privaux=\langle M \rangle$), but when~$M$ is
 public things are different.
 
@@ -667,7 +674,7 @@ for the \emph{private}-$M$ GBF, i.e., $\pubaux=\emptystring,
 We observe immediately that when~$\pubaux=\langle M \rangle$ the GBF cannot be SS-private (in the ROM) because $\privaux=\emptystring$.  In fact, the correctness attack given above suggests a one-wayness attack in the ROM, too; see the right half of Figure~\ref{fig:adv-gbf}.   The naive attack would simply output the most probable element in the support of the distribution $\distr{}{}$ used in the one-wayness experiment to sample~$S$.  But when~$M$ and the hash functions are available to the attacker, it can carry out set-membership tests for itself.  Thus the adversary on the right of Figure~\ref{fig:adv-gbf} tries the~$q-1$ most probable points, in order, halting with its output as soon as the set-membership test is successful.  If none of these points are yield a successful test, then the next most probable point is output.  It is not hard to conclude the following theorem.
 
 \begin{theorem}[{\rm OW-privacy of public-$M$ GBF}]
-Fix $k,m,n,r,\lambda>0$, and let $\setprim_{\mathrm{gbf}}=(\Rep, \Qry)$ be the public-$M$ garbled Bloom filter, in the random-oracle model for~$H$.  Then \fixme{This probability might not be correct... verify when less tired.}
+Fix $k,m,n,r,\lambda>0$, and let $\setprim_{\mathrm{gbf}}=(\Rep, \Qry)$ be the public-$M$ garbled Bloom filter, in the random-oracle model for~$H$.  Then %\fixme{This probability might not be correct... verify when less tired.}
 \[
 \AdvPrivOW{\setprim_{\mathrm{gbf}},\distr{}{}}{A_{\mathrm{ow}}} \geq 1 - \left(1-\frac{n}{2^{\mu}} \right)^{q} \geq 1 - e^{-nq/2^\mu}
 \]
