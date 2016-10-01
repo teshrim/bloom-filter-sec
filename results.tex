@@ -121,8 +121,12 @@ random-oracle queries reveal an element of~$S$.
 %%%%%%%%%%%%%%%%% DOMAIN-SEPARATED PRF %%%%%%%%%%%%%%%%%%%%
 
 \subsection{Domain-Separated PRF-Hash}
-\jnote{Give English-language description of scheme before turning to
-analysis of correctness.}
+Next we consider a natural, secret-key variant of the classic Bloom
+filter.  Here the (private) hash functions are instantiated via
+$H(j,x)=F_K(\langle j,x\rangle)$, using domain-separation to turn a
+PRF (with one secret key) into, effectively, multiple functions that
+are computationally indistinguishable from random.  We call this the
+domain-separated PRF-hash data structure.
 
 %\heading{Construction of PRF with domain separation.}
 \heading{Correctness. } Let $\setprim_{\mathrm{ds}}= (\Rep, \Qry)$
