@@ -117,11 +117,11 @@ Before continuing the proof, a bit of intuition for the introduction
 of the $\bad$-flag in games~$\game{3},\game{4}$.   Intuitively, if the index
 set~$\mathcal{I}$ exactly predicts which of the $\TestOracle$ queries will be
 false-positives (and, conversely, which will not be), then a
-zero-query FP-finding adversary can ``guess'' which of~$A$'s queries require it
-to return 1 when simulating the $\TestOracle$, and which require it to
-return 0.  In this way, no queries ever actually need to be made.
-Moving to a zero-query setting will allow us to connect to classical
-results on the FP-rate of Bloom filters; more in a moment. 
+ FP-finding adversary can ``guess'' which of~$A$'s queries require it
+to return 1 when simulating the $\TestOracle$, and which require it to return 0;
+%return 0.  In this way, no queries ever actually need to be made.
+%Moving to a zero-query setting will allow us to connect to classical
+%results on the FP-rate of Bloom filters; more in a moment. 
 
 Now, consider $\Prob{\game{3}(A) : \neg\bad}$.  The indicated event
 happens iff the $r$-set~$\calI$ contains exactly the indices of
@@ -137,10 +137,10 @@ $1/\binom{q}{r}$, and we have
 Recall that adversary~$A$ wins $\ExpCorrect{\setprim_{\mathrm{lin}},r}{}$ by finding~$r$ false positives. We can assume, without loss of generality,  that~$A$ halts immediately upon finding its $r$-th false positive. % We can also assume that every point in $\calZ$ has already been queried to $\Test$.  This latter assumption is not without loss, but can be  easily enforced (in the original security definitions) by counting as part of the number of queries~$q$, the points in $\mathcal{Z}$. 
 %
 %Under these assumptions,
-So, if $\game{4}(A)=1$, then there is a zero-query adversary~$D$ that finds~$r$ false positives against $\tilde{\setprim}_{\mathrm{lin}}$, which is $\setprim_{\mathrm{lin}}$ but with $F_{K_1}$ and $F_{K_2}$ replaced by random functions $\rho_1$ and $\rho_2$, respectively.  We give this~$D$ in Figure~\ref{fig:lin-correctness-zq-adv}. Intuitively, adversary~$D$ guesses which~$r$ of~$A$'s queries will be false positives; it simulates the~$\TestOracle$ oracle by returning 1 on the guessed queries, and 0 otherwise; and it halts after finding $r$ false-positives. It must be noted that, by the no-pointless queries assumption and the fact that the hash functions in $D$ are instantiated with random functions, $\pubaux$ is information theoretically independent of elements not in $S$. Thus we have
+So, if $\game{4}(A)=1$, then there is an adversary~$D$ that finds~$r$ false positives against $\tilde{\setprim}_{\mathrm{lin}}$, which is $\setprim_{\mathrm{lin}}$ but with $F_{K_1}$ and $F_{K_2}$ replaced by random functions $\rho_1$ and $\rho_2$, respectively.  We give this~$D$ in Figure~\ref{fig:lin-correctness-zq-adv}. Intuitively, adversary~$D$ guesses which~$r$ of~$A$'s queries will be false positives. It must be noted that, by the no-pointless queries assumption and the fact that $\HashOracle$ in $\game{3}$ returns $k$ random values for each query, $\pubaux$ is information theoretically independent of elements not in $S$. Thus, we have
 $\Prob{\game{4}(A)=1} =\Prob{\ExpCorrect{\tilde{\setprim}_{\mathrm{lin}},r}{D} = 1}$.
 
-Note that $\tilde{\setprim}_{\mathrm{lin}}$ is the scheme that is analyzed in the classical Bloom filter literature ---the hash functions are modeled as independent random functions, and the parameters $k,m,n$  are set to achieve a target maximum false-positive probability (or rate).  Kirsch and Mitzenmacher~\cite{kirsch2006less} show that the upperbound on false-positive probability for a zero-query adversary and $r=1$ is $\left( (1-e^{-kn/m})^k + O(1/n) \right)$.  For $r>1$, we observe that~$A$'s queries $x_1,x_2,\ldots,x_q$ are distinct and not elements of the original set~$S$, since we assume no pointless queries. Let $\calF_i$ be the event that~$x_i(i \in \mathcal{I})$ is a false positive.  Since $\game{4}$ (equivalently $\tilde{\setprim}_{\mathrm{lin}}$) use independent random functions, the events $\calF_1,\calF_2,\ldots,\calF_r$ are independent. 
+Note that $\tilde{\setprim}_{\mathrm{lin}}$ is the scheme that is analyzed in the classical Bloom filter literature ---the hash functions are modeled as independent random functions, and the parameters $k,m,n$  are set to achieve a target maximum false-positive probability (or rate).  Kirsch and Mitzenmacher~\cite{kirsch2006less} show that the upperbound on false-positive probability for $r=1$ is $\left( (1-e^{-kn/m})^k + O(1/n) \right)$.  For $r>1$, we observe that~$A$'s queries $x_1,x_2,\ldots,x_q$ are distinct and not elements of the original set~$S$, since we assume no pointless queries. Let $\calF_i$ be the event that~$x_i(i \in \mathcal{I})$ is a false positive.  Since $\game{4}$ (equivalently $\tilde{\setprim}_{\mathrm{lin}}$) use independent random functions, the events $\calF_1,\calF_2,\ldots,\calF_r$ are independent. 
 \[
 \Prob{\ExpCorrect{\tilde{\setprim}_{\mathrm{lin}},r}{D} = 1}\leq \left( (1-e^{-kn/m})^k + O(1/n) \right)^r 
 \]
