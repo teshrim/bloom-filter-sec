@@ -397,12 +397,14 @@ as ``canonical,'' a term we define next.
 
 \begin{definition}
 A set-membership data structure $(\Rep, \Qry)$ is {\sf canonical} if
-there exist algorithms $\Rep_1, \Rep_2$, and a function
+there exist algorithms $\Rep_1, \Rep_2$, a query-enumeration
+function~$\ell\colon\mathbb{N}\to\mathbb{N}$,
+and a function family
 $F: \calK \times \bits^{\ell_{in}} \rightarrow \bits^{\ell_{out}}$
 such that the following hold:
 \begin{itemize}
 \item $\Rep_1$ takes as input a set $S$ and outputs distinct values $s_1, \ldots, s_t \in \bits^{\ell_{in}}$,
-where $t$ depends only on~$|S|$.
+where $t=\ell(|S|)$
 \item $\Rep_2$ takes as input $|S|$ and $y_1, \ldots, y_t \in \bits^{\ell_{out}}$, and outputs
 $\pubaux$.
 \item For any $S$, the distribution on $\pubaux$ output by $\Rep(S)$ is identical to the distribution
@@ -414,7 +416,7 @@ on $\pubaux$ computing as follows:
 %\item $\pubaux \getsr \Rep_2(n, \{F_{K_j}(s_1),
 %\ldots,F_{K_j}(s_t)\}_{j\in[p]})$.
 \end{itemize}
-We call $(\Rep_1, \Rep_2, F)$ the {\sf canonical representation}
+We call $(\Rep_1, \Rep_2, \ell, F)$ the {\sf canonical representation}
 of algorithm~$\Rep$. \hfill\dqed
 \end{definition}
 
@@ -432,17 +434,14 @@ of algorithm~$\Rep$. \hfill\dqed
 
 We next show that any canonical data structure in which~$F$ is a pseudorandom function is
 semantically secure with respect to leakage consisting of the size of the set.
-\jnote{Need notation for the advantage in the PRF
-  experiment.}\tsnote{Currently typeset in an appendix}
 
 \begin{theorem}\label{thm:priv-ss}
 Let $\setprim=(\Rep, \Qry)$ be a canonical data structure for which $\Rep$
 has canonical representation
-$(\Rep_1, \Rep_2, F)$. Then for ${\sf leak}(S) = |S|$ and
+$(\Rep_1, \Rep_2,\ell, F)$. Then for ${\sf leak}(S) = |S|$ and
 any attacker $A$, there is an attacker
-$B$ \jnote{How do we describe the number of PRF queries $B$ makes? Note that it makes
-exactly $t$ queries, but $t$ depends on $|S|$ in a non-specified manner.} for which
-\[\AdvPrivSS{\setprim,{\sf leak}}{A} \leq {\sf Adv}_F^{\rm PRF}(B). \]
+$B$, making $\ell(|S|)$ queries, for which
+\[\AdvPrivSS{\setprim,{\sf leak}}{A} \leq \AdvPRF{F}{B}\,. \]
 \end{theorem}
 \begin{proof}
 We define a simulator $\Sim$ as follows. On input $n$, $\Sim$ fixes
