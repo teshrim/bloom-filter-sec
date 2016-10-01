@@ -11,30 +11,55 @@ In $\game{3}$, we modify the $\HashOracle$ oracle so that on query~$\qry_x$ it r
 
 Game~$\game{4}$ contains some important changes from game~$\game{3}$,
 but we will argue that $\Prob{\game{3}(A) = 1} \leq \Prob{\game{4}(A)
-  = 1}$.  To begin, in game~$\game{4}$ we sample an $r$-subset of
-indices from~$\{1,2,\ldots,q_H+q_T\}$.  (We will see why, shortly.)
-Next, the $\TestOracle$ oracle on input~$\qry_x$ no longer computes
-its answer directly, but instead refers to a new
-table~$\mathrm{Ans}[x]$ which is populated upon calls to the
-$\HashOracle$ oracle.  In particular, if $\mathrm{Ans}[x]$ is
-undefined, $\TestOracle$ makes a $\HashOracle(\qry_x)$ call;
+  = 1}$. The $\TestOracle$ oracle on input~$\qry_x$ no longer computes
+its answer directly, but instead refers to a new table~$\mathrm{Ans}[x]$ which is populated upon calls to the
+$\HashOracle$ oracle.  In particular, if $\mathrm{Ans}[x]$ is undefined, $\TestOracle$ makes a $\HashOracle(\qry_x)$ call;
 otherwise, it returns the contents of~$\mathrm{Ans}[x]$, which
 contains exactly the values that~$\TestOracle(\qry_x)$ would have
-returned in the previous game.  The $\HashOracle$ oracle, on
-input~$\qry_y$ computes the random values~$v_1,v_2,\ldots,v_k$ as in
-$\game{3}$.  
+returned in the previous game.  The $\HashOracle$ oracle, on input~$\qry_y$ computes the random values~$v_1,v_2,\ldots,v_k$ as in
+$\game{3}$.  It maintains the table~$T$ because~$A$ is permitted to call~$\HashOracle$
 %(We no longer need to maintain the table~$T$ because hash values are
 %only determined by~$\HashOracle$ calls, and these are never repeated
 %under our no-pointless-query assumption.)  
-It then computes the answer that~$\TestOracle(\qry_x)$ would return, in game~$\game{3}$, and stores the answer in~$\mathrm{Ans}[x]$ for use by~$\TestOracle$.  The $\HashOracle$ oracle also introduces a query counter~$c$, which is incremented whenever~$\HashOracle$ is called, either directly by~$A$ or via~$A$ having made a~$\TestOracle$ query on~$\qry_x$ where~$\mathrm{Ans}[x]$ had not been previously defined by a~$\HashOracle(\qry_x)$ call.  \fixme{for BF proof, we can assume that $\TestOracle(\qry_x)$ is never made after a~$\HashOracle(\qry_x)$ call, because~$M$ is public.  And vice versa.  So the maximum value of~$c = q_T + q_H$.}  (Note that the maximum value of~$c$ is $q_T + q_H$.)  The set~$\calI$ contains a set of~$r$ distinct values from $\{1,2,\ldots,q_T+q_H\}$ and, intuitively, these are the game's ``guesses'' at the $\HashOracle$ queries that will result in a correctness error.  If these~$r$ guesses are incorrect, then a boolean flag~$\bad$ is set, although in game~$\game{4}$ the value of~$\bad$ has no effect on the games execution; in particular, $\game{4}$ does \emph{not} contain the boxed ``Return 0'' statement.
+It then computes the answer that~$\TestOracle(\qry_x)$ would return in
+game~$\game{3}$, and stores the answer in~$\mathrm{Ans}[x]$ for use
+by~$\TestOracle$.  
+The $\HashOracle$ oracle also introduces a query counter~$c$, which is
+incremented whenever~$\HashOracle$ is called, either directly by~$A$
+or via~$A$ having made a~$\TestOracle$ query on~$\qry_x$
+where~$\mathrm{Ans}[x]$ had not been previously defined by
+a~$\HashOracle(\qry_x)$ call. 
+% \fixme{for BF proof, we can assume that $\TestOracle(\qry_x)$ is
+% never made after a~$\HashOracle(\qry_x)$ call, because~$M$ is
+% public.  And vice versa.  So the maximum value of~$c = q_T + q_H$.}
+% (Note that the maximum value of~$c$ is $q_T + q_H$.)  
+None of these changes alters the behavior of the game from the
+adversary's perspective.
 
-Games~$\game{4}$ and $\game{5}$ are identical except for this boxed statement.  In particular, game~$\game{5}$ returns 1 exactly when~$\game{4}$ would return 1 \emph{and} the boolean~$\bad$ would have remained false in~$\game{4}$.   This implies that~$\game{4}$ managed to guess exactly the queries that would result in correctness errors, and hence
+At this point, we consider $\Prob{\game{4}{A}=1}$.  Note that is
+happens iff there are~$r$ calls to the $\HashOracle$ oracle that
+increment~$\err$, i.e., queries $y \not\in S$ such that
+$\bigwedge_{j=1}^{k} M[v_j]=1$.  We can assume without loss that~$A$
+does not call~$\HashOracle$ on $y \in S$ because the indices
+$v_1,v_2,\ldots,v_k$ that will correspond to any $y \not\in S$ will be
+\emph{independent} of those corrsponding to any of the $y \in S$.
+Thus these queries are wasted.  Now, there are at total of $q_T + q_H$
+queries make to~$\HashOracle$, either directly by~$A$ or indirectly
+by~$A$ calling~$\TestOracle$.  For $\game{4}{A}$ to return 1, there
+must be~$r$ among these that increment the counter.  We can assume
+WLOG that~$A$ halts as soon as~$\err=r$ (which it can easily track),
+so there are $\binom{q_T+q_H-1}{r-1}$ possible ``winning'' query
+patterns to consider.  As each error event is independent of all
+previous choices made by the~$\HashOracle$, we need only consider the
+probability of a single error. Using Kirsch and Mitzenmacher's upper
+bound on false positive probability of a classical Bloom filter, 
+we have  $\Prob{\game{4}(A)=1} = \binom{q_T+q_H-1}{r-1}\left( (1-e^{-kn/m})^k + O(1/n) \right)^r$.
+
+This implies that~$\game{4}$ managed to guess exactly the queries that would result in correctness errors, and hence
 $\Prob{\game{5}(A)=1} = \dfrac{1}{\binom{q_T + q_H}{r}}\Prob{\game{4}(A)=1}$.
-
-For $r=1$, $\game{5}$ exactly simulates the classical Bloom filter. Since, $\HashOracle$ returns random values for each query, the event of getting a false-positive is independent of the index of the query. Using Kirsch and Mitzenmacher's upper bound on false positive probability of a classical Bloom filter, we have  $\Prob{\game{5}(A)=1} = \left( (1-e^{-kn/m})^k + O(1/n) \right)^r$.
 To summarize, 
 \[
-\AdvCorrect{\setprim_{\mathrm{Bloom}},r}{A} \leq  {\dbinom{q_T + q_H}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
+\AdvCorrect{\setprim_{\mathrm{Bloom}},r}{A} \leq  {\dbinom{q_T + q_H-1}{r-1}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
 \]
 which is the bound claimed in the theorem statement.
 \begin{figure}[tp]

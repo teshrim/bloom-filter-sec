@@ -82,7 +82,7 @@ filter (set-membership) data structure over~$\elts$. For any
 adversary~$A$ that makes a total of~$q_T$ queries to the $\Test$
 oracle, and $q_R$ queries to the RO, and has time-complexity~$O(t)$,
 \[
-\AdvCorrect{\setprim_{\mathrm{Bloom}},r}{A} \leq  {\dbinom{q_T + q_H}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
+\AdvCorrect{\setprim_{\mathrm{Bloom}},r}{A} \leq  {\dbinom{q_T + q_H-1}{r-1}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
 \]
 \end{theorem}
 We note that Kirsch and Mitzenmacher~\cite{kirsch2006less} show
@@ -90,7 +90,7 @@ that the ($r=1$, zero-query) error-probability for~$\setprim_\mathrm{Bloom}$ is
 always within $O(1/n)$ of $(1-e^{-kn/m})^k$, although the asymptotic
 rate of convergence is faster than~$1/n$.  The multiplicative (``hybrid'') term arises as a result
 of moving from the adaptive to the zero-query setting.
-Finally, $\binom{q_T+q_H}{r} \leq (q_T+q_H)^r$ (with reasonable tightness when~$r$ is small) in
+Finally, $\binom{q_T+q_H-1}{r-1} \leq (q_T+q_H)^r$ (with reasonable tightness when~$r$ is small) in
 which case the final term in the bound behaves as
 $((q_T+q_H) (1-e^{-kn/m})^k + O(q/n) )^r$; loosely, this is the bound one expects for
 trying to find a single correctness error (in this case, a false positive) in each of~$r$ independent``rounds'', each round
