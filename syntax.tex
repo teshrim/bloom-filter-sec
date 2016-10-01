@@ -10,7 +10,7 @@ black-box access to one or more oracles, which we write as
 superscripts, e.g., $F^{O_1,O_2,\ldots}$.  All algorithms (and, in
 particular, all adversaries) are stateful by default. We write
 $\langle x,y,\ldots \rangle$ for the encoding of values $x,y,\ldots$
-as a single bitstring, for some implicit and invertible encoding
+as a single bit-string, for some implicit and invertible encoding
 method. When $x$ is a string, we write $x[i]$ for the $i$-th element
 in that string, and $x[i:j]$ for the substring $x[i]x[i+1]\cdots
 x[j]$.  \tsnote{need subset of size~$r$ notation}
@@ -188,7 +188,7 @@ construction from NY), are captured setting $\privaux=K, \pubaux=M$.
 By setting $\Sigma=\bits^L$ for a specified $L>0$, we can capture
 the so-called ``garbled Bloom filter'' due to Dong, Chen and
 Wen~\cite{dong2013private}. \todo{Details have to be filled in.}
-This stores xor-shares of bitstring~$x \in S$ at positions
+This stores xor-shares of bit-string~$x \in S$ at positions
 $h_1(x),h_2(x),\ldots,h_k(x)$ in an array. Similarly, the
 cuckoo-hashing construction from NY, which (loosely speaking) stores
 a hash $g(x)$ at positions determined by
