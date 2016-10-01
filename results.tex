@@ -372,9 +372,10 @@ probability~$1/2$.  That is $\ExpPrivSSsim{\setprim_{\bilin}}{A,\Sim} \leq 1/2$.
 %%%%%%%%%%%%%%%%% Bigram DOMAIN-SEPARATED PRF %%%%%%%%%%%%%%%%%%%%
 \subsection{Bigram Domain-Separated PRF-Hash}
 
-\begin{figure}
+\begin{figure}[tp]
 \centering
-\fpage{0.5}{
+\fpage{0.75}{
+\hpagess{.5}{.45}{
 \algorithmv{$\Rep(S)$}\\
 $\pubaux \gets \emptystring$, $K \getsr \calK$\\
 for each $x \in S$\\
@@ -387,8 +388,8 @@ for each $x \in S$\\
 \nudge $\pubaux \gets \langle\pubaux, M_x \rangle$\\
 $\privaux \gets K$\\
 Return $(\pubaux,\privaux)$\\
-
-\medskip
+}
+{
 \algorithmv{$\Qry(\pubaux,\privaux,q_x)$}\\
 $B \gets \mathsf{bigram}(x)$\\
 $\overline{M} \gets 0^m$\\
@@ -397,7 +398,10 @@ for each $b \in B$\\
 \nudge\nudge $i \gets F_{K}(\langle j,b \rangle) \bmod m$\\
 \nudge\nudge $\overline{M}[i] \gets 1$\\
 if $\overline{M} \in \pubaux$ then Return 1 \\
-Return 0} \caption{Bigram domain-separated PRF-hash.}
+Return 0
+}
+} 
+\caption{Bigram domain-separated PRF-hash.}
 \label{fig:DS-bigram}
 \end{figure}
 
