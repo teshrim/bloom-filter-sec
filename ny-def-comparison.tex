@@ -1,16 +1,15 @@
 \section{Comparison to the Naor-Yogev Definition}
 \label{sec:compare-defs}
-\fixme{Uses $(t,q,\epsilon)$-style notion and theorem statements.  May
-be okay because this is a self contained appendix, but better if
-consistent with the rest of the document.}
+%\fixme{Uses $(t,q,\epsilon)$-style notion and theorem statements.  May
+%be okay because this is a self contained appendix, but better if
+%consistent with the rest of the document.}
 The structure of the Naor-Yogev definition is different from ours.
-Lifting their definition\footnote{They focus specifically on set-representation data
-structures
-with no false negatives, and their data-structure syntax
-does not distinguish public and private portions of the representation. Nevertheless, it is straightforward
-to extend their definition to more closely match ours.}
-to our setting,
-the experiment is similar but the attacker
+They focus specifically on set-representation data
+structures with no false negatives, and their data-structure syntax
+does not distinguish public and private portions of the
+representation. Nevertheless, it is straightforward
+to extend their definition to more closely match ours; we do that next.
+Their experiment is similar but the attacker
 succeeds only if it outputs a (single) query $\qry$ for which
 $\Qry(\pubaux,\privaux, \qry) \neq \qry(S)$  \emph{subject to the restriction that it did not
 previously query $\qry$ to its $\TestOracle$ oracle}. We refer to
@@ -20,9 +19,10 @@ $\NYAdvCorrect{\Pi}{A} = \Prob{\NYExpCorrect{\Pi}{A}=1}$,
 and write $\NYAdvCorrect{\Pi,r}{t,q}$ for the maximum over
 all~$t$-time adversaries that ask at most~$q$ queries. We say that a
 data structure~$\Pi$ is $(t,q,\epsilon)$-NY-correct if
-$\NYAdvCorrect{\Pi}{t,q} \leq \epsilon$. \jnote{This should all probably
-move to an appendix; it's a lot of notation to digest for something we never use again
-in the paper.}
+$\NYAdvCorrect{\Pi}{t,q} \leq \epsilon$. 
+%\jnote{This should all probably
+%move to an appendix; it's a lot of notation to digest for something we never use again
+%in the paper.}
 
 %\jnote{Just noticed something (else) odd about the NY definition: we cannot assume w.l.o.g.\
 %that $A$ makes exactly $q$ queries, and in fact it is possible to have cases where increasing
@@ -55,25 +55,11 @@ $\mathcal{C} \gets \mathcal{C} \cup \{\qry\}$ \\
 Return~$a$
 }
 }
-\caption{The Naor-Yogev definition of
-correctness, adapted to our setting.}
+\caption{The Naor-Yogev definition of correctness, adapted to our setting.}
 \label{fig:NYcorrectness}
 \end{figure}
 
 With the above in place we can now relate their definition to ours.
-
-\jnote{Do we have a compelling example of why the definition in Figure~\ref{fig:correctness}
-is ``better'' than the definition in
-Figure~\ref{fig:NYcorrectness}?}\tsnote{I don't know, but we do seem
-to have a compelling list of shortcomings of their notion, which ours
-doesn't seem to suffer. Anyway, it's a bit of an unfair comparison, in
-their favor.  You're lifting their notion to ours, which is more
-general.  And by the time we get to that, we have already done them
-the favor of cleaning up the syntax, so that their ``lifted'' notion
-looks better than it was.} \jnote{I agree, it's just that once we have ``lifted'' it
-appropriately, it's not clear what's wrong with it and why we introduce a different
-style of definition.}
-
 \begin{theorem}
 If $\Pi$ is $(t,q,\epsilon)$-NY-correct, then it is also
 $(t, q', r, q'\epsilon/r)$-correct for any $q' \leq q+1$ and $r\geq
@@ -101,12 +87,12 @@ Since the running time of $A'$ is at most $t$, and it makes at most $q'-1 \leq q
 to its oracle, this is a contradiction.
 \end{proof}
 
-\jnote{The above is tight, at least for $r=1$. Specifically, consider a scheme
+We note that the above is tight, at least for $r=1$. Specifically, consider a scheme
 in which every query is independently
 answered incorrectly with probability~$\epsilon$. Such a
 scheme will be $(t,q,\epsilon)$-NY-correct
 for any $t, q$, however an adversary making $q=1/\epsilon$ queries has constant advantage
-under our correctness definition (for $r=1$).}
+under our correctness definition (for $r=1$).
 
 \begin{theorem}
 If $\Pi$ is $(t, q, 1, \epsilon)$-correct, then it is also $(t, q-1, \epsilon)$-NY-correct.
@@ -138,13 +124,6 @@ scheme always answers incorrectly for a single, fixed query, and answers
 correctly for every other query. The theorem follows.
 \end{proof}
 
-\jnote{I'm not sure what to conclude from any of the results above. The proofs
-are also all trivial.} \tsnote{Trivial or not, it's all part of the
-overall contribution, which is putting this topic on a solid
-foundation.  We can move it all to an appendix, but I still see it as
-very worthwhile.} \jnote{It's worth having for completeness, I'm just not sure
-what we (or the reader) is supposed to do with it. It's not like we can draw
-any simple conclusions like ``our definition implies theirs'' or anything.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
