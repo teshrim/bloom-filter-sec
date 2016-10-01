@@ -157,9 +157,13 @@ rate of convergence is faster than~$1/n$.   As before, the multiplicative term $
 \heading{Privacy. }
 The privacy of $\setprim_{\mathrm{ds}}$ follows directly from our general result, Theorem~\ref{thm:priv-ss}.
 \begin{theorem}[\rm{SS-privacy of DS PRF}]\label{thm:ds-ss}
-Fix $k,m,n>0$, a set~$\elts$, and let $\setprim_{\mathrm{ds}}= (\Rep, \Qry)$ be the set-membership data structure described in Figure~\ref{fig:bf-and-ds}.  For any set~$S \in 2^\elts$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ and adversary~$B$ such that, for any adversary~$A$
+Fix $k,m,n>0$, a set~$\elts$, and let $\setprim_{\mathrm{ds}}= (\Rep,
+\Qry)$ be the set-membership data structure described in
+Figure~\ref{fig:bf-and-ds}.  For any set~$S \in 2^\elts$, let
+$\leak(S)=|S|$.  There exists a simulator~$\Sim$ and adversary~$B$
+(making~$kn$ queries) such that, for any adversary~$A$
 \[
-\AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}\;.
+\AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}\,.
 \]
 %(Both~$B$ and~$\Sim$ are explicitly constructed in the proof of this theorem.)
 \end{theorem}
@@ -268,7 +272,11 @@ construction, Theorem~\ref{thm:ds-correctness}
 \heading{Privacy. }
 The SS-privacy of the linear-PRF hash construction follows directly from~Theorem~\ref{thm:priv-ss}.
 \begin{theorem}[{\rm SS-privacy of linear-PRF}]\label{thm:lin-privacy}
-Fix $k,m,n,r>0$, a set $\elts$, and let $\setprim_{\mathrm{lin}}= (\Rep, \Qry)$ be the set-membership data structure (over~$\elts$) described in Figure~\ref{fig:lin-and-bi-lin}. For any set~$S \in 2^{\elts}$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ and an adversary~$B$ such that, for any adversary~$A$
+Fix $k,m,n,r>0$, a set $\elts$, and let $\setprim_{\mathrm{lin}}=
+(\Rep, \Qry)$ be the set-membership data structure (over~$\elts$)
+described in Figure~\ref{fig:lin-and-bi-lin}. For any set~$S \in
+2^{\elts}$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ and
+an adversary~$B$ (making $2n$ queries) such that, for any adversary~$A$
 \[
 \AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}\;.
 \]
@@ -324,7 +332,7 @@ $F_{K}$ replaced by a random function~$\rho$. Let
 $\leak_{\mathsf{abl}}$ be the leakage function just described.
 Let~$\elts=\{\mathrm{a,b,c}\}^*$. Let $n=3$,  $m=3\alpha $ for
 integer $\alpha >> 1$, and let, $k = \lceil \ln(2) \alpha
-\rceil$.\tsnote{This value of~$k$ is from the classical analysis for
+\rceil$.\footnote{This value of~$k$ is from the classical analysis for
 minimizing the FP rate for a Bloom filter, and is set this way for
 compatibility with classical results.  It isn't used in any
 essential way in the proof sketch.}  Let~$A$ be the adversary in
@@ -333,7 +341,7 @@ advantage
 $\AdvPrivSS{\setprim_{\bilin},\leak_{\mathsf{abl}}}{A,\Sim}$ can be
 made arbitrarily close to $1/2$ by choice of~$\alpha$.
 \end{theorem}
-\begin{proof}\tsnote{still a bit sketchy but believable}
+\begin{proof}%\tsnote{still a bit sketchy but believable}
 On input the set~$S$ produced by~$A$, the $\Rep$ algorithm turns $x_1=$'cab', $x_2=$'bab' and $x_3$ into their respective bigram sets: $B_{x_1}=\{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{b}\sqcup\}$, $B_{x_2}=\{\sqcup\mathrm{b},\mathrm{ba},\mathrm{ab}, \mathrm{b}\sqcup \}$; the set $B_{x_3}$ will be either $\{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{ba}, \mathrm{a}\sqcup\}$, or $\{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{bc}, \mathrm{c}\sqcup\}$, each with probability 1/2.  It then produces $\alpha$-bit arrays $M_1, M_2, M_3$ by hashing the corresponding bigram sets using the hash functions $h_j(s)=\rho_1(s)+ j\rho_2(s) \bmod m$.  Note that for sufficiently large~$m$, each of $M_1,M_2$ will contain exactly $4k$ positions set to 1; this is with overwhelming probability, up to collisions in the hash functions for different bigrams within a given bigram set.  Likewise, $M_{1,2}=M_1 \vee M_2$ will have exactly $6k$ positions set to 1, because $B_{x_1}$ and $B_{x_2}$ share $\mathrm{ab}$ and $\mathrm{a}\sqcup$.
 
 In the case that $B_{x_3}=\{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{ba}, \mathrm{a}\sqcup\}$, only one of its elements ($\mathrm{a}\sqcup$) is not in either of $B_{x_1},B_{x_2}$.  Hence, the hamming weight of $M_{1,2}\wedge M_3$ will be $4k$.  On the other hand, when $B_{x_3} = \{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{bc}, \mathrm{c}\sqcup\}$, two of its elements ($\mathrm{bc}, \mathrm{c}\sqcup$) are not covered by $B_{x_1},B_{x_2}$.  In this case, the hamming weight of $M_{1,2} \wedge M_3$ will be $3k$.  Thus $\ExpPrivSSreal{\setprim_{\bilin}}{A}=1$ with overwhelming probability.
@@ -398,7 +406,7 @@ structure described in Figure~\ref{fig:DS-bigram}. Let $\leak$ be
 the leakage function described just prior to
 Theorem~\ref{thm:bi-lin-ss}. Let~$\elts=\{\mathrm{a,b,c}\}^*$. Let
 $n=3$,  $m=3\alpha $ for integer $\alpha >> 1$, and let $k = \lceil
-\ln(2) \alpha \rceil$.\tsnote{This value of~$k$ is from the
+\ln(2) \alpha \rceil$.\footnote{As before, this value of~$k$ is from the
 classical analysis for minimizing the FP rate for a Bloom filter,
 and is set this way for compatibility with classical results.  It
 isn't used in any essential way in the proof sketch.}  Let~$A$ be
@@ -430,10 +438,19 @@ Return $L$}
 \begin{theorem} %\label{thm:priv-ss}
 Let $\Pi$ be the set-representation data structure in
 Figure~\ref{fig:DS-bigram}. Then for any attacker $A$, there is an
-attacker $B$ \jnote{How do we describe the number of PRF queries $B$
-makes? Same problem as in Theorem~\ref{thm:priv-ss}.} for which
-\[\AdvPrivSS{\setprim,{\sf leak}_\cap}{A} \leq {\sf Adv}_F^{\rm PRF}(B). \]
+attacker $B$ 
+%\jnote{How do we describe the number of PRF queries $B$
+%makes? Same problem as in Theorem~\ref{thm:priv-ss}.} 
+for which
+$\AdvPrivSS{\setprim,{\sf leak}_\cap}{A} \leq \AdvPRF{F}{B}$.
 \end{theorem}
+
+We remark that the running time of the simulator is exponential in
+the size $|S|$ of the set, so the above is not entirely satisfactory
+unless $S$ is small. Nevertheless, it does convey the intuition that
+the information leaked by the data structure is \emph{at most} the
+sizes of the various intersections of the~$\{B_x\}$.
+
 \begin{proof}
 The proof follows the same high-level ideas as in the proof of
 Theorem~\ref{fig:DS-bigram}, based on the observation that ${\sf
@@ -471,12 +488,6 @@ Return $\pubaux$
 The proof that this provides a good simulation is identical to that
 of Theorem~\ref{fig:DS-bigram}. \hfill\qed
 \end{proof}
-
-We remark that the running time of the simulator is exponential in
-the size $|S|$ of the set, so the above is not entirely satisfactory
-unless $S$ is small. Nevertheless, it does convey the intuition that
-the information leaked by the data structure is \emph{at most} the
-sizes of the various intersections of the~$\{B_x\}$.
 
 
 %%%%%%%%%%%%%%%%% GARBLED BF  %%%%%%%%%%%%%%%%%%%%
@@ -665,7 +676,12 @@ We conjecture that this is the optimal attack on the GBF in this setting.
 If instantiated with hash functions $H_j(x) = F_K(\langle j,x \rangle)$ and $\privaux = \langle K \rangle$, the SS-privacy of the GBF follows directly from~Theorem~\ref{thm:priv-ss}.
 \begin{theorem}[{\rm SS-privacy of GBF with secret hash functions}]
 \label{thm:gbf-prf-privacy}
-Fix $k,m,n,r,\lambda>0$ and a function family~$F\colon \calK \times \bits^* \to [m]$.  Let $\setprim_{\mathrm{gbf\mbox{-}prf}}= (\Rep, \Qry)$ be the garbled Bloom filter with hash functions $H_j(x)=F_K(\langle j,x \rangle)$ and $\privaux=\langle K \rangle$.  For any set~$S$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ and an adversary~$B$ such that, for any adversary~$A$
+Fix $k,m,n,r,\lambda>0$ and a function family~$F\colon \calK \times
+\bits^* \to [m]$.  Let $\setprim_{\mathrm{gbf\mbox{-}prf}}= (\Rep,
+\Qry)$ be the garbled Bloom filter with hash functions
+$H_j(x)=F_K(\langle j,x \rangle)$ and $\privaux=\langle K \rangle$.
+For any set~$S$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$
+and an adversary~$B$ (making $kn$ queries) such that, for any adversary~$A$
 \[
 \AdvPrivSS{\setprim_{\mathrm{gbf\mbox{-}prf}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}\;.
 \]
