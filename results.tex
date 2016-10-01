@@ -54,8 +54,6 @@ Return 1
 \end{figure}
 
 \subsection{Classical Bloom Filter in the Random-Oracle Model}
-
-
 Fix $n,k,m \geq 0$, and fix a set $\elts$.  Then the classical Bloom
 filter set-membership data structure $\setprim_{\mathrm{Bloom}}=
 (\Rep, \Qry)$ over~$\elts$ is defined as in
@@ -71,9 +69,7 @@ description in $\pubaux$.}
 filter meets our correctness notion in the ROM.  Again, we stress
 that this correctness is with respect to adaptive adversaries,
 aiming to find $r \geq 1$ errors (in this case, false-positives).
-The proof appears in Appendix~\ref{sec:thm3_fp}. \jnote{We seem to
-have plenty of space, so maybe start moving things from the appendix
-to the main body?}
+
 
 \begin{theorem}\label{thm3}\label{thm:bf-correctness}
 Fix $k,m,n,r>0$ and a set~$\elts$, and let
@@ -116,28 +112,11 @@ Fix $k,m,n,r>0$, a set~$\elts$, and let $\setprim_{\mathrm{Bloom}}= (\Rep, \Qry)
 \AdvPrivOW{\setprim_{\mathrm{Bloom}},\distr{}{},r}{A} \leq  \frac{(kqn+n)}{2^{\mu}}\;.
 \]
 \end{theorem}
-\todo{Typeset simple proof.  Result is on chalkboard.}
-\begin{proof}
-\begin{figure}[tp]
-\hfpagess{.45}{.45}
-{\underline{\game{0}($A$)}\\
-$S \getsr \distr{}{}$\\
-$(\pubaux,\privaux) \getsr \Rep(S)$\\
-$z \getsr A(\pubaux)$\\
-if $z \in S$ then return 1\\
-return 0\\
-
-\medskip
-\oracle{$\HashOracle(\qry_x)$}\\
-}
-{
-}
-\end{figure}
-\end{proof}
-
-
-%\jnote{Organize by scheme, not by security notions.}
-
+The straightforward proof will appear in the full version.
+Loosely, the $kqn/2^{\mu}$ term arises from the chance that random-oracle queries reveal an element of~$S$ (by the random oracle having
+been called on them in the execution of~$\Rep$), and the $n/2^\mu$
+term arises to simple guessing of an element of~$S$ should none of the
+random-oracle queries reveal an element of~$S$.
 
 %%%%%%%%%%%%%%%%% DOMAIN-SEPARATED PRF %%%%%%%%%%%%%%%%%%%%
 
