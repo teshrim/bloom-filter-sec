@@ -127,7 +127,7 @@ analysis of correctness.}
 %\heading{Construction of PRF with domain separation.}
 \heading{Correctness. } Let $\setprim_{\mathrm{ds}}= (\Rep, \Qry)$
 be the set-membership data structure defined on the right-hand side
-of Figure~\ref{fig:lin-and-ds}. As in the preceding theorem, the
+of Figure~\ref{fig:bf-and-ds}. As in the preceding theorem, the
 following says (informally) that if~$F$ is a secure PRF, then this
 domain-separated PRF construction is correct against adaptive
 adversaries.
@@ -327,7 +327,7 @@ On input $\pub \neq \emptystring$:\\
 
 \begin{theorem}[{\rm SS-privacy of bigram linear-PRF}]\label{thm:bi-lin-ss}
 Let $\setprim_{\bilin}= (\Rep, \Qry)$ be the set-membership data
-structure described in Figure~\ref{fig:neidermayer}, but with
+structure described in Figure~\ref{fig:lin-and-bi-lin}, but with
 $F_{K}$ replaced by a random function~$\rho$. Let
 $\leak_{\mathsf{abl}}$ be the leakage function just described.
 Let~$\elts=\{\mathrm{a,b,c}\}^*$. Let $n=3$,  $m=3\alpha $ for
@@ -457,7 +457,7 @@ Theorem~\ref{fig:DS-bigram}, based on the observation that ${\sf
 leak}_\cap(S)$ suffices to determine the overlap in calls to the
 pseudorandom function~$F$.
 
-Our simulator $\Sim$ (see Figure~\ref{lab:sim-bi-ds-prf}), on input $L = \{n_{S'}\}_{S' \subseteq S}$,
+Our simulator $\Sim$ (see Figure~\ref{fig:sim-bi-ds-prf}), on input $L = \{n_{S'}\}_{S' \subseteq S}$,
 proceeds as follows. Let $N = n_S$ denote the size of~$S$. The
 simulator constructs $N$ sets $B_1, \ldots, B_N \subset \{e_1,
 \ldots, e_{N'}\}$ of ``dummy elements'' $e_1, \ldots, e_{N'}$ (with
