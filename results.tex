@@ -168,7 +168,6 @@ Fix $k,m,n,r>0$, a set~$\elts$, and let $\setprim_{\mathrm{ds}}= (\Rep, \Qry)$ b
 \]
 Here, $B$ asks $q$ queries, and has time complexity $O(t+qm)$.
 \end{theorem}
-\fixme{This result is pretty intuitive following the classic BF correctness result. Probably fine to just explain it and push an appendix, or even drop from camera ready if out of space.}
 We note that Kirsch and Mitzenmacher~\cite{kirsch2006less} show
 that the ($r=1$, zero-query) error-probability for~$\setprim_\mathrm{ds}$ is
 always within $O(1/n)$ of $(1-e^{-kn/m})^k$, although the asymptotic
@@ -281,7 +280,10 @@ that the ($r=1$, zero-query) error-probability for~$\setprim_\mathrm{lin}$ is
 always within $O(1/n)$ of $(1-e^{-kn/m})^k$, although the asymptotic
 rate of convergence is faster than~$1/n$.
 the multiplicative term $\binom{q}{r}$ arises when switching from the adaptive to zero-query settings.
-\input{lin-correctness}
+The proof will appear in the full version, but we note that it very
+closely follows the proof of correctness for the DS PRF-hash
+construction, Theorem~\ref{thm:ds-correctness}
+%\input{lin-correctness}
 
 
 \heading{Privacy. }
