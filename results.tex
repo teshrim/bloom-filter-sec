@@ -435,7 +435,7 @@ Return $L$}
 %\caption{Bigram domain-separated PRF-hash.}
 \end{figure}
 
-\begin{theorem} %\label{thm:priv-ss}
+\begin{theorem} \label{thm:bi-ds-prf-priv-ss}
 Let $\Pi$ be the set-representation data structure in
 Figure~\ref{fig:DS-bigram}. Then for any attacker $A$, there is an
 attacker $B$ 
@@ -457,7 +457,7 @@ Theorem~\ref{fig:DS-bigram}, based on the observation that ${\sf
 leak}_\cap(S)$ suffices to determine the overlap in calls to the
 pseudorandom function~$F$.
 
-Our simulator $\Sim$, on input $L = \{n_{S'}\}_{S' \subseteq S}$,
+Our simulator $\Sim$ (see Figure~\ref{lab:sim-bi-ds-prf}), on input $L = \{n_{S'}\}_{S' \subseteq S}$,
 proceeds as follows. Let $N = n_S$ denote the size of~$S$. The
 simulator constructs $N$ sets $B_1, \ldots, B_N \subset \{e_1,
 \ldots, e_{N'}\}$ of ``dummy elements'' $e_1, \ldots, e_{N'}$ (with
@@ -470,9 +470,10 @@ correct intersection sizes.) It then chooses uniform values
 $y_{1,1}, \ldots, y_{1,k}, \ldots, y_{N',1}, \ldots, y_{N',k} \getsr
 \bool^{\ell_{out}}$ and computes
 
-\begin{figure}[h]
+\begin{figure}[th]
 \centering
 \fpage{0.5}{
+\algorithmv{$\Sim(\leak(S))$}\\
 $\pubaux \gets \emptystring$\\
 for each $x \in [N]$\\
 \nudge for each $b \in [N']$\\
@@ -483,6 +484,8 @@ for each $x \in [N]$\\
 \nudge $\pubaux \gets \langle\pubaux, M_x \rangle$\\
 Return $\pubaux$
 }
+\caption{Simulator for the proof of Theorem~\ref{thm:bi-ds-prf-priv-ss} }
+\label{fig:sim-bi-ds-prf}
 \end{figure}
 
 The proof that this provides a good simulation is identical to that
@@ -624,13 +627,13 @@ set-membership query would be prohibitive in many applications, and a
 $2^{-80}$ false-positive rate would be typically considered overkill in
 practice.\footnote{Note
 that, as described in~\cite{xxx}, $\lambda$ must be at least the
-bit-length of the longest element $x \in S$. \tsnote{This could be
+bit-length of the longest element $x \in S$. In practice, this could be
   handled with a slight change to the set membership test, by checking
 if the $\lambda$-bit shares xor to, say, the $\lambda$-bit truncation
-of~$x$.}}
+of~$x$.}
 Let us consider a practically interesting set of parameters. Say you have a 1000-position
 filter, $m=1000$, and a 100-element set, $n=100$,  and $k=4$ hash
-functions (a la Squid\cite{fan2000summary}).  This results in a false-positive rate of
+functions (a la Squid~\cite{fan2000summary}).  This results in a false-positive rate of
 approximately 1\% in a classical BF.  There are roughly $2^{35}$
 subsets of four indices to consider, which is reasonable on a
 commodity laptop.  Moreover, with $n=100$ the expected
@@ -651,8 +654,9 @@ oracle calls) to online set-membership (i.e., $\TestOracle$) queries.
 
 
 Switching now to the case of a \emph{private}-$M$ GBF, i.e., $\pubaux=\emptystring, \privaux=\langle M \rangle$, we have the
-following correctness bound.
-
+following correctness bound. \fixme{Probably punt on this until the
+  full version}
+%
 \begin{theorem}[{\rm Correctness of private-$M$ GBF in the ROM}]\label{thm:gbf-correctness}
 Fix $k,m,n,r,\lambda>0$, and let $\setprim_{\mathrm{gbf}}=(\Rep, \Qry)$ be the private-$M$ garbled Bloom filter. For any adversary~$A$ that makes a total of~$q_T$ queries to the $\Test$ oracle, and $q_R$ queries to the RO, and has time-complexity~$O(t)$,
 \[
