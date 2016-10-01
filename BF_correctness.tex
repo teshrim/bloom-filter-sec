@@ -36,19 +36,15 @@ does not call~$\HashOracle$ on $y \in S$ because the indices
 $v_1,v_2,\ldots,v_k$ that will correspond to any $y \not\in S$ will be
 \emph{independent} of those corrsponding to any of the $y \in S$.
 Thus these queries are wasted.  Now, there are at total of $q_T + q_H$
-queries make to~$\HashOracle$, either directly by~$A$ or indirectly
+queries made to~$\HashOracle$, either directly by~$A$ or indirectly
 by~$A$ calling~$\TestOracle$.  For $\game{4}(A)$ to return 1, there
 must be~$r$ among these that increment the counter.  We can assume
 WLOG that~$A$ halts as soon as~$\err=r$ (which it can easily track),
 so there are $\binom{q_T+q_H-1}{r-1}$ possible ``winning'' query
 patterns to consider.  As each error event is independent of all
 previous choices made by the~$\HashOracle$, we need only consider the
-probability of a single error. Using Kirsch and Mitzenmacher's upper
-bound on false positive probability of a classical Bloom filter, 
+probability of a single error. Using Kirsch and Mitzenmacher's~\cite{kirsch2006less} upperbound on false positive probability of a classical Bloom filter, 
 we have  $\Prob{\game{4}(A)=1} = \binom{q_T+q_H-1}{r-1}\left( (1-e^{-kn/m})^k + O(1/n) \right)^r$.
-
-This implies that~$\game{4}$ managed to guess exactly the queries that would result in correctness errors, and hence
-$\Prob{\game{5}(A)=1} = \dfrac{1}{\binom{q_T + q_H}{r}}\Prob{\game{4}(A)=1}$.
 To summarize, 
 \[
 \AdvCorrect{\setprim_{\mathrm{Bloom}},r}{A} \leq  {\dbinom{q_T + q_H-1}{r-1}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
