@@ -50,7 +50,7 @@ to the Naor-Yogev treatment:
 \begin{itemize}
 \item We explicitly distinguish between public and private
     portions of a data structure, something that was left
-    ambiguous in~\cite{naor2015bloom}. This allows us, for
+    ambiguous\footnote{In fact, it isn't clear that their formalization actually allows for standard Bloom filters, although fixing this ambiguity is straightforward once recognized.} in~\cite{naor2015bloom}. This allows us, for
     example, to distinguish between the hash-function keys and
     the bit array when discussing classical Bloom filters.
 \item The Naor-Yogev definition of soundness allows the
@@ -66,35 +66,10 @@ to the Naor-Yogev treatment:
     prior work to understand how secure they are. In particular,
     we analyze Bloom filters in the random-oracle model.
 \end{itemize}
+
 We give a technical comparison of our correctness notion and theirs (lifted to our more general syntax)
 in Appendix~\ref{sec:xxx}. 
 
-\todo{Describe the BF variants we consider, and briefly why they are
-  natural/interesting.}
-\todo{Surface contribution of setting the stage for a bunch of future
-  work: dynamic data-structures (including counting BFs, stable BFs,
-  hierarchical BFs, count-min-sketches, etc.); security of common
-  usages of BF and related data structures (e.g. CDNs and other
-  distributed storage, find more); more generally bringing to the
-  attention of the community the need to give proper cryptographic
-  treatment to data structures (which may not have been conceived with
-  security-critical applications in mind but have been co-opted for
-  them (like BFs).}
-%false-positive error, is a parameter of the Bloom filter.  (The
-%values of~$\epsilon,m,k$, and $|\mathcal{S}|$ are related in a
-%well-known way.) NY recast this soundness condition as a game in
-%which an adversary~$A$ is given~$\mathcal{S}$ and an oracle for
-%set-membership queries, and it attempts to find one or more false
-%positives. The fact that~$A$ can \emph{adapt} its queries and its
-%output based on what it learns from the set-membership oracle (but,
-%as we will see, not upon the hash functions) is the key definitional
-%contribution of~NY.
-
-%Bloom filters have a broad range of practical applications, for
-%example, in content-distribution networks, large database query
-%processing, routing algorithms for peer-to-peer networks, protocols
-%for establishing linkages between medical-record databases, fair
-%routing of TCP packets, Bitcoin wallet synchonization~\cite{schnell2011novel,niedermeyer2014cryptanalysis,gervais2014privacy,nojima2009cryptographically,feng2001stochastic,reynolds2003efficient,byers2002informed,broder2004network}.
 
 \ignore{We provide various security notions for these primitives...
 FP with private, public representation coins; set privacy with

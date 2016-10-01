@@ -652,17 +652,16 @@ $\privaux=\langle K \rangle$.  Now,
 however, the work switches from offline hash evaluations (i.e., random
 oracle calls) to online set-membership (i.e., $\TestOracle$) queries.
 
-
-Switching now to the case of a \emph{private}-$M$ GBF, i.e., $\pubaux=\emptystring, \privaux=\langle M \rangle$, we have the
-following correctness bound. \fixme{Probably punt on this until the
-  full version}
+In the full version of this paper, we will give a correctness bound
+for the \emph{private}-$M$ GBF, i.e., $\pubaux=\emptystring,
+\privaux=\langle M \rangle$, in the random-oracle model.  
 %
-\begin{theorem}[{\rm Correctness of private-$M$ GBF in the ROM}]\label{thm:gbf-correctness}
-Fix $k,m,n,r,\lambda>0$, and let $\setprim_{\mathrm{gbf}}=(\Rep, \Qry)$ be the private-$M$ garbled Bloom filter. For any adversary~$A$ that makes a total of~$q_T$ queries to the $\Test$ oracle, and $q_R$ queries to the RO, and has time-complexity~$O(t)$,
-\[
-\AdvCorrect{\setprim_{\mathrm{gbf}},r}{A} \leq \mbox{\fixme{}}
-\]
-\end{theorem}
+%\begin{theorem}[{\rm Correctness of private-$M$ GBF in the ROM}]\label{thm:gbf-correctness}
+%Fix $k,m,n,r,\lambda>0$, and let $\setprim_{\mathrm{gbf}}=(\Rep, \Qry)$ be the private-$M$ garbled Bloom filter. For any adversary~$A$ that makes a total of~$q_T$ queries to the $\Test$ oracle, and $q_R$ queries to the RO, and has time-complexity~$O(t)$,
+%\[
+%\AdvCorrect{\setprim_{\mathrm{gbf}},r}{A} \leq \mbox{\fixme{}}
+%\]
+%\end{theorem}
 
 \heading{Privacy. }
 We observe immediately that when~$\pubaux=\langle M \rangle$ the GBF cannot be SS-private (in the ROM) because $\privaux=\emptystring$.  In fact, the correctness attack given above suggests a one-wayness attack in the ROM, too; see the right half of Figure~\ref{fig:adv-gbf}.   The naive attack would simply output the most probable element in the support of the distribution $\distr{}{}$ used in the one-wayness experiment to sample~$S$.  But when~$M$ and the hash functions are available to the attacker, it can carry out set-membership tests for itself.  Thus the adversary on the right of Figure~\ref{fig:adv-gbf} tries the~$q-1$ most probable points, in order, halting with its output as soon as the set-membership test is successful.  If none of these points are yield a successful test, then the next most probable point is output.  It is not hard to conclude the following theorem.
