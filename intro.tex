@@ -19,12 +19,24 @@ privacy concerns do not arise. In some scenarios, however, it may be
 desirable to allow some party to pose (certain types of) queries to
 a data structure, but unacceptable to leak the data in its entirety
 to that same party. Existing definitions do not address privacy in
-this sense at~all.
+this sense at~all. The concerns outlined above motivate a careful, formal treatment of data structures in an adversarial setting, 
+where both \emph{correctness} and \emph{privacy} are considered. In this work we initiate such a
+treatment for abstract data structures.  
 
-The concerns outlined above motivate a careful treatment of data
-structures in an adversarial setting, where both \emph{soundness}
-and \emph{privacy} are considered. In this work we initiate such a
-treatment for abstract data structures, and also explore the
+Loosely speaking, we formalize a data structure as a pair of algorithms $(\Rep,\Qry)$, the representation and query-evaluation algorithms, respectively.  The randomized representation algorithm takes in an abstract object~$S$ and produces public representation data $\pubaux$ and private representation data $\privaux$.  Intuitively, $\pubaux$ is considered public information, whereas $\privaux$ is meant to be known only to the party running $\Qry$.  The deterministic query-evaluation algorithm uses $\pubaux$ and $\privaux$ in order to (approximately) evaluate permitted queries $\qry$, which are arbitrary functions over abstract objects.  We say ``approximately''  evaluate permitted queries because $\pubaux$ and $\privaux$ may not contain all of the information sufficient to determine the true value of $\qry(S)$ for all~$S$.  
+
+Let us give an example.  Consider the classic Bloom filter~\cite{bloom1970space}, in which case $\pubaux$ will consist of the bit array~$M$ that represents a given set~$S$, as well as descriptions of the hash functions $H_1,H_2,\ldots,H_k$ used to produce~$M$; $\privaux$ will be empty.  The permitted queries will be predicates of the form $\qry_x(S)=1$ iff $x \in S$. The~$\Qry$ algorithm, on input $M,H_1,H_2,\ldots,H_k$ and $\qry_x$, carries out the standard Bloom filter set-membership test to decide whether or not $x \in S$.  It is well known that Bloom fiters admit false-positive errors, thus $\Qry$ only approximates the true set-membership test.  Our correctness security notion will quantitatively capture the approximation error, but in the presense of attackers that adaptively try to induce one or more errors (false-positives, in this case).  
+
+By shifting $H_1,H_2,\ldots,H_k$ from $\pubaux$ to $\privaux$, we do not change the functionality at all.  But we may very well change the security profile of the resulting Bloom filter variant.  Indeed, this is the case.  When $H_1,H_2,\ldots,H_K$ are assumed to be good pseudorandom functions, we can prove that this variant achieves a kind of ``semantic security'' privacy guarantee: the bit array~$M$ is well known to leak a good approximation of~$|S|$, and our notion shows that it leaks nothing more than this.  (Such a result is not possible for the standard Bloom filter, or any other data structure with empty~$\privaux$.)
+
+This example offers a hint at the broad range of abstract data structures our syntax supports.  In this paper, we put the syntax and our security notions to work, analyzing Bloom filters in the random oracle model~\cite{broder2004network}, with PRFs for hash functions{niedermeyer2014cryptanalysis,naor2015bloom}, and with secret hash functions that fall short of being PRFs (so-called ``linear-PRF'' hash functions~\cite{kirsch2006less,niedermeyer2014cryptanalysis}), each representing an in-use or proposed Bloom filter variant.  The linear-PRF Bloom filter provides an opportunity to see just how brittle constructions can be to their usage.  When used to create a representation of a set, we prove that the linear-PRF Bloom filter offers both correctness and privacy.  However, when applied to a multiset (effectively) privacy is lost.  In fact, Niedermeyer et al.~\cite{niedermeyer2014cryptanalysis} show that the linear PRF Bloom filter, when applied to a collection of bigrams of German last names, admits a practical attack that reveals the names.  Note that this is despite the fact that the hash functions are constructed from secretly-keyed PRFs in a way that has been suggested in recent literature on Bloom filter variants~\cite{kirsch2006less}.  We also consider garbled Bloom filters, proposed by Dong et al.~\cite{dong2013private} as a key piece of a private set-intersection protocol.
+
+We see this work as laying the foundation for a number of follow-on studies.  For example to study dynamic data structures, such as counting Bloom filters\cite{xxx}, stable Bloom filters~\cite{xxx}, count-min sketches~\cite{xxx}, hierachical Bloom filters~\cite{xxx}, to name just a few in the extended Bloom filter family.  Another direction would be to explore the security of primitives built \emph{from} these sorts of data structures, such as content-distribution networks (where many servers propogate representations of their local cache to their neighbors)
+
+ and the security of primitives built on top of abstract data structures.
+
+We also explore the
+
 security of several specific data structures---that can all be
 viewed as generalizations of Bloom
 filters~\cite{bloom1970space}---supporting (approximate)
@@ -37,6 +49,13 @@ that we are able surface ways in which constructions
   a common pattern (which, for privacy, we tease out in a general
   theorem), and that often the most technically difficult part is
   connecting the adaptive setting to the zero-query setting.}
+
+%Bloom filters have a broad range of practical applications, for
+%example, in content-distribution networks, large database query
+%processing, routing algorithms for peer-to-peer networks, protocols
+%for establishing linkages between medical-record databases, fair
+%routing of TCP packets, Bitcoin wallet synchonization~\cite{schnell2011novel,niedermeyer2014cryptanalysis,gervais2014privacy,nojima2009cryptographically,feng2001stochastic,reynolds2003efficient,byers2002informed,broder2004network}.
+
 
 \heading{Comparison to~\cite{naor2015bloom}.} Naor and
 Yogev~\cite{naor2015bloom} recently considered the problem of
