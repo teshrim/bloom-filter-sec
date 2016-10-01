@@ -12,7 +12,7 @@ $\langle x,y,\ldots \rangle$ for the encoding of values $x,y,\ldots$
 as a single bit-string, for some implicit and invertible encoding
 method. When $x$ is a string, we write $x[i]$ for the $i$-th element
 in that string, and $x[i:j]$ for the substring $x[i]x[i+1]\cdots
-x[j]$.  \tsnote{need subset of size~$r$ notation}
+x[j]$.  %\tsnote{need subset of size~$r$ notation}
 
 \subsection{Data Structures}
 
@@ -42,11 +42,6 @@ universe $\univ$) is a tuple $\setprim=(\Rep, \Qry)$ where:
 \end{itemize}
 \end{definition}
 
-\todo{Insert discussion of syntax, if needed.  If we think it is
-  helpful to discuss the size of the representation, we can declare it
-as $|\pubaux|+|\privaux|$ and comment that if one wants to compare to
-classical size bounds, a more fine-grained separation of the output of
-$\Rep$ would allow this.}
 
 \begin{definition}[Error probability and rate] \rm
 For a specific data structure $\setprim=(\Rep, \Qry)$ supporting
@@ -67,10 +62,6 @@ which are the \emph{error probability} and \emph{error rate}, respectively.
 %\mathrm{Err}(S,\qry,\pubaux,\privaux)=1]} \leq \tilde{\epsilon}. \]
 \hfill\dqed
 \end{definition}
-\todo{Words :)  Can compare the (normal) error probability to
-  the adversarial soundness probability.  Perhaps pull back some of
-  the previous example for building intuition about the difference
-  between the two.}
 
 
 %We will sometimes say that a data structure is
@@ -127,8 +118,7 @@ $\Prob{\mathrm{Err}_i=1}=1/|\univ| \ll 1/n = \epsilon$.
 
 %\heading{Data structures for set-membership queries.}
 An important special case is a data structure that supports set-membership
-queries. \jnote{I changed this from multiplicity to membership.}
-
+queries. 
 \begin{definition} \rm
 A \emph{set-membership data structure over $\elts$} is a data
 structure with $\univ \subseteq 2^\elts$, $\Gamma=\{0,1\}$, and

@@ -1,17 +1,8 @@
 
 \section{Security Notions}
 \label{sec:security-notions}
-Following NY, we are interested in defining an adaptive (i.e.,
-adversarial) notion of correctness.
-In addition to correctness, we establish notions of privacy for data structures.
-
-
-
-%\fixme{Do we say that all notions can be extended to the ROM by giving
-%all all algorithms to a RO~$H$?  Is this true for the SS-privacy
-%notion?  (It seems to make sense elsewhere.)} \jnote{I think there are subtleties for the SS notion.}
-
-\todo{flesh out opening text}
+Following NY, we are interested in defining an adaptive (i.e.,adversarial) notion of correctness.
+In addition to correctness, we establish two kinds of privacy notions for data structures.
 
 \subsection{Correctness Against Adaptive Adversaries}
 
@@ -56,9 +47,7 @@ algorithms $\Rep,\Qry$ with access to the
 random oracle, and providing $A$ with such access as well in the
 second stage of its execution. (We do not provide $A$ with access to
 the random oracle during the first stage when it selects~$S$, as that set
-should have no dependence on the random oracle.) \jnote{In ``practice'' wouldn't someone
-just use SHA as their random oracle, hence providing an attacker with the ability
-to make $S$ depend on the random oracle? This point needs to be justified a bit.}
+should have no dependence on the random oracle.) 
 
 %\jnote{I changed $\TestOracle$ so that it outputs $(a, q(S))$ rather
 %than $(a,\mathrm{err})$. Note that the latter can be computed from the former,
@@ -124,7 +113,7 @@ many correlated queries that also cause errors.)
 At the other extreme, for any $r$ there also exists a data structure
 with $\AdvCorrect{\setprim,r}{t,r}=1$ but  $\AdvCorrect{\setprim,r+1}{t,\infty}=0$;
 any data structure that always ensures that there are exactly $r$ (easy to find)
-queries that cause an error will~do. \jnote{Not sure if it is worthwhile being more formal.}
+queries that cause an error will~do. %\jnote{Not sure if it is worthwhile being more formal.}
 We remark that the Naor-Yogev definition does not capture such distinctions
 at all.
 
@@ -162,10 +151,8 @@ of the representation of some set should not allow an attacker to deduce any ele
 (better than what the attacker could have done without the public representation).
 This may suffice for many practical applications.
 
-\subsubsection{A Simulation-Based Definition }
-
-\jnote{I like ``simulation-based security'' rather than ``semantic security.''}
-
+\heading{A Simulation-Based Definition. }
+%\jnote{I like ``simulation-based security'' rather than ``semantic security.''}
 Our simulation-based definition is given in
 Figure~\ref{fig:privacy-ss}.
 In this definition we compare the probabilities with which an attacker $A$ outputs~1
@@ -248,8 +235,7 @@ consider ${\sf leak}(S)=|S|$ as minimal leakage.) This is by analogy with encryp
 which generally leaks the length of the message being encrypted.
 
 
-\subsubsection{``One-wayness''}
-
+\heading{``One-wayness''.}
 Here we specialize to the case of set-membership data structures.
 Our one-wayness notion is defined in Figure~\ref{fig:privacy-ow}.
 The relevant experiment begins by first sampling a set $S$ according to a distribution
@@ -325,12 +311,12 @@ so an attack is only interesting if it performs better than this.
 %  definition.}
 %\label{fig:privacy-dss}
 %\end{figure}
-\todo{A simple theorem that says if $\privaux=\emptystring$ then
-  SS-privacy is unachievable for any leakage other than $\leak(S)=S$?
-It's at least worth a highlighted remark, I think.  Currently it is a
-remark in the classical BF section, but it seems worth ``pulling up''.} \jnote{Yes, agreed.}
-\todo{Since we mention what happens with $\privaux=\emptystring$, also
-mention what happens with $\pubaux=\emptystring$ :)}
+%\todo{A simple theorem that says if $\privaux=\emptystring$ then
+ % SS-privacy is unachievable for any leakage other than $\leak(S)=S$?
+%It's at least worth a highlighted remark, I think.  Currently it is a
+%remark in the classical BF section, but it seems worth ``pulling up''.} \jnote{Yes, agreed.}
+%\todo{Since we mention what happens with $\privaux=\emptystring$, also%
+%mention what happens with $\pubaux=\emptystring$ :)}
 
 \heading{Relationships between the notions.}
 Intuition suggests that semantic security should imply one-wayness. And, indeed, this is
@@ -379,7 +365,7 @@ The theorem follows. \hfill\qed
 %  \in S$.} \jnote{Since we can set $\pubaux$ to be the emptystring, I think
 %  it is trivial to see that privacy does not imply correctness.}
 
-\subsubsection{Privacy of ``Canonical'' Data Structures }
+\heading{Privacy of ``Canonical'' Data Structures. }
 Here we prove a result that will be used in the next section
 to show that a large class of
 set-membership
