@@ -172,6 +172,45 @@ $\Ans[y] \gets (1, (v_1, \ldots, v_{k}))$\\
 Return $\left(v_1,\ldots,v_k\right)$
 }
 }
+\fpage{.85}{
+\hpagessl{.45}{.5}
+{
+\underline{$\game{6}(A)$}\\
+$c\gets 0$, $\bad \gets \false$\\
+$\err \gets 0$;  $\calC \gets \emptyset$\\
+$S \getsr A$\\
+$\mathcal{I}\getsr [\{1,2,\ldots,q_T + q_H\}]^r$\\
+$(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+$\bot \getsr A^{\TestOracle,\HashOracle}(\pubaux)$\\
+if $\bad = \true$ then Return 0\\
+if $\err  < r$ then Return 0\\
+Return 1\\
+
+\oracle{$\TestOracle(\qry_x)$}\\
+if $x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup x$\\
+if $\Ans[x] = \undefined$\\
+\nudge $(h_1, \ldots, h_{k}) \gets \HashOracle(\qry_x)$\\
+Return $\Ans[x]$\\
+}
+{
+\oracle{$\HashOracle(\qry_y)$}\\
+$c \gets c + 1$\\
+for $j \in \{1,2,\ldots,k\}$\\
+\nudge $v_j \getsr [m]$\\
+%
+$M \gets\privaux$\\
+$y' \gets M[v_1] \xor M[v_2] \xor \ldots \xor M[v_k]$\\
+if $y' \neq y$ then \\
+\nudge $\Ans[y] \gets (0,y', (v_1, \ldots, v_{k}) )$\\
+\nudge if $c \in \calI$ then $\bad \gets \true$\\
+\nudge Return $\left(v_1,\ldots,v_k\right)$\\
+if $c \notin \calI$ then $\bad \gets \true$\\
+$\err \gets \err +1$\\
+$\Ans[y] \gets (1, (v_1, \ldots, v_{k}))$\\
+Return $\left(v_1,\ldots,v_k\right)$
+}
+}
 \caption{Games $\game{4}$-$\game{5}$ and zero-query adversary~$A_0$ for the
 proof of Theorem~\ref{thm:gbf-correctness}.}
 \label{fig:gbf-correctness-games2}
