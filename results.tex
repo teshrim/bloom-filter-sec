@@ -200,18 +200,20 @@ On input a set of distinct elements $S=\{x_1,x_2,\ldots,x_n\}$, algorithm~$\Rep_
 $M \gets 0^m$; $K \getsr \calK$\\
 for $x \in S$\\
 %\jnote{Fix}\tsnote{Fix what?}\\
+\nudge $f_1 \gets F_{K}(\langle 1,x \rangle)$, $f_2 \gets F_{K}(\langle 2,x \rangle)$\\
 \nudge for $j \in \{1,2,\ldots,k\}$\\
-\nudge\nudge $h_j \gets F_{K}(\langle 1,x \rangle) + j\cdot F_{K}(\langle 2,x \rangle) \bmod m$\\
+\nudge\nudge $h_j \gets f_1 + j\cdot f_2 \bmod m$\\
 \nudge\nudge $M[h_j] \gets 1$\\
-%$\pubaux \gets M$, $\privaux \gets \langle K \rangle$\\
-Return $(\pubaux=M,\privaux=K)$\\
+$\pubaux \gets M$, $\privaux \gets \langle K \rangle$\\
+Return $(\pubaux,\privaux)$\\
 
 \medskip
-\algorithmv{$\Qry(\pubaux=M,\privaux=K,q_x)$}\\
-%$M\gets\pubaux$, $K \gets \privaux$\\
+\algorithmv{$\Qry(\pubaux,\privaux)$}\\
+$M\gets\pubaux$, $K \gets \privaux$\\
 %\jnote{Fix}\tsnote{Fix what?} \\
+$f_1 \gets F_{K}(\langle 1,x \rangle)$, $f_2 \gets F_{K}(\langle 2,x \rangle)$\\
 for $j \in \{1,2,\ldots,k\}$\\
-\nudge $h_j \gets F_{K}(\langle 1,x \rangle) + j\cdot F_{K}(\langle 2,x\rangle) \bmod m$\\
+\nudge $h_j \gets f_1 + j\cdot f_2 \bmod m$\\
 \nudge if $M[h_j] \neq 1$ then Return 0\\
 Return 1
 }
@@ -223,9 +225,9 @@ for each $x \in S$\\
 \nudge $M_x \gets 0^m$\\
 \nudge $B_x \gets \mathsf{bigram}(x)$\\
 \nudge for each $b \in B_x$\\
+\nudge\nudge $f_1 \gets F_{K}(\langle 1,b \rangle)$, $f_2 \gets F_{K}(\langle 2,b \rangle)$\\
 \nudge\nudge for $j \in [k]$\\
-\nudge\nudge\nudge $i \gets F_{K}(\langle 1, b\rangle)+j\cdot
-F_{K}(\langle 2, b  \rangle) \bmod m$\\
+\nudge\nudge\nudge $i \gets f_1+j\cdot f_2 \bmod m$\\
 \nudge\nudge\nudge $M_x[i] \gets 1$\\
 \nudge $\pubaux \gets \langle\pubaux, M_x \rangle$\\
 $\privaux \gets \langle K_1,K_2 \rangle$\\
@@ -237,7 +239,8 @@ $B \gets \mathsf{bigram}(x)$\\
 $\overline{M} \gets 0^m$\\
 for each $b \in B$\\
 \nudge for $j \in [k]$\\
-\nudge\nudge $i \gets F_{K}(\langle 1,b \rangle)+j\cdot F_{K}(\langle 2,b \rangle) \bmod m$\\
+\nudge\nudge $f_1 \gets F_{K}(\langle 1,b \rangle)$, $f_2 \gets F_{K}(\langle 2,b \rangle)$\\
+\nudge\nudge $i \gets f_1+j\cdot f_2 \bmod m$\\
 \nudge\nudge $\overline{M}[i] \gets 1$\\
 if $\overline{M} \in \pubaux$ then Return 1 \\
 Return 0
@@ -249,9 +252,8 @@ The $\mathsf{bigram}$ algorithm takes a
 string~$x=x_1,x_2,\ldots,x_\ell$ as input, and returns the set of
 bigrams for the left- and right-padded string $\sqcup x \sqcup$,
 i.e. $\{\sqcup x_1, x_1x_2,\ldots,x_{\ell-1}x_\ell,x_\ell\sqcup\}$.
-\jnote{I would emphasize that $F_K(\cdot)$ is computed only twice
-per inner loop (which is the whole point of this scheme) by moving
-that computation outside the loop.}} \label{fig:lin-and-bi-lin}
+Both schemes use a function family $F\colon \calK \times \bits^* \to [m]$.
+}\label{fig:lin-and-bi-lin}
 \label{fig:niedermeyer}
 \end{figure}
 
