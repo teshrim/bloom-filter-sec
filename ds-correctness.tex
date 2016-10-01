@@ -3,7 +3,7 @@
 \newcommand{\OK}{\calO(\langle j,x \rangle)}
 
 \begin{proof}[Theorem~\ref{thm:ds-correctness}]
-\fixme{Animesh: remove these Cref things and replace with references
+%\fixme{Animesh: remove these Cref things and replace with references
   like I have them in the text.}
 We use a game playing argument to prove this theorem. Please refer to
 Figure~\ref{fig:ds-correctness-games}. In game \game{0} adversary $A$ attacks the xcorrectness game with  hash functions $h_j(x) = \FK $, and hence exactly simulates $\ExpCorrect{\setprim_{\mathrm{ds}},r}{A}$.
@@ -22,9 +22,9 @@ By a standard conditioning of PRF advantage, we have
 \Prob{\game{0}(A)=1} = \AdvPRF{F}{B} + \Prob{\game{1}(A)=1}%\label{eq:13}
 \end{equation*}
 
-Coming back to the game playing argument, in game $\game{2}$, $\HashOracle$ returns random values sampled from $[m]$, assuming $A$ makes no pointless queries. In addition, the $\Test$ oracle keeps a counter, $c$ to keep track of the number of queries by $A$ to the $\Test$. It also sets a boolean $\bad$ flag to $\false$ if queries which are not indexed by the $r$-set $\calI$ are false-positives, and queries indexed by set $\calI$ are not false-positives. It must be noted that $\bad$ does not affect the output of the $\Test$ or the game. We argue that, $\Prob{\game{1}(A)=1} \leq \Prob{\game{2}(A)=1}$. Game $\game{3}$ is identical to $\game{2}$, except it returns 0 if $\bad$ is set to $\true$. $\game{3}$ returns 1 whenever $\game{2}$ would return 1, and $\bad$ remained false in $\game{2}$. So, basically $\game{3}$ guessed exactly the $r$ queries that results in errors. Hence, $\Prob{\game{3}(A)=1} = \frac{1}{\binom{q}{r}}\Prob{\game{2}(A)=1}$.
+Coming back to the game playing argument, in game $\game{2}$, $\HashOracle$ returns random values sampled from $[m]$, assuming $A$ makes no pointless queries. In addition, the $\TestOracle$ oracle keeps a counter, $c$ to keep track of the number of queries by $A$ to the $\TestOracle$. It also sets a boolean $\bad$ flag to $\false$ if queries which are not indexed by the $r$-set $\calI$ are false-positives, and queries indexed by set $\calI$ are not false-positives. It must be noted that $\bad$ does not affect the output of the $\TestOracle$ or the game. We argue that, $\Prob{\game{1}(A)=1} \leq \Prob{\game{2}(A)=1}$. Game $\game{3}$ is identical to $\game{2}$, except it returns 0 if $\bad$ is set to $\true$. $\game{3}$ returns 1 whenever $\game{2}$ would return 1, and $\bad$ remained false in $\game{2}$. So, basically $\game{3}$ guessed exactly the $r$ queries that results in errors. Hence, $\Prob{\game{3}(A)=1} = \frac{1}{\binom{q}{r}}\Prob{\game{2}(A)=1}$.
 
-Let $D$ be a zero-query adversary(shown in Figure~\ref{fig:lin-correctness-zq-adv}) corresponding to $A$ attacking $\game{3}$; it finds $r$ false positives against $\tilde{\setprim}_{\mathrm{ds}}$. It simulates the~$\Test$ oracle by returning 1 on the guessed queries, and 0 otherwise; and it halts after finding $r$ false-positives. Intuitively, it  guesses which~$r$ of~$A$'s queries will be false positives.  So, $\AdvCorrect{\tilde{\setprim}_{\mathrm{ds}},r}{D} = \Prob{\game{3}(A) = 1}$.
+Let $D$ be a zero-query adversary(shown in Figure~\ref{fig:lin-correctness-zq-adv}) corresponding to $A$ attacking $\game{3}$; it finds $r$ false positives against $\tilde{\setprim}_{\mathrm{ds}}$. It simulates the~$\TestOracle$ oracle by returning 1 on the guessed queries, and 0 otherwise; and it halts after finding $r$ false-positives. Intuitively, it  guesses which~$r$ of~$A$'s queries will be false positives.  So, $\AdvCorrect{\tilde{\setprim}_{\mathrm{ds}},r}{D} = \Prob{\game{3}(A) = 1}$.
 
 It can be easily seen that  $\tilde{\setprim}_{\mathrm{ds}}$ is the scheme that is analyzed in the classical Bloom filter literature. So, for a zero-query adversary $D$ and $r=1$, advantage of $D$ to win $\ExpCorrect{\tilde{\setprim}_{\mathrm{ds}},r}$ will be upper bounded by the false-positive probability of a classical Bloom filter. For $r > 1$, based on the assumption that $A$ makes no pointless queries, the queries made by $A$ are distinct and not elements of the original set $S$. Also, since $\HashOracle$ in $\game{3}$ returns $k$ random values for each query, the event of getting a false positive is independent of the index of the query. So, $\AdvCorrect{\tilde{\setprim}_{\mathrm{ds}},r}{D} =   {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r$
 
@@ -176,7 +176,7 @@ On input $\pubaux$:\\
 }
 \caption{Left: Adversary $B$ simulating $\game{0}(A)$ and $\game{1}(A)$ respectively for the
 proof of Theorem~\ref{thm:ds-correctness}. Right: Zero-query adversary $D$ for Theorems~\ref{thm:ds-correctness} and ~\ref{thm:lin-correctness}.}\label{fig:ds-correctness-adv}\label{fig:lin-correctness-zq-adv}
-\fixme{Animesh: remove Crefs, make caption refer to correct theorem}
+%\fixme{Animesh: remove Crefs, make caption refer to correct theorem}
 \end{figure}	
 
 \end{proof}
