@@ -265,7 +265,7 @@ rate of convergence is faster than~$1/n$.
 the multiplicative term $\binom{q}{r}$ arises when switching from the adaptive to zero-query settings.
 The proof will appear in the full version, but we note that it very
 closely follows the proof of correctness for the DS PRF-hash
-construction, Theorem~\ref{thm:ds-correctness}
+construction, Theorem~\ref{thm:ds-correctness}.
 %\input{lin-correctness}
 
 
@@ -298,7 +298,14 @@ On input $n,F_K(s_1),F_K(s_2),\ldots,F_K(s_{2n-1}) , F_K(s_{2n})$, algorithm $\R
 %\todo{Correctness theorem for this scheme.  Should follow pretty closely the one for ``plain'' linear-PRF.}\tsnote{Actually not sure this is that interesting, but for parallel structure one would want to give it.}
 \heading{Privacy. }
 Consider the set-membership data structure given in Figure~\ref{fig:lin-and-bi-lin} (right side), which we call the \emph{bigram linear-PRF} construction.  This construction is of practical interest, as it has been suggested as a way to address the privacy-preserving record-linkage problem, in particular for linking common records in medical databases~\cite{niedermeyer2014cryptanalysis,schnell2011novel}.
-We only address the privacy of this construction, as the correctness follows immediately from the correctness of the Linear-PRF construction.  The privacy, however, does not.  Here we exhibit an efficient SS-privacy attack even when simulator is provided nearly the entire set.  Consider the following ``all-but-last'' leakage function.  On input a set~$S=\{x_1,x_2,\ldots,x_n\}$, it assigns $x'_n \gets x_n[1:|x_n|-1]$ and returns $\mathsf{leak_{abl}}(S)=\{x_1,x_2,\ldots,x'_n\}$.  \todo{OW privacy proof? Or just some text that says that Niedermeyer et al. show something stronger~---OW-privacy violation---~albeit with $n=10000, m=10000\alpha$ for an $\alpha$ that I need to look up.}
+We only address the privacy of this construction, as the correctness
+follows immediately from the correctness of the Linear-PRF
+construction.  The privacy, however, does not.  Here we exhibit an
+efficient SS-privacy attack even when simulator is provided nearly the
+entire set.  Consider the following ``all-but-last'' leakage function.
+On input a set~$S=\{x_1,x_2,\ldots,x_n\}$, it assigns $x'_n \gets
+x_n[1:|x_n|-1]$ and returns
+$\mathsf{leak_{abl}}(S)=\{x_1,x_2,\ldots,x'_n\}$.
 
 \begin{figure}[tp]
 \centering
@@ -605,7 +612,7 @@ the xor-shares stored in~$M$ are random strings.  (Note that
   this is independent of~$k,m,n$; although $k>1$ is required for the
   xor shares.)  However, this analysis implicitly assumes that the potential false-positive string~$x$ is fixed
 \emph{before}~$M$ is determined.  We will see that this carries over
-\tsnote{I think?} to the case in which~$M$ is private (i.e.,
+ to the case in which~$M$ is private (i.e.,
 $\pubaux=\emptystring,\privaux=\langle M \rangle$), but when~$M$ is
 public things are different.
 
