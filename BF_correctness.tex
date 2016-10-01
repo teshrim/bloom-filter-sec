@@ -7,12 +7,28 @@ Game $\game{1}$ is exactly same as game $\game{0}$ except the $\Qry$ call (insid
 
 In game $\game{2}$, the $\Test$ oracle is altered to return the hash values~$h_1,h_2,\ldots, h_k$ in addition to the result of executing the code of $\Qry$.  As this only provides additional information to the adversary, $\Prob{\game{1}(A) = 1} \leq \Prob{\game{2}(A) = 1}$.
 
-In $\game{3}$, we modify the $\HashOracle$ oracle so that on query~$\qry_x$ it returns all of the~$k$ values that previously would have required calls $\HashOracle(1,\qry_y),\HashOracle(2,\qry_y),\ldots,\linebreak\HashOracle(k,\qry_y)$.  This results in adversary getting $(k-1)$ hash values ``for free'', as we charge the adversary only for a single query.  We alter the $\TestOracle$ oracle accordingly, so that it makes a single call $\Hash(\qry_x)$ rather than~$k$ such calls.  
-We do this so that we can assume that a call~$\HashOracle(\qry_x)$ is pointless after a~$\TestOracle(\qry_x)$ call, and this will aid us in subsequent games.  \fixme{for BF proof, this actually does more, it makes a hash query as good as a test query, because~$M$ is public.}  Thus, $\Prob{\game{2}(A) = 1} \leq \Prob{\game{3}(A) = 1}$. 
+In $\game{3}$, we modify the $\HashOracle$ oracle so that on query~$\qry_x$ it returns all of the~$k$ values that previously would have required calls $\HashOracle(1,\qry_y),\HashOracle(2,\qry_y),\ldots,\linebreak\HashOracle(k,\qry_y)$.  This results in adversary getting $(k-1)$ hash values ``for free'', as we charge the adversary only for a single query.  We alter the $\TestOracle$ oracle accordingly, so that it makes a single call $\Hash(\qry_x)$ rather than~$k$ such calls.  We do this so that we can assume that a call~$\HashOracle(\qry_x)$ is pointless after a~$\TestOracle(\qry_x)$ call, and this will aid us in subsequent games.  \fixme{for BF proof, this actually does more, it makes a hash query as good as a test query, because~$M$ is public.} Thus, $\Prob{\game{2}(A) = 1} \leq \Prob{\game{3}(A) = 1}$.  We assume from Game~$\game{3}$ and on that $\Rep$ is also appropriately modifed for the new behavior of~$\HashOracle$.
 
-Game~$\game{4}$ contains some important changes from game~$\game{3}$, but we will argue that $\Prob{\game{3}(A) = 1} \leq \Prob{\game{4}(A) = 1}$.  To begin, in game~$\game{4}$ we sample an $r$-subset of indices from~$\{1,2,\ldots,q_H+q_T\}$.  (We will see why, shortly.)  Next, the $\TestOracle$ oracle on input~$\qry_x$ no longer computes its answer directly, but instead refers to a new table~$\mathrm{Ans}[x]$ which is populated upon calls to the $\HashOracle$ oracle.  In particular, if $\mathrm{Ans}[x]$ is undefined, $\TestOracle$ makes a $\HashOracle(\qry_x)$ call; otherwise, it returns the contents of~$\mathrm{Ans}[x]$, which contains exactly the values that~$\TestOracle(\qry_x)$ would have returned in the previous game.  The $\HashOracle$ oracle, on input~$\qry_y$ computes the random values~$v_1,v_2,\ldots,v_k$ as in $\game{3}$.  (We no longer need to maintain the table~$T$ because hash values are only determined by~$\HashOracle$ calls, and these are never repeated under our no-pointless-query assumption.)  It then computes the answer that~$\TestOracle(\qry_x)$ would return, in game~$\game{3}$, and stores the answer in~$\mathrm{Ans}[x]$ for use by~$\TestOracle$.  The $\HashOracle$ oracle also introduces a query counter~$c$, which is incremented whenever~$\HashOracle$ is called, either directly by~$A$ or via~$A$ having made a~$\TestOracle$ query on~$\qry_x$ where~$\mathrm{Ans}[x]$ had not been previously defined by a~$\HashOracle(\qry_x)$ call.  \fixme{for BF proof, we can assume that $\TestOracle(\qry_x)$ is never made after a~$\HashOracle(\qry_x)$ call, because~$M$ is public.  And vice versa.  So the maximum value of~$c = q_T + q_H$.}  (Note that the maximum value of~$c$ is $q_T + q_H$.)  The set~$\calI$ contains a set of~$r$ distinct values from $\{1,2,\ldots,q_T+q_H\}$ and, intuitively, these are the game's ``guesses'' at the $\HashOracle$ queries that will result in a correctness error.  If these~$r$ guesses are incorrect, then a boolean flag~$\bad$ is set, although in game~$\game{4}$ the value of~$\bad$ has no effect on the games execution; in particular, $\game{4}$ does \emph{not} contain the boxed ``Return 0'' statement.
+Game~$\game{4}$ contains some important changes from game~$\game{3}$,
+but we will argue that $\Prob{\game{3}(A) = 1} \leq \Prob{\game{4}(A)
+  = 1}$.  To begin, in game~$\game{4}$ we sample an $r$-subset of
+indices from~$\{1,2,\ldots,q_H+q_T\}$.  (We will see why, shortly.)
+Next, the $\TestOracle$ oracle on input~$\qry_x$ no longer computes
+its answer directly, but instead refers to a new
+table~$\mathrm{Ans}[x]$ which is populated upon calls to the
+$\HashOracle$ oracle.  In particular, if $\mathrm{Ans}[x]$ is
+undefined, $\TestOracle$ makes a $\HashOracle(\qry_x)$ call;
+otherwise, it returns the contents of~$\mathrm{Ans}[x]$, which
+contains exactly the values that~$\TestOracle(\qry_x)$ would have
+returned in the previous game.  The $\HashOracle$ oracle, on
+input~$\qry_y$ computes the random values~$v_1,v_2,\ldots,v_k$ as in
+$\game{3}$.  
+%(We no longer need to maintain the table~$T$ because hash values are
+%only determined by~$\HashOracle$ calls, and these are never repeated
+%under our no-pointless-query assumption.)  
+It then computes the answer that~$\TestOracle(\qry_x)$ would return, in game~$\game{3}$, and stores the answer in~$\mathrm{Ans}[x]$ for use by~$\TestOracle$.  The $\HashOracle$ oracle also introduces a query counter~$c$, which is incremented whenever~$\HashOracle$ is called, either directly by~$A$ or via~$A$ having made a~$\TestOracle$ query on~$\qry_x$ where~$\mathrm{Ans}[x]$ had not been previously defined by a~$\HashOracle(\qry_x)$ call.  \fixme{for BF proof, we can assume that $\TestOracle(\qry_x)$ is never made after a~$\HashOracle(\qry_x)$ call, because~$M$ is public.  And vice versa.  So the maximum value of~$c = q_T + q_H$.}  (Note that the maximum value of~$c$ is $q_T + q_H$.)  The set~$\calI$ contains a set of~$r$ distinct values from $\{1,2,\ldots,q_T+q_H\}$ and, intuitively, these are the game's ``guesses'' at the $\HashOracle$ queries that will result in a correctness error.  If these~$r$ guesses are incorrect, then a boolean flag~$\bad$ is set, although in game~$\game{4}$ the value of~$\bad$ has no effect on the games execution; in particular, $\game{4}$ does \emph{not} contain the boxed ``Return 0'' statement.
 
-Games~$\game{4}$ and $\game{5}$ are identical except for this boxed statement.  In particular, game~$\game{5}$ returns 1 exactly when~$\game{4}$ would return 1 \emph{and} the boolean~$\bad$ would have remained false in~$\game{4}$.   This implies that~$game{4}$ managed to guess exactly the queries that would result in correctness errors, and hence
+Games~$\game{4}$ and $\game{5}$ are identical except for this boxed statement.  In particular, game~$\game{5}$ returns 1 exactly when~$\game{4}$ would return 1 \emph{and} the boolean~$\bad$ would have remained false in~$\game{4}$.   This implies that~$\game{4}$ managed to guess exactly the queries that would result in correctness errors, and hence
 $\Prob{\game{5}(A)=1} = \dfrac{1}{\binom{q_T + q_H}{r}}\Prob{\game{4}(A)=1}$.
 
 For $r=1$, $\game{5}$ exactly simulates the classical Bloom filter. Since, $\HashOracle$ returns random values for each query, the event of getting a false-positive is independent of the index of the query. Using Kirsch and Mitzenmacher's upper bound on false positive probability of a classical Bloom filter, we have  $\Prob{\game{5}(A)=1} = \left( (1-e^{-kn/m})^k + O(1/n) \right)^r$.
@@ -153,9 +169,14 @@ Return $\Ans[x]$\\
 }
 {
 \oracle{$\HashOracle(\qry_y)$}\\
-$c \gets c + 1$\\
 for $j \in \{1,2,\ldots,k\}$\\
 \nudge $v_j \getsr [m]$\\
+\nudge if $T[j,y] \neq \undefined$\\
+\nudge \nudge $v_j \gets T[j,y]$\\
+\nudge $T[j,y] \gets v_j$\\
+%\nudge $c \gets c + 1$\\
+%\nudge for $j \in \{1,2,\ldots,k\}$\\
+%\nudge $v_j \getsr [m]$\\
 %
 $M \gets\pubaux$\\
 for $j \in \{1,2,\ldots,k\}$\\
