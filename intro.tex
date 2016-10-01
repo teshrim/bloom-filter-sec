@@ -31,30 +31,10 @@ By shifting $H_1,H_2,\ldots,H_k$ from $\pubaux$ to $\privaux$, we do not change 
 
 This example offers a hint at the broad range of abstract data structures our syntax supports.  In this paper, we put the syntax and our security notions to work, analyzing Bloom filters in the random oracle model~\cite{broder2004network}, with PRFs for hash functions{niedermeyer2014cryptanalysis,naor2015bloom}, and with secret hash functions that fall short of being PRFs (so-called ``linear-PRF'' hash functions~\cite{kirsch2006less,niedermeyer2014cryptanalysis}), each representing an in-use or proposed Bloom filter variant.  The linear-PRF Bloom filter provides an opportunity to see just how brittle constructions can be to their usage.  When used to create a representation of a set, we prove that the linear-PRF Bloom filter offers both correctness and privacy.  However, when applied to a multiset (effectively) privacy is lost.  In fact, Niedermeyer et al.~\cite{niedermeyer2014cryptanalysis} show that the linear PRF Bloom filter, when applied to a collection of bigrams of German last names, admits a practical attack that reveals the names.  Note that this is despite the fact that the hash functions are constructed from secretly-keyed PRFs in a way that has been suggested in recent literature on Bloom filter variants~\cite{kirsch2006less}.  We also consider garbled Bloom filters, proposed by Dong et al.~\cite{dong2013private} as a key piece of a private set-intersection protocol.
 
-We see this work as laying the foundation for a number of follow-on studies.  For example to study dynamic data structures, such as counting Bloom filters\cite{xxx}, stable Bloom filters~\cite{xxx}, count-min sketches~\cite{xxx}, hierachical Bloom filters~\cite{xxx}, to name just a few in the extended Bloom filter family.  Another direction would be to explore the security of primitives built \emph{from} these sorts of data structures, such as content-distribution networks (where many servers propogate representations of their local cache to their neighbors)
-
- and the security of primitives built on top of abstract data structures.
-
-We also explore the
-
-security of several specific data structures---that can all be
-viewed as generalizations of Bloom
-filters~\cite{bloom1970space}---supporting (approximate)
-set-membership queries. Specifically, we show \ldots \todo{highlight
-that we are able surface ways in which constructions
-  are sensitive to use cases, i.e. schemes secure with secret hash
-  functions but not with public hash functions}
-\todo{Somewhere in the intro, might what to face the ``nothing hard''
-  criticism head on.  Perhaps mention that many of the results follow
-  a common pattern (which, for privacy, we tease out in a general
-  theorem), and that often the most technically difficult part is
-  connecting the adaptive setting to the zero-query setting.}
-
-%Bloom filters have a broad range of practical applications, for
-%example, in content-distribution networks, large database query
-%processing, routing algorithms for peer-to-peer networks, protocols
-%for establishing linkages between medical-record databases, fair
-%routing of TCP packets, Bitcoin wallet synchonization~\cite{schnell2011novel,niedermeyer2014cryptanalysis,gervais2014privacy,nojima2009cryptographically,feng2001stochastic,reynolds2003efficient,byers2002informed,broder2004network}.
+We see this work as laying the foundation for a number of follow-on studies.  For example to study dynamic data structures, such as counting Bloom filters\cite{xxx}, stable Bloom filters~\cite{xxx}, count-min sketches~\cite{xxx}, hierachical Bloom filters~\cite{xxx}, to name just a few in the extended Bloom filter family.  Another direction would be to explore the security of primitives built \emph{from} these sorts of data structures, such as content-distribution networks (where many servers propogate representations of their local cache to their neighbors), or cryptographic strike lists (a la early versions of the QUIC protocol~\cite{xxx}) for nonce-replay protection.  The Bloom filter family alone has a wide range of practical applications, for example in large database query
+processing, routing algorithms for peer-to-peer networks, protocols
+for establishing linkages between medical-record databases, fair
+routing of TCP packets, and Bitcoin wallet synchonization~\cite{schnell2011novel,niedermeyer2014cryptanalysis,gervais2014privacy,nojima2009cryptographically,feng2001stochastic,reynolds2003efficient,byers2002informed,broder2004network}.
 
 
 \heading{Comparison to~\cite{naor2015bloom}.} Naor and
@@ -64,7 +44,7 @@ their work served as inspiration for our own. Our work extends
 their work significantly in several directions. For starters, we
 consider abstract data structures (rather than only the case of
 set-membership data structures), and consider privacy in addition to
-soundness. Even with respect to the specific case of soundness for
+correctness. Even with respect to the specific case of correctness for
 set-membership data structures, our work offers several advantages
 to the Naor-Yogev treatment:
 \begin{itemize}
@@ -85,22 +65,9 @@ to the Naor-Yogev treatment:
     analyzing practical constructions that have been proposed in
     prior work to understand how secure they are. In particular,
     we analyze Bloom filters in the random-oracle model.
-    \jnote{Which are widely used?}
 \end{itemize}
-\tsnote{I think we can say a bit more here about what they show, and
-  why their presentation is lacking, certainly as a work that anchors
-  an important area of study.  This feels a bit weak, at the moment.
-  For example, at the opening of this section we say they consider
-  ``adversarial soundness for Bloom filters'', but I assert that it
-  isn't clear that their syntax allows them to study Bloom filters at all.}
-  \jnote{I'm a little concerned about walking the line between
-  criticizing them and offending them. I also wouldn't say ``their
-  syntax doesn't allow them to study Bloom filters''; is that
-  because they don't deal with random oracles?}
-We give a more detailed comparison to, and criticism
-of~\cite{naor2015bloom} in Appendix~\ref{sec:xxx}. \jnote{Any
-comparison/criticism should be in the Intro. The Appendix is just a
-technical comparison of different styles of definition.}
+We give a technical comparison of our correctness notion and theirs (lifted to our more general syntax)
+in Appendix~\ref{sec:xxx}. 
 
 \todo{Describe the BF variants we consider, and briefly why they are
   natural/interesting.}
