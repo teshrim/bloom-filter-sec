@@ -36,7 +36,7 @@ a~$\HashOracle(\qry_x)$ call.
 None of these changes alters the behavior of the game from the
 adversary's perspective.
 
-At this point, we consider $\Prob{\game{4}{A}=1}$.  Note that is
+At this point, we consider $\Prob{\game{4}(A)=1}$.  Note that is
 happens iff there are~$r$ calls to the $\HashOracle$ oracle that
 increment~$\err$, i.e., queries $y \not\in S$ such that
 $\bigwedge_{j=1}^{k} M[v_j]=1$.  We can assume without loss that~$A$
@@ -45,7 +45,7 @@ $v_1,v_2,\ldots,v_k$ that will correspond to any $y \not\in S$ will be
 \emph{independent} of those corrsponding to any of the $y \in S$.
 Thus these queries are wasted.  Now, there are at total of $q_T + q_H$
 queries make to~$\HashOracle$, either directly by~$A$ or indirectly
-by~$A$ calling~$\TestOracle$.  For $\game{4}{A}$ to return 1, there
+by~$A$ calling~$\TestOracle$.  For $\game{4}(A)$ to return 1, there
 must be~$r$ among these that increment the counter.  We can assume
 WLOG that~$A$ halts as soon as~$\err=r$ (which it can easily track),
 so there are $\binom{q_T+q_H-1}{r-1}$ possible ``winning'' query
