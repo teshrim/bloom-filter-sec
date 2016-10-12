@@ -1,0 +1,20 @@
+\section{Security notions}
+\tsnote{ALL BELOW IS OLD!  Treat accordingly.}
+
+\paragraph{Alternative Security Definitions. }
+NOTE: this section is very sketchy.  It was actually written first, before I realized how underspecified the [NY] syntax is.
+
+The first alternative I'll call “partial-inversion resistance”.  It captures privacy of the Bloom filter input.  Sticking with the [NY] notation, let $B=(B_1, B_2)$ be the bloom filter population and querying algorithms, respectively.  Fix integers $n,m > 0$.  The (still informal) experiment is as follows: 
+
+$S=\{x_1,x_2,..., x_n\}$ sampled from U according to some distribution $D_U$.  $B_1(S,m)$ returns~$M$, an array of~$m$ bits. Adversary~$\advA$ is given an oracle for $B_2(M,\cdot)$  (and assume $B_2$ outputs 0 or 1).  Adversary~$\advA$ halts with output $z$, and wins if $z \in S$.
+
+Essentially, $B_1$ is a mapping from $n$-tuples (over $S$) to $m$-tuples (over $\{0,1\}$, in typical bloom filters).  The adversary's job is to determine some component of the input to $B_1$, i.e. partial inversion of M. \tsnote{How does this relate to Ristenpart et al.'s recent work on model-inversion attacks?}
+
+Definitional choices remain...
+
+Should $B_1$ be randomized, as it is in [NY]?  Traditionally, no: population of the Bloom filter array is a deterministic process.  (Here I'm viewing the sampling of the hash functions as external to $B_1$.)   An implication of deterministic $B_1$ seems to be that distribution $D_U$ must have reasonable min-entropy.  
+Should the hash functions used by $B_1$ and $B_2$ in traditional Bloom filters be explicit in the syntax, and explicitly surfaced in the security notion?  
+Should they be given as oracles to $\advA$?  That is, should we assume that attackers know the hash functions begin used? Should $\advA$ be given $m = |M|$ as input?  That is, should we assume that attackers know the size of the representation?
+Should $B_2$ be deterministic?  Traditionally, yes.  But I allowing it to be stateful admits more advanced Bloom filter constructions, e.g. counting Bloom filters.  [NY] do consider the case that $B_2$ is randomized (“unstable representations”), but I don't know of any Bloom filters whose array representations are probabilistic over time.
+
+Note that false positives do not count as wins in this experiment.  They could be by, say, changing the winning condition to “Adversary $\advA$ wins if $B_2(M,\cdot)$ ever returns 1”.  But I think this muddles together separate security goals --- forging a bogus input, and learning one of the real inputs.  So I prefer to keep them separate.  (I'd want to rewrite the [NY] notion, however.)
