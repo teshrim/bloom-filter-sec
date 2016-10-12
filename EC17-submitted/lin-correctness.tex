@@ -1,0 +1,292 @@
+%F_{K}(\langle 1,x \rangle) + j\cdot F_{K}(\langle 2,x \rangle) \bmod m
+\begin{proof}[Theorem~\ref{thm:lin-correctness}]
+The proof of the theorem will use a game playing argument as shown in  Figure~\ref{fig:lin-correctness-games}. $\game{0}(A)$ exactly simulates $\ExpCorrect{\setprim_\mathrm{lin},r}{A}$ with hash functions $h_j(x) =  F_{K}(\langle 1,x \rangle) + j\cdot F_{K}(\langle 2,x \rangle) \bmod m$. So,
+
+\begin{equation}
+\AdvCorrect{\setprim_{\mathrm{lin}},r}{A} = \Prob{\game{0}(A)=1}\label{eq:0}
+\end{equation}
+
+ In $\game{1}(A)$, $F_{K}(\langle 1,\cdot \rangle)$ is replaced by a random function, whereas in $\game{2}(A)$, both $F_{K}(\langle 1,\cdot \rangle)$ and $F_{K}(\langle 2, \cdot \rangle)$ are replaced by random functions.
+
+%\caption{Adversary $B_1, B_2$ simulating $\game{1}(A)$ and $\game{2}(A)$ respectively}\label{fig:lin-correctness-adv}
+\begin{figure}[tp]
+\fpage{0.9}{
+\hpagessl{0.5}{0.5}
+{
+$\adversaryv{B_1^{\calO}}$\\
+$S \getsr A$\\
+$\calC \gets \emptyset$; $\err \gets 0$\\
+$(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+Run~$A(\pubaux)$\\
+When $A$ asks $\TestOracle(\qry_x)$:\\
+\nudge if $x \in \mathcal{C}$ then Return $\bot$\\
+\nudge $\calC \gets \calC \cup x$\\
+\nudge $a \gets \Qry^{\HashOracle}(\pubaux,\privaux, x)$\\
+\nudge if $a \neq \qry_x(S)$ then \\
+\nudge \nudge $\err \gets \err + 1$\\
+\nudge Return~$a$\\
+When $A$ halts: \\
+\nudge if $\err  < r$ then Return 0\\
+\nudge Return 1\\
+
+\medskip
+\oracle{$\HashOracle(x)$}\\
+for $i \in \{1,2,\ldots,k\}$\\
+\nudge $v_i \gets F_{K}(\langle 1,x \rangle) + i \cdot \calO(\langle 2,x \rangle) \bmod m$\\
+Return ${v_1,v_2,\ldots,v_k}$
+}
+{
+$\adversaryv{B_2^{\calO}}$\\
+$S \getsr A$\\
+$\calC \gets \emptyset$; $\err \gets 0$\\
+$(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+Run~$A(\pubaux)$\\
+When $A$ asks $\TestOracle(\qry_x)$:\\
+\nudge if $x \in \mathcal{C}$ then Return $\bot$\\
+\nudge $\calC \gets \calC \cup x$\\
+\nudge $a \gets \Qry^{\HashOracle}(\pubaux,\privaux, x)$\\
+\nudge if $a \neq \qry_x(S)$ then \\
+\nudge \nudge $\err \gets \err +1$\\
+\nudge Return~$a$\\
+When $A$ halts: \\
+\nudge if $\err  < r$ then Return 0\\
+\nudge Return 1
+
+\medskip
+\oracle{$\HashOracle(x)$}\\
+$a \getsr [m]$\\
+if $T[x] \neq \undefined$\\
+\nudge $a \gets T[x]$\\
+$T[x] \gets a$\\
+for $i \in \{1,2,\ldots,k\}$\\
+\nudge $v_i \gets \calO(\langle 1,x \rangle) + i\cdot a$\\
+Return ${v_1,v_2,\ldots,v_k}$
+}
+}
+\caption{Adversary $B_1$ simulating $\game{0}(A)$ and $\game{1}(A)$, and $B_2$ simulating $\game{1}(A)$ and $\game{2}(A)$  respectively for the proof of Theorem~\ref{thm:lin-correctness}.}\label{fig:lin-correctness-adv}
+%\fixme{fix caption and Crefs}
+\end{figure}
+
+The PRF security notion is shown in Figure~\ref{fig:prf}. Let
+prf-adversaries $B_1, B_2$ be as shown in Figure~\ref{fig:lin-correctness-adv}.
+Adversary~$B_1$ is constructed so that, if its challenge bit~$b=1$,
+then it exactly simulates $\game{0}$ for~$A$; if $b=0$, it
+simulates~$\game{1}$.  Similarly, adversary~$B_2$ simulates~$\game{1}$
+if its challenge bit~$b=1$, and $\game{2}$ otherwise.  We can conclude
+that 
+\begin{align*}
+\Prob{\ExpPRF{F}{B_1} = 1\,|\,b=1} &= \Prob{\game{0}(A)=1} \\%\label{eq:m1}\\
+\Prob{\ExpPRF{F}{B_1} = 1\,|\,b=0} &= 1-\Prob{\game{1}(A)=1} \\%\label{eq:m3}\\
+\Prob{\ExpPRF{F}{B_2} = 1\,|\,b=1} &= \Prob{\game{1}(A)=1} \\%\label{eq:m2}\\
+\Prob{\ExpPRF{F}{B_2} = 1\,|\,b=0} &= 1-\Prob{\game{2}(A)=1} \\%\label{eq:m4}
+\end{align*}
+%
+\noindent
+By a standard conditioning of the PRF advantage, we have 
+\begin{equation*}
+\Prob{\game{0}(A)=1} = \AdvPRF{F}{B_1} +\AdvPRF{F}{B_2} + \Prob{\game{2}(A)=1}%\label{eq:13}
+\end{equation*}
+
+
+In $\game{3}(A)$, we replace the random functions used in
+$\HashOracle$ (in $\game{2}(A)$) with lazy sampling of elements from
+$[m]$.  This change does not alter the behavior of the oracle, as the
+random functions are (by the no-pointless-queries assumption on~$A$) always called on a new
+value of~$x$.
+%
+Also, the $\TestOracle$ oracle now sets $\bad$ to $\true$ if the
+queries indexed by the set $\mathcal{I}$ fail to be false-positives,
+or if any of the remaining queries are false-positives. It can be
+observed that the $\bad$ flag has no impact on the output of the
+$\TestOracle$, nor does it affect  the value returned
+by~$\game{3}$. Thus we have $\Prob{\game{2}(A)=1} =
+\Prob{\game{3}(A)=1}$ and
+\[
+\Prob{\game{3}(A)=1 \wedge \game{3}(A): \neg\bad} = \Prob{\game{3}(A)=1} \Prob{\game{3}(A) : \neg\bad}%\label{eq:1} \\
+\]
+
+We note that $\game{3}$ and $\game{4}$ are
+``identical-untill-$\bad$''~\cite{bellare2004game}.  In particular,
+in $\game{4}$, $A$ returns 0 when $\game{3}$ would have returned 1 (i.e.,
+the adversary outputs~$r$ false-positives, but $\bad=\true$).  
+Moreover,  $\game{4}(A)$ returning 1 implies that $\bad$ is never set to $\true$. Therefore,
+$\Prob{\game{4}(A)=1} = \Prob{\game{3}(A)=1 \wedge \neg\bad} =
+\Prob{\game{3}(A)=1} \Prob{\game{3}(A) : \neg\bad}$, by our previous observation.
+
+Before continuing the proof, a bit of intuition for the introduction
+of the $\bad$-flag in games~$\game{3},\game{4}$.   Intuitively, if the index
+set~$\mathcal{I}$ exactly predicts which of the $\TestOracle$ queries will be
+false-positives (and, conversely, which will not be), then a
+ FP-finding adversary can ``guess'' which of~$A$'s queries require it
+to return 1 when simulating the $\TestOracle$, and which require it to return 0;
+%return 0.  In this way, no queries ever actually need to be made.
+%Moving to a zero-query setting will allow us to connect to classical
+%results on the FP-rate of Bloom filters; more in a moment. 
+
+Now, consider $\Prob{\game{3}(A) : \neg\bad}$.  The indicated event
+happens iff the $r$-set~$\calI$ contains exactly the indices of
+$\TestOracle$-queries that are false-positives.  Since the value
+of~$\bad$ does not alter the responses of~$\TestOracle$, $\err$'s update
+and the set~$\calI$ are independent.
+Thus $\bad$ remains $\false$ after~$A$ halts with probability
+$1/\binom{q}{r}$, and we have 
+\begin{equation*}
+\Prob{\game{4}(A)=1} = \frac{1}{\dbinom{q}{r}}\Prob{\game{3}(A)=1}
+\end{equation*}
+
+Recall that adversary~$A$ wins $\ExpCorrect{\setprim_{\mathrm{lin}},r}{}$ by finding~$r$ false positives. We can assume, without loss of generality,  that~$A$ halts immediately upon finding its $r$-th false positive. % We can also assume that every point in $\calZ$ has already been queried to $\Test$.  This latter assumption is not without loss, but can be  easily enforced (in the original security definitions) by counting as part of the number of queries~$q$, the points in $\mathcal{Z}$. 
+%
+%Under these assumptions,
+So, if $\game{4}(A)=1$, then there is an adversary~$D$ that finds~$r$ false positives against $\tilde{\setprim}_{\mathrm{lin}}$, which is $\setprim_{\mathrm{lin}}$ but with $F_{K_1}$ and $F_{K_2}$ replaced by random functions $\rho_1$ and $\rho_2$, respectively.  We give this~$D$ in Figure~\ref{fig:lin-correctness-zq-adv}. Intuitively, adversary~$D$ guesses which~$r$ of~$A$'s queries will be false positives. It must be noted that, by the no-pointless queries assumption and the fact that $\HashOracle$ in $\game{3}$ returns $k$ random values for each query, $\pubaux$ is information theoretically independent of elements not in $S$. Thus, we have
+$\Prob{\game{4}(A)=1} =\Prob{\ExpCorrect{\tilde{\setprim}_{\mathrm{lin}},r}{D} = 1}$.
+
+Note that $\tilde{\setprim}_{\mathrm{lin}}$ is the scheme that is analyzed in the classical Bloom filter literature ---the hash functions are modeled as independent random functions, and the parameters $k,m,n$  are set to achieve a target maximum false-positive probability (or rate).  Kirsch and Mitzenmacher~\cite{kirsch2006less} show that the upperbound on false-positive probability for $r=1$ is $\left( (1-e^{-kn/m})^k + O(1/n) \right)$.  For $r>1$, we observe that~$A$'s queries $x_1,x_2,\ldots,x_q$ are distinct and not elements of the original set~$S$, since we assume no pointless queries. Let $\calF_i$ be the event that~$x_i(i \in \mathcal{I})$ is a false positive.  Since $\game{4}$ (equivalently $\tilde{\setprim}_{\mathrm{lin}}$) use independent random functions, the events $\calF_1,\calF_2,\ldots,\calF_r$ are independent. 
+\[
+\Prob{\ExpCorrect{\tilde{\setprim}_{\mathrm{lin}},r}{D} = 1}\leq \left( (1-e^{-kn/m})^k + O(1/n) \right)^r 
+\]
+
+To summarize, we have 
+\[
+\AdvCorrect{\setprim_{\mathrm{lin}},r}{A}  \leq  \AdvPRF{F}{B_1} +\AdvPRF{F}{B_2} +\dbinom{q}{r}\left( (1-e^{-kn/m})^k + O(1/n) \right)^r
+\]
+which is the bound claimed in the theorem statement. %\hfill \qed
+
+%\caption{Game playing argument}\label{fig:Game}
+\begin{figure}[tp]
+\fpage{.99}{
+\hpagessl{.52}{.5}
+{
+\underline{\game{0}(A)}\\
+$K \getsr \calK $\\
+$S \getsr A$; $\calC \gets \emptyset$; $\err \gets 0$\\
+$(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+$\bot \getsr A^{\TestOracle}(\pubaux)$\\
+if $\err  < r$ then Return 0\\
+Return 1\\
+
+\medskip
+\oracle{$\TestOracle(\qry_x)$}\\
+if $x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup x$\\
+$a \gets \Qry^{\HashOracle}(\pubaux,\privaux, x)$\\
+if $a \neq \qry_x(S)$ then $\err \gets \err + 1$\\
+Return~$a$\\
+
+\medskip
+\oracle{$\HashOracle(x)$}\\
+for $i = 1$ to $k$\\
+\nudge $h_i(x) = F_{K}(\langle 1,x \rangle) + i\cdot F_{K}(\langle 2,x \rangle) \bmod m$\\
+Return $\left(h_1(x),\ldots,h_k(x)\right)$
+}
+{
+\underline{\game{1}(A)}\\
+$K \getsr \calK $, $\rho \getsr \Func{\univ,[m]}$\\
+$S \getsr A$; $\calC \gets \emptyset$; $\err \gets 0$\\
+$(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+$\bot \getsr A^{\TestOracle}(\pubaux)$\\
+if $\err  < r$ then Return 0\\
+Return 1\\
+
+\medskip
+\oracle{$\TestOracle(\qry_x)$}\\
+if $x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup x$\\
+$a \gets \Qry^{\HashOracle}(\pubaux,\privaux, x)$\\
+if $a \neq \qry_x(S)$ then $\err \gets \err + 1$\\
+Return~$a$\\
+
+\medskip
+\oracle{$\HashOracle(x)$}\\
+for $i=1$ to $k$\\
+\nudge $h_i(x) = F_{K}(\langle 1,x \rangle) + i \cdot \rho(x) \bmod m$\\
+Return $\left(h_1(x),\ldots,h_k(x)\right)$
+}
+}
+\fpage{.99}{
+\hpagessl{.52}{.5}
+{
+\underline{\game{2}(A)}\\
+$\rho_1,\rho_2 \getsr \Func{\univ,[m]}$\\
+$S \getsr A$; $\calC \gets \emptyset$; $\err \gets 0$\\
+$(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+$\bot \getsr A^{\TestOracle}(\pubaux)$\\
+if $\err  < r$ then Return 0\\
+Return 1\\
+
+
+\oracle{$\TestOracle(\qry_x)$}\\
+if $x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup x$\\
+$a \gets \Qry^{\HashOracle}(\pubaux,\privaux, x)$\\
+if $a \neq \qry_x(S)$ then $\err \gets \err + 1$\\
+Return~$a$\\
+
+\medskip
+\oracle{$\HashOracle(x)$}\\
+for $i=1$ to $k$\\
+\nudge $h_i(x) = \rho_1(x) + i \cdot \rho_2(x) \bmod m$\\
+Return $\left(h_1(x),\ldots,h_k(x)\right)$
+}
+{
+\underline{{$\game{3}(A)$},\fbox{$\game{4}(A)$}}\\
+$c\gets 0$, $\bad \gets \false$, $\err \gets 0$;  $\calC \gets \emptyset$\\
+$S \getsr A$; $\mathcal{I}\getsr [\{1,2,\ldots,q\}]^r$\\
+$(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+$\bot \getsr A^{\TestOracle}(\pubaux)$\\
+if $\bad = \true$ then \fbox{Return 0}\\
+if $\err  < r$ then Return 0\\
+Return 1\\
+
+\medskip
+\oracle{$\TestOracle(\qry_x)$}\\
+if $x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup x$\\
+$c \gets c+1$\\
+$v \gets \Qry^{\HashOracle}(\pubaux,\privaux, x)$\\
+if $c \in \mathcal{I}$ and $v = \qry_x(S)$ then \\
+\nudge $\bad \gets \true$ \\
+if $c \not\in \mathcal{I}$ and $v \neq \qry_x(S)$ then \\
+\nudge $\bad \gets \true$\\
+if $v \neq \qry_x(S)$ then $\err \gets \err +1$\\
+Return~$v$\\
+
+\medskip
+\oracle{$\HashOracle(x)$}\\
+$a,b \getsr [m]$\\
+for $i = 1$ to~$k$\\
+\nudge $v_i = a+i \cdot b \bmod m$\\
+Return $\left(v_1,\ldots,v_k\right)$
+}
+}
+\caption{Games $\game{0}$-$\game{4}$ for the
+proof of Theorem~\ref{thm:lin-correctness}.}
+\label{fig:lin-correctness-games}
+%\fixme{fix caption and Crefs}
+\end{figure}
+
+
+%\caption{PRF game}\label{fig:prf}
+\begin{figure}[tp]
+\centering
+\fpage{0.55}{
+\hpagess{0.5}{0.35}
+{
+$\experimentv{\ExpPRF{F}{B}}$\\
+$K \getsr \calK $\\
+$\rho \getsr \Func{\univ,[m]}$\\
+$b \getsr \bits$\\
+$b' \getsr B^\calO$\\
+Return $[b = b']$\\
+}
+{
+$\oracle{\calO \smallskip(x)}$\\
+if $ b = 1$ then\\
+\nudge Return $F_K(x)$\\
+Return $\rho(x)$\\
+}
+}
+\caption{PRF security notion}\label{fig:prf}
+\end{figure}
+
+\end{proof}
+

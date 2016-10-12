@@ -1,0 +1,223 @@
+%\section{Proof of Theorem~\ref{thm:bf-correctness}}
+%\label{sec:thm3_fp}
+\begin{proof}[Theorem~\ref{thm:gbf-correctness}]
+We use a game playing argument, please refer to Figures~\ref{fig:gbf-correctness-games1} and~\ref{fig:gbf-correctness-games2}. In game $\game{0}$, the $\HashOracle$ oracle performs lazy sampling of elements from $[m]$ to mimic a random oracle (RO). For every distinct query, $\HashOracle$ returns a random value sampled from $[m]$. It can be seen that, game $\game{0}$ exactly simulates the correctness game of $\setprim_{\mathrm{gbf}}$.  So, $\AdvCorrect{\setprim_{\mathrm{gbf}},r}{A} = \Prob{\game{0}(A) = 1}$.
+
+Game $\game{1}$ is exactly same as game $\game{0}$ except the $\Qry$ call (inside the $\TestOracle$ oracle) is replaced by the code of $\Qry$.  Hence, $\Prob{\game{0}(A) = 1} = \Prob{\game{1}(A) = 1}$.
+
+In game $\game{2}$, the $\Test$ oracle is altered to return the hash values~$h_1,h_2,\ldots, h_k$ in addition to the result of executing the code of $\Qry$.  As this only provides additional information to the adversary, $\Prob{\game{1}(A) = 1} \leq \Prob{\game{2}(A) = 1}$.
+
+In $\game{3}$, we modify the $\HashOracle$ oracle so that on query~$\qry_x$ it returns all of the~$k$ values that previously would have required calls $\HashOracle(1,\qry_y),\HashOracle(2,\qry_y),\ldots,\linebreak\HashOracle(k,\qry_y)$.  This results in adversary getting $(k-1)$ hash values ``for free'', as we charge the adversary only for a single query.  We alter the $\TestOracle$ oracle accordingly, so that it makes a single call $\HashOracle(\qry_x)$ rather than~$k$ such calls.  
+We do this so that we can assume that a call~$\HashOracle(\qry_x)$ is pointless after a~$\TestOracle(\qry_x)$ call, and this will aid us in subsequent games.  \fixme{for BF proof, this actually does more, it makes a hash query as good as a test query, because~$M$ is public.}  Thus, $\Prob{\game{2}(A) = 1} \leq \Prob{\game{3}(A) = 1}$. We assume from Game~$\game{3}$ and on that $\Rep$ is also appropriately modifed for the new behavior of~$\HashOracle$.
+
+%tom here
+Game~$\game{4}$ contains some important changes from game~$\game{3}$, but we will argue that $\Prob{\game{3}(A) = 1} \leq \Prob{\game{4}(A) = 1}$.  To begin, in game~$\game{4}$ we sample an $r$-subset of indices from~$\{1,2,\ldots,q_H+q_T\}$.  (We will see why, shortly.)  Next, the $\TestOracle$ oracle on input~$\qry_x$ no longer computes its answer directly, but instead refers to a new table~$\mathrm{Ans}[x]$ which is populated upon calls to the $\HashOracle$ oracle.  In particular, if $\mathrm{Ans}[x]$ is undefined, $\TestOracle$ makes a $\HashOracle(\qry_x)$ call; otherwise, it returns the contents of~$\mathrm{Ans}[x]$, which contains exactly the values that~$\TestOracle(\qry_x)$ would have returned in the previous game.  The $\HashOracle$ oracle, on input~$\qry_y$ computes the random values~$v_1,v_2,\ldots,v_k$ as in $\game{3}$.  (We no longer need to maintain the table~$T$ because hash values are only determined by~$\HashOracle$ calls, and these are never repeated under our no-pointless-query assumption.)  It then computes the answer that~$\TestOracle(\qry_x)$ would return, in game~$\game{3}$, and stores the answer in~$\mathrm{Ans}[x]$ for use by~$\TestOracle$.  The $\HashOracle$ oracle also introduces a query counter~$c$, which is incremented whenever~$\HashOracle$ is called, either directly by~$A$ or via~$A$ having made a~$\TestOracle$ query on~$\qry_x$ where~$\mathrm{Ans}[x]$ had not been previously defined by a~$\HashOracle(\qry_x)$ call.  \fixme{for BF proof, we can assume that $\TestOracle(\qry_x)$ is never made after a~$\HashOracle(\qry_x)$ call, because~$M$ is public.  And vice versa.  So the maximum value of~$c = q_T + q_H$.}  (Note that the maximum value of~$c$ is $q_T + q_H$.)  The set~$\calI$ contains a set of~$r$ distinct values from $\{1,2,\ldots,q_T+q_H\}$ and, intuitively, these are the game's ``guesses'' at the $\HashOracle$ queries that will result in a correctness error.  If these~$r$ guesses are incorrect, then a boolean flag~$\bad$ is set, although in game~$\game{4}$ the value of~$\bad$ has no effect on the games execution; in particular, $\game{4}$ does \emph{not} contain the boxed ``Return 0'' statement.
+
+Games~$\game{4}$ and $\game{5}$ are identical except for this boxed statement.  In particular, game~$\game{5}$ returns 1 exactly when~$\game{4}$ would return 1 \emph{and} the boolean~$\bad$ would have remained false in~$\game{4}$.   This implies that~$\game{4}$ managed to guess exactly the queries that would result in correctness errors, and hence
+$\Prob{\game{5}(A)=1} = \dfrac{1}{\binom{q_T + q_H}{r}}\Prob{\game{4}(A)=1}$.
+
+Game~$\game{6}$ alters $\HashOracle$ so that it returns what would
+previously have be stored in $\mathrm{Ans}[\cdot]$, so we can drop the
+$\TestOracle$ altogether.  Thus $\Prob{\game{5}(A)=1} =
+\Prob{\game{6}(A)=1}$.
+
+Let us now consider the probability that 
+
+To summarize, 
+\[
+\AdvCorrect{\setprim_{\mathrm{gbf}},r}{A} \leq  {\dbinom{q_T + q_H}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
+\]
+which is the bound claimed in the theorem statement.
+\begin{figure}[tp]
+\fpage{.95}{
+\hpagessl{.5}{.5}
+{
+\underline{$\game{0}(A)$}\\
+$S \getsr A$; $\calC \gets \emptyset$; $\err \gets 0$\\
+$(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+$\bot \getsr A^{\TestOracle,\HashOracle}(\pubaux)$\\
+if $\err  < r$ then Return 0\\
+Return 1\\
+
+\oracle{$\TestOracle(\qry_x)$}\\
+if $x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup x$\\
+$a \gets \Qry^{\HashOracle,\HashOracle}(\pubaux,\privaux, x)$\\
+if $a \neq \qry_x(S)$ then \\
+\nudge $\err \gets \err + 1$\\
+Return~$a$\\
+
+\oracle{$\HashOracle(i,\qry_y)$}\\
+$v \getsr [m]$\\
+if $T[i,y] \neq \undefined$\\
+\nudge $v \gets T[i,y]$\\
+$T[i,y] \gets v$\\
+Ret $v$
+}
+{
+\underline{$\game{1}(A)$}\\
+$S \getsr A$; $\calC \gets \emptyset$; $\err \gets 0$\\
+$(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+$\bot \getsr A^{\TestOracle,\HashOracle}(\pubaux)$\\
+if $\err  < r$ then Return 0\\
+Return 1\\
+
+\oracle{$\TestOracle(\qry_x)$}\\
+if $x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup x$; $M \gets\privaux$\\
+for $j \in \{1,2,\ldots,k\}$\\
+\nudge $h_j \gets \HashOracle(j, \qry_x)$\\
+$x' \gets M[h_1] \xor M[h_2] \xor \ldots \xor M[h_k]$\\
+if $x' \neq x$ then Return 0\\
+$\err \gets \err + 1$\\
+Return 1\\
+
+\oracle{$\HashOracle(i,\qry_y)$}\\
+$v \getsr [m]$\\
+if $T[i,y] \neq \undefined$\\
+\nudge $v \gets T[i,y]$\\
+$T[i,y] \gets v$\\
+Ret $v$
+}
+}
+\fpage{.95}{
+\hpagessl{.5}{.5}
+{
+\underline{$\game{2}(A)$}\\
+$S \getsr A$; $\calC \gets \emptyset$; $\err \gets 0$\\
+$(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+$\bot \getsr A^{\TestOracle,\HashOracle}(\pubaux)$\\
+if $\err  < r$ then Return 0\\
+Return 1\\ 
+
+\oracle{$\TestOracle(\qry_x)$}\\
+if $x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup x$; $M \gets\privaux$\\
+for $j \in \{1,2,\ldots,k\}$\\
+\nudge $h_j \gets \HashOracle(j, \qry_x)$\\
+$x' \gets M[h_1] \xor M[h_2] \xor \ldots \xor M[h_k]$\\
+if $x' \neq x$ then Return $(0, (h_1, \ldots, h_j))$ \\
+$\err \gets \err + 1$\\
+Return $(1, (h_1, \ldots, h_{k}) )$ \\
+
+\oracle{$\HashOracle(i,\qry_y)$}\\
+$v \getsr [m]$\\
+if $T[i,y] \neq \undefined$\\
+\nudge $v \gets T[i,y]$\\
+$T[i,y] \gets v$\\
+Ret $v$
+}
+{
+\underline{$\game{3}(A)$}\\
+$S \getsr A$; $\calC \gets \emptyset$; $\err \gets 0$\\
+$(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+$\bot \getsr A^{\TestOracle,\HashOracle}(\pubaux)$\\
+if $\err  < r$ then Return 0\\
+Return 1\\ 
+
+\oracle{$\TestOracle(\qry_x)$}\\
+if $x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup x$; $M \gets\privaux$\\
+$(h_1, \ldots, h_{k}) \gets \HashOracle(\qry_x)$\\
+$x' \gets M[h_1] \xor M[h_2] \xor \ldots \xor M[h_k]$\\
+if $x' \neq x$ then Return $(0, (h_1, \ldots, h_j))$ \\
+$\err \gets \err + 1$\\
+Return $(1, (h_1, \ldots, h_{k}) )$ \\
+
+\oracle{$\HashOracle(\qry_y)$}\\
+for $j \in \{1,2,\ldots,k\}$\\
+\nudge $v_j \getsr [m]$\\
+\nudge if $T[j,y] \neq \undefined$\\
+\nudge \nudge $v_j \gets T[j,y]$\\
+\nudge $T[j,y] \gets v_j$\\
+Ret $\left(v_1,\ldots,v_k\right)$
+}
+}
+\caption{Games $\game{0}$-$\game{3}$ for the
+proof of Theorem~\ref{thm:gbf-correctness}.}
+\label{fig:gbf-correctness-games1}
+\end{figure}
+\begin{figure}[tp]
+\fpage{.85}{
+\hpagessl{.45}{.5}
+{
+\underline{$\game{4}(A)$\fbox{$\game{5}(A)$}}\\
+$c\gets 0$, $\bad \gets \false$\\
+$\err \gets 0$;  $\calC \gets \emptyset$\\
+$S \getsr A$\\
+$\mathcal{I}\getsr [\{1,2,\ldots,q_T + q_H\}]^r$\\
+$(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+$\bot \getsr A^{\TestOracle,\HashOracle}(\pubaux)$\\
+if $\bad = \true$ then \fbox{Return 0}\\
+if $\err  < r$ then Return 0\\
+Return 1\\
+
+\oracle{$\TestOracle(\qry_x)$}\\
+if $x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup x$\\
+if $\Ans[x] = \undefined$\\
+\nudge $(h_1, \ldots, h_{k}) \gets \HashOracle(\qry_x)$\\
+Return $\Ans[x]$\\
+}
+{
+\oracle{$\HashOracle(\qry_y)$}\\
+$c \gets c + 1$\\
+for $j \in \{1,2,\ldots,k\}$\\
+\nudge $v_j \getsr [m]$\\
+%
+$M \gets\privaux$\\
+$y' \gets M[v_1] \xor M[v_2] \xor \ldots \xor M[v_k]$\\
+if $y' \neq y$ then \\
+\nudge $\Ans[y] \gets (0, (v_1, \ldots, v_{k}) )$\\
+\nudge if $c \in \calI$ then $\bad \gets \true$\\
+\nudge Return $\left(v_1,\ldots,v_k\right)$\\
+if $c \notin \calI$ then $\bad \gets \true$\\
+$\err \gets \err +1$\\
+$\Ans[y] \gets (1, (v_1, \ldots, v_{k}))$\\
+Return $\left(v_1,\ldots,v_k\right)$
+}
+}
+\fpage{.85}{
+\hpagessl{.5}{.45}
+{
+\underline{$\game{6}(A)$}\\
+$c\gets 0$, $\bad \gets \false$\\
+$\err \gets 0$;  $\calC \gets \emptyset$\\
+$S \getsr A$\\
+$\mathcal{I}\getsr [\{1,2,\ldots,q_T + q_H\}]^r$\\
+$(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+$\bot \getsr A^{\HashOracle}(\pubaux)$\\
+if $\bad = \true$ then Return 0\\
+if $\err  < r$ then Return 0\\
+Return 1\\
+
+%\oracle{$\TestOracle(\qry_x)$}\\
+%if $x \in \mathcal{C}$ then Return $\bot$\\
+%$\calC \gets \calC \cup x$\\
+%if $\Ans[x] = \undefined$\\
+%\nudge $(h_1, \ldots, h_{k}) \gets \HashOracle(\qry_x)$\\
+%Return $\Ans[x]$\\
+
+\oracle{$\HashOracle(\qry_y)$}\\
+$c \gets c + 1$\\
+for $j \in \{1,2,\ldots,k\}$\\
+\nudge $v_j \getsr [m]$\\
+%
+$M \gets\privaux$\\
+$y' \gets M[v_1] \xor M[v_2] \xor \ldots \xor M[v_k]$\\
+if $y' \neq y$ then \\
+\nudge if $c \in \calI$ then $\bad \gets \true$\\
+\nudge Return $\left(0,v_1,\ldots,v_k\right)$\\
+if $c \notin \calI$ then $\bad \gets \true$\\
+$\err \gets \err +1$\\
+Return $\left(1,v_1,\ldots,v_k\right)$
+}
+{
+}
+}
+\caption{Games $\game{4}$-$\game{5}$ and zero-query adversary~$A_0$ for the
+proof of Theorem~\ref{thm:gbf-correctness}.}
+\label{fig:gbf-correctness-games2}
+\end{figure}
+\hfill\qed
+\end{proof}

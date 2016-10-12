@@ -1,0 +1,15 @@
+\begin{theorem}\label{thm:gbf-correctnessUB}
+Fix $k,m,n,r>0$, and let $\setprim_{\mathrm{garb}}= (\calQ,\Rep, \Qry)$ be the set-multiplicity data structure just described. For any adversary~$A$ that makes a total of $q$ queries to the RO, and has time-complexity~$O(t)$,
+\[
+\AdvCorrect{\setprim_{\mathrm{garb}},r}{A}  \leq \left(1 - e^{-n/m^k}\right)^{nr} + \dbinom{q}{r}\left(\dfrac{1}{2^\lambda}\right)^r
+\]
+\end{theorem}
+
+\begin{proof}
+Let $\epsilon_{\fn}$, $\epsilon_{\fp}$ be the events of finding $r$ false-negatives, and $r$ false-positives respectively in a garbled Bloom filter. Dong et al.\cite{dong2013private}, show that for a zero-query adversary and $r=1$, the upper bound on false-positive probability in a garbled Bloom filter is $\left(\dfrac{1}{2^\lambda}\right)$. Using analyses and results from  previous proofs, $\Prob{\epsilon_{\fp}} \leq \dbinom{q}{r}\left(\dfrac{1}{2^\lambda}\right)^r$. 
+
+In an earlier proof, we found a tight bound on $\epsilon_{\fn}$, i.e. $\Prob{\epsilon_{\fn}} = \left( 1-p \right)^{nr}$, where $p = \left( 1-\dfrac{1}{\dbinom{m}{k}} \right)^{n-1}$. For $n >> 0$, $p \approx  e^{-n/m^k}$. Since, $\epsilon_{\fp}$ and $\epsilon_{\fn}$ are mutually independent events, The probability that $A$ wins the correctness game is upper-bounded by $\Prob{\epsilon_{\fn}} + \Prob{\epsilon_{\fp}}$. Hence,
+\[
+\AdvCorrect{\setprim_{\mathrm{garb}},r}{A}  \leq \left(1 - e^{-n/m^k}\right)^{nr} + \dbinom{q}{r}\left(\dfrac{1}{2^\lambda}\right)^r
+\]
+\end{proof}

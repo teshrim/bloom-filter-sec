@@ -1,0 +1,120 @@
+\begin{theorem}\label{thm3}
+A classic Bloom filter is private in random oracle model(ROM), i.e. an adaptive adversary $A$ has low probability of winning the $\ExpPrivPubHashBB{B}{\distr{\univ}{n},A}$ game in ROM. For $q$ queries and min-entropy ($\mu$) of $\distr{\univ}{n}$,
+
+\begin{equation}
+\AdvPrivPubHashBB{B}{A} \leq  \frac{q}{2^\mu} + \frac{n}{\abs{\univ}}
+\end{equation}
+
+\end{theorem}
+
+\begin{proof}[\Cref{thm3}]
+As shown in \Cref{fig:GameT3}, $\game{0}(A)$ and $\game{1}(A)$ exactly simulate $\ExpPrivPubHashBB{B}{\distr{\univ}{n}, A}$ in ROM, except in $\game{1}(A)$, the random oracle always returns $k$ uniformly random values for any $x \in \univ$.
+\begin{equation}
+\AdvPrivPubHashBB{B}{A} = \Prob{\game{0}(A)=1}\label{eq:0T3}
+\end{equation}
+%\caption{Game playing argument}\label{fig:Game}
+\begin{figure}
+\centering
+\fpage{.6}{
+\hpagess{.4}{.45}
+{
+$\game{1}(A)$\\
+\fbox{$\game{0}(A)$\\
+}
+$\\ \calS \getsr \distr{\univ}{n}$\\
+$(M,\tau) \getsr \Rep^{\HashOracle}(\calS)$\\
+$x \getsr A^{\MemOracle,\QryOracle,\HashOracle}(M)$\\
+if $x\in \calS$ then Ret 1\\
+Ret 0
+}
+%
+{
+\oracle{$\MemOracle(x)$}\\
+Ret $[x \in \calS]$\\
+
+\medskip
+\oracle{$\QryOracle(x)$}\\
+Ret $\Qry^{\HashOracle}(M,\tau,x)$\\
+
+\medskip
+\oracle{$\HashOracle(x)$}\\
+$\rho_i \getsr Func(\univ,[m])$, for $i\in[1,k]$\\
+$z_{i} \gets \rho_i(x)$, for $i\in[1,k]$\\
+if $T[x] \neq $ undefined\\
+\nudge Bad $\gets$ true\\
+\fbox{
+$z_i \gets T[x]$, for $i\in[1,k]$
+}
+$\\T[x] \gets z_i$, for $i\in[1,k]$\\
+Ret $z_i$, for $i\in[1,k]$\\
+}
+}
+\caption{\Cref{thm3}: Game playing argument}\label{fig:GameT3}
+\end{figure}
+
+\noindent
+It is evident from $\game{0}(A)$ and $\game{1}(A)$ that 
+\begin{equation}
+\Prob{\game{0}(A) : \mathrm{Bad}=\mathrm{true}} = \Prob{\game{1}(A) : \mathrm{Bad}=\mathrm{true}}\label{eq:1T3}
+\end{equation}
+
+\noindent
+Using fundamental lemma of game playing argument and \Cref{eq:1T3}
+\begin{eqnarray}
+\nonumber \Prob{\game{0}(A)=1} & \leq & \Prob{\game{0}(A)=1 | \mathrm{Bad} \neq \mathrm{true}} + \Prob{\game{0}(A) : \mathrm{Bad}=\mathrm{true}}\\
+&=& \Prob{\game{1}(A)=1} + \Prob{\game{1}(A) : \mathrm{Bad}=\mathrm{true}}\label{eq:2T3}
+\end{eqnarray}
+
+\noindent
+Let the random oracle be modified to output $k$ uniformly random values without setting any Bad flag. Let's call it $\game{2}(A)$ which is shown in \Cref{fig:Game2T3}. It turns out that the  $\QryOracle$ is no more deterministic due to coins of the random oracle. Hence, the results of the $q$ queries by $A$ are mutually independent and random. So, neglecting the output of $A$, the game samples one of the elements queried by $A$, and returns 1/0. 
+
+\begin{equation}
+\Prob{\game{1}(A)=1} = \Prob{\game{2}(A)=1} = \frac{q}{2^\mu}\label{eq:3T3}
+\end{equation}
+
+\begin{figure}
+\centering
+\fpage{.6}{
+\hpagess{.5}{.5}
+{
+\underline{$\game{2}(A)$}\\
+$\calZ \gets \emptyset$\\
+$\calS \getsr \distr{\univ}{n}$\\
+$(M,\tau) \getsr \Rep^{\HashOracle}(\calS)$\\
+$x' \gets A^{\MemOracle,\QryOracle,\HashOracle}(M)$\\
+$x \getsr \calZ$\\
+if $x\in \calS $ then Ret 1\\
+Ret 0
+}
+%
+{
+\oracle{$\MemOracle(x)$}\\
+Ret $[x \in \calS]$\\
+
+\medskip
+\oracle{$\QryOracle(x)$}\\
+Ret $\Qry^{\HashOracle}(M,\tau,x)$\\
+
+\medskip
+\oracle{$\HashOracle(x)$}\\
+$\calZ \gets \calZ \cup x$\\ 
+$\rho_i \getsr Func(\univ,[m])$, for $i\in[1,k]$\\
+$z_i \gets \rho_i(x)$, for $i\in[1,k]$\\
+Ret $z_i$, for $i\in[1,k]$\\
+}
+}
+\caption{\Cref{thm3}: Game playing argument}\label{fig:Game2T3}
+\end{figure}
+
+In $\game{1}(A)$, $T[x]\neq$ undefined, if earlier $\Rep$ asked hash-indices of $x$. So,  Bad $\gets$ true if $A$ queries an element present in $\calS$. 
+\begin{equation}
+\Prob{\game{1}(A):\mathrm{Bad} = \mathrm{true}} = \frac{n}{\abs{\univ}}\label{eq:4T3}
+\end{equation}
+
+From \Cref{eq:0T3,eq:1T3,eq:2T3}, \Cref{eq:3T3} and \Cref{eq:4T3}
+
+\begin{equation}
+\AdvPrivPubHashBB{B}{A} \leq  \frac{q}{2^\mu} + \frac{n}{\abs{\univ}}
+\end{equation}
+
+\end{proof}

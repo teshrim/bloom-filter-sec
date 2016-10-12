@@ -1,0 +1,88 @@
+\section{Security in the Multi-Server Settings }  \jnote{What is the
+goal here? If they don't share hash functions, I'm not sure what is
+gained by considering this definition.} \tsnote{Perhaps not the same
+hash functions, but correlated ones.  For example, server~$j$ uses
+hash functions $\tilde{h}_i(x) = h_i(\langle \mathrm{id}_j \rangle \concat x)$ for
+some $h_i$ shared among servers.  The $\mathrm{id}_j$ may or may not
+be public, e.g. in a P2P network your ID might be a nonce learned only
+when you join.  Also, the sets $\mathcal{S_j}$ stored at each server
+might be correlated.} In this section, we consider
+security notions for settings in which there may be multiple
+servers, each holding a filter representation of a set.  To allow
+for each server to embed server-specific information into its
+representation, we abstract the servers as $B_1,B_2,\ldots,B_\ell$
+where each $B_i=(\Hash_i,\Rep_i,\Qry_i)$ is an $(n,k,m)$-filter.
+\tsnote{Still some kinks to be ironed out though.  The current
+notions sample fresh hash functions for each server.  But in (say)
+the Squid setting, the same hash functions are used across all Squid
+instances... maybe it suffices, for that setting, to say that the
+$\Hash_i$ are all the same, and each simply returns a fixed set
+of~$k$ hash functions (i.e., deterministic).} To model insider
+attacks, we give the adversary the ability to corrupt (adaptively)
+instances of the filter.  Such attacks capture P2P settings, in
+which the adversary may join the network as a peer.
+
+\begin{figure}
+\centering
+\fpage{.6}{
+\hpagess{.6}{.35}
+{
+\experimentv{$\ExpFPSecHash{B_1,B_2,\ldots,B_\ell}{\distr{U}{n}, A}$}\\
+$\mathcal{C} \gets \emptyset$\\
+for $i=1$ to $\ell$\\
+\nudge $S_i \getsr \distr{U}{n}$\\
+\nudge $ \mathcal{H}_i \gets \{h^i_1,h^i_2,\ldots,h^i_k\} \getsr \Hash_i$\\
+\nudge $M_i \getsr \Rep_i^{\HashOracle(i,\cdot,\cdot)}(S_i)$\\
+$(i,x) \getsr A^{\QryOracle,\CorruptOracle}(\{S_i\}_{i=1}^{\ell})$\\
+if $i \not\in \mathcal{C} \wedge \Qry_i^{\HashOracle(i,\cdot,\cdot)}(M_i,x)=1$ then \\
+\nudge Ret 1\\
+Ret 0
+}
+%
+{
+\oracle{$\QryOracle(i,x)$}\\
+Ret $\Qry_i^{\HashOracle}(M_i,x)$\\
+
+\medskip
+\oracle{$\HashOracle(i,j,x)$}\\
+Ret $h^i_j(x)$\\
+
+\medskip
+\oracle{$\CorruptOracle(i,x)$}\\
+$\mathcal{C} \gets \mathcal{C} \cup \{i\}$\\
+Ret $M_i,\mathcal{H}_i$\\
+}
+}
+%%%%%%%
+\fpage{.6}{
+\hpagess{.6}{.35}
+{
+\experimentv{$\ExpFPPubHash{B_1,B_2,\ldots,B_\ell}{\distr{U}{n}, A}$}\\
+$\mathcal{C} \gets \emptyset$\\
+for $i=1$ to $\ell$\\
+\nudge $S_i \getsr \distr{U}{n}$\\
+\nudge $ \mathcal{H}_i \gets \{h^i_1,h^i_2,\ldots,h^i_k\} \getsr \Hash_i$\\
+\nudge $M_i \getsr \Rep_i^{\HashOracle(i,\cdot,\cdot)}(S_i)$\\
+$(i,x) \getsr A^{\QryOracle,\CorruptOracle}(\{S_i\}_{i=1}^{\ell},\{\mathcal{H}_i\}_{i=1}^{\ell})$\\
+if $i \not\in \mathcal{C} \wedge \Qry_i^{\HashOracle(i,\cdot,\cdot)}(M_i,x)=1$ then \\
+\nudge Ret 1\\
+Ret 0
+}
+%
+{
+\oracle{$\QryOracle(i,x)$}\\
+Ret $\Qry_i^{\HashOracle}(M_i,x)$\\
+
+\medskip
+\oracle{$\HashOracle(i,j,x)$}\\
+Ret $h^i_j(x)$\\
+
+\medskip
+\oracle{$\CorruptOracle(i,x)$}\\
+$\mathcal{C} \gets \mathcal{C} \cup \{i\}$\\
+Ret $M_i$\\
+}
+}
+\caption{False-positive security for an $(n,k,m)$-filter~$B$ in the multiple-server setting.  (Three variations, depending on access to/knowledge of hash functions.) \textcolor{cyan}{Not clear which of these notions really makes sense.}}
+\label{fig:fp-filter}
+\end{figure}

@@ -1,0 +1,26 @@
+\section{Instances of canonical set-multiplicity data structure}
+We check whether various set-multiplicity data structures are captured in this definition. Fix set $S$ with elements $x_1, \ldots, x_t \in \bool^{\ell_{in}} $.
+
+\heading{Classical Bloom filter in ROM}
+ Fix $k,m > 0$. Define $F: \bool^{\ell_{in}} \rightarrow \bool^{m}}$ as the RO instance; it uses lazy sampling to mimic RO.
+\begin{enumerate}
+\item $x_1, \ldots, x_t \getsr \Rep_1(S)$.
+\item $\pubaux \getsr \Rep_2(|S|,  F(x_1), \ldots, F(x_t))$.
+\end{enumerate}
+
+\heading{Linear-prf data structure}
+Fix $k,m > 0$. Define $F: \bool^n \times \bool^{\ell_{in}} \rightarrow \bool^{\ell_{out}}$
+such that the following hold:
+\begin{itemize}
+\item $\Rep_1$ takes as input a set $S$ and outputs distinct values $x_1, \ldots, x_t \in \bool^{\ell_{in}}$,
+where $t$ depends only on~$|S|$.
+\item $\Rep_2$ takes as input $|S|$ and $y_1, \ldots, y_t \in \bool^{\ell_{out}}$, and outputs
+$\pubaux$.
+\item For any $S$, the distribution on $\pubaux$ output by $\Rep(S)$ is identical to the distribution
+on $\pubaux$ computing as follows:
+\begin{enumerate}
+\item $x_1, \ldots, x_t \getsr \Rep_1(S)$.
+\item $k \getsr \bool^n$.
+\item $\pubaux \getsr \Rep_2(|S|, F_k(x_1), \ldots, F_k(x_t))$.
+\end{enumerate}
+\end{itemize}
