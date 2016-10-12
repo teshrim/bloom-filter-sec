@@ -1,0 +1,144 @@
+\section{Introduction}
+\label{sec:intro}
+
+Data structures are a fundamental tool used throughout computer
+science. Typically, when the behavior of a data structure (e.g., its
+running time or its error probability) is analyzed, the analysis is
+performed under the assumption that the input/queries to the data
+structure are chosen independently of the data structure itself, and
+in particular independent of any internal randomness used by the
+data structure. But, as recently highlighted by Naor and
+Yogev~\cite{naor2015bloom}, there are many natural scenarios in
+which the input/queries may be chosen \emph{adversarially} and
+\emph{adaptively} based on partial information and/or prior
+observations about the data structure.
+
+In addition, standard applications of data structures assume that
+the party querying the data structure is fully trusted, and hence
+privacy concerns do not arise. In some scenarios, however, it may be
+desirable to allow some party to pose (certain types of) queries to
+a data structure, but unacceptable to leak the data in its entirety
+to that same party. Existing definitions do not address privacy in
+this sense at~all. The concerns outlined above motivate a careful, formal treatment of data structures in an adversarial setting, 
+where both \emph{correctness} and \emph{privacy} are considered. In this work we initiate such a
+treatment for abstract data structures.  
+
+Loosely speaking, we formalize a data structure as a pair of algorithms $(\Rep,\Qry)$, the representation and query-evaluation algorithms, respectively.  The randomized representation algorithm takes in an abstract object~$S$ and produces public representation data $\pubaux$ and private representation data $\privaux$.  Intuitively, $\pubaux$ is considered public information, whereas $\privaux$ is meant to be known only to the party running $\Qry$.  The deterministic query-evaluation algorithm uses $\pubaux$ and $\privaux$ in order to (approximately) evaluate permitted queries $\qry$, which are arbitrary functions over abstract objects.  We say ``approximately''  evaluate permitted queries because $\pubaux$ and $\privaux$ may not contain all of the information sufficient to determine the true value of $\qry(S)$ for all~$S$.  
+
+Let us give an example.  Consider the classic Bloom filter~\cite{bloom1970space}, in which case $\pubaux$ will consist of the bit array~$M$ that represents a given set~$S$, as well as descriptions of the hash functions $H_1,H_2,\ldots,H_k$ used to produce~$M$; $\privaux$ will be empty.  The permitted queries will be predicates of the form $\qry_x(S)=1$ iff $x \in S$. The~$\Qry$ algorithm, on input $M,H_1,H_2,\ldots,H_k$ and $\qry_x$, carries out the standard Bloom filter set-membership test to decide whether or not $x \in S$.  It is well known that Bloom fiters admit false-positive errors, thus $\Qry$ only approximates the true set-membership test.  Our correctness security notion will quantitatively capture the approximation error, but in the presense of attackers that adaptively try to induce one or more errors (false-positives, in this case).  
+
+By shifting $H_1,H_2,\ldots,H_k$ from $\pubaux$ to $\privaux$, we do not change the functionality at all.  But we may very well change the security profile of the resulting Bloom filter variant.  Indeed, this is the case.  When $H_1,H_2,\ldots,H_K$ are assumed to be good pseudorandom functions, we can prove that this variant achieves a kind of ``semantic security'' privacy guarantee: the bit array~$M$ is well known to leak a good approximation of~$|S|$, and our notion shows that it leaks nothing more than this.  (Such a result is not possible for the standard Bloom filter, or any other data structure with empty~$\privaux$.)
+
+This example offers a hint at the broad range of abstract data structures our syntax supports.  In this paper, we put the syntax and our security notions to work, analyzing Bloom filters in the random oracle model~\cite{broder2004network}, with PRFs for hash functions~\cite{niedermeyer2014cryptanalysis,naor2015bloom}, and with secret hash functions that fall short of being PRFs (so-called ``linear-PRF'' hash functions~\cite{kirsch2006less,niedermeyer2014cryptanalysis}), each representing an in-use or proposed Bloom filter variant.  The linear-PRF Bloom filter provides an opportunity to see just how brittle constructions can be to their usage.  When used to create a representation of a set, we prove that the linear-PRF Bloom filter offers both correctness and privacy.  However, when applied to a multiset (effectively) privacy is lost.  In fact, Niedermeyer et al.~\cite{niedermeyer2014cryptanalysis} show that the linear PRF Bloom filter, when applied to a collection of bigrams of German last names, admits a practical attack that reveals the names.  Note that this is despite the fact that the hash functions are constructed from secretly-keyed PRFs in a way that has been suggested in recent literature on Bloom filter variants~\cite{kirsch2006less}.  We also consider garbled Bloom filters, proposed by Dong et al.~\cite{dong2013private} as a key piece of a private set-intersection protocol.
+
+We see this work as laying the foundation for a number of follow-on studies.  For example to study dynamic data structures, such as counting Bloom filters\cite{fan2000summary}, scalable Bloom filters~\cite{almeida2007scalable}, count-min sketches~\cite{cormode2005improved}, hierachical Bloom filters~\cite{zhu2004hierarchical}, to name just a few in the extended Bloom filter family.  Another direction would be to explore the security of primitives built \emph{from} these sorts of data structures, such as content-distribution networks (where many servers propogate representations of their local cache to their neighbors), or cryptographic strike lists (a la early versions of the QUIC protocol) for nonce-replay protection.  The Bloom filter family alone has a wide range of practical applications, for example in large database query
+processing, routing algorithms for peer-to-peer networks, protocols
+for establishing linkages between medical-record databases, fair
+routing of TCP packets, and Bitcoin wallet synchonization~\cite{schnell2011novel,niedermeyer2014cryptanalysis,gervais2014privacy,nojima2009cryptographically,feng2001stochastic,reynolds2003efficient,byers2002informed,broder2004network}.
+
+
+\heading{Comparison to~\cite{naor2015bloom}.} Naor and
+Yogev~\cite{naor2015bloom} recently considered the problem of
+adversarial soundness for Bloom filters and, indeed,
+their work served as inspiration for our own. Our work extends
+their work significantly in several directions. For starters, we
+consider abstract data structures (rather than only the case of
+set-membership data structures), and consider privacy in addition to
+correctness. Even with respect to the specific case of correctness for
+set-membership data structures, our work offers several advantages
+to the Naor-Yogev treatment:
+\begin{itemize}
+\item We explicitly distinguish between public and private
+    portions of a data structure, something that was left
+    ambiguous\footnote{In fact, it isn't clear that their formalization actually allows for standard Bloom filters, although fixing this ambiguity is straightforward once recognized.} in~\cite{naor2015bloom}. This allows us, for
+    example, to distinguish between the hash-function keys and
+    the bit array when discussing classical Bloom filters.
+\item The Naor-Yogev definition of soundness allows the
+    adversary to make several set-membership queries, some of
+    which may produce incorrect results, and the attacker then
+    succeeds if it can output a \emph{fresh} query which leads
+    to an error. We propose instead what we find to be a more
+    natural definition in which the attacker succeeds if it can
+    cause a certain number of incorrect results.
+\item Naor and Yogev analyze a new Bloom-filter construction of
+    their own design. In contrast, we are interested in
+    analyzing practical constructions that have been proposed in
+    prior work to understand how secure they are. In particular,
+    we analyze Bloom filters in the random-oracle model.
+\end{itemize}
+
+We give a technical comparison of our correctness notion and theirs (lifted to our more general syntax)
+in Appendix~\ref{sec:compare-defs}. 
+
+
+\ignore{We provide various security notions for these primitives...
+FP with private, public representation coins; set privacy with
+private, public representation coins; FP/set privacy in the
+multi-representation setting (outsider attack, think CDNs); FP/set
+privacy in the multi-representation setting with corruptions
+(insider attack, think P2P networks) \tsnote{Those are just the ones
+that come to mind now.  Could also consider authenticity of
+representations, think CDN or P2P settings.}}
+
+\heading{Related work.} 
+\input{related-work}
+%\jnote{See the discussion of related work in
+%Naor-Yogev. We should cite [LN93]. I can't tell how relevant [MNS11]
+%is. [HW13] seems relevant, though I don't think it is captured by
+%our current definitions.}
+
+%\jnote{Discuss use of BFs and BF variants in a security-oriented
+%setting. Also some prior work formalizing BFs in an adversarial
+%environment. See commented out portion of the .tex}
+
+\ignore{\heading{Related work: attacks}
+\begin{itemize}
+\item Niedermayer et al., ``Cryptanalysis of Basic Bloom Filters Used for Privacy-Preserving Record Linkage'', breaking privacy of secret-hash-function Bloom filters. \tsnote{Journal of Privacy and Confidentiality, 2014}
+\item Gerbet, Kumar and Lauradoux, ``The power of evil choices in bloom filters''.
+\tsnote{DSN'15: Looks like a real goldmine of related work!}
+\item Crosby and Wallach, ``Denial of Service via Algorithmic Complexity Attacks'' \tsnote{Gives attacks on Squid}
+\item Gao et al., ``Internet Cache Pollution Attacks and Countermeasures''
+\end{itemize}}
+
+\ignore{\heading{Related work: definitions(?)}
+\begin{itemize}
+\item Nojima and Kadobayashi, ``Cryptographically Secure Bloom Filters''.
+\tsnote{Gives some security definitions for privacy. Quick scan, not super
+clear what they achieve. The definition of client-privacy
+ (Definition 1) for example, makes no sense to me.  Actually,
+ likewise for server-privacy (Definition 2).  Both seem vague
+ and thoroughly underspecified.}
+\item Naor and Yogev
+\item Eujin Goh, ``Secure Indexes'' \tsnote{A secure index can
+    be used for set membership.  Builds a secret-key data
+    structure (an Index) that allows searching for keyword~$w$
+    if one holds the trapdoor $T_w$ for~$w$, where the trapdoor
+    depends on the secret key.  Main construction uses
+    traditional Bloom filters and a PRF.  Construction appears
+    quite inefficient, needing a very long secret key, turning a
+    keyword~$w$ into a bunch of PRF outputs, and then storing
+    each of these PRF outputs in the BF.  Haven't read the full
+    analysis; don't know if this was ever published. }
+    \jnote{Never published. I think this work uses Bloom filters
+    for encrypted search; I don't remember the paper having much
+    to say about Bloom filters themselves.}
+\end{itemize}
+
+\heading{Related work: constructions}
+\begin{itemize}
+\item Bellovin and Cheswick, ``Privacy-Enhanced Searches Using
+    Encrypted Bloom Filters''.
+\item Kerschbaum , ``Public-Key Encrypted Bloom Filters with Applications to Supply Chain Integrity''.
+\item S\"{a}rell\"{a} et al., ``BloomCasting: Security in Bloom Filter Based Multicast''.
+\item Dong, Chen, Wen, ``When Private Set Intersection Meets Big Data: An Efficient and Scaleable Protocol'' \tsnote{``garbled bloom filters'', which actually store the set element by storing~$k$ xor-shares, one at each of the~$k$ hash indices (with care for reusing shares if hash collisions occur); also and``oblivious bloom intersection''}\tsnote{If the filter and the hash functions are public, there is a naive attack that works for some interesting parameters.  Pick~$k$ positions $i_1,i_2,\ldots,i_k$, xor strings at these positions to get a candidate~$x$.  If $h_{1}(x)=i_1 \wedge h_2(x)=i_2 \wedge \cdots \wedge h_k(x) = i_k$ then either $x \in S$ or~$x$ is a false-positive. (You don't have to do all~$k$ hashes, you can stop as soon as one fails to match the index.) Say you have a 1000-position filter ($m=1000$) and a 100-element set ($n=100$), and you are willing to tolerate a 1\% FP rate.  Then you'd set $k=4$ (a la Squid).  There are roughly $2^{35}$ subsets of 4 indices to consider, which is reasonable on a laptop these days.  (Also, since $n=100$ the expected number of trials is roughly $2^{28}$.) With the FP rate of 1\%, if you find a winner then almost certainly it is in the set.  Granted, this attack is naive, but notice that you \emph{cannot} mount it against a standard Bloom filter. Also notice that this attack might be significantly more efficient than brute force guessing over the universe of inputs (imagine that $U=\bits^{64}$), even if you know that the distribution deviates significantly from uniform. }
+\item Tarkoma, Rothenberg, Lagerspetz ``Theory and Practice of Bloom Filters in Distributed Systems'' \tsnote{Great high-level coverage.  Only found preprint version though.}
+\item Durham, Kantarcioglu, Xue, Kuzu, Malin ``Composite Bloom Filters for Secure Record Linkage'' \tsnote{Per-field BFs, sampled and composed into single BF that is then permuted by a secret random permtation.  No clear statement of the problem that is being solved.  Should pull full version and get details.}
+\end{itemize}
+
+\heading{Related work: tangential}
+\begin{itemize}
+\item Chang and Mitzenmacher ``Privacy Preserving Keyword Searches on Remote Encrypted Data''.
+\item Mitzenmacher and Vadhan. ``Why Simple Hash Functions Work: Exploiting the Entropy in a Data Stream''.
+\item Dodis et al. ``Fuzzy Extractors: How to Generate Strong Keys from Biometrics and Other Noisy Data'' \tsnote{Introduces ``secure sketches'', which is a representation of a single-element set that is information theoretically private (up to some function of the min-entropy of the element); only tangentially related to ``sketches'' as defined in the Bloom filter literature.}
+\end{itemize}
+}

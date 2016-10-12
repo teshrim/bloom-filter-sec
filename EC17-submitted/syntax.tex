@@ -1,0 +1,185 @@
+\section{Preliminaries}
+
+When~$\univ$ is a set, we write $x \getsr \univ$ to denote sampling
+an element uniformly from~$\univ$ and assigning it to~$x$. We extend
+this notation to randomized algorithms, so $x \getsr A(y)$ denotes
+that (randomized) algorithm $A$ is run on input~$y$, and the output
+of the algorithm is assigned to~$x$. Algorithms may be provided
+black-box access to one or more oracles, which we write as
+superscripts, e.g., $F^{O_1,O_2,\ldots}$.  All algorithms (and, in
+particular, all adversaries) are stateful by default. We write
+$\langle x,y,\ldots \rangle$ for the encoding of values $x,y,\ldots$
+as a single bit-string, for some implicit and invertible encoding
+method. When $x$ is a string, we write $x[i]$ for the $i$-th element
+in that string, and $x[i:j]$ for the substring $x[i]x[i+1]\cdots
+x[j]$.  %\tsnote{need subset of size~$r$ notation}
+
+\subsection{Data Structures}
+
+We consider an abstract notion of data structures.
+
+%Informally, the representation should serve as a good
+%approximation of the multiset, at least with respect to the allowed queries.
+\begin{definition}[Data structure] \rm
+Fix sets~$\univ, \Gamma$, and $\calQ = \{\qry \colon \univ \to
+\Gamma\}$. A \emph{data structure} (supporting queries $\calQ$ over
+universe $\univ$) is a tuple $\setprim=(\Rep, \Qry)$ where:
+\begin{itemize}
+\item $\Rep \colon \univ \to \bits^* \times \bits^*$ is a
+    randomized \emph{representation algorithm}, taking as input
+    an element $S \in \univ$,
+    and outputting %a \emph{representation} $M \in \Sigma^*$,
+    \emph{public representation data} $\pubaux \in \bits^*$ and
+    \emph{private representation data} $\privaux \in \bits^*$.
+    We write $(\pubaux,\privaux) \getsr \Rep(S)$ as shorthand
+    for this execution.
+\item $\Qry\colon \bits^* \times \bits^* \times \calQ \to
+    \Gamma$ is a deterministic \emph{query-evaluation}
+    algorithm, taking as input $\pubaux,\privaux \in \bits^*$
+    and a query $\qry \in \calQ$, and outputting an
+    \emph{answer} $a \in \Gamma$.  We write $a \gets
+    \Qry(\pubaux,\privaux,\qry)$ for this execution. \hfill\dqed
+\end{itemize}
+\end{definition}
+
+
+\begin{definition}[Error probability and rate] \rm
+For a specific data structure $\setprim=(\Rep, \Qry)$ supporting
+queries $\calQ$ over universe $\univ$, let
+$\mathrm{Err}(S,\qry,\pubaux,\privaux)$ be  true iff
+$\Qry(\pubaux,\privaux, \qry) \neq \qry(S)$.  Then we define for
+$\setprim$ the quantities
+\begin{align*}
+&\max_{S,\qry}\Prob{(\pubaux,\privaux) \getsr \Rep(S) :
+\mathrm{Err}(S,\qry,\pubaux,\privaux)=1 } &\\
+&\max_{S}\Prob{(\pubaux,\privaux) \getsr \Rep(S);\, \qry \getsr \calQ :
+\mathrm{Err}(S,\qry,\pubaux,\privaux)=1} &
+\end{align*}
+which are the \emph{error probability} and \emph{error rate}, respectively.
+%
+%We say it has \emph{error rate} $\tilde{\epsilon}$ if
+%\[{\textstyle \max_{S}\Pr[(\pubaux,\privaux) \getsr \Rep(S);\, \qry \getsr \calQ :
+%\mathrm{Err}(S,\qry,\pubaux,\privaux)=1]} \leq \tilde{\epsilon}. \]
+\hfill\dqed
+\end{definition}
+
+
+%We will sometimes say that a data structure is
+%$(1-\epsilon)$-correct, meaning it has error probability~$\epsilon$.
+%Note that $1-\epsilon$ is a worst-case lower bound on the
+%correctness of the data structure. \tsnote{Don't know if this will be necessary.}
+
+The above definition can be lifted to the random-oracle model by
+giving $\Rep, \Qry$ access to a random oracle. In that case, the
+probabilities are also taken over choice of the random oracle. We
+remark that, while our error probability and error rate do not
+distinguish among ``types'' of errors, they also do not preclude
+instantiations (like the classical Bloom filter) that admit only one
+type of error, e.g., false positives.
+
+
+\def\bin{{\sf Bin}}
+\ignore{
+\heading{Error probability vs.\ error rate. } We pause to
+highlight an important difference between error probability and
+error rate.  In particular, the error probability~$\epsilon$ is
+measured only over the coins of~$\Rep$, for a fixed~$S$ and
+query~$\qry$. Once the coins of~$\Rep$ are fixed, it is not
+straightforward how to connect~$\epsilon$ to events that depend on
+other sources of randomness.   We illustrate how this surfaces with
+the following example.
+
+\jnote{The following may need to be updated to fit the new syntax.}
+Let~$\setprim$ be a data structure that has error-probability $\epsilon$,
+and consider a correctness-violating attack that asks random queries
+$\qry_1,\qry_2,\ldots,\qry_T$, i.e., uniform samples from~$\calQ$.
+Let $\mathrm{Err}_i$ be a random variable indicating the event
+$\Qry(\pubaux,\privaux,\qry_i)\neq \qry_i(S)$.  We know that the
+probability that $\mathrm{Err}_i=1$ is at most~$\epsilon$, and it is
+tempting to model the~$\mathrm{Err}_i$ as i.i.d. Bernoulli trials
+with success probability~$\epsilon$. However, a moment's reflection
+shows that this is not the case. Concretely, consider the following
+scheme. Fix $|S|=n$ for all $S \in \calS$, where $n \ll |\univ|$.
+For the queries, let $\calQ = \{\qry_x\colon \calS \to \bits \,|\,
+\forall x \in \univ\}$ where $\forall S \in \calS$ the predicate
+$\qry_x(S)=1 \Leftrightarrow x \in S$.  Let $\Rep(S)$ pick a random
+element~$s \in S$, and return $M = S \setminus \{s\}$ and $\privaux
+= \emptystring$.  To respond to queries,
+let~$\Qry(\pubaux,\privaux,\qry_x)=1$ iff $x \in M$.  It is easy to
+see that this scheme is $1/n$-correct; for any fixed~$S$, there are
+exactly~$n$ queries~$\qry_x$ that have probability~$1/n$ (over the
+coins of~$\Rep$) of causing a correctness error, and the remaining
+$|\univ|-n$ queries have probability zero of causing an error.
+Moreover, once the coins of~$\Rep$ are fixed, there is exactly
+\emph{one} query that will cause an error.  Thus for random queries
+from~$Q$, for all~$i\in[T]$ we have
+$\Prob{\mathrm{Err}_i=1}=1/|\univ| \ll 1/n = \epsilon$.
+}
+
+%\heading{Data structures for set-membership queries.}
+An important special case is a data structure that supports set-membership
+queries. 
+\begin{definition} \rm
+A \emph{set-membership data structure over $\elts$} is a data
+structure with $\univ \subseteq 2^\elts$, $\Gamma=\{0,1\}$, and
+$\calQ=\{\qry_x\}_{x \in \univ}$, where $\qry_x(S)$ is true iff $x
+\in S$. \hfill\dqed
+\end{definition}
+
+Note that we do not require $\univ = 2^\elts$ since, e.g., a
+particular set-membership data structure might only be defined for
+sets up to some bounded size.
+
+\ignore{ \jnote{Below needs to change.} For concreteness, we note
+that a classical Bloom filter is a particular example of a
+set-membership data structure. Specifically,
+%\jnote{Only handles sets, not multisets.}
+let $\Gamma=\bits$, and fix functions $k(\cdot)$ and $m(\cdot)$
+parameterizing the scheme.  Algorithm $\Rep$, on input a set~$S$,
+computes $k=k(|S|)$ and $m=m(|S|)$ and then chooses $k$ functions
+$h_1, \ldots, h_k \in \mathcal{H}$ for some function family
+$\mathcal{H}=\{h \colon \univ \to \mathbb{N}\}$.\footnote{For this
+  example, we are implicitly assuming that the range of the hash
+  functions admits a natural mapping to $[m]$.  In practice, this
+  could be enforced in various ways, including allowing $\Rep$ to
+  return an indication of error. }
+It then computes an $m$-bit
+array~$M$ (initialized to 0 everywhere) by setting $M[h_i(x)]=1$ for
+all $i\in [k]$ and $x \in S$.  Finally, $\Rep$ returns
+$\privaux=\emptystring$ and $\pubaux = \langle
+M,h_1,h_2,\ldots,h_k\rangle$ as the representation.
+%
+Algorithm~$\Qry$ is defined so that, on input
+$(\pubaux,\privaux,\qry_x)$, it returns the minimum of the values
+$M[h_1(x)],\ldots,M[h_k(x)]$.  We note that the standard Bloom filter
+analysis treats $h_1,h_2,\ldots,h_k$ as independent random functions,
+which we may capture in the ROM with some simple adjustments to the above.
+
+As a simple extension, consider $\Gamma=\mathbb{N}$ and modify the
+classical Bloom filter so that it stores counters, rather than bits, at
+each position in an array.  In particular, for each~$x \in S$ the
+$\Rep$~algorithm increments the counters stored at positions
+$h_1(x), h_2(x), \ldots, h_k(x)$, returns the final array of
+counters as~$M$.  The $\Qry$-algorithm remains the same. Such a
+construction gives a static version of a counting Bloom
+filter~\cite{fan2000summary}.  We will capture dynamic versions, as well as
+count-min sketches~\cite{cormode2005improved}, scalable Bloom filters~\cite{almeida2007scalable},
+etc., in future work.\tsnote{?}
+
+A Bloom filter with secret hash functions is captured by setting
+$\privaux=(h_1,h_2,\ldots,h_k)$, and setting $\pubaux=M$.
+Related constructions that use a secret key~$K$, but not for hashing (e.g.\ the PRP-based
+construction from NY), are captured setting $\privaux=K, \pubaux=M$.
+
+\tsnote{needs updating, since $\Sigma$ is gone, and the range of
+  $\Rep$ is just $\bits^*$ with implicit encoding of whatever is the
+  ``natural'' way to think about $\pubaux$ (e.g. counters, xor-shares)}
+By setting $\Sigma=\bits^L$ for a specified $L>0$, we can capture
+the so-called ``garbled Bloom filter'' due to Dong, Chen and
+Wen~\cite{dong2013private}. \todo{Details have to be filled in.}
+This stores xor-shares of bit-string~$x \in S$ at positions
+$h_1(x),h_2(x),\ldots,h_k(x)$ in an array. Similarly, the
+cuckoo-hashing construction from NY, which (loosely speaking) stores
+a hash $g(x)$ at positions determined by
+$h_1(x),h_2(x),\ldots,h_k(x)$, is captured when $L=|g(x)|$.
+\todo{Check the correctness of this claim.} }

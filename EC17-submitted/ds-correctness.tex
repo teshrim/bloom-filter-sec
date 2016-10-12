@@ -1,0 +1,182 @@
+\newcommand{\FK}{F_K(\langle j,x \rangle)}
+\newcommand{\rhoK}{\rho(\langle j,x \rangle)}
+\newcommand{\OK}{\calO(\langle j,x \rangle)}
+
+\begin{proof}[Theorem~\ref{thm:ds-correctness}]
+%\fixme{Animesh: remove these Cref things and replace with references
+  %like I have them in the text.}
+We use a game playing argument to prove this theorem. Please refer to
+Figure~\ref{fig:ds-correctness-games}. In game \game{0} adversary $A$ attacks the correctness game with  hash functions $h_j(x) = \FK $, and hence exactly simulates $\ExpCorrect{\setprim_{\mathrm{ds}},r}{A}$.
+\begin{equation}
+\AdvCorrect{\setprim_{\mathrm{ds}},r}{A} = \Prob{\game{0}(A)=1}
+\end{equation}
+
+In game $\game{1}$, $A$ attacks a related data structure $\tilde{\setprim}_\mathrm{ds}$, in which $F_K$ is replaced by a random function. Let $B$ be a prf-adversary as shown in Figure~\ref{fig:ds-correctness-adv}. Based on its challenge bit $b$, it exactly simulates $\game{0}$ or $\game{1}$. So,
+\begin{align*}
+\Prob{\ExpPRF{F}{B} = 1\,|\,b=1} &= \Prob{\game{0}(A)=1} \\
+\Prob{\ExpPRF{F}{B} = 1\,|\,b=0} &= 1-\Prob{\game{1}(A)=1}
+\end{align*}
+
+By a standard conditioning of PRF advantage, we have
+\begin{equation*}
+\Prob{\game{0}(A)=1} = \AdvPRF{F}{B} + \Prob{\game{1}(A)=1}%\label{eq:13}
+\end{equation*}
+
+Coming back to the game playing argument, in game $\game{2}$, $\HashOracle$ returns random values sampled from $[m]$, assuming $A$ makes no pointless queries. In addition, the $\TestOracle$ oracle keeps a counter, $c$ to keep track of the number of queries by $A$ to the $\TestOracle$. It also sets a boolean $\bad$ flag to $\false$ if queries which are not indexed by the $r$-set $\calI$ are false-positives, and queries indexed by set $\calI$ are not false-positives. It must be noted that $\bad$ does not affect the output of the $\TestOracle$ or the game. We argue that, $\Prob{\game{1}(A)=1} \leq \Prob{\game{2}(A)=1}$. Game $\game{3}$ is identical to $\game{2}$, except it returns 0 if $\bad$ is set to $\true$. $\game{3}$ returns 1 whenever $\game{2}$ would return 1, and $\bad$ remained false in $\game{2}$. So, basically $\game{3}$ guessed exactly the $r$ queries that results in errors. Hence, $\Prob{\game{3}(A)=1} = \frac{1}{\binom{q}{r}}\Prob{\game{2}(A)=1}$.
+
+Let $D$ be an adversary shown in Figure~\ref{fig:lin-correctness-zq-adv}. It effectively simulates game~$\game{3}$, guessing which~$r$ of~$A$'s queries to send to its own~$\TestOracle$. By its construction, if $\game{3}(A)=1$ then~$D$ will also find~$r$ errors in~$\tilde{\setprim}_{\mathrm{ds}}$.  Thus, $\AdvCorrect{\tilde{\setprim}_{\mathrm{ds}},r}{D} = \Prob{\game{3}(A) = 1}$.
+
+It can be easily seen that  $\tilde{\setprim}_{\mathrm{ds}}$ is the scheme that is analyzed in the classical Bloom filter literature. So, for an adversary $D$ and $r=1$, advantage of $D$ to win $\ExpCorrect{\tilde{\setprim}_{\mathrm{ds}},r}$ will be upper bounded by the false-positive probability of a classical Bloom filter. For $r > 1$, based on the assumption that $A$ makes no pointless queries, the queries made by $A$ are distinct and not elements of the original set $S$. Also, since $\HashOracle$ in $\game{3}$ returns $k$ random values for each query, the event of getting a false positive is independent of the index of the query. So, $\AdvCorrect{\tilde{\setprim}_{\mathrm{ds}},r}{D} =   {\binom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r$
+
+\noindent
+To summarize, we have
+\[
+\AdvCorrect{\setprim_{\mathrm{ds}},r}{A} \leq  \AdvPRF{F}{B}  + {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r
+\]
+which is the bound claimed in the theorem statement. \hfill \qed
+
+%\caption{Game playing argument}\label{fig:Game}
+\begin{figure}[tp]
+\fpage{.9}{
+\hpagessl{.45}{.5}
+{
+\underline{\game{0}(A)}\\
+$K \getsr \calK $\\
+$S \getsr A$; $\calC \gets \emptyset$; $\err \gets 0$\\
+$(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+$\bot \getsr A^{\TestOracle}(\pubaux)$\\
+if $\err  < r$ then Return 0\\
+Return 1
+
+\medskip
+\oracle{$\TestOracle(\qry_x)$}\\
+if $x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup \{x\}$\\
+$a \gets \Qry^{\HashOracle}(\pubaux,\privaux, x)$\\
+if $a \neq \qry_x(S)$ then $\err \gets \err + 1$\\
+Return~$a$
+
+\medskip
+\oracle{$\HashOracle(x)$}\\
+for $j = 1$ to $k$\\
+\nudge $h_j(x) \gets \FK $\\
+Return $\left(h_1(x),\ldots,h_k(x)\right)$
+}
+{
+\underline{\game{1}(A)}\\
+$\rho \getsr \Func{\univ,[m]}$\\
+$S \getsr A$; $\calC \gets \emptyset$; $\err \gets 0$\\
+$(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+$\bot \getsr A^{\TestOracle}(\pubaux)$\\
+if $\err  < r$ then Return 0\\
+Return 1
+
+\medskip
+\oracle{$\TestOracle(\qry_x)$}\\
+if $x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup \{x\}$\\
+$a \gets \Qry^{\HashOracle}(\pubaux,\privaux, x)$\\
+if $a \neq \qry_x(S)$ then $\err \gets \err + 1$\\
+Return~$a$
+
+\medskip
+\oracle{$\HashOracle(x)$}\\
+for $j=1$ to $k$\\
+\nudge $h_j(x) \gets \rhoK $\\
+Return $\left(h_1(x),\ldots,h_k(x)\right)$
+}
+}
+\fpage{.9}{
+\hpagessl{.45}{.5}
+{
+\underline{\game{2}(A)\fbox{\game{3}(A)}}\\
+$c\gets 0$; $\err \gets 0$\\
+$\bad \gets \false$\\
+$\calC \gets \emptyset$\\
+$S\gets A$\\
+$\mathcal{I}\getsr [\{1,2,\ldots,q\}]^r$\\
+$(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+$\bot \getsr A^{\TestOracle}(\pubaux)$\\
+if $\bad = \true$ then \fbox{Return 0}\\
+if $\err  < r$ then Return 0\\
+Return 1
+}
+%
+{
+\oracle{$\TestOracle(\qry_x)$}\\
+if $x \in \mathcal{C}$ then Return $\bot$\\
+$\calC \gets \calC \cup \{x\}$\\
+$c \gets c+1$\\
+$v \gets \Qry^{\HashOracle}(\pubaux,\privaux, x)$\\
+if $c \in \mathcal{I}$ and $v = \qry_x(S)$ then \\
+\nudge $\bad \gets \true$ \\
+if $c \not\in \mathcal{I}$ and $v \neq \qry_x(S)$ then \\
+\nudge $\bad \gets \true$\\
+if $v \neq \qry_x(S)$ then $\err \gets \err +1$\\
+Return~$v$
+
+\medskip
+\oracle{$\HashOracle(x)$}\\
+for $j = 1$ to~$k$\\
+\nudge $v_j \getsr [m]$\\
+Return $\left(v_1,\ldots,v_k\right)$
+}
+}
+\caption{Games $\game{0}$-$\game{3}$ for the
+proof of Theorem~\ref{thm:ds-correctness}.}
+\label{fig:ds-correctness-games}
+
+\end{figure}
+
+%\caption{PRF adversary $B$ simulating $\game{1}(A)$ and $\game{2}(A)$
+\begin{figure}
+\centering
+\fpage{.8}{
+\hpagessl{.5}{.45}
+{
+$\adversaryv{B^{\calO}}$\\
+$S \getsr A$\\
+$\calC \gets \emptyset$; $\err \gets 0$\\
+$(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
+Run~$A(\pubaux)$\\
+When $A$ asks $\TestOracle(\qry_x)$:\\
+\nudge if $x \in \mathcal{C}$ then Return $\bot$\\
+\nudge $\calC \gets \calC \cup \{x\}$\\
+\nudge $a \gets \Qry^{\HashOracle}(\pubaux,\privaux, x)$\\
+\nudge if $a \neq \qry_x(S)$ then \\
+\nudge \nudge $\err \gets \err +1$\\
+\nudge Return~$a$\\
+When $A$ halts: \\
+\nudge if $\err  < r$ then Return 0\\
+\nudge Return 1
+
+\medskip
+\oracle{$\HashOracle(x)$}\\
+\nudge Return $\OK$, for $j\in[1,k]$
+}
+{
+$\adversaryv{D^\TestOracle}$\\[4pt]
+On input $\emptystring$:\\
+\nudge $S \getsr A$\\
+\nudge Return~$S$\\
+On input $\pubaux$:\\
+\nudge $c \gets 0$, $\calC \gets \emptyset$, $\err \gets 0$\\
+\nudge $\mathcal{I}\getsr [\{1,2,\ldots,q\}]^r$\\
+\nudge Run $A(\pubaux)$\\
+\nudge When $A$ asks $\qry_x$:\\
+\nudge\nudge if $x \in \mathcal{C}$ then Return $\bot$\\
+\nudge\nudge $\calC \gets \calC \cup \{x\}$\\
+\nudge\nudge $c \gets c+1$; $r \gets 0$\\
+\nudge\nudge if $c \in \mathcal{I}$\\
+\nudge\nudge \nudge $r \gets \TestOracle(\qry_x)$\\
+\nudge\nudge Reply to~$A$ with $r$\\
+\nudge When $A$ halts:\\
+\nudge\nudge Return $\bot$
+}
+}
+\caption{Left: Adversary $B$ simulating $\game{0}(A)$ and $\game{1}(A)$ respectively for the
+proof of Theorem~\ref{thm:ds-correctness}. Right: Adversary $D$ for Theorems~\ref{thm:ds-correctness} }\label{fig:ds-correctness-adv}\label{fig:lin-correctness-zq-adv}
+%\fixme{Animesh: remove Crefs, make caption refer to correct theorem}
+\end{figure}	
+
+\end{proof}

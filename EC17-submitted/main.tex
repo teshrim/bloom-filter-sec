@@ -1,0 +1,125 @@
+\documentclass{llncs}[11pt]
+\def\llncs{1}
+%\usepackage[letterpaper,hmargin=1in,vmargin=1in]{geometry}
+
+\usepackage{amsmath, amssymb}
+\usepackage{amsfonts}
+
+\input{defs}
+
+%%%%%%%%%%%%%%%%%%%% ADDITIONAL MACROS %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\Rep}{\mathsc{Rep}}
+\newcommand{\Hash}{\mathsc{Hash}}
+\newcommand{\Qry}{\mathsc{Qry}}
+\newcommand{\Update}{\mathsc{Up}}
+\newcommand{\Init}{\mathsc{Init}}
+\newcommand{\Test}{\mathsc{Test}}
+\newcommand{\multiset}[2]{\mathbb{M}_{#1}^{#2}}
+
+\newcommand{\ExpCorrectSecHash}[2]{\mathrm{\Exp}^{\mathrm{correct\mbox{-}prv}}_{#1}(#2)}
+\newcommand{\ExpCorrectPubHashBB}[2]{\mathrm{\Exp}^{\mathrm{correct\mbox{-}bb\mbox{-}pub}}_{#1}(#2)}
+\newcommand{\ExpCorrectPubHash}[2]{\mathrm{\Exp}^{\mathrm{correct\mbox{-}pub}}_{#1}(#2)}
+
+\newcommand{\ExpCorrect}[2]{\mathrm{\Exp}^{\mathrm{correct}}_{#1}(#2)}
+\newcommand{\AdvCorrect}[2]{\mathrm{\Adv}^{\mathrm{correct}}_{#1}(#2)}
+\newcommand{\NYExpCorrect}[2]{\mathrm{\Exp}^{\mathrm{NY}}_{#1}(#2)}
+\newcommand{\NYAdvCorrect}[2]{\mathrm{\Adv}^{\mathrm{NY}}_{#1}(#2)}
+\newcommand{\ExpWCorrect}[2]{\mathrm{\Exp}^{\mathrm{wcorrect}}_{#1}(#2)}
+\newcommand{\AdvWCorrect}[2]{\mathrm{\Adv}^{\mathrm{wcorrect}}_{#1}(#2)}
+\newcommand{\QryOracle}{\mathsf{Query}}
+\newcommand{\MemOracle}{\mathsf{Member}}
+\newcommand{\UpdateOracle}{\mathsf{Update}}
+\newcommand{\HashOracle}{\mathsf{Hash}}
+\newcommand{\CorruptOracle}{\mathsf{Corrupt}}
+\newcommand{\TestOracle}{\mathsf{Test}}
+\newcommand{\RepOracle}{\mathsf{Rep}}
+
+\newcommand{\ExpFPSecHash}[2]{\mathrm{\Exp}^{\mathrm{fp\mbox{-}prv}}_{#1}(#2)}
+\newcommand{\ExpFPPubHash}[2]{\mathrm{\Exp}^{\mathrm{fp\mbox{-}pub}}_{#1}(#2)}
+\newcommand{\ExpFP}[2]{\mathrm{\Exp}^{\mathrm{fp}}_{#1}(#2)}
+\newcommand{\AdvFPSecHash}[2]{\mathrm{\Adv}^{\mathrm{fp\mbox{-}prv}}_{#1}(#2)}
+\newcommand{\AdvFPPubHashBB}[2]{\mathrm{\Adv}^{\mathrm{fp\mbox{-}bb\mbox{-}pub}}_{#1}(#2)}
+\newcommand{\AdvFPPubHash}[2]{\mathrm{\Adv}^{\mathrm{fp\mbox{-}pub}}_{#1}(#2)}
+
+\newcommand{\ExpPrivSecHash}[2]{\mathrm{\Exp}^{\mathrm{priv\mbox{-}prv}}_{#1}(#2)}
+\newcommand{\ExpPrivPubHashBB}[2]{\mathrm{\Exp}^{\mathrm{priv \mbox{-} bb\mbox{-}pub}}_{#1}(#2)}
+\newcommand{\ExpPrivPubHash}[2]{\mathrm{\Exp}^{\mathrm{priv\mbox{-}pub}}_{#1}(#2)}
+\newcommand{\AdvPrivSecHash}[2]{\mathrm{\Adv}^{\mathrm{priv\mbox{-}prv}}_{#1}(#2)}
+\newcommand{\AdvPrivPubHashBB}[2]{\mathrm{\Adv}^{\mathrm{priv \mbox{-} bb\mbox{-}pub}}_{#1}(#2)}
+\newcommand{\AdvPrivPubHash}[2]{\mathrm{\Adv}^{\mathrm{priv\mbox{-}pub}}_{#1}(#2)}
+
+\newcommand{\ExpPrivOW}[2]{\mathrm{\Exp}^{\mathrm{ow\mbox{-}rep}}_{#1}(#2)}
+%\newcommand{\ExpPrivNull}[2]{\mathrm{\Exp}^{\mathrm{ow\mbox{-}rep\mbox{-}0}}_{#1}(#2)}
+\newcommand{\AdvPrivOW}[2]{\mathrm{\Adv}^{\mathrm{ow\mbox{-}rep}}_{#1}(#2)}
+%\newcommand{\ExpWPriv}[2]{\mathrm{\Exp}^{\mathrm{wpriv}}_{#1}(#2)}
+%\newcommand{\AdvWPriv}[2]{\mathrm{\Adv}^{\mathrm{wpriv}}_{#1}(#2)}
+%\newcommand{\ExpPrivInd}[2]{\mathrm{\Exp}^{\mathrm{ind\mbox{-}qry}}_{#1}(#2)}
+\newcommand{\ExpPrivSS}[2]{\mathrm{\Exp}^{\mathrm{ss\mbox{-}rep}}_{#1}(#2)}
+\newcommand{\ExpPrivSSreal}[2]{\mathrm{\Exp}^{\mathrm{ss\mbox{-}rep\mbox{-}1}}_{#1}(#2)}
+\newcommand{\ExpPrivSSsim}[2]{\mathrm{\Exp}^{\mathrm{ss\mbox{-}rep\mbox{-}0}}_{#1}(#2)}
+\newcommand{\AdvPrivSS}[2]{\mathrm{\Adv}^{\mathrm{ss\mbox{-}rep}}_{#1}(#2)}
+
+\newcommand{\distr}[2]{\mathcal{D}_{#1}^{#2}}
+\newcommand{\univ}{\calU}
+\newcommand{\elts}{\calX}
+\newcommand{\Perm}[1]{\mathrm{Perm}(#1)}
+\newcommand{\Func}[1]{\mathrm{Func}(#1)}
+\newcommand{\win}{\mathrm{win}}
+\newcommand{\err}{\mathrm{err}}
+\newcommand{\Ans}{\mathrm{Ans}}
+\newcommand{\Break}{\mathrm{break}}
+\newcommand{\setprim}{\Pi}
+\newcommand{\finalshare}{\mathrm{finalshare}}
+\newcommand{\emptyslot}{\mathrm{emptyslot}}
+\newcommand{\fn}{\mathrm{fn}}
+\newcommand{\fp}{\mathrm{fp}}
+\def\pub{{\sf pub}}
+\def\aux{{\sf aux}}
+\def\pubaux{{\sf pub}}
+\def\privaux{{\sf priv}}
+\newcommand{\bilin}{\mathrm{bi}\mbox{-}\mathrm{lin}}
+\newcommand{\leak}{{\sf leak}}
+\renewcommand{\qed}{$\blacksquare$}
+\renewcommand{\dqed}{$\Diamond$}
+\newcommand{\qry}{\mathsf{qry}}
+
+%%%%%%%%%%%%%%%%%%%% TITLE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{{\bf Security Notions for Abstract Data Structures}}
+%\date{\today}
+\date{}
+\author{Last updated: \today}
+\begin{document}
+\maketitle
+
+
+%%%%%%%%%%%%%%%%%%%% ABSTRACT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abstract}
+\input{abstract}
+\end{abstract}
+
+\input{intro}
+\input{syntax}
+\input{notions}
+%\input{relations}
+\input{results}
+
+
+%%%%%%%%%%%%%%% BIBLIOGRAPHY %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bibliographystyle{alpha}
+\bibliography{main}
+
+%%%%%%%%%%%%%%% APPENDICES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\appendix
+\input{ny-def-comparison}
+%\input{BF_correctness}
+%\input{GBF-correctness-private-M}
+%\input{GBF-private-M}
+%\input{TheoremGBF_correctness}
+%\input{TheoremGBF_correctnessUB}
+%\input{Proofs}
+%\input{intro-old}
+%\input{tasks_and_ideas}
+%\input{mutable-filters}
+%\input{filters-multi-server}
+
+\end{document}
