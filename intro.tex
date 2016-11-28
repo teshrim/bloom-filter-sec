@@ -1,25 +1,12 @@
 \section{Introduction}
 \label{sec:intro}
 
-Data structures are a fundamental tool used throughout computer
-science. Typically, when the behavior of a data structure (e.g., its
-running time or its error probability) is analyzed, the analysis is
-performed under the assumption that the input/queries to the data
-structure are chosen independently of the data structure itself, and
-in particular independent of any internal randomness used by the
-data structure. But, as recently highlighted by Naor and
-Yogev~\cite{naor2015bloom}, there are many natural scenarios in
-which the input/queries may be chosen \emph{adversarially} and
-\emph{adaptively} based on partial information and/or prior
-observations about the data structure.
+Data structures are a fundamental tool used throughout computerscience. Typically, when the behavior of a data structure (e.g., its running time or its error probability) is analyzed, the analysis is performed under the assumption that any inputs and queries to the data structure are chosen independently of the data structure itself.
+In particular, independent of any internal randomness used by the data structure. But as recently highlighted by Naor and Yogev~\cite{naor2015bloom}, there are many natural scenarios in which the input and queries may be chosen \emph{adversarially} and \emph{adaptively}, based on partial information and prior observations about the data structure.
 
-In addition, standard applications of data structures assume that
-the party querying the data structure is fully trusted, and hence
-privacy concerns do not arise. In some scenarios, however, it may be
-desirable to allow some party to pose (certain types of) queries to
-a data structure, but unacceptable to leak the data in its entirety
-to that same party. Existing definitions do not address privacy in
-this sense at~all. The concerns outlined above motivate a careful, formal treatment of data structures in an adversarial setting, 
+In addition, standard applications of data structures assume that the party querying the data structure is fully trusted. Hence, privacy concerns do not arise. But in many real-world scenarios, a data structure is built from sensitive data.  Here one would like to know what information is leaked by queries to the data structure; minimally, to know that a reasonable number of queries to not effectively divulge the entire data.  Existing definitions say nothing about privacy in this sense. 
+
+These concerns motivate a careful and formal treatment of data structures in an adversarial setting, 
 where both \emph{correctness} and \emph{privacy} are considered. In this work we initiate such a
 treatment.  
 
