@@ -40,5 +40,18 @@ Ideas for private-M GBF correctness bound (in the ROM):
     Note: that each row of C is 0-1, but (1) at most k of the positions in any row are 1, and (2) those positions are random.
     Note: if you lift the "at most k" restriction and just let each row of C be a uniform element of {0,1}^m, then if row 1,2,...,t are linearly independent, |Span(rows 1,2,...t)|=2^t, so adding the (t+1)-th row is in the span with probability 2^t/2^m.  (This is a conditional probability, of course, conditioned o the first t rows being linearly independent.)
 
+
+     Let C_i be the i-th row of C.  Let rowSpan(C) be the span of C_1,C_2,...,C_t.
+     Consider the following "attack", with array F initially 0 everywhere.
+        for all v \in rowSpan(C):
+	   x <-- \Oplus_{i \in ones(v)} x_i  // the xor of all x_i such that v_i=1
+	   F[x] <-- F[x]+1
+
+         let the next query be an x with the largest value of F[x]
+
+      Then in the model that C_{t+1} is a uniform element of {0,1}^m, Prob(next query x is FP) = F[x]/2^m
+      because if C_{t+1} is any of the vectors v in rowSpan(C) that "yields" this x (i.e. any that contributed to F[x]) then the attack wins.  I conjecture that this is the best possible attack; note that it takes exponential time in the worst case because |rowSpan| is exponential in t, worst case.
+
+
 Note: that you can easily bound the number of 1s in any column of C, too, if that helps.  (This is the probability of throwing multiple random balls into one bin.)  It's likely that each column has at most one 1 in it until t = \Theta(sqrt(m)).
 
