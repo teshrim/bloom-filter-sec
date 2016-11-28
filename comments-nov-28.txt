@@ -19,3 +19,6 @@ Missing results:
 
 
 
+Ideas for private-M GBF correctness bound:
+
+I had some solid ideas for how to do this, but I'll have to go looking for where I wrote them down!  I recall it being something along these lines.  Each query allows you to write down at most one GF(2) linear equation.  Write this as a matrix-multiplication problem.  So long as the 0-1 coefficient matrix remains full rank, things remain secure.  Once that stops being true, then (potentially) something bad happens.
