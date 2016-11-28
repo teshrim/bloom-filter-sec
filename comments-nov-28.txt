@@ -1,0 +1,21 @@
+Security for ADS to-dos (12/28):
+
+-- The abstract and intro need a solid once-over for grammar, punctuation, sentence structure, etc.
+-- Add a new \heading to set off the paragraphs about our case studies/contributions.  This will help to elevate it's visual importance to (at least) that of the comparison to NY15.
+-- Do we ever actually use Definition 2 (Error probability and error rate)?
+-- Text in Section 3 has a lot of parenthetical statements. This seems particularly jarring in "The effect of r" subsection.  Actually beyond that, too.
+-- Move Figure 3 to the top of a page.
+-- Theorem 3 needs a name.
+-- Better explain what the results of Theorems 10, and 11 say together.  (Also, Theorem 9 feels like it is "dangling".)
+-- Theorem 10, just say leak is leak_abl
+-- Theorem 12, and "in the ROM" to the theorem name
+
+Missing results:
+
+-- Proof of Theorem 4  (OW of classical BF in the ROM)
+-- Proof of Theorem 7 (Correctness of linear-PRF)
+-- A result on the OW-security of bigram linear-PRF?  This is silently swept under the rug: we give an SS attack, but say nothing about the OW security.  NSKS14 give some sort of OW attack.
+-- Correctness bound for private-M GBF in the ROM (HARD!)
+
+
+
