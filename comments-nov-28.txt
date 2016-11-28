@@ -37,5 +37,8 @@ Ideas for private-M GBF correctness bound (in the ROM):
     Does knowing C,X help to "extend" X (and C) by one?  This is what's needed to go from t positive Test queries to t+1.
     Does knowing C,X leak information about the values in M?
 
-    Note that each row of C is 0-1, but (1) at most k of the positions in any row are 1, and (2) those positions are random.
-    Note that you can easily bound the number of 1s in any column of C, too, if that helps.  (This is the probability of throwing multiple random balls into one bin.)  It's likely that each column has at most one 1 in it until t = \Theta(sqrt(m)).
+    Note: that each row of C is 0-1, but (1) at most k of the positions in any row are 1, and (2) those positions are random.
+    Note: if you lift the "at most k" restriction and just let each row of C be a uniform element of {0,1}^m, then if row 1,2,...,t are linearly independent, |Span(rows 1,2,...t)|=2^t, so adding the (t+1)-th row is in the span with probability 2^t/2^m.  (This is a conditional probability, of course, conditioned o the first t rows being linearly independent.)
+
+Note: that you can easily bound the number of 1s in any column of C, too, if that helps.  (This is the probability of throwing multiple random balls into one bin.)  It's likely that each column has at most one 1 in it until t = \Theta(sqrt(m)).
+
