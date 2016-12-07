@@ -1,40 +1,41 @@
-%Introduction
-%Probably first Bloom filter paper
-@article{bloom1970space,
-  title={Space/time trade-offs in hash coding with allowable errors},
-  author={Bloom, Burton H},
-  journal={Communications of the ACM},
-  volume={13},
-  number={7},
-  pages={422--426},
-  year={1970},
-  publisher={ACM}
-}
-
-%NY paper
-@inproceedings{naor2015bloom,
-  title={Bloom Filters in Adversarial Environments},
-  author={Naor, Moni and Yogev, Eylon},
-  booktitle={Annual Cryptology Conference},
-  pages={565--584},
-  year={2015},
-  organization={Springer}
-}
-
-@inproceedings{kirsch2006less,
-  title={Less hashing, same performance: Building a better Bloom filter},
-  author={Kirsch, Adam and Mitzenmacher, Michael},
-  booktitle={European Symposium on Algorithms},
-  pages={456--467},
-  year={2006},
-  organization={Springer}
-}
-
 %Variants of Bloom filter
- 
+@article{kirsch2006less,
+  author    = {Adam Kirsch and
+               Michael Mitzenmacher},
+  title     = {Less hashing, same performance: Building a better Bloom filter},
+  journal   = {Random Struct. Algorithms},
+  volume    = {33},
+  number    = {2},
+  pages     = {187--218},
+  year      = {2008},
+}
+
+%Record Linkage2
+@article{niedermeyer2014cryptanalysis,
+  title={Cryptanalysis of basic Bloom filters used for privacy preserving record linkage},
+  author={Niedermeyer, Frank and Steinmetzer, Simone and Kroll, Martin and Schnell, Rainer},
+  journal={Journal of Privacy and Confidentiality},
+  volume={6},
+  number={2},
+  pages={3},
+  year={2014}
+}
+
+%Broder and Mitzenmacher survey on applications of bloom filters(the above 3 applications are part of the survey)
+@article{broder2004network,
+  author    = {Andrei Z. Broder and
+               Michael Mitzenmacher},
+  title     = {Survey: Network Applications of Bloom Filters: {A} Survey},
+  journal   = {Internet Mathematics},
+  volume    = {1},
+  number    = {4},
+  pages     = {485--509},
+  year      = {2003},
+}
+
 %Counting Bloom filter
 @article{fan2000summary,
-  title={Summary cache: a scalable wide-area web cache sharing protocol},
+  title={Summary cache: A scalable wide-area web cache sharing protocol},
   author={Fan, Li and Cao, Pei and Almeida, Jussara and Broder, Andrei Z},
   journal={IEEE/ACM Transactions on Networking (TON)},
   volume={8},
@@ -43,6 +44,46 @@
   year={2000},
   publisher={IEEE Press}
 }
+
+%NY citations from their related work
+@article{lipton1993clocked,
+  title={Clocked adversaries for hashing},
+  author={Lipton, Richard J and Naughton, Jeffrey F},
+  journal={Algorithmica},
+  volume={9},
+  number={3},
+  pages={239--252},
+  year={1993},
+  publisher={Springer}
+}
+
+%P2P keyword searching
+@inproceedings{reynolds2003efficient,
+  title={Efficient peer-to-peer keyword searching},
+  author={Reynolds, Patrick and Vahdat, Amin},
+  booktitle={Proc.\ ACM/IFIP/USENIX International Conference on Middleware},
+  pages={21--40},
+  year={2003},
+  publisher={Springer}
+}
+
+%Ensuring TCP fairness in non-responsive flows(SFB)
+@inproceedings{feng2001stochastic,
+  author    = {Wu{-}chang Feng and
+               Dilip D. Kandlur and
+               Debanjan Saha and
+               Kang G. Shin},
+  title     = {Stochastic Fair Blue: {A} Queue Management Algorithm for Enforcing
+               Fairness},
+  booktitle = {Proc.\ {IEEE} {INFOCOM}},
+  pages     = {1520--1529},
+  year      = {2001},
+}
+
+
+
+
+
 
 %Scalable Bloom filter
 @article{almeida2007scalable,
@@ -77,16 +118,9 @@
   journal={Working paper series no. WP-GRLC-2011-02. N{\"u}rnberg, Germany, City: German Record Linkage Center},
   year={2011}
 }
-%Record Linkage2
-@article{niedermeyer2014cryptanalysis,
-  title={Cryptanalysis of basic bloom filters used for privacy preserving record linkage},
-  author={Niedermeyer, Frank and Steinmetzer, Simone and Kroll, Martin and Schnell, Rainer},
-  journal={Journal of Privacy and Confidentiality},
-  volume={6},
-  number={2},
-  pages={3},
-  year={2014}
-}
+
+
+
 %Bitcoin
 @inproceedings{gervais2014privacy,
   title={On the privacy provisions of bloom filters in lightweight bitcoin clients},
@@ -106,25 +140,8 @@
   pages={131--139},
   year={2009}
 }
-%Ensuring TCP fairness in non-responsive flows(SFB)
-@inproceedings{feng2001stochastic,
-  title={Stochastic fair blue: A queue management algorithm for enforcing fairness},
-  author={Feng, Wu-chang and Kandlur, Dilip D and Saha, Debanjan and Shin, Kang G},
-  booktitle={INFOCOM 2001. Twentieth Annual Joint Conference of the IEEE Computer and Communications Societies. Proceedings. IEEE},
-  volume={3},
-  pages={1520--1529},
-  year={2001},
-  organization={IEEE}
-}
-%P2P keyword searching
-@inproceedings{reynolds2003efficient,
-  title={Efficient peer-to-peer keyword searching},
-  author={Reynolds, Patrick and Vahdat, Amin},
-  booktitle={Proceedings of the ACM/IFIP/USENIX 2003 International Conference on Middleware},
-  pages={21--40},
-  year={2003},
-  organization={Springer-Verlag New York, Inc.}
-}
+
+
 %Content delivery
 @article{byers2002informed,
   title={Informed content delivery across adaptive overlay networks},
@@ -136,17 +153,7 @@
   year={2002},
   publisher={ACM}
 }
-%Broder and Mitzenmacher survey on applications of bloom filters(the above 3 applications are part of the survey)
-@article{broder2004network,
-  title={Network applications of bloom filters: A survey},
-  author={Broder, Andrei and Mitzenmacher, Michael},
-  journal={Internet mathematics},
-  volume={1},
-  number={4},
-  pages={485--509},
-  year={2004},
-  publisher={Taylor \& Francis}
-}
+
 
 @article{chang2008bigtable,
   title={Bigtable: A distributed storage system for structured data},
@@ -161,7 +168,7 @@
 
 
 %Definitions
-%  +nojima2009cryptographicall +naor2015bloom     
+%  +nojima2009cryptographicall +naor2015bloom
 @article{goh2003secure,
   title={Secure Indexes.},
   author={Goh, Eu-Jin and others},
@@ -173,15 +180,6 @@
 
 % Attacks
 % +schnell2011novel +niedermeyer2014cryptanalysis +gervais2014privacy
-
-%DOS attack
-@inproceedings{crosby2003denial,
-  title={Denial of Service via Algorithmic Complexity Attacks.},
-  author={Crosby, Scott A and Wallach, Dan S},
-  booktitle={Usenix Security},
-  volume={2},
-  year={2003}
-}
 
 %DOS via polluting attacks
 @inproceedings{gerbet2015power,
@@ -221,14 +219,8 @@
   organization={Springer}
 }
 
-@inproceedings{dong2013private,
-  title={When private set intersection meets big data: an efficient and scalable protocol},
-  author={Dong, Changyu and Chen, Liqun and Wen, Zikai},
-  booktitle={Proceedings of the 2013 ACM SIGSAC conference on Computer \& communications security},
-  pages={789--800},
-  year={2013},
-  organization={ACM}
-}
+% => CCS:DonCheWen13
+
 
 @article{tarkoma2012theory,
   title={Theory and practice of bloom filters for distributed systems},
@@ -390,17 +382,7 @@
   publisher={IEEE}
 }
 
-%NY citations from their related work
-@article{lipton1993clocked,
-  title={Clocked adversaries for hashing},
-  author={Lipton, Richard J and Naughton, Jeffrey F},
-  journal={Algorithmica},
-  volume={9},
-  number={3},
-  pages={239--252},
-  year={1993},
-  publisher={Springer}
-}
+
 
 @article{mironov2011sketching,
   title={Sketching in adversarial environments},

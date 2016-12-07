@@ -1,4 +1,4 @@
-Security for ADS to-dos (12/28):
+Security for ADS to-dos (11/28):
 
 -- The abstract and intro need a solid once-over for grammar, punctuation, sentence structure, etc.
 -- [DONE] Add a new \heading to set off the paragraphs about our case studies/contributions.  This will help to elevate it's visual importance to (at least) that of the comparison to NY15. 
@@ -58,3 +58,9 @@ Ideas for private-M GBF correctness bound (in the ROM):
 
 Note: that you can easily bound the number of 1s in any column of C, too, if that helps.  (This is the probability of throwing multiple random balls into one bin.)  It's likely that each column has at most one 1 in it until t = \Theta(sqrt(m)).
 
+
+
+Next steps (longer term):
+- Dynamic data structures
+- Security for higher-level protocols based on data structures, e.g., content-distribution networks
+- Attacking deployed systems using data structures

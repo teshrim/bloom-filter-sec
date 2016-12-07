@@ -1,6 +1,6 @@
 \section{Security Notions}
 \label{sec:security-notions}
-Following NY, we are interested in defining an adaptive (i.e.,adversarial) notion of correctness.
+Following NY, we are interested in defining an adaptive (i.e., adversarial) notion of correctness.
 In addition to correctness, we establish two kinds of privacy notions for data structures.
 
 
@@ -47,7 +47,7 @@ algorithms $\Rep,\Qry$ with access to the
 random oracle, and providing $A$ with such access as well in the
 second stage of its execution. (We do not provide $A$ with access to
 the random oracle during the first stage when it selects~$S$, as that set
-should have no dependence on the random oracle.) 
+should have no dependence on the random oracle.)
 
 %\jnote{I changed $\TestOracle$ so that it outputs $(a, q(S))$ rather
 %than $(a,\mathrm{err})$. Note that the latter can be computed from the former,
@@ -394,7 +394,7 @@ where $t=\ell(|S|)$
 \item $\Rep_2$ takes as input $|S|$ and $y_1, \ldots, y_t \in \bits^{\ell_{out}}$, and outputs
 $\pubaux$.
 \item For any $S$, the distribution on $\pubaux$ output by $\Rep(S)$ is identical to the distribution
-on $\pubaux$ computing as follows:
+on $\pubaux$ computed as follows:
 (1) $s_1, \ldots, s_t \getsr \Rep_1(S)$;
 (2) $K \getsr \calK$;
 (3) $\pubaux \getsr \Rep_2(|S|, F_{K}(s_1), \ldots,F_{K}(s_t))$.

@@ -1,9 +1,75 @@
-The Naor-Yogev paper~\cite{naor2015bloom} served as inspiration for our work.  We recommend reading the very good related work section contained in their paper for a discussion of related theory papers.  Here we mention a few additional practical works, but stress that this only scratches the surface.
+Naor and Yogev~\cite{C:NaoYog15} recently considered the problem of
+adversarial soundness for Bloom filters and, indeed, their work
+served as inspiration for our own. Our work extends their work
+significantly in several directions. For starters, we consider
+abstract data structures (rather than only the case of
+set-membership data structures), and consider privacy in addition to
+correctness. Even with respect to the specific case of correctness
+for set-membership data structures, our work offers several
+advantages to the Naor-Yogev treatment:
+\begin{itemize}
+\item We explicitly distinguish between public and private
+    portions of a data structure, something they leave
+    ambiguous.\footnote{In fact, it isn't clear that their
+formalization actually allows for standard Bloom filters,
+    although fixing this ambiguity is straightforward once
+    recognized.} This allows us, for example, to distinguish
+    between the hash-function keys and the bit array when
+    discussing classical Bloom filters.
+\item The Naor-Yogev definition of soundness allows the
+    adversary to make several set-membership queries, some of
+    which may produce incorrect results, and the attacker then
+    succeeds if it can output a \emph{fresh} query which leads
+    to an error. We propose instead what we find to be a more
+    natural definition in which the attacker succeeds if it can
+    cause a certain number of incorrect results.
+\item Naor and Yogev analyze a new Bloom-filter construction of
+    their own design. In contrast, we are interested in
+    analyzing practical constructions that have been proposed in
+    prior work to understand their security. In particular, we
+    analyze Bloom filters in the random-oracle model, something
+    not considered by Naor and Yogev.
+\end{itemize}
 
-As previously mentioned Bloom filters and their relatives are some of the most widely used data structures supporting set-membership queries.  We give a few more, here. Hbase, a hadoop based NoSql database designed to handle large datasets has an implementation of Bloom filter and counting Bloom filter. Hbase is the open-source implementation of Google's BigTable storage system~\cite{chang2008bigtable}. 
-The Squid proxy~\cite{fan2000summary} uses a bloom filter as a ``summary cache'' of the set of URLs in its cache in order to web object retreival latency.   Crossby and Walach~\cite{crosby2003denial} exploited hash collisions in Squid to increase the average URL load time.  In an older paper, Lipton and Naughton~\cite{lipton1993clocked} showed how timing analysis of record insertion in a hash table can help an adversary to adapt and chose elements that take more time to be mapped into the hash table. Reynolds and Vahdat~\cite{reynolds2003efficient} proposed an efficient distributed search engine that can be used to search for files that contain a particular keyword. This search engine maps the keywords of each file into a Bloom filter; a look-up of the keyword in the Bloom filter tells whether the node has files containing that keyword or not. Record linkage is very often required to collect and combine records from different databases.
+%We give a technical comparison of our correctness notion and theirs (lifted to our more general syntax)
+%in Appendix~\ref{sec:compare-defs}.
 
-Schnell et. al.~\cite{schnell2011novel} proposed the so-called ``Cryptographic Longterm Key'' as a way to support privacy-preserving record linkage. This uses secretly keyed hash functions to create a Bloom filter for each surname. The surname is broken into bigrams and mapped into the Bloom filter with secret hash functions.  Subsequently, Niedermeyer et al.~\cite{niedermeyer2014cryptanalysis} showed an attack on a database of German surnames which were stored in secretly hashed Bloom filters, similar to Cryptographic Longterm Key.
 
-Stochastic Fair Blue~\cite{feng2001stochastic} uses counting Bloom filter to manage non-responsive TCP traffic. 
+We recommend reading the Naor-Yogev paper for a survey of related
+work and a discussion of related theory papers. Here we mention a
+few additional practical works, but stress that this only scratches
+the surface.
 
+\jnote{Rather random collection of papers using Bloom filters and
+variants. I removed it for now, since it's not clear that they have
+any particular relevance to us.}
+%As previously mentioned, Bloom
+%filters and their relatives are some of the most widely used data
+%structures supporting set-membership queries. As examples, Hbase,
+%the open-source implementation of Google's BigTable storage
+%system~\cite{chang2008bigtable},
+%%a Hadoop-based NoSql database designed to handle large datasets,
+%includes an implementation of Bloom filters and counting Bloom
+%filters, and the Squid proxy~\cite{fan2000summary} uses a Bloom
+%filter as a ``summary'' of the set of URLs in its cache in order to
+%improve latency for web-object retrieval. Reynolds and
+%Vahdat~\cite{reynolds2003efficient} proposed an efficient
+%distributed search engine that can be used to search for files
+%containing a particular keyword. Their search engine maps the
+%keywords of each file into a Bloom filter; a look-up of the keyword
+%in the Bloom filter tells whether the node has files containing that
+%keyword or not. Stochastic Fair Blue~\cite{feng2001stochastic} uses
+%counting Bloom filter to manage non-responsive TCP traffic.
+
+Lipton and Naughton~\cite{lipton1993clocked} showed how timing
+analysis of record insertion in a hash table can help an adversary
+to adaptively chose elements so as to increase the running time.
+Crosby and Walach~\cite{crosby2003denial} exploited hash collisions
+in Squid to increase the average URL load time.
+
+Schnell et al.~\cite{schnell2011novel} proposed a way to support
+privacy-preserving record linkage by using secretly keyed hash
+functions. Subsequently, Niedermeyer et
+al.~\cite{niedermeyer2014cryptanalysis} showed an attack on a
+similar system when used on a database of German surnames.
+\jnote{See Section~???}
