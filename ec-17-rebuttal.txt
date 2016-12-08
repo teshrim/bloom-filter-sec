@@ -1,0 +1,25 @@
+We thank the reviewers for their comments, which mainly highlight our failure to make certain key points and contributions clear. We appreciate the opportunity to address the comments, and will improve our presentation in the final version. 
+
+
+Reviewer A: While not “flashy”, establishing good foundations for widely deployed primitives is very important. For various reasons, which we will better emphasize, the most directly related prior work falls short. Applying our syntax and notions to real and proposed constructions also reveals new security findings, e.g., what is leaked by public representations. We agree that our work raises multiple follow-on research questions in an area that is practically relevant yet underexplored.
+
+Reviewer B: The separation of data-structure representations into (non-trivial) public and private parts is motivated by the fact that practical data structures (Bloom filter variants, in particular) DO have non-trivial public and private parts. This is essential in some applications, e.g., the use of so-called “encrypted” Bloom filters for medical-record linkage across hospital databases ([NSKS14]). Making this explicit also allows for weighing the costs/benefits to security, system design, and operational deployment. (Note also that the secure Bloom filter proposed by [NY] has public and private parts, though their syntax and security notion do not make this important distinction.) So, while it is true that one can always “push” the public part into the private part to achieve a security definition, this misses the point.
+
+
+Similarly, one can make any data structure canonical by letting Rep_1 output all the elements of S, and letting F_K be the identity. What is important is whether a data structure has a canonical representation where F is a pseudorandom function. Perhaps a naming change will help.
+
+
+Some of our results are information-theoretic, while some (including any that rely on a PRF) are computational. If we implied otherwise, please let us know and we can clarify it.
+
+
+Reviewer C: If we have missed any relevant prior work on data structures in an adversarial environment, please provide specific references. We will be happy to add them to the related-work section.
+
+
+Regarding the separation of representations into public and private parts, see the answer given to Reviewer B. 
+
+
+It is true that our correctness definition (in the ROM) does not allow the attacker to access the random oracle in the first part of the attack. We believe this provides a faithful model practice, where the set whose representation the honest party is computing is independent of the functions used to generate that representation. Note also that one could easily achieve independence by salting the hash function with a random sale before using it. 
+
+
+The question of composition is an interesting one that we leave for future work, though we expect that composition would hold as long as independent random oracles are used.
+
