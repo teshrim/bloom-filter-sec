@@ -11,11 +11,11 @@ advantages to the Naor-Yogev treatment:
 \item We explicitly distinguish between public and private
     portions of a data structure, something they leave
     ambiguous.\footnote{In fact, it isn't clear that their
-formalization actually allows for standard Bloom filters,
-    although fixing this ambiguity is straightforward once
-    recognized.} This allows us, for example, to distinguish
-    between the hash-function keys and the bit array when
-    discussing classical Bloom filters.
+formalization allows for standard Bloom filters, though fixing
+    this ambiguity is straightforward once recognized.} This
+    allows us, for example, to distinguish between the
+    hash-function keys and the bit array when discussing
+    classical Bloom filters.
 \item The Naor-Yogev definition of soundness allows the
     adversary to make several set-membership queries, some of
     which may produce incorrect results, and the attacker then
@@ -42,7 +42,8 @@ the surface.
 
 \jnote{Rather random collection of papers using Bloom filters and
 variants. I removed it for now, since it's not clear that they have
-any particular relevance to us.}
+any particular relevance to us. I kept only the refs that seemed
+directly relevant.}
 %As previously mentioned, Bloom
 %filters and their relatives are some of the most widely used data
 %structures supporting set-membership queries. As examples, Hbase,

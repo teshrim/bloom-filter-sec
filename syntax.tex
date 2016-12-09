@@ -1,7 +1,7 @@
 \section{Preliminaries}
 
 When~$\univ$ is a set, we write $x \getsr \univ$ to denote sampling
-an element uniformly from~$\univ$ and assigning it to~$x$. We extend
+a uniform element from~$\univ$ and assigning it to~$x$. We extend
 this notation to randomized algorithms, so $x \getsr A(y)$ denotes
 that (randomized) algorithm $A$ is run on input~$y$, and the output
 of the algorithm is assigned to~$x$. Algorithms may be provided
@@ -27,7 +27,7 @@ universe $\univ$) is a tuple $\setprim=(\Rep, \Qry)$ where:
 \begin{itemize}
 \item $\Rep \colon \univ \to \bits^* \times \bits^*$ is a
     randomized \emph{representation algorithm}, taking as input
-    an element $S \in \univ$,
+    $S \in \univ$,
     and outputting %a \emph{representation} $M \in \Sigma^*$,
     \emph{public representation data} $\pubaux \in \bits^*$ and
     \emph{private representation data} $\privaux \in \bits^*$.
@@ -42,20 +42,19 @@ universe $\univ$) is a tuple $\setprim=(\Rep, \Qry)$ where:
 \end{itemize}
 \end{definition}
 
-
 \begin{definition}[Error probability and rate] \rm
 For a specific data structure $\setprim=(\Rep, \Qry)$ supporting
 queries $\calQ$ over universe $\univ$, let
 $\mathrm{Err}(S,\qry,\pubaux,\privaux)$ be  true iff
-$\Qry(\pubaux,\privaux, \qry) \neq \qry(S)$.  Then we define for
-$\setprim$ the quantities
+$\Qry(\pubaux,\privaux, \qry) \neq \qry(S)$.  Then we define
 \begin{align*}
 &\max_{S,\qry}\Prob{(\pubaux,\privaux) \getsr \Rep(S) :
 \mathrm{Err}(S,\qry,\pubaux,\privaux)=1 } &\\
 &\max_{S}\Prob{(\pubaux,\privaux) \getsr \Rep(S);\, \qry \getsr \calQ :
 \mathrm{Err}(S,\qry,\pubaux,\privaux)=1} &
 \end{align*}
-which are the \emph{error probability} and \emph{error rate}, respectively.
+to be, respectively, the \emph{error probability} and \emph{error
+rate} of~$\Pi$.
 %
 %We say it has \emph{error rate} $\tilde{\epsilon}$ if
 %\[{\textstyle \max_{S}\Pr[(\pubaux,\privaux) \getsr \Rep(S);\, \qry \getsr \calQ :
@@ -69,14 +68,13 @@ which are the \emph{error probability} and \emph{error rate}, respectively.
 %Note that $1-\epsilon$ is a worst-case lower bound on the
 %correctness of the data structure. \tsnote{Don't know if this will be necessary.}
 
-The above definition can be lifted to the random-oracle model by
-giving $\Rep, \Qry$ access to a random oracle. In that case, the
+The above definitions can be lifted to the random-oracle model by
+giving $\Rep, \Qry$ access to a random oracle. In that case, all
 probabilities are also taken over choice of the random oracle. We
 remark that, while our error probability and error rate do not
-distinguish among ``types'' of errors, they also do not preclude
-instantiations (like the classical Bloom filter) that admit only one
-type of error, e.g., false positives.
-
+distinguish among different ``types'' of errors, they also do not
+preclude instantiations (like the classical Bloom filter) that admit
+only one type of error, e.g., false positives.
 
 \def\bin{{\sf Bin}}
 \ignore{
@@ -117,18 +115,27 @@ $\Prob{\mathrm{Err}_i=1}=1/|\univ| \ll 1/n = \epsilon$.
 }
 
 %\heading{Data structures for set-membership queries.}
-An important special case is a data structure that supports set-membership
-queries. 
+An important special case is a data structure for set-membership
+queries.
 \begin{definition} \rm
 A \emph{set-membership data structure over $\elts$} is a data
 structure with $\univ \subseteq 2^\elts$, $\Gamma=\{0,1\}$, and
-$\calQ=\{\qry_x\}_{x \in \univ}$, where $\qry_x(S)$ is true iff $x
+$\calQ=\{\qry_x\}_{x \in \univ}$ where $\qry_x(S)$ is true iff $x
 \in S$. \hfill\dqed
 \end{definition}
 
 Note that we do not require $\univ = 2^\elts$ since, e.g., a
 particular set-membership data structure might only be defined for
 sets up to some bounded size.
+
+\heading{The role of $\pubaux$.} One can always ``increase
+security'' by pushing all representation data into $\privaux$ and
+making $\pubaux$ empty. (This is true in a formal sense for the
+definitions given subsequently, but is intuitively true regardless.)
+But this misses the point. First, we are interested in analyzing
+existing data structures, some of which have a non-empty public
+portion. Moreover, for some applications a non-trivial $\pubaux$ is
+essential; this will become clear in Section~\ref{sec:case_studies}.
 
 \ignore{ \jnote{Below needs to change.} For concreteness, we note
 that a classical Bloom filter is a particular example of a

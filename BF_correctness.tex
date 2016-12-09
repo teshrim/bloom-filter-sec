@@ -1,7 +1,16 @@
 %\section{Proof of Theorem~\ref{thm:bf-correctness}}
 %\label{sec:thm3_fp}
 \begin{proof}[Theorem~\ref{thm:bf-correctness}]
-We use a game playing argument, please refer to Figures~\ref{fig:bf-correctness-games1} and~\ref{fig:bf-correctness-games2}. In game $\game{0}$, the $\HashOracle$ oracle performs lazy sampling of elements from $[m]$ to mimic a random oracle (RO). For every distinct query, $\HashOracle$ returns a random value sampled from $[m]$. It can be seen that, game $\game{0}$ exactly simulates the correctness game of $\setprim_{\mathrm{gbf}}$.  So, $\AdvCorrect{\setprim_{\mathrm{gbf}},r}{A} = \Prob{\game{0}(A) = 1}$.
+We use a game playing argument; please refer to
+Figures~\ref{fig:bf-correctness-games1}
+and~\ref{fig:bf-correctness-games2}. In game $\game{0}$, the
+$\HashOracle$ oracle performs lazy sampling of elements from $[m]$
+to mimic a random oracle (RO). For every distinct query,
+$\HashOracle$ returns a random value sampled from $[m]$. It can be
+seen that, game $\game{0}$ exactly simulates the correctness game of
+$\setprim_{\mathrm{gbf}}$.  So,
+$\AdvCorrect{\setprim_{\mathrm{gbf}},r}{A} = \Prob{\game{0}(A) =
+1}$.
 
 Game $\game{1}$ is exactly same as game $\game{0}$ except the $\Qry$ call (inside the $\TestOracle$ oracle) is replaced by the code of $\Qry$.  Hence, $\Prob{\game{0}(A) = 1} = \Prob{\game{1}(A) = 1}$.
 
@@ -21,10 +30,10 @@ $\game{3}$.  It maintains the table~$T$ because~$A$ is permitted to
 call~$\HashOracle$ on $y \in S$.
 %(We no longer need to maintain the table~$T$ because hash values are
 %only determined by~$\HashOracle$ calls, and these are never repeated
-%under our no-pointless-query assumption.)  
+%under our no-pointless-query assumption.)
 It then computes the answer that~$\TestOracle(\qry_x)$ would return in
 game~$\game{3}$, and stores the answer in~$\mathrm{Ans}[x]$ for use
-by~$\TestOracle$.  
+by~$\TestOracle$.
 None of these changes alters the behavior of the game from the
 adversary's perspective.
 
@@ -43,9 +52,9 @@ WLOG that~$A$ halts as soon as~$\err=r$ (which it can easily track),
 so there are $\binom{q_T+q_H-1}{r-1}$ possible ``winning'' query
 patterns to consider.  As each error event is independent of all
 previous choices made by the~$\HashOracle$, we need only consider the
-probability of a single error. Using Kirsch and Mitzenmacher's~\cite{kirsch2006less} upperbound on false positive probability of a classical Bloom filter, 
+probability of a single error. Using Kirsch and Mitzenmacher's~\cite{kirsch2006less} upperbound on false positive probability of a classical Bloom filter,
 we have  $\Prob{\game{4}(A)=1} = \binom{q_T+q_H-1}{r-1}\left( (1-e^{-kn/m})^k + O(1/n) \right)^r$.
-To summarize, 
+To summarize,
 \[
 \AdvCorrect{\setprim_{\mathrm{Bloom}},r}{A} \leq  {\dbinom{q_T + q_H-1}{r-1}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
 \]
@@ -109,7 +118,7 @@ $S \getsr A$; $\calC \gets \emptyset$; $\err \gets 0$\\
 $(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
 $\bot \getsr A^{\TestOracle,\HashOracle}(\pubaux)$\\
 if $\err  < r$ then Return 0\\
-Return 1\\ 
+Return 1\\
 
 \oracle{$\TestOracle(\qry_x)$}\\
 if $x \in \mathcal{C}$ then Return $\bot$\\
@@ -134,7 +143,7 @@ $S \getsr A$; $\calC \gets \emptyset$; $\err \gets 0$\\
 $(\pubaux,\privaux) \getsr \Rep^{\HashOracle}(S)$\\
 $\bot \getsr A^{\TestOracle,\HashOracle}(\pubaux)$\\
 if $\err  < r$ then Return 0\\
-Return 1\\ 
+Return 1\\
 
 \oracle{$\TestOracle(\qry_x)$}\\
 if $x \in \mathcal{C}$ then Return $\bot$\\

@@ -1,4 +1,4 @@
-\section{Case Studies}
+\section{Case Studies}\label{sec:case_studies}
 Here we explore various set-membership data structures that have been proposed
 in the literature with respect to our definitions.
 
@@ -41,11 +41,10 @@ $M\gets\pubaux$, $K \gets \privaux$\\
 for $j \in \{1,2,\ldots,k\}$\\
 \nudge $h_j \gets F_{K}(\langle j,x \rangle) $\\
 \nudge if $M[h_j] \neq 1$ then Return 0\\
-Return 1
-}
-\caption{{\bf Left:} $\Rep$ and $\Qry$ algorithms for classic Bloom
+Return 1 } \caption{{\bf Left:} $\Rep$ and $\Qry$ algorithms for
+classical Bloom
   filter $\setprim_{\mathrm{Bloom}}$ in the ROM for a hash function $H\colon \mathbb{N} \times
-  \elts \to [m]$. {\bf Right:} $\Rep$ and $\Qry$
+  \elts \to [m]$, where $|S| \leq n$. {\bf Right:} $\Rep$ and $\Qry$
   algorithms for the domain-separated PRF data structure
   $\setprim_{\mathrm{ds}}$, using function family $F \colon
   \calK \times \elts \to [m]$.  Both constructions have query set is $\calQ=\{q_x\colon
@@ -54,43 +53,50 @@ Return 1
 \end{figure}
 
 \subsection{Classical Bloom Filter in the Random-Oracle Model}
-Fix $n,k,m \geq 0$, and fix a set $\elts$.  Then the classical Bloom
+Fix $k,m,n \geq 0$ and a universe $\elts$.  Then the classical Bloom
 filter set-membership data structure $\setprim_{\mathrm{Bloom}}=
 (\Rep, \Qry)$ over~$\elts$ is defined as in
-Figure~\ref{fig:bf-and-ds} (left side).  We
-define~$\setprim_{\mathrm{Bloom}}$ in the random-oracle model
-(ROM), as the traditional analysis of Bloom filter correctness (as a
-function of $n,k,m$) is done in this model.\footnote{The standard
-model version would have $\Rep$ choose $H_1,H_2,\ldots,H_k$ from a
-hash function family, compute $h_j$ using these, and placing their
-description in $\pubaux$.}
+Figure~\ref{fig:bf-and-ds} (left side) for sets $S \subseteq \elts$
+of size at most $|S|\leq n$. We define~$\setprim_{\mathrm{Bloom}}$
+in the random-oracle model (ROM), as the traditional analysis of
+correctness (as a function of $n,k,m$) is done in this
+model.\footnote{The standard-model version would have $\Rep$ choose
+$H_1,\ldots,H_k$ from some function family, compute $h_j$ using
+these, and place their description in $\pubaux$.}
 
-\heading{Correctness. } The following theorem proves that the Bloom
-filter meets our correctness notion in the ROM.  Again, we stress
-that this correctness is with respect to adaptive adversaries,
-aiming to find $r \geq 1$ errors (in this case, false-positives).
+\heading{Correctness. } We prove that the Bloom filter meets our
+correctness notion in the ROM.  Again, we stress that this
+correctness is with respect to adaptive adversaries, aiming to find
+$r \geq 1$ errors (in this case, false-positives).
 
 
 \begin{theorem}\label{thm3}\label{thm:bf-correctness}
-Fix $k,m,n,r>0$ and a set~$\elts$, and let
-$\setprim_{\mathrm{Bloom}}= (\Rep, \Qry)$ be the classical Bloom
-filter (set-membership) data structure over~$\elts$. For any
-adversary~$A$ that makes a total of~$q_T$ queries to the $\Test$
-oracle, and $q_R$ queries to the RO, and has time-complexity~$O(t)$,
+Fix $k,m,n,r>0$ and~$\elts$, and let $\setprim_{\mathrm{Bloom}}=
+(\Rep, \Qry)$ be the classical Bloom filter (set-membership) data
+structure over~$\elts$. For any adversary~$A$ that makes a total
+of~$q_T$ queries to the $\Test$ oracle, $q_R$ queries to the random
+oracle, and has time-complexity~$O(t)$,
 \[
 \AdvCorrect{\setprim_{\mathrm{Bloom}},r}{A} \leq  {\dbinom{q_T + q_H-1}{r-1}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
 \]
 \end{theorem}
-We note that Kirsch and Mitzenmacher~\cite{kirsch2006less} show
-that the ($r=1$, zero-query) error-probability for~$\setprim_\mathrm{Bloom}$ is
-always within $O(1/n)$ of $(1-e^{-kn/m})^k$, although the asymptotic
-rate of convergence is faster than~$1/n$.  The multiplicative (``hybrid'') term arises as a result
-of moving from the adaptive to the zero-query setting.
-Finally, $\binom{q_T+q_H-1}{r-1} \leq (q_T+q_H)^r$ (with reasonable tightness when~$r$ is small) in
-which case the final term in the bound behaves as
-$((q_T+q_H) (1-e^{-kn/m})^k + O(q/n) )^r$; loosely, this is the bound one expects for
-trying to find a single correctness error (in this case, a false positive) in each of~$r$ independent``rounds'', each round
-consisting of~$(q_T+q_H)$ attempts.
+Note that Kirsch and Mitzenmacher~\cite{kirsch2006less} show that
+the ($r=1$, zero-query) error-probability
+for~$\setprim_\mathrm{Bloom}$ is %always within $O(1/n)$ of
+$(1-e^{-kn/m})^k+O(1/n)$. %, although the asymptotic rate of
+%convergence is faster than~$1/n$.
+The multiplicative %(``hybrid'')
+term arises as a result of moving from the zero-query to the
+adaptive setting. Also note that $\binom{q_T+q_H-1}{r-1} \leq
+(q_T+q_H)^r$ (with reasonable tightness when~$r$ is small), in which
+case the bound becomes
+\[\left((q_T+q_H) \cdot (1-e^{-kn/m})^k + O((q_T+q_H)/n) \right)^r;\]
+loosely, and ignoring the low-order term, this is the bound one
+expects if we view the attacker as trying to find an error in each
+of~$r$ independent``rounds,'' each round consisting of~$q_T+q_H$
+attempts. \jnote{But if the attacker makes $q=q_T+q_H$ queries
+overall, isn't it only making $q/r$ queries per round?}
+%JK
 \input{BF_correctness}
 
 \heading{Privacy. }
@@ -254,7 +260,7 @@ medical-record linkage.  It uses the same linear-PRF hash functions,
 but has a $\Rep$ algorithm that that does not ensure that the hash
 functions are called on \emph{distinct} values.  We show that this is
 \emph{not} private with respect to our SS notion for a leakage
-function that leaks nearly the entire set~$S$. 
+function that leaks nearly the entire set~$S$.
 %\todo{It would be better, perhaps, to show that it is not OW secure, since this implies it isn't SS secure, and OW security is what Niedermeyer et al. violate.}
 
 Taken together, the results of this section and the next highlight how sensitive the privacy of linear PRF-hash constructions is to usage.
@@ -406,7 +412,7 @@ for each $b \in B$\\
 if $\overline{M} \in \pubaux$ then Return 1 \\
 Return 0
 }
-} 
+}
 \caption{Bigram domain-separated PRF-hash.}
 \label{fig:DS-bigram}
 \end{figure}
@@ -457,9 +463,9 @@ Return $L$}
 \begin{theorem} \label{thm:bi-ds-prf-priv-ss}
 Let $\Pi$ be the set-representation data structure in
 Figure~\ref{fig:DS-bigram}. Then for any attacker $A$, there is an
-attacker $B$ 
+attacker $B$
 %\jnote{How do we describe the number of PRF queries $B$
-%makes? Same problem as in Theorem~\ref{thm:priv-ss}.} 
+%makes? Same problem as in Theorem~\ref{thm:priv-ss}.}
 for which
 $\AdvPrivSS{\setprim,{\sf leak}_\cap}{A} \leq \AdvPRF{F}{B}$.
 \end{theorem}
@@ -673,7 +679,7 @@ oracle calls) to online set-membership (i.e., $\TestOracle$) queries.
 
 In the full version of this paper, we will give a correctness bound
 for the \emph{private}-$M$ GBF, i.e., $\pubaux=\emptystring,
-\privaux=\langle M \rangle$, in the random-oracle model.  
+\privaux=\langle M \rangle$, in the random-oracle model.
 %
 %\begin{theorem}[{\rm Correctness of private-$M$ GBF in the ROM}]\label{thm:gbf-correctness}
 %Fix $k,m,n,r,\lambda>0$, and let $\setprim_{\mathrm{gbf}}=(\Rep, \Qry)$ be the private-$M$ garbled Bloom filter. For any adversary~$A$ that makes a total of~$q_T$ queries to the $\Test$ oracle, and $q_R$ queries to the RO, and has time-complexity~$O(t)$,
