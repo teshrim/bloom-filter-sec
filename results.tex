@@ -80,22 +80,21 @@ oracle, and has time-complexity~$O(t)$,
 \AdvCorrect{\setprim_{\mathrm{Bloom}},r}{A} \leq  {\dbinom{q_T + q_H-1}{r-1}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
 \]
 \end{theorem}
-Note that Kirsch and Mitzenmacher~\cite{kirsch2006less} show that
-the ($r=1$, zero-query) error-probability
+Kirsch and Mitzenmacher~\cite{kirsch2006less} show that the ($r=1$,
+zero-query) error-probability
 for~$\setprim_\mathrm{Bloom}$ is %always within $O(1/n)$ of
 $(1-e^{-kn/m})^k+O(1/n)$. %, although the asymptotic rate of
 %convergence is faster than~$1/n$.
 The multiplicative %(``hybrid'')
 term arises as a result of moving from the zero-query to the
 adaptive setting. Also note that $\binom{q_T+q_H-1}{r-1} \leq
-(q_T+q_H)^r$ (with reasonable tightness when~$r$ is small), in which
+(eq/r)^r$ (letting $q=q_T+q_H$, and assuming $q\gg r$), in which
 case the bound becomes
-\[\left((q_T+q_H) \cdot (1-e^{-kn/m})^k + O((q_T+q_H)/n) \right)^r;\]
-loosely, and ignoring the low-order term, this is the bound one
-expects if we view the attacker as trying to find an error in each
-of~$r$ independent``rounds,'' each round consisting of~$q_T+q_H$
-attempts. \jnote{But if the attacker makes $q=q_T+q_H$ queries
-overall, isn't it only making $q/r$ queries per round?}
+\[\left(eq/r \cdot (1-e^{-kn/m})^k + O(q/rn) \right)^r.\]
+Loosely, and ignoring the low-order term, this is the bound expected
+by viewing the attacker as trying to find an error in each of~$r$
+independent``rounds,'' each round consisting of~$q/r$ attempts.
+\jnote{I didn't find the last two sentences helpful.}
 %JK
 \input{BF_correctness}
 
