@@ -152,7 +152,7 @@ of some set should not allow an attacker to deduce any element of that set
 This may suffice for many practical applications.
 
 \heading{A simulation-based definition. }
-%\jnote{I like ``simulation-based security'' rather than ``semantic security.''}
+\jnote{I like ``simulation-based security'' rather than ``semantic security.''}
 Our simulation-based definition is given in
 Figure~\ref{fig:privacy-ss}.
 In this definition we compare the probabilities with which an attacker $A$ outputs~1
@@ -178,7 +178,7 @@ define
 \Prob{\ExpPrivSSsim{\setprim,{\sf leak}}{A, \Sim}=1} \right|\right\}.\end{eqnarray*}
 The definition can be lifted to the random-oracle model by providing
 all algorithms with access to the
-random oracle.
+random oracle. \jnote{Including the simulator? So is this a non-programmable RO? We should comment in any case.}
 Informally, a scheme $\setprim$ is secure with respect to some leakage function ${\sf leak}$
 if for all efficient $A$ there is a simulator $\Sim$ such that
 $\AdvPrivSS{\setprim,{\sf leak}}{A}$ is small.
@@ -203,7 +203,7 @@ $\pubaux \getsr \Sim({\sf leak}(S))$ \\
 return $A(\pubaux)$\\
 }
 }
-\caption{Experiments for a ``semantic-security''-style privacy
+\caption{Experiments for a simulation-based privacy
   definition.}
 \label{fig:privacy-ss}
 \end{figure}
@@ -319,8 +319,8 @@ so an attack is only interesting if it performs better than this.
 %\todo{Since we mention what happens with $\privaux=\emptystring$, also%
 %mention what happens with $\pubaux=\emptystring$ :)}
 
-\heading{Relationships between the notions.}
-Intuition suggests that semantic security should imply one-wayness. And, indeed, this is
+\heading{Relationships between the notions. }
+Intuition suggests that our simulation-based definition should imply one-wayness. And, indeed, this is
 the case---provided one is careful with the technical details.
 For a distribution ${\cal D}$
 over subsets of some universe ${\cal X}$, define
@@ -330,8 +330,8 @@ this merely extends the notion of pointwise min-entropy to condition on some
 observed information ${\sf leak}(S)$ about the set in question.
 
 \begin{theorem}
-Let $\setprim$ be a set-membership data structure. For any distribution ${\cal D}$ and
-attacker~$A$, there is an attacker $A'$ running in about the same time with
+Let $\setprim$ be a set-membership data structure. For any distribution ${\cal D}$,
+attacker~$A$, and leakage function~${\sf leak}$, there is an attacker $A'$ running in about the same time as~$A$ with
 \[\AdvPrivOW{\setprim,\mathcal{D}}{A} \leq \AdvPrivSS{\setprim,{\sf
     leak}}{A'} + 2^{-\tilde H_\infty({\cal D} \mid {\sf leak})}.\]
 %Let $\setprim$ be a set-representation data structure that is $(t, \epsilon)$-semantically secure
@@ -354,7 +354,7 @@ about the set~$S$ that was sampled is ${\sf leak}(S)$; thus,
 \[\Prob{\ExpPrivSSsim{\setprim,{\sf leak}}{A', \Sim}=1} \leq
 2^{-\tilde H_\infty({\cal D} \mid {\sf leak})}.\]
 The theorem follows. \hfill\qed
-\end{proof} \pagebreak[4]
+\end{proof} \pagebreak[1]
 
 
 
@@ -419,14 +419,14 @@ on $\pubaux$ computed as follows:
 %  \jnote{I say we state the general theorem in Section~3.2 and just
 %  promise that applications will come in Section~4.}
 
-$\Pi$ is \emph{canonical} if it has a factoring $\Rep_1, \Rep_2, \ell, F$ in which
-$F$ is a pseudorandom function (in which case we call $\Rep_1, \Rep_2, \ell, F$ a canonical factoring of~$\Pi$).
+Informally, we say that $\Pi$ is \emph{canonical} if it has a factoring $\Rep_1, \Rep_2, \ell, F$ in which
+$F$ is a pseudorandom function.
 We next show that any canonical data structure satisfies our simulation-based definition
 with respect to leakage consisting of the size of the set.
 
 \begin{theorem}\label{thm:priv-ss}
 Let $\setprim=(\Rep, \Qry)$ have
-canonical factoring
+factoring
 $(\Rep_1, \Rep_2,\ell, F)$. Then for ${\sf leak}(S) = |S|$ and
 any attacker $A$, there is an attacker
 $B$ making $\ell(|S|)$ queries for which
@@ -479,8 +479,8 @@ probability with which it outputs~1 in $G_1$.
 The follows immediately from the
 observation that the distribution on $t$ (in $G_1$) is identical to the distribution on~$t^*$
 (in $G_2$) by definition
-of canonical, and it is clear that the distributions of everything
-else are the same as well.
+of canonical, and it is clear that the joint distribution of everything
+else is the same as well.
 
 One can verify that $G_2$ is identical to the following experiment:
 \begin{enumerate}

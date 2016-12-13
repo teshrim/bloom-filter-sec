@@ -41,13 +41,14 @@ $M\gets\pubaux$, $K \gets \privaux$\\
 for $j \in \{1,2,\ldots,k\}$\\
 \nudge $h_j \gets F_{K}(\langle j,x \rangle) $\\
 \nudge if $M[h_j] \neq 1$ then Return 0\\
-Return 1 } \caption{{\bf Left:} $\Rep$ and $\Qry$ algorithms for
+Return 1 } \caption{{\bf Left:} $\Rep$ and $\Qry$ algorithms for the
 classical Bloom
   filter $\setprim_{\mathrm{Bloom}}$ in the ROM for a hash function $H\colon \mathbb{N} \times
-  \elts \to [m]$, where $|S| \leq n$. {\bf Right:} $\Rep$ and $\Qry$
+  \elts \to [m]$, where $|S| \leq n$. \jnote{Both should abort if $|S|>n$.}
+  {\bf Right:} $\Rep$ and $\Qry$
   algorithms for the domain-separated PRF data structure
   $\setprim_{\mathrm{ds}}$, using function family $F \colon
-  \calK \times \elts \to [m]$.  Both constructions have query set is $\calQ=\{q_x\colon
+  \calK \times \elts \to [m]$.  Both constructions have query set $\calQ=\{q_x\colon
   \univ \to \bits\}$ where $q_x(S)=1 \Leftrightarrow x \in S$.  }
 \label{fig:bf-and-ds}
 \end{figure}
@@ -57,18 +58,26 @@ Fix $k,m,n \geq 0$ and a universe $\elts$.  Then the classical Bloom
 filter set-membership data structure $\setprim_{\mathrm{Bloom}}=
 (\Rep, \Qry)$ over~$\elts$ is defined as in
 Figure~\ref{fig:bf-and-ds} (left side) for sets $S \subseteq \elts$
-of size at most $|S|\leq n$. We define~$\setprim_{\mathrm{Bloom}}$
-in the random-oracle model (ROM), as the traditional analysis of
-correctness (as a function of $n,k,m$) is done in this
-model.\footnote{The standard-model version would have $\Rep$ choose
-$H_1,\ldots,H_k$ from some function family, compute $h_j$ using
-these, and place their description in $\pubaux$.}
+of size at most $|S|\leq n$. \jnote{This should really be
+parameterized everywhere, e.g., as
+$\setprim_{\mathrm{Bloom}}^{k,m,n}$.} We
+define~$\setprim_{\mathrm{Bloom}}$ in the random-oracle model (ROM),
+as the traditional analysis of correctness (as a function of
+$n,k,m$) is done in this model.\footnote{The standard-model version
+would have $\Rep$ choose $H_1,\ldots,H_k$ from some function family,
+compute $h_j$ using these, and place their description in
+$\pubaux$.}
 
 \heading{Correctness. } We prove that the Bloom filter meets our
 correctness notion in the ROM.  Again, we stress that this
 correctness is with respect to adaptive adversaries, aiming to find
 $r \geq 1$ errors (in this case, false-positives).
 
+\jnote{We should state the bound in the theorem in terms of resource
+bounds , rather than in terms of a fixed adversary~$A$ (i.e., bound
+$\Pi_{\mathrm{Bloom},r}(t,q_T, q_H)$ not
+$\Pi_{\mathrm{Bloom},r}(A)$---note we need to define the former in
+the ROM in Section~3). Same goes for all theorems.}
 
 \begin{theorem}\label{thm3}\label{thm:bf-correctness}
 Fix $k,m,n,r>0$ and~$\elts$, and let $\setprim_{\mathrm{Bloom}}=
@@ -77,69 +86,81 @@ structure over~$\elts$. For any adversary~$A$ that makes a total
 of~$q_T$ queries to the $\Test$ oracle, $q_R$ queries to the random
 oracle, and has time-complexity~$O(t)$,
 \[
-\AdvCorrect{\setprim_{\mathrm{Bloom}},r}{A} \leq  {\dbinom{q_T + q_H-1}{r-1}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
+\AdvCorrect{\setprim_{\mathrm{Bloom}},r}{A} \leq  {\dbinom{q_T + q_H}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
 \]
 \end{theorem}
-Kirsch and Mitzenmacher~\cite{kirsch2006less} show that the ($r=1$,
-zero-query) error-probability
+Note that Kirsch and Mitzenmacher~\cite{kirsch2006less} show that
+the ($r=1$, zero-query) error-probability
 for~$\setprim_\mathrm{Bloom}$ is %always within $O(1/n)$ of
-$(1-e^{-kn/m})^k+O(1/n)$. %, although the asymptotic rate of
-%convergence is faster than~$1/n$.
+$(1-e^{-kn/m})^k+O(1/n)$, though the asymptotic rate of convergence
+is faster than~$1/n$.
 The multiplicative %(``hybrid'')
-term arises as a result of moving from the zero-query to the
-adaptive setting. Also note that $\binom{q_T+q_H-1}{r-1} \leq
-(eq/r)^r$ (letting $q=q_T+q_H$, and assuming $q\gg r$), in which
-case the bound becomes
+term is due to moving from the zero-query to the adaptive setting.
+Also note that $\binom{q_T+q_H}{r} \leq (eq/r)^r$ (letting
+$q=q_T+q_H$), in which case the bound becomes
 \[\left(eq/r \cdot (1-e^{-kn/m})^k + O(q/rn) \right)^r.\]
 Loosely, and ignoring the low-order term, this is the bound expected
 by viewing the attacker as trying to find an error in each of~$r$
 independent``rounds,'' each round consisting of~$q/r$ attempts.
 \jnote{I didn't find the last two sentences helpful.}
-%JK
 \input{BF_correctness}
 
-\heading{Privacy. }
-Turning to privacy, we observe immediately that the classical BF, in the
-ROM, does not meet our SS-privacy notion when the leakage function
-fails to reveal the entire set~$S$.  This is because the set~$S$ is
-adversarially chosen, and the adversary has access to the random
-oracle, i.e. the hash functions used to make~$\pubaux$.  Thus the
-adversary can simply check that the $\pubaux$ it receives is correct.
-Thus, unless $m,k,n$ are such that the false-positive rate is large,
-the simulator needs to call the random oracle on the points in~$S$ in order to ``fool'' the adversary.
+\heading{Privacy. } We observe that, intuitively, the classical
+Bloom filter does not meet our simulation-based privacy notion
+except in trivial cases (e.g., if the leakage function reveals the
+entire set, the false-positive rate is~1, or the attacker makes no
+$H$-queries). This is because the attacker knows the set~$S$; as
+long as the attacker can compute~$H$ (as it can in the ROM), it can
+simply check that the $\pubaux$ it receives is consistent with~$S$.
 %\tsnote{I'm still not completely comfortable with this.  It isn't explicit in our SS notion, but I assume that~$A$ is stateful and so knows~$S$ in its second stage?  If so, I wonder if the classic BF in the ROM would be secure relative to a weaker notion (but still stronger than OW) in which the second stage does not know~$S$?  This seems likely to me.}
+We note that this will be true for \emph{any} data structure for
+which $\privaux$ is empty, since in that case $\pubaux$ alone
+suffices to evaluate $\Qry(\pubaux,\privaux,\cdot)$. \jnote{In the
+ROM the attack requires that the attacker can query the ROM
+sufficiently many times.}
 
-We note that this will be true for \emph{any} data structure that returns an empty $\privaux$, because this implies that $\pubaux$ alone suffices to evaluate $\Qry(\pubaux,\privaux,\cdot)$.
+On the other hand, we can show that the classical Bloom filter does
+meet our notion of one-wayness in the~ROM:
 
-\begin{theorem}[{\rm OW-privacy of classic BF in the ROM}]\label{thm3}\label{thm:bf-ow}
-Fix $k,m,n,r>0$, a set~$\elts$, and let $\setprim_{\mathrm{Bloom}}= (\Rep, \Qry)$ be the classical Bloom filter data structure over~$\elts$. Let $\distr{}{}$ be a distribution over subsets of universe~$\univ=2^\elts$, where $\mu = H_\infty(\distr{}{})$.  For any adversary~$A$ that makes $q$~queries to its oracle
+\begin{theorem}%[{\rm OW-privacy of classic BF in the ROM}]
+%\label{thm3}
+\label{thm:bf-ow} Fix $k,m,n>0$ and~$\elts$, and let
+$\setprim_{\mathrm{Bloom}}= (\Rep, \Qry)$ be the classical Bloom
+filter data structure over~$\elts$. Let $\distr{}{}$ be a
+distribution over subsets of $\elts$ of size at most~$n$, and let
+$\mu = H_\infty(\distr{}{})$. Then for any adversary~$A$ that makes
+at most $q_H$~queries to~$H$,
 \[
-\AdvPrivOW{\setprim_{\mathrm{Bloom}},\distr{}{},r}{A} \leq  \frac{(kqn+n)}{2^{\mu}}\;.
+\AdvPrivOW{\setprim_{\mathrm{Bloom}},\distr{}{}}{A} \leq  \frac{(kq_H n+n)}{2^{\mu}}\;.
 \]
 \end{theorem}
-The straightforward proof will appear in the full version.
-Loosely, the $kqn/2^{\mu}$ term arises from the chance that random-oracle queries reveal an element of~$S$ (by the random oracle having
-been called on them in the execution of~$\Rep$), and the $n/2^\mu$
-term arises to simple guessing of an element of~$S$ should none of the
-random-oracle queries reveal an element of~$S$.
+\jnote{I don't see how you get the above bound. A gross upper bound
+is obtained by saying that the attacker wins if it ever makes a
+single query $H(\star, x)$ with $x \in S$. The probability of that
+is $q_H/2^\mu$, which is better than $kq_Hn/2^\mu$.} The
+straightforward proof will appear in the full version. Roughly, the
+$kqn/2^{\mu}$ term \jnote{Revisit later.} arises from the event that
+random-oracle queries reveal an element of~$S$, and the $n/2^\mu$
+term represents the probability that the attacker simply guesses an
+element of~$S$.
 
 %%%%%%%%%%%%%%%%% DOMAIN-SEPARATED PRF %%%%%%%%%%%%%%%%%%%%
 
-\subsection{Domain-Separated PRF-Hash}
-Next we consider a natural, secret-key variant of the classic Bloom
-filter.  Here the (private) hash functions are instantiated via
-$H(j,x)=F_K(\langle j,x\rangle)$, using domain-separation to turn a
-PRF (with one secret key) into, effectively, multiple functions that
-are computationally indistinguishable from random.  We call this the
-domain-separated PRF-hash data structure.
+\subsection{A Secret-Key Variant of the Bloom Filter}
+Next we consider a natural, secret-key variant of the classical
+Bloom filter where the (private) hash functions are instantiated via
+$H(j,x)=F_K(\langle j,x\rangle)$, where $F$ is a pseudorandom
+function (PRF), using domain separation to turn a PRF into,
+effectively, multiple (independent) random functions. (Refer to the
+right side of Figure~\ref{fig:bf-and-ds}.) We call this the
+\emph{domain-separated PRF data structure}.
+
+\jnote{Maybe just call it ``pseudorandom hash''?}
 
 %\heading{Construction of PRF with domain separation.}
-\heading{Correctness. } Let $\setprim_{\mathrm{ds}}= (\Rep, \Qry)$
-be the set-membership data structure defined on the right-hand side
-of Figure~\ref{fig:bf-and-ds}. As in the preceding theorem, the
-following says (informally) that if~$F$ is a secure PRF, then this
-domain-separated PRF construction is correct against adaptive
-adversaries.
+\heading{Correctness. } As in Theorem~\ref{thm3}, the following says
+(informally) that if~$F$ is a PRF, then the domain-separated PRF
+construction enjoys correct against adaptive adversaries.
 
 % \tsnote{Not really appropriate to say this next thing; I'll add a new section that addresses bigram DS-PRF hash.}
 % We note that Neidermayer et
@@ -149,36 +170,57 @@ adversaries.
 % same end, albeit via explict domain separation rather than separate
 % keys.
 
-\begin{theorem}[{\rm Correctness of DS-PRF}]\label{thm2}\label{thm:ds-correctness}
-Fix $k,m,n,r>0$, a set~$\elts$, and let $\setprim_{\mathrm{ds}}= (\Rep, \Qry)$ be the set-membership data structure (over~$\elts$) in Figure~\ref{fig:bf-and-ds}.  For any adversary~$A$ that makes a total of~$q$ queries to its oracle and has time-complexity~$O(t)$, there exists a prf-adversary ~$B$ (explicitly constructed in the proof of this theorem) such that
+\jnote{As with the classical BF, this should always be
+parameterized, e.g., as $\setprim_{\mathrm{ds}}^{k,m,n}(F)$.}
+
+\begin{theorem}%[{\rm Correctness of DS-PRF}]
+\label{thm2}\label{thm:ds-correctness} Fix $k,m,n,r>0$ and~$\elts$,
+and let $\setprim_{\mathrm{ds}}= (\Rep, \Qry)$ be the
+domain-separated PRF data structure over $\elts$. Then
 \[
-\AdvCorrect{\setprim_{\mathrm{ds}},r}{A} \leq  \AdvPRF{F}{B}  + {\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
+\AdvCorrect{\setprim_{\mathrm{ds}},r}{t, q_T} \leq  \AdvPRF{F}{O(t+q_T m), q_T}  + {\dbinom{q_T}{r}} \cdot \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
 \]
-Here, $B$ asks $q$ queries, and has time complexity $O(t+qm)$.
 \end{theorem}
-We note that Kirsch and Mitzenmacher~\cite{kirsch2006less} show
-that the ($r=1$, zero-query) error-probability for~$\setprim_\mathrm{ds}$ is
-always within $O(1/n)$ of $(1-e^{-kn/m})^k$, although the asymptotic
-rate of convergence is faster than~$1/n$.   As before, the multiplicative term $\binom{q}{r}$ arises when switching from the adaptive to zero-query settings.
+\jnote{I don't think we ever define $\AdvPRF{F}{q, t}$.}
+
+%We note that Kirsch and Mitzenmacher~\cite{kirsch2006less} show
+%that the ($r=1$, zero-query) error-probability for~$\setprim_\mathrm{ds}$ is
+%always within $O(1/n)$ of $(1-e^{-kn/m})^k$, although the asymptotic
+%rate of convergence is faster than~$1/n$.   As before, the multiplicative term $\binom{q}{r}$ arises when switching from the adaptive to zero-query settings.
+\jnote{The proof of this theorem should be ``morally the same'' as
+the proof of Theorem~\ref{thm3} (unless I am missing some
+subtlety?). So I think we should omit this proof altogether. If not,
+then it should follow the same structure as the proof of
+Theorem~\ref{thm3} or else the reader is likely to be confused (as I
+was).}
+
 \input{ds-correctness}
 
 
-\heading{Privacy. }
-The privacy of $\setprim_{\mathrm{ds}}$ follows directly from our general result, Theorem~\ref{thm:priv-ss}.
-\begin{theorem}[\rm{SS-privacy of DS PRF}]\label{thm:ds-ss}
-Fix $k,m,n>0$, a set~$\elts$, and let $\setprim_{\mathrm{ds}}= (\Rep,
-\Qry)$ be the set-membership data structure described in
-Figure~\ref{fig:bf-and-ds}.  For any set~$S \in 2^\elts$, let
-$\leak(S)=|S|$.  There exists a simulator~$\Sim$ and adversary~$B$
-(making~$kn$ queries) such that, for any adversary~$A$
+\heading{Privacy. } In contrast to the case of classical Bloom
+filters (with public hash functions), the domain-separated PRF data
+structure achieves our simulation-based notion of privacy. Indeed,
+this follows directly from Theorem~\ref{thm:priv-ss}.
+
+\begin{theorem}%[\rm{SS-privacy of DS PRF}]
+\label{thm:ds-ss} Fix $k,m,n>0$ and ~$\elts$, and let
+$\setprim_{\mathrm{ds}}= (\Rep, \Qry)$ be the domain-separated PRF
+data structure.  Let $\leak(S)=|S|$. Then
 \[
-\AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}\,.
+\AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim} \leq
+\AdvPRF{F}{B}\,.
 \]
 %(Both~$B$ and~$\Sim$ are explicitly constructed in the proof of this theorem.)
 \end{theorem}
 \begin{proof}
-It suffices to give the decomposition of $\Rep$ in to $\Rep_1$ and $\Rep_2$ as required by Theorem~\ref{thm:priv-ss}.
-On input a set of distinct elements $S=\{x_1,x_2,\ldots,x_n\}$, algorithm~$\Rep_1$ returns $s_1=\langle 1,x_1 \rangle, s_2=\langle 2,x_1 \rangle, \ldots, s_k\langle k,x_1\rangle, s_{k+1}=\langle 1,x_2\rangle, \ldots,\linebreak s_{2k}=\langle k,x_2\rangle, \ldots ,s_{kn+1}=\langle 1,x_n\rangle, \ldots, s_{kn}=\langle k,x_n \rangle$.  On input $n,F_K(s_1),\ldots,\linebreak F_K(s_{kn})$, algorithm $\Rep_2$ simply initializes an all-zero array~$M$ of~$m$-bits, and sets the positions $M[F_K(s_i)]$ to 1.  It returns~$M$ as $\pubaux$. \hfill\qed
+Let $\ell(n) = kn$. Let $\Rep_1$ be the algorithm that, on input a
+set $S=\{x_1,\ldots,x_n\}$, outputs $\{\langle i,x_j \rangle\}_{i\in
+{k}, j \in [n]}$. Let $\Rep_2$ be the algorithm that, on input
+$n,y_1, \ldots, y_{\ell(n)}$, initializes an $m$-bit array $M$ to~0
+and then sets $M[y_i] \gets 1$ for $i \in [\ell(n)]$. One can easily
+verify that $(\Rep_1, \Rep_2, \ell, F)$ is a factoring of~$\Pi$.
+Applying Theorem~\ref{thm:priv-ss} yields the claimed result.
+\hfill\qed
 \end{proof}
 
 
@@ -248,9 +290,21 @@ Both schemes use a function family $F\colon \calK \times \bits^* \to [m]$.
 \label{fig:niedermeyer}
 \end{figure}
 
+%JK
 \subsection{Linear PRF-hash Bloom Filter }
 %\heading{Linear-PRF construction. }
-The domain-separated PRF-hash requires~$k$ PRF evaluations per set-membership query, and this may be unattractive in certain use cases.  Kirsch and Mitzenmacher~\cite{kirsch2006less} have shown that two PRF evaluations suffices, defining the hash functions to be $h_i(x)=F_K(\langle 1,x \rangle) + j\cdot F_K(\langle 2,x \rangle) \bmod m$, where~$m$ is the bit-length of the Bloom filter.\footnote{Actually, they define $h_i(x)=F_{K_1}(x)  + j\cdot F_{K_2}(x) \bmod m$, using distinct keys instead of domain-separation, but the constructions are equivalent with respect to security.} We call this the \emph{linear PRF-hash} Bloom Filter.  In this section, we show that this scheme is both correct and private with respect to our SS notion.
+The domain-separated PRF-hash requires~$k$ PRF evaluations per
+set-membership query, and this may be unattractive in certain use
+cases.  Kirsch and Mitzenmacher~\cite{kirsch2006less} have shown
+that two PRF evaluations suffice, defining the hash functions to be
+$h_i(x)=F_K(\langle 1,x \rangle) + j\cdot F_K(\langle 2,x \rangle)
+\bmod m$, where~$m$ is the bit-length of the Bloom
+filter.\footnote{Actually, they define $h_i(x)=F_{K_1}(x)  + j\cdot
+F_{K_2}(x) \bmod m$, using distinct keys instead of
+domain-separation, but the constructions are equivalent with respect
+to security.} We call this the \emph{linear PRF-hash} Bloom filter.
+\jnote{Maybe call it ``Pairwise-independent hash''?} In this
+section, we show that this scheme is both correct and private.
 
 Looking ahead to the next section, we will analyze a closely related
 construction, which was attacked by Niedermeyer et
@@ -262,7 +316,9 @@ functions are called on \emph{distinct} values.  We show that this is
 function that leaks nearly the entire set~$S$.
 %\todo{It would be better, perhaps, to show that it is not OW secure, since this implies it isn't SS secure, and OW security is what Niedermeyer et al. violate.}
 
-Taken together, the results of this section and the next highlight how sensitive the privacy of linear PRF-hash constructions is to usage.
+Taken together, the results of this section and the next highlight
+the privacy of the linear PRF-hash construction can be sensitive to
+its usage.
 
 
 \heading{Correctness. }
@@ -313,15 +369,20 @@ On input $n,F_K(s_1),F_K(s_2),\ldots,F_K(s_{2n-1}) , F_K(s_{2n})$, algorithm $\R
 %\heading{Bigram Linear-PRF construction (``Niedermeyer''). }
 %\heading{Correctness.}
 %\todo{Correctness theorem for this scheme.  Should follow pretty closely the one for ``plain'' linear-PRF.}\tsnote{Actually not sure this is that interesting, but for parallel structure one would want to give it.}
-\heading{Privacy. }
-Consider the set-membership data structure given in Figure~\ref{fig:lin-and-bi-lin} (right side), which we call the \emph{bigram linear-PRF} construction.  This construction is of practical interest, as it has been suggested as a way to address the privacy-preserving record-linkage problem, in particular for linking common records in medical databases~\cite{niedermeyer2014cryptanalysis,schnell2011novel}.
+\heading{Privacy. } Consider the set-membership data structure given
+in Figure~\ref{fig:lin-and-bi-lin} (right side), which we call the
+\emph{bigram linear-PRF} construction.  This construction is of
+practical interest, as it has been suggested as a way to address the
+privacy-preserving record-linkage problem, in particular for linking
+common records in medical
+databases~\cite{niedermeyer2014cryptanalysis}. %,schnell2011novel}.
 We only address the privacy of this construction, as the correctness
 follows immediately from the correctness of the Linear-PRF
 construction.  The privacy, however, does not.  Here we exhibit an
-efficient SS-privacy attack even when simulator is provided nearly the
-entire set.  Consider the following ``all-but-last'' leakage function.
-On input a set~$S=\{x_1,x_2,\ldots,x_n\}$, it assigns $x'_n \gets
-x_n[1:|x_n|-1]$ and returns
+efficient SS-privacy attack even when simulator is provided nearly
+the entire set.  Consider the following ``all-but-last'' leakage
+function. On input a set~$S=\{x_1,x_2,\ldots,x_n\}$, it assigns
+$x'_n \gets x_n[1:|x_n|-1]$ and returns
 $\mathsf{leak_{abl}}(S)=\{x_1,x_2,\ldots,x'_n\}$.
 
 \begin{figure}[tp]
@@ -441,10 +502,10 @@ arbitrarily close to $1/2$ by choice of~$\alpha$.
 \end{theorem}
 
 On the other hand, we can show that this data structure \emph{is}
-semantically secure with respect to a different leakage function,
-namely, one that leaks the sizes of the intersections of the various
-bigram sets. Specifically, for a set $S$ define ${\sf leak}_\cap(S)$
-via the following algorithm:
+secure with respect to a different leakage function, namely, one
+that leaks the sizes of the intersections of the various bigram
+sets. Specifically, for a set $S$ define ${\sf leak}_\cap(S)$ via
+the following algorithm:
 
 \begin{figure}[h]
 \centering
@@ -600,14 +661,14 @@ Return~$X_{q}$
 {\bf Right:} One-wayness attack for garbled Bloom filters with public~$M$.  The sequence $X_1,X_2,\ldots,X_q,$ are the~$q$ most probable points in the support of~$\distr{}{}$ in decreasing order.  }
 \label{fig:adv-gbf}
 \end{figure}
-Dong, Chen and Wen~\cite{dong2013private} introduce a set-membership data
-structure called a \emph{garbled Bloom filter} (GBF).   Modulo some implementation
-details, a GBF is like a classical Bloom filter, but
-rather than storing a bit 1 at the indices determined by $H_j(x)$, the
-GBF stores xor-shares of~$x$.  Thus, if $x \in S$, then hashing~$x$
-and xoring together the strings stored at the indicated positions
-recovers~$x$. We give the pseudocode for the GBF $\Rep$ and $\Qry$
-algorithms in Figure~\ref{fig:gbf}.
+Dong, Chen and Wen~\cite{CCS:DonCheWen13} introduce a set-membership
+data structure called a \emph{garbled Bloom filter} (GBF).   Modulo
+some implementation details, a GBF is like a classical Bloom filter,
+but rather than storing a bit 1 at the indices determined by
+$H_j(x)$, the GBF stores xor-shares of~$x$.  Thus, if $x \in S$,
+then hashing~$x$ and xoring together the strings stored at the
+indicated positions recovers~$x$. We give the pseudocode for the GBF
+$\Rep$ and $\Qry$ algorithms in Figure~\ref{fig:gbf}.
 
 In~\cite{dong2013private} the GBF is a central piece of a private set-intersection
 scheme, in which the client computes a classical BF over its
@@ -633,15 +694,17 @@ the xor-shares stored in~$M$ are random strings.  (Note that
 $\pubaux=\emptystring,\privaux=\langle M \rangle$), but when~$M$ is
 public things are different.
 
-Consider the adversary described in the left half of Figure~\ref{fig:adv-gbf}.  In one
-round of the for-loop, it pics~$k$ positions $i_1,i_2,\ldots,i_k$, and
-xors the strings at these positions to get a candidate~$x$.   If $x
-\in S$, which the adversary knows in the correctness experiment, then
-it moves on to a new set of positions.  If $x \not\in S$ and
-$h_{1}(x)=i_1 \wedge h_2(x)=i_2 \wedge \cdots \wedge h_k(x) = i_k$,
-then it \emph{must be} that $x$ is a false-positive.   Indeed, note
-that the probability of this (in the ROM) is precisely the
-false-positive rate of a classical BF using the same $(k,m,n)$ as the GBF.
+Consider the adversary described in the left half of
+Figure~\ref{fig:adv-gbf}.  In one round of the for-loop, it pics~$k$
+positions $i_1,i_2,\ldots,i_k$, and xors the strings at these
+positions to get a candidate~$x$.   If $x \in S$, which the
+adversary knows in the correctness experiment, then it moves on to a
+new set of positions.  If $x \not\in S$ and $h_{1}(x)=i_1 \wedge
+h_2(x)=i_2 \wedge \cdots \wedge h_k(x) = i_k$, then it \emph{must
+be} that $x$ is a false-positive.   Indeed, note that the
+probability of this (in the ROM) is precisely the false-positive
+rate of a classical Bloom filter using the same $(k,m,n)$ as the
+GBF.
 
 Now, this adversary will find a false positive, if there is one, but in the worst case it will consider
 $\binom{m}{k} \approx m^k$ $k$-tuples of positions.  If both~$m$

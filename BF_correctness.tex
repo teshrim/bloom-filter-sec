@@ -5,9 +5,9 @@ We use a game playing argument; please refer to
 Figures~\ref{fig:bf-correctness-games1}
 and~\ref{fig:bf-correctness-games2}. In game $\game{0}$, the
 $\HashOracle$ oracle performs lazy sampling of elements from $[m]$
-to mimic a random oracle (RO). For every distinct query,
-$\HashOracle$ returns a random value sampled from $[m]$. It can be
-seen that game $\game{0}$ exactly simulates the correctness game of
+to mimic a random oracle. For every distinct query, $\HashOracle$
+returns a random value sampled from $[m]$. It can be seen that game
+$\game{0}$ exactly simulates the correctness game of
 $\setprim_{\mathrm{Bloom}}$, and so
 $\AdvCorrect{\setprim_{\mathrm{Bloom}},r}{A} = \Prob{\game{0}(A) =
 1}$.
@@ -23,7 +23,7 @@ $\bot \getsr A^{\TestOracle,\HashOracle}(\pubaux)$\\
 if $\err  < r$ then Return 0\\
 Return 1\\
 
-\oracle{$\TestOracle(\qry_x)$}\\
+\oracle{$\TestOracle(q_x)$}\\
 if $x \in \mathcal{C}$ then Return $\bot$\\
 $\calC \gets \calC \cup x$\\
 $a \gets \Qry^{\HashOracle}(\pubaux,\privaux, x)$\\
@@ -44,7 +44,7 @@ $\bot \getsr A^{\TestOracle,\HashOracle}(\pubaux)$\\
 if $\err  < r$ then Return 0\\
 Return 1\\
 
-\oracle{$\TestOracle(\qry_x)$}\\
+\oracle{$\TestOracle(q_x)$}\\
 if $x \in \mathcal{C}$ then Return $\bot$\\
 $\calC \gets \calC \cup x$; $M \gets\pubaux$\\
 for $j \in \{1,2,\ldots,k\}$\\
@@ -66,7 +66,7 @@ $\bot \getsr A^{\TestOracle,\HashOracle}(\pubaux)$\\
 if $\err  < r$ then Return 0\\
 Return 1\\
 
-\oracle{$\TestOracle(\qry_x)$}\\
+\oracle{$\TestOracle(q_x)$}\\
 if $x \in \mathcal{C}$ then Return $\bot$\\
 $\calC \gets \calC \cup x$; $M \gets\pubaux$\\
 for $j \in \{1,2,\ldots,k\}$\\
@@ -89,7 +89,7 @@ $\bot \getsr A^{\TestOracle,\HashOracle}(\pubaux)$\\
 if $\err  < r$ then Return 0\\
 Return 1\\
 
-\oracle{$\TestOracle(\qry_x)$}\\
+\oracle{$\TestOracle(q_x)$}\\
 if $x \in \mathcal{C}$ then Return $\bot$\\
 $\calC \gets \calC \cup x$; $M \gets\pubaux$\\
 $(h_1, \ldots, h_{k}) \gets \HashOracle(x)$\\
@@ -138,61 +138,55 @@ of~$\HashOracle$.) We do this so we can assume that a
 call~$\HashOracle(x)$ is pointless after a~$\TestOracle(x)$ call has
 been made. This change results in the adversary getting $(k-1)$ hash
 values ``for free,'' as we charge the adversary only for a single
-query. \jnote{I don't see why we do this. The analysis is no easier,
-but now the attacker gets free queries.}  It is obvious that
-$\Prob{\game{2}(A) = 1} \leq \Prob{\game{3}(A) = 1}$.
+query. \jnote{Can we do better by being more careful?} It is obvious
+that $\Prob{\game{2}(A) = 1} \leq \Prob{\game{3}(A) = 1}$.
 
-%JK
 Game~$\game{4}$ contains some important changes from
 game~$\game{3}$. In $\game{4}$ the $\TestOracle$ oracle no longer
 computes its answer directly, but instead refers to a
 table~$\mathrm{Ans}[x]$ that is populated upon calls to the
-$\HashOracle$ oracle.  In particular, if $\mathrm{Ans}[x]$ is
-undefined, $\TestOracle$ makes a call $\HashOracle(x)$; otherwise,
-it returns the contents of~$\mathrm{Ans}[x]$, which contains exactly
-the values that~$\TestOracle(\qry_x)$ would have returned in the
-previous game.  The $\HashOracle$ oracle, on input~$\qry_y$ computes
-the random values~$v_1,v_2,\ldots,v_k$ as in $\game{3}$. It
-maintains the table~$T$ because~$A$ is permitted to
-call~$\HashOracle$ on $y \in S$.
+$\HashOracle$ oracle.  If $\mathrm{Ans}[x]$ is undefined,
+$\TestOracle$ makes a call $\HashOracle(x)$; otherwise, it returns
+the contents of~$\mathrm{Ans}[x]$, which contains exactly the values
+that~$\TestOracle(q_x)$ would have returned in the previous game.
+The $\HashOracle$ oracle, on input~$x$, computes
+values~$v_1,\ldots,v_k$ as in $\game{3}$. %It maintains the table~$T$
+%because~$A$ is permitted to call~$\HashOracle$ on $y \in S$.
 %(We no longer need to maintain the table~$T$ because hash values are
 %only determined by~$\HashOracle$ calls, and these are never repeated
 %under our no-pointless-query assumption.)
-It then computes the answer that~$\TestOracle(\qry_x)$ would return in
+It then computes the answer that~$\TestOracle(q_x)$ would return in
 game~$\game{3}$, and stores the answer in~$\mathrm{Ans}[x]$ for use
-by~$\TestOracle$.
-None of these changes alters the behavior of the game from the
-adversary's perspective.
+by~$\TestOracle$. None of these changes alters the view of~$A$, and
+so $\Prob{\game{3}(A) = 1} = \Prob{\game{4}(A)
+  = 1}$. \jnote{You had $\leq$ before.}
 
- but we will argue that $\Prob{\game{3}(A) = 1} \leq
-\Prob{\game{4}(A)
-  = 1}$.
-
-At this point, we consider $\Prob{\game{4}(A)=1}$.  Note that is
-happens iff there are~$r$ calls to the $\HashOracle$ oracle that
-increment~$\err$, i.e., queries $y \not\in S$ such that
-$\bigwedge_{j=1}^{k} M[v_j]=1$.  We can assume without loss that~$A$
-does not call~$\HashOracle$ on $y \in S$ because the indices
-$v_1,v_2,\ldots,v_k$ that will correspond to any $y \not\in S$ will
-be \emph{independent} of those corresponding to any of the $y \in
-S$. Thus these queries are wasted.  Now, there are at total of $q_T
-+ q_H$ queries made to~$\HashOracle$, either directly by~$A$ or
-indirectly by~$A$ calling~$\TestOracle$.  For $\game{4}(A)$ to
-return 1, there must be~$r$ among these that increment the counter.
-We can assume without loss of generality that~$A$ halts as soon
-as~$\err=r$ (which it can easily track), so there are
-$\binom{q_T+q_H-1}{r-1}$ possible ``winning'' query patterns to
-consider.  As each error event is independent of all previous
+Note that $\game{4}(A)=1$ iff there are~$r$ queries to the
+$\HashOracle$ oracle that increment~$\err$, i.e., queries $y \not\in
+S$ such that $\bigwedge_{j=1}^{k} M[v_j]=1$.
+%We can assume without
+%loss of generality that~$A$ does not call~$\HashOracle$ on $y \in S$
+%because the indices $v_1,v_2,\ldots,v_k$ that will correspond to any
+%$y \not\in S$ will be \emph{independent} of those corresponding to
+%any of the $y \in S$. Thus these queries are wasted.
+There are at total of $q_T + q_H$ queries made to~$\HashOracle$,
+either directly by~$A$ or indirectly when~$A$ calls~$\TestOracle$.
+For $\game{4}(A)$ to return~1, there must be~$r$ among these that
+increment~$\err$. %We can assume without loss of generality that~$A$
+%halts as soon as~$\err=r$ (which it can easily track), so
+There are $\binom{q_T+q_H}{r}$ possible ``winning'' query patterns
+to consider.  \jnote{I changed the bound; I don't think it was
+correct before.} As each error event is independent of all previous
 choices made by the~$\HashOracle$, we need only consider the
-probability of a single error. Using Kirsch and
-Mitzenmacher's~\cite{kirsch2006less} upper bound on false positive
-probability of a classical Bloom filter, we have
-$\Prob{\game{4}(A)=1} = \binom{q_T+q_H-1}{r-1}\left( (1-e^{-kn/m})^k
-+ O(1/n) \right)^r$. To summarize,
+probability of a single error. Using the upper bound on false
+positives for the classical Bloom filter shown by Kirsch and
+Mitzenmacher~\cite{kirsch2006less}, we have $\Prob{\game{4}(A)=1}
+\leq \binom{q_T+q_H}{r}\left( (1-e^{-kn/m})^k + O(1/n) \right)^r$.
+We conclude that
 \[
-\AdvCorrect{\setprim_{\mathrm{Bloom}},r}{A} \leq  {\dbinom{q_T + q_H-1}{r-1}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
+\AdvCorrect{\setprim_{\mathrm{Bloom}},r}{A} \leq  {\dbinom{q_T + q_H}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,,
 \]
-which is the bound claimed in the theorem statement.
+as claimed.
 \begin{figure}[tp]
 \fpage{.9}{
 \hpagessl{.45}{.5}
@@ -206,7 +200,7 @@ $\bot \getsr A^{\TestOracle,\HashOracle}(\pubaux)$\\
 if $\err  < r$ then Return 0\\
 Return 1\\
 
-\oracle{$\TestOracle(\qry_x)$}\\
+\oracle{$\TestOracle(q_x)$}\\
 if $x \in \mathcal{C}$ then Return $\bot$\\
 $\calC \gets \calC \cup x$\\
 if $\Ans[x] = \undefined$\\
@@ -215,7 +209,7 @@ Return $\Ans[x]$\\
 %
 }
 {
-\oracle{$\HashOracle(\qry_y)$}\\
+\oracle{$\HashOracle(y)$}\\
 for $j \in \{1,2,\ldots,k\}$\\
 \nudge $v_j \getsr [m]$\\
 \nudge if $T[j,y] \neq \undefined$\\
@@ -230,8 +224,9 @@ for $j \in \{1,2,\ldots,k\}$\\
 \nudge if $M[v_j] \neq 1$ then \\
 \nudge \nudge $\Ans[y] \gets (0, (v_1, \ldots, v_{k}) )$\\
 %\nudge \nudge if $c \in \calI$ then $\bad \gets \true$\\
-\nudge \nudge $\Break$\\
-if $j < k$ then Return $\left(v_1,\ldots,v_k\right)$\\
+\nudge \nudge Return $\left(v_1,\ldots,v_k\right)$\\
+%\nudge \nudge $\Break$\\
+%if $j < k$ then Return $\left(v_1,\ldots,v_k\right)$\\
 %if $c \notin \calI$ then $\bad \gets \true$\\
 if $y \not\in S$ then $\err \gets \err +1$\\
 $\Ans[y] \gets (1, (v_1, \ldots, v_{k}))$\\
