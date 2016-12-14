@@ -203,9 +203,10 @@ structure achieves our simulation-based notion of privacy. Indeed,
 this follows directly from Theorem~\ref{thm:priv-ss}.
 
 \begin{theorem}%[\rm{SS-privacy of DS PRF}]
-\label{thm:ds-ss} Fix $k,m,n>0$ and ~$\elts$, and let
+\label{thm:ds-ss} Fix $k,m,n>0$ and~$\elts$, and let
 $\setprim_{\mathrm{ds}}= (\Rep, \Qry)$ be the domain-separated PRF
-data structure.  Let $\leak(S)=|S|$. Then
+data structure over~$\elts$.  Let $\leak(S)=|S|$. Then \jnote{Need
+to rewrite theorem statement.}
 \[
 \AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim} \leq
 \AdvPRF{F}{B}\,.
@@ -213,14 +214,14 @@ data structure.  Let $\leak(S)=|S|$. Then
 %(Both~$B$ and~$\Sim$ are explicitly constructed in the proof of this theorem.)
 \end{theorem}
 \begin{proof}
-Let $\ell(n) = kn$. Let $\Rep_1$ be the algorithm that, on input a
+Let $\ell(n) = kn$, let $\Rep_1$ be the algorithm that, on input a
 set $S=\{x_1,\ldots,x_n\}$, outputs $\{\langle i,x_j \rangle\}_{i\in
-{k}, j \in [n]}$. Let $\Rep_2$ be the algorithm that, on input
+{k}, j \in [n]}$, and let $\Rep_2$ be the algorithm that, on input
 $n,y_1, \ldots, y_{\ell(n)}$, initializes an $m$-bit array $M$ to~0
 and then sets $M[y_i] \gets 1$ for $i \in [\ell(n)]$. One can easily
-verify that $(\Rep_1, \Rep_2, \ell, F)$ is a factoring of~$\Pi$.
-Applying Theorem~\ref{thm:priv-ss} yields the claimed result.
-\hfill\qed
+verify that $(\Rep_1, \Rep_2, \ell, F)$ is a factoring
+of~$\Pi_{\mathrm{ds}}$. Applying Theorem~\ref{thm:priv-ss} yields
+the claimed result. \hfill\qed
 \end{proof}
 
 
@@ -279,110 +280,143 @@ if $\overline{M} \in \pubaux$ then Return 1 \\
 Return 0
 }
 \caption{{\bf Left:} $\Rep$ and $\Qry$ algorithms for the linear-PRF
-  data structure $\setprim_{\mathrm{lin}}$ {\bf Right:}
-The scheme from Niedermeyer et al.\cite{niedermeyer2014cryptanalysis}, $\setprim_{\bilin}$.
-The $\mathsf{bigram}$ algorithm takes a
-string~$x=x_1,x_2,\ldots,x_\ell$ as input, and returns the set of
-bigrams for the left- and right-padded string $\sqcup x \sqcup$,
-i.e. $\{\sqcup x_1, x_1x_2,\ldots,x_{\ell-1}x_\ell,x_\ell\sqcup\}$.
-Both schemes use a function family $F\colon \calK \times \bits^* \to [m]$.
-}\label{fig:lin-and-bi-lin}
-\label{fig:niedermeyer}
+  data structure $\setprim_{\mathrm{lin}}$. {\bf Right:}
+Data structure $\setprim_{\bilin}$ from Niedermeyer et
+al.~\cite{niedermeyer2014cryptanalysis}. The $\mathsf{bigram}$
+algorithm takes a string~$x=x_1,x_2,\ldots,x_\ell$ as input, and
+returns the set of bigrams for the left- and right-padded string
+$\sqcup x \sqcup$, i.e. $\{\sqcup x_1,
+x_1x_2,\ldots,x_{\ell-1}x_\ell,x_\ell\sqcup\}$. Both schemes use a
+function family $F\colon \calK \times \bits^* \to [m]$.
+}\label{fig:lin-and-bi-lin} \label{fig:niedermeyer}
 \end{figure}
 
-%JK
 \subsection{Linear PRF-hash Bloom Filter }
 %\heading{Linear-PRF construction. }
-The domain-separated PRF-hash requires~$k$ PRF evaluations per
-set-membership query, and this may be unattractive in certain use
-cases.  Kirsch and Mitzenmacher~\cite{kirsch2006less} have shown
-that two PRF evaluations suffice, defining the hash functions to be
-$h_i(x)=F_K(\langle 1,x \rangle) + j\cdot F_K(\langle 2,x \rangle)
-\bmod m$, where~$m$ is the bit-length of the Bloom
-filter.\footnote{Actually, they define $h_i(x)=F_{K_1}(x)  + j\cdot
-F_{K_2}(x) \bmod m$, using distinct keys instead of
-domain-separation, but the constructions are equivalent with respect
-to security.} We call this the \emph{linear PRF-hash} Bloom filter.
-\jnote{Maybe call it ``Pairwise-independent hash''?} In this
-section, we show that this scheme is both correct and private.
 
-Looking ahead to the next section, we will analyze a closely related
-construction, which was attacked by Niedermeyer et
-al.~\cite{niedermeyer2014cryptanalysis} in the context of private
-medical-record linkage.  It uses the same linear-PRF hash functions,
-but has a $\Rep$ algorithm that that does not ensure that the hash
-functions are called on \emph{distinct} values.  We show that this is
-\emph{not} private with respect to our SS notion for a leakage
-function that leaks nearly the entire set~$S$.
+\jnote{The BF, DS-PRF, and Linear PRF data structures are all the
+same underlying construction but using different instantiations of
+the hash functions. Can we just express them all as, e.g.,
+$\Pi_{BF}(H_1, \ldots, H_k)$ with different choices for the~$H$'s?
+Similarly, the names should be consistent; maybe ``RO Bloom
+filter,'' ``independent-PRF Bloom filter,'' and
+``pairwise-independent-PRF Bloom filter''?}
+
+The domain-separated PRF data structure requires~$k$ PRF evaluations
+per set-membership query.  Kirsch and
+Mitzenmacher~\cite{kirsch2006less} studied a variant, which uses
+just two PRF evaluations per query, in which the indices $h_j$ of
+the array that get set for a given element $x$ are (essentially)
+computed as $h_j = F_K(\langle 1,x \rangle) + j\cdot F_K(\langle 2,x
+\rangle) \bmod m$ (where $m$ is the length of the array); see
+Figure~\ref{fig:lin-and-bi-lin} (left side).
+%shown that two PRF evaluations suffice, defining the hash functions
+%to be $h_i(x)=F_K(\langle 1,x \rangle) + j\cdot F_K(\langle 2,x
+%\rangle) \bmod m$, where~$m$ is the bit-length of the Bloom
+%filter.\footnote{Actually, they define $h_i(x)=F_{K_1}(x)  + j\cdot
+%F_{K_2}(x) \bmod m$, using distinct keys instead of
+%domain-separation, but the constructions are equivalent with respect
+%to security.}
+We call this the \emph{linear PRF-hash} Bloom filter, and denote it
+by $\setprim_{\mathrm{lin}}$. \jnote{Maybe call it
+``Pairwise-independent hash''?} In this section, we show that this
+scheme is both correct and private.
+
+\jnote{I was not happy with the paragraph contrasting these results
+with those of the next section. The attack on by Niedermeyer has
+nothing to do with the hash functions used; it is due to the fact
+that they work on bigrams.}
+%Looking ahead, in the next section we
+%will analyze a closely related construction that was attacked by
+%Niedermeyer et al.~\cite{niedermeyer2014cryptanalysis}. That
+%construction computes indices $h_j$ in the same way, but does not
+%ensure that $F$ is evaluated on \emph{distinct} values; that
+%construction is \emph{not} private.
 %\todo{It would be better, perhaps, to show that it is not OW secure, since this implies it isn't SS secure, and OW security is what Niedermeyer et al. violate.}
-
-Taken together, the results of this section and the next highlight
-the privacy of the linear PRF-hash construction can be sensitive to
-its usage.
+%This illustrates that the privacy of the linear PRF-hash
+%construction can be sensitive to its usage.
 
 
-\heading{Correctness. }
-For now, let $n,k,m \geq 0$.  Then $\setprim_{\mathrm{lin}}= (\Rep, \Qry)$ is defined as in Figure~\ref{fig:lin-and-bi-lin} (left side).  The following result shows, informally, that if~$F$ is a good PRF, then $\setprim_{\mathrm{lin}}$ is correct against adaptive error-finding adversaries.
+\heading{Correctness. } The following result shows, informally, that
+if~$F$ is a good PRF, then $\setprim_{\mathrm{lin}}$ is correct
+against adaptive error-finding adversaries.
 
-\begin{theorem}[{\rm Correctness of linear-PRF}]\label{thm1}\label{thm:lin-correctness}
-Fix $k,m,n,r>0$, a set~$\elts$, and let $\setprim_{\mathrm{lin}}= (\Rep, \Qry)$ be the set-membership data structure (over~$\elts$) described in Figure~\ref{fig:lin-and-bi-lin}.  For any adversary~$A$ that makes a total of~$q$ queries to its oracle and has time-complexity~$O(t)$, there exist prf-adversaries~$B_1,B_2$ (explicitly constructed in the proof of this theorem) such that
+\jnote{Again, the theorem should not refer to specific adversaries,
+but should instead refer to given resource bounds.}
+
+\begin{theorem}%[{\rm Correctness of linear-PRF}]
+\label{thm1}\label{thm:lin-correctness} Fix $k,m,n,r>0$ and~$\elts$,
+and let $\setprim_{\mathrm{lin}}= (\Rep, \Qry)$ be the
+set-membership data structure over~$\elts$.  For any adversary~$A$
+that makes a total of~$q_T$ queries to its $\Test$ oracle and runs
+in time~$t$, there exist~$B_1,B_2$ such that
 \[
-\AdvCorrect{\setprim_{\mathrm{lin}},r}{A} \leq  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}  +{\dbinom{q}{r}} \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
+\AdvCorrect{\setprim_{\mathrm{lin}},r}{A} \leq  \AdvPRF{F}{B_1} + \AdvPRF{F}{B_2}  +{\dbinom{q}{r}} \cdot \left( (1-e^{-kn/m})^k + O(1/n) \right)^r\,.
 \]
-Here, $B_1$ and $B_2$, each ask~$q$ oracle queries and have time complexity~$O(t+qm)$.
+Here, $B_1$ and $B_2$ each ask~$q$ oracle queries and run in
+time~$O(t+qm)$.
 \end{theorem}
-Again, Kirsch and Mitzenmacher~\cite{kirsch2006less} show
-that the ($r=1$, zero-query) error-probability for~$\setprim_\mathrm{lin}$ is
-always within $O(1/n)$ of $(1-e^{-kn/m})^k$, although the asymptotic
-rate of convergence is faster than~$1/n$.
-the multiplicative term $\binom{q}{r}$ arises when switching from the adaptive to zero-query settings.
-The proof will appear in the full version, but we note that it very
-closely follows the proof of correctness for the DS PRF-hash
-construction, Theorem~\ref{thm:ds-correctness}.
+Kirsch and Mitzenmacher~\cite{kirsch2006less} show that the ($r=1$,
+zero-query) error-probability for~$\setprim_\mathrm{lin}$ is always
+within $O(1/n)$ of $(1-e^{-kn/m})^k$, although the asymptotic rate
+of convergence is faster than~$1/n$; the multiplicative term
+$\binom{q}{r}$ arises due to switching from the zero-query setting
+to the adaptive setting. A proof of the above will appear in the
+full version, but we remark that it closely follows the proof of
+Theorem~\ref{thm:bf-correctness}.
 %\input{lin-correctness}
 
 
-\heading{Privacy. }
-The SS-privacy of the linear-PRF hash construction follows directly from~Theorem~\ref{thm:priv-ss}.
-\begin{theorem}[{\rm SS-privacy of linear-PRF}]\label{thm:lin-privacy}
-Fix $k,m,n,r>0$, a set $\elts$, and let $\setprim_{\mathrm{lin}}=
-(\Rep, \Qry)$ be the set-membership data structure (over~$\elts$)
-described in Figure~\ref{fig:lin-and-bi-lin}. For any set~$S \in
-2^{\elts}$, let $\leak(S)=|S|$.  There exists a simulator~$\Sim$ and
-an adversary~$B$ (making $2n$ queries) such that, for any adversary~$A$
+\heading{Privacy. } Simulation-based privacy of the linear PRF-hash
+construction follows from~Theorem~\ref{thm:priv-ss}.
+
+\begin{theorem}%[{\rm SS-privacy of linear-PRF}]
+\label{thm:lin-privacy} Fix $k,m,n>0$ and $\elts$, and let
+$\setprim_{\mathrm{lin}}= (\Rep, \Qry)$ be the set-membership data
+structure over~$\elts$. Let $\leak(S)=|S|$.  Then \jnote{Need to
+rewrite theorem statement.}
 \[
 \AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim} \leq  \AdvPRF{F}{B}\;.
 \]
 %(Both~$B$ and~$\Sim$ are explicitly constructed in the proof of this theorem.)
 \end{theorem}
 \begin{proof}
-It suffices to give the decomposition of $\Rep$ in to $\Rep_1$ and $\Rep_2$ as required by Theorem~\ref{thm:priv-ss}.
-On input a set of distinct elements
-$S=\{x_1,x_2,\ldots,x_n\}$, algorithm~$\Rep_1$ returns $s_1=\langle 1,x_1 \rangle, s_2=\langle 2,x_1 \rangle, s_3 = \langle 1,x_2\rangle, s_4=\langle 2,x_2 \rangle,\ldots,\linebreak s_{2n-1}=\langle 1,x_n \rangle, s_{2n}=\langle 2,x_n \rangle$.
-
-On input $n,F_K(s_1),F_K(s_2),\ldots,F_K(s_{2n-1}) , F_K(s_{2n})$, algorithm $\Rep_2$ initializes an all-zero array~$M$ of~$m$-bits, and sets the positions $M[F_K(s_i)+j\cdot F_K(s_{i+1})\bmod m]$ to 1, for each $j \in [k]$.  It returns~$M$ as $\pubaux$. \hfill\qed
+Let $\ell(n) = 2n$, let $\Rep_1$ be the algorithm that, on input a
+set $S=\{x_1,\ldots,x_n\}$, outputs $\{\langle b,x_i \rangle\}_{b\in
+\{1,2\}, i \in [n]}$, and let $\Rep_2$ be the algorithm that, on
+input $n,y_{1,1}, y_{2,1}, \ldots, y_{1,n}, y_{2,n}$,  initializes
+an $m$-bit array $M$ to~0 and then sets $M[y_{1,i}+j \cdot y_{2,i}
+\bmod m] \gets 1$ for $i \in [n]$ and $j \in [k]$. One can easily
+verify that $(\Rep_1, \Rep_2, \ell, F)$ is a factoring
+of~$\Pi_{\mathrm{ds}}$. Theorem~\ref{thm:priv-ss} yields the claimed
+result. \hfill\qed
 \end{proof}
 
-
+%JK
 %%%%%%%%%%%%%%%%% BIGRAM LINEAR-PRF (AKA "NIEDERMEYER")  %%%%%%%%%%%%%%%%%%%%
 \subsection{Bigram Linear-PRF Construction}
 %\heading{Bigram Linear-PRF construction (``Niedermeyer''). }
 %\heading{Correctness.}
 %\todo{Correctness theorem for this scheme.  Should follow pretty closely the one for ``plain'' linear-PRF.}\tsnote{Actually not sure this is that interesting, but for parallel structure one would want to give it.}
-\heading{Privacy. } Consider the set-membership data structure given
-in Figure~\ref{fig:lin-and-bi-lin} (right side), which we call the
+Consider the set-membership data structure given in
+Figure~\ref{fig:lin-and-bi-lin} (right side), which we call the
 \emph{bigram linear-PRF} construction.  This construction is of
 practical interest, as it has been suggested as a way to address the
 privacy-preserving record-linkage problem, in particular for linking
 common records in medical
 databases~\cite{niedermeyer2014cryptanalysis}. %,schnell2011novel}.
-We only address the privacy of this construction, as the correctness
-follows immediately from the correctness of the Linear-PRF
-construction.  The privacy, however, does not.  Here we exhibit an
-efficient SS-privacy attack even when simulator is provided nearly
-the entire set.  Consider the following ``all-but-last'' leakage
-function. On input a set~$S=\{x_1,x_2,\ldots,x_n\}$, it assigns
-$x'_n \gets x_n[1:|x_n|-1]$ and returns
+\jnote{We should really give more discussion, explaining the goal of
+``privacy-preserving record linkage'' and describing the protocol
+(at a high level).}
+
+\heading{Privacy. } We only address the privacy of this
+construction, as the correctness follows immediately from the
+correctness of the Linear-PRF construction.  The privacy, however,
+does not.  Here we exhibit an efficient SS-privacy attack even when
+simulator is provided nearly the entire set.  Consider the following
+``all-but-last'' leakage function. On input a
+set~$S=\{x_1,x_2,\ldots,x_n\}$, it assigns $x'_n \gets
+x_n[1:|x_n|-1]$ and returns
 $\mathsf{leak_{abl}}(S)=\{x_1,x_2,\ldots,x'_n\}$.
 
 \begin{figure}[tp]
