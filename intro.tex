@@ -27,8 +27,8 @@ structures in an adversarial setting, where both \emph{correctness}
 and \emph{privacy} are considered. We initiate such a treatment in
 this work.
 
-\heading{Formalizing abstract data structures.} Loosely speaking, we
-formalize a data structure as a pair of algorithms $(\Rep,\Qry)$,
+\heading{Formalizing abstract data structures. } Loosely speaking,
+we formalize a data structure as a pair of algorithms $(\Rep,\Qry)$,
 the representation and query-evaluation algorithms, respectively.
 The randomized representation algorithm takes in an abstract
 object~$S$ and produces public representation data $\pubaux$ and
@@ -67,11 +67,11 @@ leaks a good approximation of~$|S|$, but nothing more.  (Such a
 result is not possible for the standard Bloom filter, or any other
 data structure with empty~$\privaux$.)
 
-\heading{Case studies.} The example above offers a hint at the broad
-range of abstract data structures our syntax supports.  In this
-paper, we put the syntax and our security notions to work in several
-case studies.  First, we analyze classical Bloom filters when the
-hash functions are modeled as public random
+\heading{Case studies. } The example above offers a hint at the
+broad range of abstract data structures our syntax supports.  In
+this paper, we put the syntax and our security notions to work in
+several case studies.  First, we analyze classical Bloom filters
+when the hash functions are modeled as public random
 oracles~\cite{broder2004network}, when the hash functions are
 secretly-keyed PRFs~\cite{niedermeyer2014cryptanalysis,C:NaoYog15},
 and when the hash functions are secretly keyed but fall short of
@@ -124,7 +124,7 @@ privacy in the multi-representation setting with corruptions
 that come to mind now.  Could also consider authenticity of
 representations, think CDN or P2P settings.}}
 
-\heading{Related work.}
+\heading{Related work. }
 \input{related-work}
 %\jnote{See the discussion of related work in
 %Naor-Yogev. We should cite [LN93]. I can't tell how relevant [MNS11]

@@ -228,7 +228,7 @@ the claimed result. \hfill\qed
 %%%%%%%%%%%%%%%%% LINEAR-PRF %%%%%%%%%%%%%%%%%%%%
 \begin{figure}[tp]
 \centering
-\hfpagess{.5}{.5}
+\hfpagess{.45}{.45}
 {
 \algorithmv{$\Rep(S)$}\\
 $M \gets 0^m$; $K \getsr \calK$\\
@@ -242,9 +242,8 @@ $\pubaux \gets M$, $\privaux \gets \langle K \rangle$\\
 Return $(\pubaux,\privaux)$\\
 
 \medskip
-\algorithmv{$\Qry(\pubaux,\privaux)$}\\
+\algorithmv{$\Qry(\pubaux,\privaux, q_x)$}\\
 $M\gets\pubaux$, $K \gets \privaux$\\
-%\jnote{Fix}\tsnote{Fix what?} \\
 $f_1 \gets F_{K}(\langle 1,x \rangle)$, $f_2 \gets F_{K}(\langle 2,x \rangle)$\\
 for $j \in \{1,2,\ldots,k\}$\\
 \nudge $h_j \gets f_1 + j\cdot f_2 \bmod m$\\
@@ -253,38 +252,38 @@ Return 1
 }
 {
 \algorithmv{$\Rep(S)$}\\
-$\pubaux \gets \emptystring$\\
-$K_1,K_2, \getsr \calK$\\
+$\pubaux \gets \emptystring$; $K \getsr \calK$\\
 for each $x \in S$\\
 \nudge $M_x \gets 0^m$\\
 \nudge $B_x \gets \mathsf{bigram}(x)$\\
 \nudge for each $b \in B_x$\\
 \nudge\nudge $f_1 \gets F_{K}(\langle 1,b \rangle)$, $f_2 \gets F_{K}(\langle 2,b \rangle)$\\
-\nudge\nudge for $j \in [k]$\\
-\nudge\nudge\nudge $i \gets f_1+j\cdot f_2 \bmod m$\\
-\nudge\nudge\nudge $M_x[i] \gets 1$\\
+\nudge\nudge for $j \in \{1, 2, \ldots, k\}$\\
+\nudge\nudge\nudge $h_j \gets f_1+j\cdot f_2 \bmod m$\\
+\nudge\nudge\nudge $M_x[h_j] \gets 1$\\
 \nudge $\pubaux \gets \langle\pubaux, M_x \rangle$\\
-$\privaux \gets \langle K_1,K_2 \rangle$\\
+$\privaux \gets \langle K \rangle$\\
 Return $(\pubaux,\privaux)$\\
 
 \medskip
 \algorithmv{$\Qry(\pubaux,\privaux,q_x)$}\\
 $B \gets \mathsf{bigram}(x)$\\
-$\overline{M} \gets 0^m$\\
+$M_x \gets 0^m$\\
 for each $b \in B$\\
-\nudge for $j \in [k]$\\
-\nudge\nudge $f_1 \gets F_{K}(\langle 1,b \rangle)$, $f_2 \gets F_{K}(\langle 2,b \rangle)$\\
-\nudge\nudge $i \gets f_1+j\cdot f_2 \bmod m$\\
-\nudge\nudge $\overline{M}[i] \gets 1$\\
-if $\overline{M} \in \pubaux$ then Return 1 \\
+\nudge $f_1 \gets F_{K}(\langle 1,b \rangle)$, $f_2 \gets F_{K}(\langle 2,b \rangle)$\\
+\nudge for $j \in \{1, 2, \ldots, k\}$\\
+\nudge\nudge $h_j \gets f_1+j\cdot f_2 \bmod m$\\
+\nudge\nudge $M_x[h_j] \gets 1$\\
+if $M_x \in \pubaux$ then Return 1 \\
 Return 0
 }
 \caption{{\bf Left:} $\Rep$ and $\Qry$ algorithms for the linear-PRF
   data structure $\setprim_{\mathrm{lin}}$. {\bf Right:}
 Data structure $\setprim_{\bilin}$ from Niedermeyer et
-al.~\cite{niedermeyer2014cryptanalysis}. The $\mathsf{bigram}$
+al.~\cite{niedermeyer2014cryptanalysis}. \jnote{Can we not describe
+this in terms of $\setprim_{\mathrm{lin}}$?} The $\mathsf{bigram}$
 algorithm takes a string~$x=x_1,x_2,\ldots,x_\ell$ as input, and
-returns the set of bigrams for the left- and right-padded string
+returns the set of bigrams for the left-and-right-padded string
 $\sqcup x \sqcup$, i.e. $\{\sqcup x_1,
 x_1x_2,\ldots,x_{\ell-1}x_\ell,x_\ell\sqcup\}$. Both schemes use a
 function family $F\colon \calK \times \bits^* \to [m]$.
@@ -392,7 +391,6 @@ of~$\Pi_{\mathrm{ds}}$. Theorem~\ref{thm:priv-ss} yields the claimed
 result. \hfill\qed
 \end{proof}
 
-%JK
 %%%%%%%%%%%%%%%%% BIGRAM LINEAR-PRF (AKA "NIEDERMEYER")  %%%%%%%%%%%%%%%%%%%%
 \subsection{Bigram Linear-PRF Construction}
 %\heading{Bigram Linear-PRF construction (``Niedermeyer''). }
@@ -400,20 +398,24 @@ result. \hfill\qed
 %\todo{Correctness theorem for this scheme.  Should follow pretty closely the one for ``plain'' linear-PRF.}\tsnote{Actually not sure this is that interesting, but for parallel structure one would want to give it.}
 Consider the set-membership data structure given in
 Figure~\ref{fig:lin-and-bi-lin} (right side), which we call the
-\emph{bigram linear-PRF} construction.  This construction is of
-practical interest, as it has been suggested as a way to address the
-privacy-preserving record-linkage problem, in particular for linking
-common records in medical
+\emph{bigram linear-PRF} construction. \jnote{Really a bad
+name\ldots} This construction is of interest as it has been
+suggested as a way to address the privacy-preserving record-linkage
+problem, in particular for linking common records in medical
 databases~\cite{niedermeyer2014cryptanalysis}. %,schnell2011novel}.
-\jnote{We should really give more discussion, explaining the goal of
+\jnote{We should really give more discussion, explaining the data
+structure in words, and also discussing the goal of
 ``privacy-preserving record linkage'' and describing the protocol
-(at a high level).}
+for doing so (at a high level).}
 
 \heading{Privacy. } We only address the privacy of this
 construction, as the correctness follows immediately from the
-correctness of the Linear-PRF construction.  The privacy, however,
-does not.  Here we exhibit an efficient SS-privacy attack even when
-simulator is provided nearly the entire set.  Consider the following
+correctness of the linear PRF-hash construction. \jnote{Well, with
+some loss of parameters.} The privacy, however, does not.
+%JK
+Here we
+exhibit an efficient SS-privacy attack even when simulator is
+provided nearly the entire set. Consider the following
 ``all-but-last'' leakage function. On input a
 set~$S=\{x_1,x_2,\ldots,x_n\}$, it assigns $x'_n \gets
 x_n[1:|x_n|-1]$ and returns
