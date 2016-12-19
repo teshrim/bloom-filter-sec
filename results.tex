@@ -360,14 +360,14 @@ zero-query) error-probability for~$\setprim_\mathrm{lin}$ is always
 within $O(1/n)$ of $(1-e^{-kn/m})^k$, although the asymptotic rate
 of convergence is faster than~$1/n$; the multiplicative term
 $\binom{q}{r}$ arises due to switching from the zero-query setting
-to the adaptive setting. A proof of the above will appear in the
-full version, but we remark that it closely follows the proof of
-Theorem~\ref{thm:bf-correctness}.
+to the adaptive setting. A proof of the above closely follows the
+proof of Theorem~\ref{thm:bf-correctness}, and will appear in the
+full version.
 %\input{lin-correctness}
 
 
 \heading{Privacy. } Simulation-based privacy of the linear PRF-hash
-construction follows from~Theorem~\ref{thm:priv-ss}.
+construction follows from~Theorem~\ref{thm:priv-ss}:
 
 \begin{theorem}%[{\rm SS-privacy of linear-PRF}]
 \label{thm:lin-privacy} Fix $k,m,n>0$ and $\elts$, and let
@@ -396,82 +396,119 @@ result. \hfill\qed
 %\heading{Bigram Linear-PRF construction (``Niedermeyer''). }
 %\heading{Correctness.}
 %\todo{Correctness theorem for this scheme.  Should follow pretty closely the one for ``plain'' linear-PRF.}\tsnote{Actually not sure this is that interesting, but for parallel structure one would want to give it.}
-Consider the set-membership data structure given in
-Figure~\ref{fig:lin-and-bi-lin} (right side), which we call the
-\emph{bigram linear-PRF} construction. \jnote{Really a bad
-name\ldots} This construction is of interest as it has been
-suggested as a way to address the privacy-preserving record-linkage
-problem, in particular for linking common records in medical
-databases~\cite{niedermeyer2014cryptanalysis}. %,schnell2011novel}.
-\jnote{We should really give more discussion, explaining the data
-structure in words, and also discussing the goal of
+
+The set-membership data structure given on the right-hand side of
+Figure~\ref{fig:lin-and-bi-lin}, which we call the \emph{bigram
+linear-PRF} construction \jnote{Really a bad name\ldots}, was
+suggested as a way to allow for privacy-preserving
+linkage of medical records~\cite{niedermeyer2014cryptanalysis}. %,schnell2011novel}.
+\jnote{We should really give more discussion, explaining what the
+data structure does in words, and also discussing the goal of
 ``privacy-preserving record linkage'' and describing the protocol
-for doing so (at a high level).}
-
-\heading{Privacy. } We only address the privacy of this
+for doing so (at a high level).} We only address the privacy of this
 construction, as the correctness follows immediately from the
-correctness of the linear PRF-hash construction. \jnote{Well, with
-some loss of parameters.} The privacy, however, does not.
-%JK
-Here we
-exhibit an efficient SS-privacy attack even when simulator is
-provided nearly the entire set. Consider the following
-``all-but-last'' leakage function. On input a
-set~$S=\{x_1,x_2,\ldots,x_n\}$, it assigns $x'_n \gets
-x_n[1:|x_n|-1]$ and returns
-$\mathsf{leak_{abl}}(S)=\{x_1,x_2,\ldots,x'_n\}$.
+correctness of the linear PRF-hash construction. \jnote{Actually, it
+seems worth giving a proof of correctness just to get the parameters
+right.}
 
-\begin{figure}[tp]
-\centering
-\fpage{.65}
-{
-\adversaryv{$A$}\\[1ex]
-On input $\emptystring$:\\
-\nudge $x_1 \gets \mathrm{cab}$\\
-\nudge $x_2 \gets \mathrm{bab}$\\
-\nudge $z \getsr \bits$\\
-\nudge if $z=1$ then $x_3 \gets \mathrm{caba}$\\
-\nudge else $x_3 \gets \mathrm{cabc}$\\
-\nudge Return $S=\{x_1,x_2,x_3\}$\\
-On input $\pub \neq \emptystring$:\\
-\nudge $M_1,M_2,M_3 \gets \pub$\\
-\nudge $M_{1,2} \gets M_1 \vee M_2$\\
-\nudge if $z=1 \wedge \left(3k < \mathsf{hamming}(M_{1,2} \wedge M_3) = 4k\right)$ then \\
-\nudge\nudge Return 1 \\
-\nudge if $z=0 \wedge \left(\mathsf{hamming}(M_{1,2} \wedge M_3) \leq 3k\right)$ then \\
-\nudge\nudge Return 1 \\
-\nudge Return 0
-}
-\caption{Adversary for Theorem~\ref{thm:bi-lin-ss}. The function $\mathsf{hamming}(M)$ returns the hamming weight of~$M$.}
-\label{fig:adv-bi-lin-ss}
-\end{figure}
+\heading{Privacy. }  Unfortunately, and in contrast to the linear
+PRF-hash construction on which it is based, the scheme does not
+achieve our simulation-based notion of privacy. In fact, we show
+that it fails severely: roughly, even a simulator given everything
+but the last character of one of the strings in~$S$ cannot simulate
+the public output.
 
-\begin{theorem}[{\rm SS-privacy of bigram linear-PRF}]\label{thm:bi-lin-ss}
-Let $\setprim_{\bilin}= (\Rep, \Qry)$ be the set-membership data
-structure described in Figure~\ref{fig:lin-and-bi-lin}, but with
-$F_{K}$ replaced by a random function~$\rho$. Let
-$\leak_{\mathsf{abl}}$ be the leakage function just described.
-Let~$\elts=\{\mathrm{a,b,c}\}^*$. Let $n=3$,  $m=3\alpha $ for
-integer $\alpha >> 1$, and let, $k = \lceil \ln(2) \alpha
-\rceil$.\footnote{This value of~$k$ is from the classical analysis for
-minimizing the FP rate for a Bloom filter, and is set this way for
-compatibility with classical results.  It isn't used in any
-essential way in the proof sketch.}  Let~$A$ be the adversary in
-Figure~\ref{fig:adv-bi-lin-ss}.  Then for any simulator $\Sim$, the
-advantage
-$\AdvPrivSS{\setprim_{\bilin},\leak_{\mathsf{abl}}}{A,\Sim}$ can be
-made arbitrarily close to $1/2$ by choice of~$\alpha$.
-\end{theorem}
+%\begin{figure}[tp]
+%\centering
+%\fpage{.65}
+%{
+%\adversaryv{$A$}\\[1ex]
+%On input $\emptystring$:\\
+%\nudge $x_1 \gets \mathrm{cab}$\\
+%\nudge $x_2 \gets \mathrm{bab}$\\
+%\nudge $z \getsr \bits$\\
+%\nudge if $z=1$ then $x_3 \gets \mathrm{caba}$\\
+%\nudge else $x_3 \gets \mathrm{cabc}$\\
+%\nudge Return $S=\{x_1,x_2,x_3\}$\\
+%On input $\pub \neq \emptystring$:\\
+%\nudge $M_1,M_2,M_3 \gets \pub$\\
+%\nudge $M_{1,2} \gets M_1 \vee M_2$\\
+%\nudge if $z=1 \wedge \left(3k < \mathsf{hamming}(M_{1,2} \wedge M_3) = 4k\right)$ then \\
+%\nudge\nudge Return 1 \\
+%\nudge if $z=0 \wedge \left(\mathsf{hamming}(M_{1,2} \wedge M_3) \leq 3k\right)$ then \\
+%\nudge\nudge Return 1 \\
+%\nudge Return 0
+%}
+%\caption{Adversary for Theorem~\ref{thm:bi-lin-ss}. The function $\mathsf{hamming}(M)$ returns the hamming weight of~$M$.}
+%\label{fig:adv-bi-lin-ss}
+%\end{figure}
+
+\jnote{Give intuition for why the attack works: the same ``hash
+functions'' are used for each ``Bloom filter,'' and this leaks
+information about bigrams shared among multiple strings.} \jnote{I
+simplified the attack.}
+
+Formally, consider sets of strings over $\bool$, and fix the leakage
+function $\leak_{\mathsf{abl}}$ defined by
+\[\leak_{\mathsf{abl}}(\{x_1, \ldots, x_n\}) = \{x_1, \ldots, x_{n-1},
+x'_n\},\] where $x_n$ is the lexicographically last string in the
+given set, and $x'_n$ is equal to $x_n$ with the last bit removed.
+Define an attacker $A$ as follows: it chooses a uniform bit~$b$; if
+$b=0$ then it outputs the set $S=\{1,111\}$, and if $b=1$ then it
+outputs the set $S=\{1, 101\}$. Next, given public information $\pub
+= \langle M_1, M_2 \rangle$ (where $M_2$ is the array with more bits
+set to~1), it counts the number of positions set to~1 in $M_2$ that
+are not set to~1 in~$M_1$. If this number is strictly greater
+than~$k$, then $A$ outputs~1; otherwise, it outputs~0.
+
+In analyzing the behavior of $A$, note first that $\Rep$ begins by
+mapping each of the strings in $S$ to their respective bigram sets,
+namely, $\{\sqcup 1, 1\sqcup\}$ for the first string, and either
+$\{\sqcup 1, 11, 1\sqcup\}$ or $\{\sqcup 1, 10, 01, 1\sqcup\}$ for
+the second string. It then produces the $m$-bit arrays $M_1, M_2$.
+Because the bigram set for the second string is, in either case, a
+strict superset of the bigram set for the first string, $M_2$ (which
+is the array with more bits set to~1) always corresponds to the
+second string.
+
+Now, when $b=0$ the bigram set for the second string contains
+exactly one more element than the bigram set for the first string,
+and so the number of positions set to~1 in $M_2$ that are \emph{not}
+set to~1 in $M_1$ is at most~$k$. On the other hand, when $b=1$ the
+bigram set for the second string contains exactly two more elements
+than the bigram set for the first string, and so with high
+probability the number of positions set to~1 in $M_2$ that are not
+set to~1 in $M_1$ exceeds~$k$. (Specifically, in the worst case
+there are $2k$ positions---call them~$I$---set to~1 in $M_1$, and
+then the number in question exceeds~$k$ as long as a strict majority
+of the $2k$ positions set to~1 by the extra bigrams $10, 01$ lie
+outside of~$I$. Pairwise independence of those $2k$ positions can be
+used to bound this probability. If $k\geq 4$ and $2k/m \leq 1/4$,
+this probability is at least %JK
+
+ implies that this happens except with
+probability at most $(4 \cdot (\frac{1}{2}- \leq 1/2$.)
+
+%\begin{theorem}%[{\rm SS-privacy of bigram linear-PRF}]
+%\label{thm:bi-lin-ss}
+%Let~$\elts=\{\mathrm{a,b,c}\}^*$. Let $n=3$,  $m=3\alpha $ for
+%integer $\alpha \gg 1$, and let, $k = \lceil \ln(2) \alpha
+%\rceil$.\footnote{This value of~$k$ is from the classical analysis
+%for minimizing the FP rate for a Bloom filter, and is set this way
+%for compatibility with classical results.  It isn't used in any
+%essential way in the proof sketch.}  Let~$A$ be the adversary in
+%Figure~\ref{fig:adv-bi-lin-ss}.  Then for any simulator $\Sim$, the
+%advantage
+%$\AdvPrivSS{\setprim_{\bilin},\leak_{\mathsf{abl}}}{A,\Sim}$ can be
+%made arbitrarily close to $1/2$ by choice of~$\alpha$.
+%\end{theorem}
 \begin{proof}%\tsnote{still a bit sketchy but believable}
-On input the set~$S$ produced by~$A$, the $\Rep$ algorithm turns $x_1=$'cab', $x_2=$'bab' and $x_3$ into their respective bigram sets: $B_{x_1}=\{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{b}\sqcup\}$, $B_{x_2}=\{\sqcup\mathrm{b},\mathrm{ba},\mathrm{ab}, \mathrm{b}\sqcup \}$; the set $B_{x_3}$ will be either $\{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{ba}, \mathrm{a}\sqcup\}$, or $\{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{bc}, \mathrm{c}\sqcup\}$, each with probability 1/2.  It then produces $\alpha$-bit arrays $M_1, M_2, M_3$ by hashing the corresponding bigram sets using the hash functions $h_j(s)=\rho_1(s)+ j\rho_2(s) \bmod m$.  Note that for sufficiently large~$m$, each of $M_1,M_2$ will contain exactly $4k$ positions set to 1; this is with overwhelming probability, up to collisions in the hash functions for different bigrams within a given bigram set.  Likewise, $M_{1,2}=M_1 \vee M_2$ will have exactly $6k$ positions set to 1, because $B_{x_1}$ and $B_{x_2}$ share $\mathrm{ab}$ and $\mathrm{a}\sqcup$.
-
-In the case that $B_{x_3}=\{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{ba}, \mathrm{a}\sqcup\}$, only one of its elements ($\mathrm{a}\sqcup$) is not in either of $B_{x_1},B_{x_2}$.  Hence, the hamming weight of $M_{1,2}\wedge M_3$ will be $4k$.  On the other hand, when $B_{x_3} = \{\sqcup\mathrm{c},\mathrm{ca},\mathrm{ab},\mathrm{bc}, \mathrm{c}\sqcup\}$, two of its elements ($\mathrm{bc}, \mathrm{c}\sqcup$) are not covered by $B_{x_1},B_{x_2}$.  In this case, the hamming weight of $M_{1,2} \wedge M_3$ will be $3k$.  Thus $\ExpPrivSSreal{\setprim_{\bilin}}{A}=1$ with overwhelming probability.
-
-On the other hand, the simulator~$\Sim$ is given 'cab','bab','cab' as
-input.  It can perfectly simulate $M_1,M_2$ by lazily sampling random
-function~$\rho$ itself.  However, it has no information about the
-bit~$z$, so at best it can cause~$A$ to output 1 with
-probability~$1/2$.  That is $\ExpPrivSSsim{\setprim_{\bilin}}{A,\Sim} \leq 1/2$. \hfill\qed
+On the other hand, the simulator~$\Sim$ is given 'cab','bab','cab'
+as input.  It can perfectly simulate $M_1,M_2$ by lazily sampling
+random function~$\rho$ itself.  However, it has no information about
+the bit~$z$, so at best it can cause~$A$ to output 1 with
+probability~$1/2$.  That is
+$\ExpPrivSSsim{\setprim_{\bilin}}{A,\Sim} \leq 1/2$. \hfill\qed
 \end{proof}
 
 
