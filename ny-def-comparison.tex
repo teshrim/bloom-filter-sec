@@ -3,23 +3,26 @@
 %\fixme{Uses $(t,q,\epsilon)$-style notion and theorem statements.  May
 %be okay because this is a self contained appendix, but better if
 %consistent with the rest of the document.}
-The structure of the Naor-Yogev definition is different from ours.
-They focus specifically on set-representation data
-structures with no false negatives, and their data-structure syntax
-does not distinguish public and private portions of the
+We briefly describe the differences between the Naor-Yogev definition of correctness and ours.
+For starters,
+they focus specifically on set-representation data
+structures with no false negatives, and (more importantly) their data-structure syntax
+does not distinguish between public and private portions of a
 representation. Nevertheless, it is straightforward
-to extend their definition to more closely match ours; we do that next.
-Their experiment is similar but the attacker
+to extend their definition to more closely match ours; we do that below.
+A more fundamental difference is that in
+their experiment for defining correctness, the attacker
 succeeds only if it outputs a (single) query $\qry$ for which
-$\Qry(\pubaux,\privaux, \qry) \neq \qry(S)$  \emph{subject to the restriction that it did not
+$\Qry(\pubaux,\privaux, \qry) \neq \qry(S)$  \emph{and for which it did not
 previously query $\qry$ to its $\TestOracle$ oracle}. We refer to
 Figure~\ref{fig:NYcorrectness} for a definition of the relevant experiment.
-We define the advantage of adversary~$A$ as
+We define the advantage of adversary~$A$ relative to their experiment
+as
 $\NYAdvCorrect{\Pi}{A} = \Prob{\NYExpCorrect{\Pi}{A}=1}$,
-and write $\NYAdvCorrect{\Pi,r}{t,q}$ for the maximum over
-all~$t$-time adversaries that ask at most~$q$ queries. We say that a
-data structure~$\Pi$ is $(t,q,\epsilon)$-NY-correct if
-$\NYAdvCorrect{\Pi}{t,q} \leq \epsilon$. 
+and let $\NYAdvCorrect{\Pi}{t,q}$ be the maximum of this value taken over
+all~$t$-time adversaries that ask at most~$q$ queries. %We say a
+%data structure~$\Pi$ is \emph{$(t,q,\epsilon)$-NY-correct} if
+%$\NYAdvCorrect{\Pi}{t,q} \leq \epsilon$.
 %\jnote{This should all probably
 %move to an appendix; it's a lot of notation to digest for something we never use again
 %in the paper.}
@@ -61,20 +64,18 @@ Return~$a$
 
 With the above in place we can now relate their definition to ours.
 \begin{theorem}
-If $\Pi$ is $(t,q,\epsilon)$-NY-correct, then it is also
-$(t, q', r, q'\epsilon/r)$-correct for any $q' \leq q+1$ and $r\geq
-1$.
+Fix $\Pi$. If $\NYAdvCorrect{\Pi}{t,q} \leq \epsilon$, then for any $r \geq 1$ and $q' \leq q+1$ it holds that
+$\AdvCorrect{\setprim,r}{t,q'} \leq q'\epsilon/r$.
 \end{theorem}
 \begin{proof}
-Let $\Pi$ be a data structure that is $(t,q,\epsilon)$-NY-correct,
-and assume that for some $q' \leq q+1$ and
+Assume that for some $q' \leq q+1$ and
 $r \geq 1$
 there is an adversary $A$ running in time~$t$
 and making $q'$ oracle queries such that
 $\AdvCorrect{\Pi,r}{A} > q'\epsilon/r$.
-(Note that
-we may assume $A$ always makes exactly $q'$ queries without loss of generality.)
-With probability at least
+(Note
+we may assume that $A$ always makes exactly $q'$ queries without loss of generality.)
+This means that with probability at least
 $q'\epsilon/r$ in an execution of $\ExpCorrect{\Pi,r}{A}$, we have that
 $A$ makes at least $r$ distinct queries to $\TestOracle$ for which
 an incorrect answer is returned. Let $A'$ be the algorithm that simply
@@ -84,43 +85,45 @@ as its final output. Then with probability at least $r/q' \cdot (q'\epsilon/r)=\
 the query chosen by $A'$
 leads to an incorrect answer, and was not previously asked to the $\TestOracle$ oracle.
 Since the running time of $A'$ is at most $t$, and it makes at most $q'-1 \leq q$ queries
-to its oracle, this is a contradiction.
+to its oracle, this is a contradiction. \hfill\qed
 \end{proof}
 
-We note that the above is tight, at least for $r=1$. Specifically, consider a scheme
+We remark that the above is tight, at least for $r=1$. Specifically, consider a scheme
 in which every query is independently
 answered incorrectly with probability~$\epsilon$. Such a
-scheme will be $(t,q,\epsilon)$-NY-correct
-for any $t, q$, however an adversary making $q=1/\epsilon$ queries has constant advantage
-under our correctness definition (for $r=1$).
+scheme satisfies $\NYAdvCorrect{\Pi}{t,q} \leq \epsilon$ for any $t, q$,
+however an adversary making $q=1/\epsilon$ queries has constant advantage
+with respect to our correctness definition (for $r=1$).
+
+In the other direction, we show:
 
 \begin{theorem}
-If $\Pi$ is $(t, q, 1, \epsilon)$-correct, then it is also $(t, q-1, \epsilon)$-NY-correct.
+Fix $\Pi$. If $\AdvCorrect{\setprim,1}{t,q} \leq \epsilon$, then
+$\NYAdvCorrect{\Pi}{t,q-1} \leq \epsilon$.
 \end{theorem}
-
 \begin{proof}
-Let $\Pi$ be a data structure that is $(t,q,1,\epsilon)$-correct,
-and assume
+Assume
 there is an adversary $A$ running in time~$t$
 and making at most $q-1$ oracle queries such that
 $\NYAdvCorrect{\Pi}{A} > \epsilon$.
 Let $A'$ be the algorithm that simply
-runs~$A$, passing the oracle queries of~$A$ to its own oracle, until~$A$ terminates
+runs~$A$, forwarding the oracle queries of~$A$ to its own oracle, until~$A$ terminates
 with output~$\qry$; then, $A'$ sends~$\qry$ to $\TestOracle$. It is immediate that $A'$ makes at most $q$ oracle queries, and
-$\AdvCorrect{\Pi,1}{A'} \geq \NYAdvCorrect{\Pi}{A}$, a contradiction.
+$\AdvCorrect{\Pi,1}{A'} \geq \NYAdvCorrect{\Pi}{A}$, a contradiction. \hfill\qed
 \end{proof}
 
 \begin{theorem}
-There exists a data structure $\Pi$ that
-is $(t, q, 2, 0)$-correct, but is not $(t, 0, \epsilon)$-NY-correct
-for any $\epsilon<1$.
+There is a data structure $\Pi$ over ${\cal X}$
+for which $\AdvCorrect{\setprim,2}{t,q}=0$ for all $t, q$,
+but $\NYAdvCorrect{\Pi}{O(1),0} = 1$.
 \end{theorem}
 \begin{proof}
-Let $\Pi$ be the set-membership data structure in which $\Rep(S)$ outputs
+Let $x \in {\cal X}$ be
+an arbitrary fixed element.
+Define $\Pi$ such that $\Rep(S)$ outputs
 $\pubaux=\privaux=S$, and
-$\Qry(S, S, \qry_y)$ outputs $\qry_y(S)$ if $y \neq x$ but outputs $1-\qry_x(S)$ otherwise,
-where $x \in {\cal X}$ is a fixed element of the universe. This
-scheme always answers incorrectly for a single, fixed query, and answers
+$\Qry(S, S, \qry_y)$ outputs $\qry_y(S)$ if $y \neq x$ but outputs $1-\qry_x(S)$ otherwise.
+This scheme always answers incorrectly for a single, fixed query, and answers
 correctly for every other query. The theorem follows.
 \end{proof}
 
