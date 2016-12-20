@@ -400,16 +400,15 @@ result. \hfill\qed
 The set-membership data structure given on the right-hand side of
 Figure~\ref{fig:lin-and-bi-lin}, which we call the \emph{bigram
 linear-PRF} construction \jnote{Really a bad name\ldots}, was
-suggested as a way to allow for privacy-preserving
-linkage of medical records~\cite{niedermeyer2014cryptanalysis}. %,schnell2011novel}.
-\jnote{We should really give more discussion, explaining what the
-data structure does in words, and also discussing the goal of
-``privacy-preserving record linkage'' and describing the protocol
-for doing so (at a high level).} We only address the privacy of this
-construction, as the correctness follows immediately from the
-correctness of the linear PRF-hash construction. \jnote{Actually, it
-seems worth giving a proof of correctness just to get the parameters
-right.}
+suggested as a way to allow for privacy-preserving linkage of
+medical records~\cite{schnell2011novel}. \jnote{We should really
+give more discussion, explaining what the data structure does in
+words, and also discussing the goal of ``privacy-preserving record
+linkage'' and describing the protocol for doing so (at a high
+level).} We only address the privacy of this construction, as the
+correctness follows immediately from the correctness of the linear
+PRF-hash construction. \jnote{Actually, it seems worth giving a
+proof of correctness just to get the parameters right.}
 
 \heading{Privacy. }  Unfortunately, and in contrast to the linear
 PRF-hash construction on which it is based, the scheme does not
@@ -448,18 +447,20 @@ functions'' are used for each ``Bloom filter,'' and this leaks
 information about bigrams shared among multiple strings.} \jnote{I
 simplified the attack.}
 
-Formally, consider sets of strings over $\bool$, and fix the leakage
-function $\leak_{\mathsf{abl}}$ defined by
-\[\leak_{\mathsf{abl}}(\{x_1, \ldots, x_n\}) = \{x_1, \ldots, x_{n-1},
-x'_n\},\] where $x_n$ is the lexicographically last string in the
-given set, and $x'_n$ is equal to $x_n$ with the last bit removed.
-Define an attacker $A$ as follows: it chooses a uniform bit~$b$; if
-$b=0$ then it outputs the set $S=\{1,111\}$, and if $b=1$ then it
-outputs the set $S=\{1, 101\}$. Next, given public information $\pub
-= \langle M_1, M_2 \rangle$ (where $M_2$ is the array with more bits
-set to~1), it counts the number of positions set to~1 in $M_2$ that
-are not set to~1 in~$M_1$. If this number is strictly greater
-than~$k$, then $A$ outputs~1; otherwise, it outputs~0.
+Formally, consider sets of strings over $\bool$, and fix the
+``all-but-last'' leakage function $\leak_{\mathsf{abl}}$ defined by
+\[\leak_{\mathsf{abl}}(\{x_1, \ldots, x_n\}) = \{x_1, \ldots, x_{n-1}\},\]
+where $x_n$ is the lexicographically last string in the given set.
+\jnote{Could also give all-but-the-2nd bit of $x_n$, but does it
+matter?} Define an attacker $A$ as follows: it chooses a uniform
+bit~$b$; if $b=0$ then it outputs the set $S=\{1,111\}$, and if
+$b=1$ then it outputs the set $S=\{1, 101\}$. Next, given public
+information $\pub = \langle M_1, M_2 \rangle$ (where $M_2$ is the
+array with more bits set to~1), it counts the number of positions
+set to~1 in $M_2$ that are \emph{not} set to~1 in~$M_1$. If $b=0$
+and this number is $k$ or less, or if $b=1$ and this number if
+strictly greater than~$k$, then $A$ outputs~1; otherwise, it
+outputs~0.
 
 In analyzing the behavior of $A$, note first that $\Rep$ begins by
 mapping each of the strings in $S$ to their respective bigram sets,
@@ -477,17 +478,22 @@ and so the number of positions set to~1 in $M_2$ that are \emph{not}
 set to~1 in $M_1$ is at most~$k$. On the other hand, when $b=1$ the
 bigram set for the second string contains exactly two more elements
 than the bigram set for the first string, and so with high
-probability the number of positions set to~1 in $M_2$ that are not
-set to~1 in $M_1$ exceeds~$k$. (Specifically, in the worst case
-there are $2k$ positions---call them~$I$---set to~1 in $M_1$, and
-then the number in question exceeds~$k$ as long as a strict majority
-of the $2k$ positions set to~1 by the extra bigrams $10, 01$ lie
+probability there are more than $k$ positions set to~1 in $M_2$ that
+are not set to~1 in~$M_1$. (Specifically, in the worst case there
+are $2k$ positions---call them~$I$---set to~1 in $M_1$, and then the
+number in question exceeds~$k$ as long as a strict majority of the
+$2k$ positions set to~1 by the additional bigrams $10, 01$ lie
 outside of~$I$. Pairwise independence of those $2k$ positions can be
 used to bound this probability. If $k\geq 4$ and $2k/m \leq 1/4$,
-this probability is at least %JK
+this probability is at least~$1/2$.) \jnote{Check my math? Get
+tighter analysis?} We conclude that in the real experiment $A$
+outputs~1 with probability at least~3/4.
 
- implies that this happens except with
-probability at most $(4 \cdot (\frac{1}{2}- \leq 1/2$.)
+On the other hand, a simulator~$\Sim$ given ${\sf
+leak}_{\mathsf{abl}}(S) = \{1\}$ has no information about~$b$, and
+it is not hard to see that no $\Sim$ can cause $A$ to output~1 with
+probability better than~1/2.
+
 
 %\begin{theorem}%[{\rm SS-privacy of bigram linear-PRF}]
 %\label{thm:bi-lin-ss}
@@ -502,14 +508,8 @@ probability at most $(4 \cdot (\frac{1}{2}- \leq 1/2$.)
 %$\AdvPrivSS{\setprim_{\bilin},\leak_{\mathsf{abl}}}{A,\Sim}$ can be
 %made arbitrarily close to $1/2$ by choice of~$\alpha$.
 %\end{theorem}
-\begin{proof}%\tsnote{still a bit sketchy but believable}
-On the other hand, the simulator~$\Sim$ is given 'cab','bab','cab'
-as input.  It can perfectly simulate $M_1,M_2$ by lazily sampling
-random function~$\rho$ itself.  However, it has no information about
-the bit~$z$, so at best it can cause~$A$ to output 1 with
-probability~$1/2$.  That is
-$\ExpPrivSSsim{\setprim_{\bilin}}{A,\Sim} \leq 1/2$. \hfill\qed
-\end{proof}
+%\begin{proof}%\tsnote{still a bit sketchy but believable}
+%\end{proof}
 
 
 
@@ -546,52 +546,56 @@ if $\overline{M} \in \pubaux$ then Return 1 \\
 Return 0
 }
 }
-\caption{Bigram domain-separated PRF-hash.}
+\caption{Bigram domain-separated PRF-hash. \jnote{There must be some better choice of notation to indicate that
+the only change is in the way the hash functions are instantiated. (This is a general comment that
+applies to the entire paper.)}}
 \label{fig:DS-bigram}
 \end{figure}
 
-
 Niedermeyer et al.~\cite{niedermeyer2014cryptanalysis} suggest
-replacing the linear-PRF hash functions in the previous construction
-with independently keyed PRFs as a countermeasure to their attack.
-In terms of SS-privacy, however, this change offers no help.  The
-following theorem is proved via a nearly identical argument as
-Theorem~\ref{thm:bi-lin-ss}.
+replacing the hash functions in the previous construction with
+independently keyed PRFs as a countermeasure to their attack.
+\jnote{We don't even say what their attack is.} In terms of
+simulation-based privacy, however, it is not hard to see---using a
+similar attack as in the previous section---that this is of little
+help.
 
-\begin{theorem}[{\rm SS-privacy of bigram DS PRF-hash}]\label{thm:bi-ds-ss}
-Let $\setprim_{\bilin}= (\Rep, \Qry)$ be the set-membership data
-structure described in Figure~\ref{fig:DS-bigram}. Let $\leak$ be
-the leakage function described just prior to
-Theorem~\ref{thm:bi-lin-ss}. Let~$\elts=\{\mathrm{a,b,c}\}^*$. Let
-$n=3$,  $m=3\alpha $ for integer $\alpha >> 1$, and let $k = \lceil
-\ln(2) \alpha \rceil$.\footnote{As before, this value of~$k$ is from the
-classical analysis for minimizing the FP rate for a Bloom filter,
-and is set this way for compatibility with classical results.  It
-isn't used in any essential way in the proof sketch.}  Let~$A$ be
-the adversary in Figure~\ref{fig:adv-bi-lin-ss}.  Then for any
-simulator $\Sim$, the advantage
-$\AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim}$ can be made
-arbitrarily close to $1/2$ by choice of~$\alpha$.
-\end{theorem}
+%\begin{theorem}[{\rm SS-privacy of bigram DS PRF-hash}]\label{thm:bi-ds-ss}
+%Let $\setprim_{\bilin}= (\Rep, \Qry)$ be the set-membership data
+%structure described in Figure~\ref{fig:DS-bigram}. Let $\leak$ be
+%the leakage function described just prior to
+%Theorem~\ref{thm:bi-lin-ss}. Let~$\elts=\{\mathrm{a,b,c}\}^*$. Let
+%$n=3$,  $m=3\alpha $ for integer $\alpha >> 1$, and let $k = \lceil
+%\ln(2) \alpha \rceil$.\footnote{As before, this value of~$k$ is from the
+%classical analysis for minimizing the FP rate for a Bloom filter,
+%and is set this way for compatibility with classical results.  It
+%isn't used in any essential way in the proof sketch.}  Let~$A$ be
+%the adversary in Figure~\ref{fig:adv-bi-lin-ss}.  Then for any
+%simulator $\Sim$, the advantage
+%$\AdvPrivSS{\setprim_{\mathrm{ds}},\leak}{A,\Sim}$ can be made
+%arbitrarily close to $1/2$ by choice of~$\alpha$.
+%\end{theorem}
 
-On the other hand, we can show that this data structure \emph{is}
-secure with respect to a different leakage function, namely, one
-that leaks the sizes of the intersections of the various bigram
-sets. Specifically, for a set $S$ define ${\sf leak}_\cap(S)$ via
-the following algorithm:
+On the other hand, we can show that this data structure \emph{does}
+achieve our notion of simulation-based privacy with respect to a
+different leakage function, namely, one that leaks the sizes of the
+intersections of the various bigram sets. Specifically, for a set
+$S$ define ${\sf leak}_\cap(S)$ via the following algorithm:
 
-\begin{figure}[h]
-\centering
-\fpage{0.5}{
+\medskip\begin{center}
 \algorithmv{${\sf leak}_\cap(S)$}\\
 $L \gets \emptystring$\\
 for each $x \in S$\\
 \nudge $B_x \gets \mathsf{bigram}(x)$\\
 for each $S' \subseteq S$\\
 \nudge $L \gets \left\langle L, \; \left| \bigcap_{x \in S'} B_x \right| \right\rangle$\\
-Return $L$}
+Return $L$
 %\caption{Bigram domain-separated PRF-hash.}
-\end{figure}
+\end{center}
+
+\jnote{Fix indentation.}
+
+\jnote{I ran out of steam at this point\ldots}
 
 \begin{theorem} \label{thm:bi-ds-prf-priv-ss}
 Let $\Pi$ be the set-representation data structure in
@@ -735,31 +739,31 @@ Return~$X_{q}$
 \label{fig:adv-gbf}
 \end{figure}
 Dong, Chen and Wen~\cite{CCS:DonCheWen13} introduce a set-membership
-data structure called a \emph{garbled Bloom filter} (GBF).   Modulo
-some implementation details, a GBF is like a classical Bloom filter,
-but rather than storing a bit 1 at the indices determined by
-$H_j(x)$, the GBF stores xor-shares of~$x$.  Thus, if $x \in S$,
-then hashing~$x$ and xoring together the strings stored at the
-indicated positions recovers~$x$. We give the pseudocode for the GBF
-$\Rep$ and $\Qry$ algorithms in Figure~\ref{fig:gbf}.
+data structure called a \emph{garbled Bloom filter} (GBF). Roughly,
+whereas for each element $x$ in a given input set a classical Bloom
+filter would set positions of an array to~1 as determined by
+$H_1(x), \ldots, H_k(x)$, a GBF stores a $k$-out-of-$k$
+secret-sharing of $x$ in those positions. (Thus, a GBF is an array
+of strings rather than an array of bits.) We provide the pseudocode
+in Figure~\ref{fig:gbf}.
 
-In~\cite{dong2013private} the GBF is a central piece of a private set-intersection
-scheme, in which the client computes a classical BF over its
-set~$S_1$, the server computes a GBF over its set~$S_2$, and then an
-oblivious transfer protocol is carried out, at the end of which the
-client obtains a GBF for $S_1 \cap S_2$ (the server learns nothing).
-The authors note that the GBF is a new set-membership data structure
-that may be of general interest, so we explore its correctness and
-privacy with respect to use case that may or may not make the
-representation~$M$ public. The pseudocode in Figure~\ref{fig:gbf}
-covers both possibilities.
+In~\cite{CCS:DonCheWen13} the GBF is a central piece of a private
+set-intersection scheme, in which the client computes a classical BF
+over its set~$S_1$, the server computes a GBF over its set~$S_2$,
+and then an oblivious transfer protocol is carried out, at the end
+of which the client obtains a GBF for $S_1 \cap S_2$ (the server
+learns nothing). The authors note that the GBF is a new
+set-membership data structure that may be of general interest, so we
+explore its correctness and privacy with respect to use case that
+may or may not make the representation~$M$ public. The pseudocode in
+Figure~\ref{fig:gbf} covers both possibilities.
 
-\heading{Correctness.}
-We note that~\cite{dong2013private} provides error-rate analysis, i.e., the
-probability of finding a single false-positive in a non-adaptive
-attack.  When $\lambda$ is the bit-length of the xor-shares, they
-argue that the error-rate is at most $2^{-\lambda}$, roughly because
-the xor-shares stored in~$M$ are random strings.  (Note that
+\heading{Correctness.} We note that~\cite{CCS:DonCheWen13} provides
+error-rate analysis, i.e., the probability of finding a single
+false-positive in a non-adaptive attack.  When $\lambda$ is the
+bit-length of the xor-shares, they argue that the error-rate is at
+most $2^{-\lambda}$, roughly because the xor-shares stored in~$M$
+are random strings.  (Note that
   this is independent of~$k,m,n$; although $k>1$ is required for the
   xor shares.)  However, this analysis implicitly assumes that the potential false-positive string~$x$ is fixed
 \emph{before}~$M$ is determined.  We will see that this carries over
@@ -779,15 +783,16 @@ probability of this (in the ROM) is precisely the false-positive
 rate of a classical Bloom filter using the same $(k,m,n)$ as the
 GBF.
 
-Now, this adversary will find a false positive, if there is one, but in the worst case it will consider
-$\binom{m}{k} \approx m^k$ $k$-tuples of positions.  If both~$m$
-and~$k$ are large this is infeasible.  In~\cite{dong2013private} they suggest to
-set~$k=\lambda$, and test with $\lambda=80$.  Making 80 hash calls per
-set-membership query would be prohibitive in many applications, and a
-$2^{-80}$ false-positive rate would be typically considered overkill in
-practice.\footnote{Note
-that, as described in~\cite{dong2013private}, $\lambda$ must be at least the
-bit-length of the longest element $x \in S$. In practice, this could be
+Now, this adversary will find a false positive, if there is one, but
+in the worst case it will consider $\binom{m}{k} \approx m^k$
+$k$-tuples of positions.  If both~$m$ and~$k$ are large this is
+infeasible.  Dong et al.~\cite{CCS:DonCheWen13} suggest to
+set~$k=\lambda$, and test with $\lambda=80$.  Making 80 hash calls
+per set-membership query would be prohibitive in many applications,
+and a $2^{-80}$ false-positive rate would be typically considered
+overkill in practice.\footnote{Note that, as described
+in~\cite{CCS:DonCheWen13}, $\lambda$ must be at least the bit-length
+of the longest element $x \in S$. In practice, this could be
   handled with a slight change to the set membership test, by checking
 if the $\lambda$-bit shares xor to, say, the $\lambda$-bit truncation
 of~$x$.}
