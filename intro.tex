@@ -60,12 +60,15 @@ attackers that adaptively try to induce one or more errors
 By shifting $H_1,H_2,\ldots,H_k$ from $\pubaux$ to $\privaux$, we do
 not change the functionality, but we may very well change the
 security profile of the resulting Bloom-filter variant.  Indeed,
-this is the case.  When $H_1,H_2,\ldots,H_K$ are assumed to be
-pseudorandom functions, we can prove that this variant achieves a
-sort of ``semantic security'' privacy guarantee: the bit array~$M$
-leaks a good approximation of~$|S|$, but nothing more.  (Such a
-result is not possible for the standard Bloom filter, or any other
-data structure with empty~$\privaux$.)
+this is the case.  When $H_1,H_2,\ldots,H_K$
+%
+\cpnote{Is $K$ supposed to be $k$?}
+%
+are assumed to be pseudorandom functions, we can prove that this variant
+achieves a sort of ``semantic security'' privacy guarantee: the bit array~$M$
+leaks a good approximation of~$|S|$, but nothing more.  (Such a result is not
+possible for the standard Bloom filter, or any other data structure with
+empty~$\privaux$.)
 
 \heading{Case studies. } The example above offers a hint at the
 broad range of abstract data structures our syntax supports.  In
@@ -115,7 +118,7 @@ literature on Bloom-filter variants~\cite{kirsch2006less}.
 
 
 
-\ignore{We provide various security notions for these primitives...
+ ignore{We provide various security notions for these primitives...
 FP with private, public representation coins; set privacy with
 private, public representation coins; FP/set privacy in the
 multi-representation setting (outsider attack, think CDNs); FP/set
